@@ -3,75 +3,50 @@ const fs=require('node:fs');
 const path=require('node:path');
 const vm=require('node:vm');
 const root=path.resolve(__dirname,'..');
-const listeners=new Map();
-const raf=[];
-const noop=()=>{};
-const gradient={addColorStop:noop};
-const ctx2d=new Proxy({
-  createLinearGradient:()=>gradient,
-  createRadialGradient:()=>gradient,
-  measureText:()=>({width:0})
-},{get(target,key){return key in target?target[key]:noop;},set(target,key,value){target[key]=value;return true;}});
-function element(id){
-  const handlers={};
-  return {
-    id,hidden:false,textContent:'',dataset:{keyId:id==='left'?3:id==='right'?4:id==='jump'?7:id==='star'?20:5},
-    style:{},classList:{add:noop,remove:noop},
-    addEventListener(name,fn){(handlers[name]??=[]).push(fn);},
-    fire(name,event={}){for(const fn of handlers[name]||[])fn(event);},
-    setPointerCapture:noop,
-    querySelector(){return paragraph;},
-    handlers
-  };
-}
-const paragraph=element('menu-paragraph');
-const ids=['game','menu','pause-layer','settings-layer','statusline','egg-hud','fps-counter','start','resume','restart','back-title','fps-mode','show-fps','fullscreen-btn','open-settings','close-settings','share-site','reset-game','level-select','menu-level-name','level-detail','game-hint'];
+const listeners=new Map(),raf=[];const noop=()=>{};const gradient={addColorStop:noop};
+const ctx2d=new Proxy({createLinearGradient:()=>gradient,createRadialGradient:()=>gradient,measureText:()=>({width:0})},{get(t,k){return k in t?t[k]:noop;},set(t,k,v){t[k]=v;return true;}});
+function element(id){const handlers={};return {id,hidden:false,disabled:false,textContent:'',value:'',checked:false,dataset:{},style:{},classList:{add:noop,remove:noop},width:160,height:104,addEventListener(n,f){(handlers[n]??=[]).push(f);},fire(n,event={}){for(const f of handlers[n]||[])f(event);},getContext:()=>ctx2d,setPointerCapture:noop,handlers};}
+const ids=['game','level-cover','menu','level-screen','pause-layer','complete-layer','guide-layer','settings-layer','statusline','egg-hud','fps-counter','pause-mini','continue-game','open-chapters','open-guide','level-prev','level-next','level-position','level-name','level-chapter','level-record','level-lock','play-level','back-title','resume','restart','pause-chapters','complete-title','complete-eggs','complete-stats','next-level','result-chapters','guide-back','fps-mode','show-fps','fullscreen-btn','open-settings','close-settings','share-site','reset-game','game-hint','save-summary'];
 const els=Object.fromEntries(ids.map(id=>[id,element(id)]));
 els.game.getContext=()=>ctx2d;
-const buttons=['left','right','jump','star','pause'].map(element);
-els['level-select'].value='0';
-const document={
-  hidden:false,fullscreenElement:null,documentElement:{requestFullscreen:async()=>{document.fullscreenElement=document.documentElement;}},exitFullscreen:async()=>{document.fullscreenElement=null;},
-  getElementById:id=>els[id],
-  querySelectorAll:()=>buttons,
-  addEventListener:(name,fn)=>{(listeners.get('document:'+name)||listeners.set('document:'+name,[]).get('document:'+name)).push(fn);}
-};
-const sandbox={
-  document,window:null,console:{error:err=>{throw err;},log:noop},
-  addEventListener:(name,fn)=>{(listeners.get(name)||listeners.set(name,[]).get(name)).push(fn);},
-  requestAnimationFrame:fn=>raf.push(fn),
-  CustomEvent:function(type,init){this.type=type;this.detail=init?.detail;},
-  localStorage:{getItem:key=>key==='bounce-fps-mode'?'120':null,setItem:noop},navigator:{},confirm:()=>true,prompt:noop,
-  dispatchEvent:noop,
-  TextDecoder,TextEncoder,Image:class{constructor(){this.complete=true;this.naturalWidth=1;this.naturalHeight=1;}set src(v){this._src=v;}},
-  fetch:async url=>{
-    const bytes=fs.readFileSync(path.join(root,url));
-    return {ok:true,json:async()=>JSON.parse(bytes.toString('utf8')),arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};
-  }
-};
-sandbox.window=sandbox;
-vm.createContext(sandbox);
-for(const file of ['src/original-input-map.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','game.js']){
-  vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),sandbox,{filename:file});
-}
+const controls=['left','right','jump','star'].map((name,i)=>{const b=element(name);b.dataset.keyId=[3,4,7,20][i];return b;});
+const records=Array.from({length:15},()=>({eggs:0,clearTime:9999,score:0,globalScore:0}));
+let storageValue=JSON.stringify({version:1,records,selected:0,totalGameTime:0});
+const storage={getItem:k=>k==='bounce-tales-original-save-v1'?storageValue:null,setItem:(k,v)=>{if(k==='bounce-tales-original-save-v1')storageValue=v;},removeItem:k=>{if(k==='bounce-tales-original-save-v1')storageValue=null;}};
+const document={hidden:false,fullscreenElement:null,documentElement:{requestFullscreen:async()=>{document.fullscreenElement=document.documentElement;}},getElementById:id=>els[id]||element(id),querySelectorAll:()=>controls,addEventListener(n,f){(listeners.get('document:'+n)||listeners.set('document:'+n,[]).get('document:'+n)).push(f);}};
+const sandbox={document,window:null,console:{error:e=>{throw e;},warn:noop,log:noop},addEventListener(n,f){(listeners.get(n)||listeners.set(n,[]).get(n)).push(f);},requestAnimationFrame:f=>raf.push(f),CustomEvent:function(type,init){this.type=type;this.detail=init?.detail;},localStorage:storage,navigator:{},confirm:()=>true,prompt:noop,dispatchEvent:noop,TextDecoder,TextEncoder,Image:class{constructor(){this.complete=true;this.naturalWidth=1;this.naturalHeight=1;}set src(v){this._src=v;}},fetch:async url=>{const bytes=fs.readFileSync(path.join(root,url));return {ok:true,json:async()=>JSON.parse(bytes.toString('utf8')),arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};}};
+sandbox.window=sandbox;vm.createContext(sandbox);
+for(const file of ['src/original-input-map.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','src/original-progression.js','src/game-particles.js','game.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),sandbox,{filename:file});
+const wait=()=>new Promise(resolve=>setImmediate(resolve));
 (async()=>{
-  await new Promise(resolve=>setImmediate(resolve));
+  await wait();await wait();
   assert.match(els.statusline.textContent,/ORIGINAL LEVEL DATA LOADED/);
-  assert.equal(els['fps-mode'].value,'auto','outdated 90/120 FPS preferences should safely fall back to Auto');
+  assert.equal(els.menu.hidden,false,'boot should land on the in-game title scene');
+  assert.equal(els['pause-mini'].hidden,true,'pause control is hidden outside gameplay');
+  assert.equal(els['fps-mode'].value,'auto','old high refresh preferences safely fall back to Auto');
   assert.equal(raf.length,1,'boot should start the animation loop');
+  assert.equal(els['level-select'],undefined,'no external HTML dropdown selector');
+  els['open-chapters'].fire('click');
+  assert.equal(els['level-screen'].hidden,false,'chapter book opens inside the game viewport');
+  els['level-next'].fire('click');
+  assert.equal(JSON.parse(storageValue).selected,0,'browsing the book must not overwrite Continue progress');
+  els['level-prev'].fire('click');
   let now=1000;
   const stageNames=['Misty Morning','Unfriendly Friends','Seeking Answers','Bumpy Cracks','Secret Stalkway','Into the Mines','A Gloomy Path','Rumbling Sounds','Trapped in Machine','Tunnel of Treasures','Wicked Circus','Hunting Colours','Almost There','Final Ride','Fantastic Fair'];
   const tick=frames=>{for(let i=0;i<frames;i++){const next=raf.shift();assert.equal(typeof next,'function');next(now);now+=1000/60;}};
-  els.start.fire('click');tick(3);els['back-title'].fire('click');
-  for(let i=1;i<stageNames.length;i++){
-    els['level-select'].fire('change',{target:{value:String(i)}});
-    await new Promise(resolve=>setImmediate(resolve));
-    assert.match(els['menu-level-name'].textContent,new RegExp(stageNames[i].replace(/[.*+?^${}()|[\]\\]/g,'\\$&')),'selected stage title');
-    assert.equal(els.start.disabled,false,'level '+i+' should load and enable Start');
-    els.start.fire('click');tick(4);els['back-title'].fire('click');
+  for(let i=0;i<stageNames.length;i++){
+    if(i>0)els['level-next'].fire('click');
+    assert.equal(els['level-position'].textContent,String(i+1).padStart(2,'0')+' / 15');
+    assert.match(els['level-name'].textContent,new RegExp(stageNames[i].replace(/[.*+?^${}()|[\]\\]/g,'\\$&')),'chapter title');
+    els['play-level'].fire('click');await wait();await wait();
+    assert.equal(els['pause-mini'].hidden,false,'gameplay pause control visible for '+stageNames[i]);
+    tick(4);
+    els['pause-mini'].fire('click');
+    assert.equal(els['pause-layer'].hidden,false,'pause screen opens in-game');
+    els['pause-chapters'].fire('click');
+    assert.equal(els['level-screen'].hidden,false,'chapter book returns from pause');
   }
-  assert.ok(raf.length>=1,'game loop should continue scheduling frames');
+  assert.ok(raf.length>=1,'game loop keeps scheduling frames');
   document.hidden=true;for(const fn of listeners.get('document:visibilitychange')||[])fn();
-  assert.equal(typeof listeners.get('document:visibilitychange')?.[0],'function','visibility handler should remain available');
-  console.log('Runtime smoke: all 15 original levels loaded from RLEF, Start activated for each, display-driven loop and visibility reset passed');
+  console.log('Runtime smoke: original title, in-game chapter book, no external dropdown, all 15 RLEF stages boot/play/pause, FPS defaults and visibility reset passed');
 })().catch(err=>{console.error(err);process.exitCode=1;});

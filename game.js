@@ -32,7 +32,13 @@ let spriteAnimations=new Map(),cameraFollowSpeed=5,cameraSnap=false,playerDeathT
 let lastTime=0,cameraX=0,cameraY=0,unlockedForme=0,toastTimer=0,toastText='';
 let fpsMode=localStorage.getItem('bounce-fps-mode')||'auto',showFps=localStorage.getItem('bounce-show-fps')==='true',fpsFrames=0,fpsStamp=0,displayFps=0,lastRenderAt=0;
 if(!['auto','30','60'].includes(fpsMode))fpsMode='auto';
-const S={play:'play',title:'title',pause:'pause'};
+const S={play:'play',title:'title',select:'select',pause:'pause',complete:'complete',guide:'guide'};
+const COVER_IDS=[359,363,364,365,328,366,367,368,369,329,370,360,361,362,330];
+const LEVEL_TEXT_INDICES=[20,24,25,26,32,27,28,29,30,33,31,21,22,23,34];
+const BONUS_REQUIREMENTS={4:60,9:200,14:400};
+let progress=BounceOriginalProgression.load(localStorage),selectedLevelIndex=progress.selected||0;
+let particles=new BounceGameParticles.ParticleSystem();
+let victoryTimer=0,deathAnimationElapsed=0,deathBaseY=0,completionResult=null,worldMinY=-Infinity,worldMaxY=Infinity;
 function toast(t){toastText=t;toastTimer=1.3;}
 function fixedPoint(m,x,y){return {x:(m[0]*x+m[1]*y)/65536+m[2]/65536,y:(m[3]*x+m[4]*y)/65536+m[5]/65536};}
 function matrixPoint(m,x,y){return fixedPoint(m,x,y);}
@@ -42,7 +48,7 @@ function imgFor(index){
   if(loadedImages.has(index))return loadedImages.get(index);
   const im=new Image();im.src='assets/original/'+atlases[index];loadedImages.set(index,im);return im;
 }
-function drawImageMap(id,x,y,seen=new Set(),frame=0){
+function drawImageMap(id,x,y,seen=new Set(),frame=0,targetCtx=ctx){
   const map=imageMaps.maps[String(id)];
   if(!map||seen.has(id))return;
   seen.add(id);
@@ -50,14 +56,14 @@ function drawImageMap(id,x,y,seen=new Set(),frame=0){
     if(map.width<=0||map.height<=0){seen.delete(id);return;}
     const im=imgFor(map.image);
     if(im&&im.complete&&im.naturalWidth){
-      ctx.drawImage(im,map.atlasX,map.atlasY,map.width,map.height,
+      targetCtx.drawImage(im,map.atlasX,map.atlasY,map.width,map.height,
         Math.round(x-map.originX),Math.round(y-map.originY),map.width,map.height);
     }
   }else if(map.type==='compound'){
-    for(const part of map.parts)drawImageMap(part[2],x+part[0],y+part[1],seen,frame);
+    for(const part of map.parts)drawImageMap(part[2],x+part[0],y+part[1],seen,frame,targetCtx);
   }else if(map.type==='animated'&&map.frames.length){
     const at=((frame|0)%map.frames.length+map.frames.length)%map.frames.length;
-    drawImageMap(map.frames[at],x,y,seen,frame);
+    drawImageMap(map.frames[at],x,y,seen,frame,targetCtx);
   }
   seen.delete(id);
 }
@@ -128,7 +134,7 @@ function buildRuntime(parsed){
       const p=getWorldPos(o);renderObjects.push({type:'friend',object:o,point:p});
     }
   }
-  collected=0;elapsed=0;
+  collected=0;elapsed=0;victoryTimer=0;deathAnimationElapsed=0;completionResult=null;particles.clear();
   spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;
   eventEngine=new BounceEventEngine.EventEngine(parsed.objects,{
     strings:languageStrings,playerObjectId,
@@ -138,10 +144,11 @@ function buildRuntime(parsed){
     onFlagsChanged:(obj,flags)=>{const poly=worldGeometry.find(p=>p.id===obj.id);if(poly)poly.nocollide=(flags&0x20)!==0;},
     onCameraTarget:id=>{cameraSnap=false;},
     onCameraParams:(bounce,stabilize,snap)=>{cameraFollowSpeed=clamp(stabilize/28,1.5,10);cameraSnap=!!snap;},
-    onCheckpoint:point=>{checkpointPosition={x:point.x,y:point.y};}
+    onCheckpoint:point=>{checkpointPosition={x:point.x,y:point.y};toast('CHECKPOINT');}
   });
   world=eventEngine.world;refreshGeometryWorld(world);
   checkpointPosition={x:body.x,y:body.y};
+  const ys=worldGeometry.flatMap(poly=>poly.vertices.map(v=>v.y));worldMinY=ys.length?Math.min(...ys):-Infinity;worldMaxY=ys.length?Math.max(...ys):Infinity;
   cameraX=body.x;cameraY=body.y+96;
   refreshHud();
 }
@@ -157,7 +164,7 @@ function collectEggs(){
     if(flags&0x20)continue;
     const p=e.object?getWorldPos(e.object):e;
     const dx=body.x-p.x,dy=body.y-p.y;
-    if(dx*dx+dy*dy<2025){e.collected=true;collected++;}
+    if(dx*dx+dy*dy<2025){e.collected=true;collected++;particles.emitEgg(p.x,p.y,10);}
   }
   refreshHud();
 }
@@ -168,7 +175,7 @@ function collideEnemies(previous){
     if(!result)continue;
     if(result.egg)bonusEggs.push({...result.egg,collected:false});
     if(result.type==='player-hit'){
-      playerDeathTimer=3;body.enabled=false;toast('TRY AGAIN');
+      playerDeathTimer=3;deathAnimationElapsed=0;deathBaseY=body.y;body.enabled=false;body.eyeFrame=1;body.resetPhysics();toast('TRY AGAIN');
     }
   }
   refreshHud();
@@ -280,21 +287,42 @@ function updateCannon(dt,held){
   }
   return true;
 }
+function beginVictory(){
+  if(victoryTimer>0||mode!==S.play)return;
+  victoryTimer=3;body.resetPhysics();body.enabled=false;input.clear();toast('CHAPTER COMPLETE');
+}
+function beginDeath(){
+  if(playerDeathTimer>0||victoryTimer>0)return;
+  playerDeathTimer=3;deathAnimationElapsed=0;deathBaseY=body.y;body.enabled=false;body.eyeFrame=1;body.resetPhysics();toast('TRY AGAIN');
+}
 function update(dt){
   if(mode!==S.play||!body)return;
-  elapsed+=dt;
+  if(victoryTimer>0){
+    victoryTimer=Math.max(0,victoryTimer-dt);
+    updateSpriteAnimations(dt);particles.update(dt);
+    if(victoryTimer===0)completeCurrentChapter();
+    return;
+  }
   if(playerDeathTimer>0){
-    playerDeathTimer=Math.max(0,playerDeathTimer-dt);
+    deathAnimationElapsed+=dt;playerDeathTimer=Math.max(0,playerDeathTimer-dt);
+    const t=deathAnimationElapsed;
+    if(t<=1){body.y=deathBaseY+Math.sin(t*Math.PI)*95;}
+    else{body.y=deathBaseY+Math.max(-380,95-(t-1)*260);}
+    const pos=screenPoint(body);if(pos.y>H+25)cameraY+=Math.min(80,dt*90);
+    particles.update(dt);updateSpriteAnimations(dt);
     if(playerDeathTimer===0){
-      const pos=checkpointPosition||spawn;body.reset(pos.x,pos.y);body.enabled=true;body.visible=true;body.eyeFrame=0;toast('CHECKPOINT');
+      const pos=checkpointPosition||spawn;body.reset(pos.x,pos.y);body.enabled=true;body.visible=true;body.eyeFrame=0;body.idleAnimStartTimer=3000;cameraX=body.x;cameraY=body.y+96;eventEngine?.vars.fill(0);toast('CHECKPOINT');
     }
-    updateSpriteAnimations(dt);if(toastTimer>0)toastTimer-=dt;return;
+    if(toastTimer>0)toastTimer-=dt;
+    return;
   }
   const held=input.gameHeld();
   if(cannonState){
     updateCannon(dt,held);
     if(eventEngine){eventEngine.update(body,{x:body.x,y:body.y},dt,playerObjectId);world=eventEngine.world;}
-    if(fieldMessageTimer>0)fieldMessageTimer=Math.max(0,fieldMessageTimer-dt);
+    if(eventEngine?.vars[0]===1)beginDeath();
+    if(eventEngine?.vars[0]===2)beginVictory();
+    particles.update(dt);if(fieldMessageTimer>0)fieldMessageTimer=Math.max(0,fieldMessageTimer-dt);
     updateSpriteAnimations(dt);if(toastTimer>0)toastTimer-=dt;return;
   }
   if(held.left)body.moveLeft(false);
@@ -304,8 +332,6 @@ function update(dt){
   body.update(dt,SCALE);
   if(body.enabled)updatePlayerEyes(dt);
   resolveTerrain(dt,previousPosition);
-  // WaterObject contact logic is evaluated after the actor's movement, exactly
-  // like the original collision pass. The first overlapping zone owns the update.
   for(const zone of waters)zone.matrix=world.get(zone.object.id)||zone.matrix;
   BounceOriginalWater.update(waters,body,previousPosition,dt);
   updateTrampolines(dt,previousPosition);
@@ -313,10 +339,10 @@ function update(dt){
   updateEnemies(dt);
   collectEggs();
   collideEnemies(previousPosition);
-  if(eventEngine){
-    eventEngine.update(body,previousPosition,dt,playerObjectId);
-    world=eventEngine.world;
-  }
+  if(eventEngine){eventEngine.update(body,previousPosition,dt,playerObjectId);world=eventEngine.world;}
+  if(eventEngine?.vars[0]===1)beginDeath();
+  if(eventEngine?.vars[0]===2||(BONUS_REQUIREMENTS[currentLevel.index]&&collected>=30))beginVictory();
+  if(Number.isFinite(worldMinY)&&body.y<worldMinY-160)beginDeath();
   let targetX=body.x,targetY=body.y+96;
   if(eventEngine&&eventEngine.cameraTargetId>=0&&eventEngine.cameraTargetId!==playerObjectId){
     const target=world.get(eventEngine.cameraTargetId);
@@ -324,10 +350,12 @@ function update(dt){
   }
   const cameraStep=Math.min(1,dt*cameraFollowSpeed);
   if(cameraSnap){cameraX=targetX;cameraY=targetY;}else{cameraX+=(targetX-cameraX)*cameraStep;cameraY+=(targetY-cameraY)*cameraStep;}
+  particles.update(dt);
   if(toastTimer>0)toastTimer-=dt;
   if(fieldMessageTimer>0)fieldMessageTimer=Math.max(0,fieldMessageTimer-dt);
   updateSpriteAnimations(dt);
 }
+
 function drawWater(zone){
   const o=zone.object,m=world.get(o.id)||zone.matrix;if(!m)return;
   const left=BounceOriginalWater.worldPoint(m,o.areaMinX,o.areaMinY),right=BounceOriginalWater.worldPoint(m,o.areaMaxX,o.areaMinY);
@@ -491,6 +519,71 @@ function drawEnemy(e){
     ctx.fillStyle='#ff00ff';ctx.fillRect(x,y,10,10);ctx.fillRect(x+10,y+10,10,10);
   }
 }
+function javaRandom(seed){
+  let state=(BigInt(seed)^0x5DEECE66Dn)&((1n<<48n)-1n);
+  return ()=>{
+    state=(state*0x5DEECE66Dn+0xBn)&((1n<<48n)-1n);
+    return Number(BigInt.asIntN(32,state>>16n));
+  };
+}
+function makeParallaxLayer(imageIds,moveNum,moveDen,xStep,xRange,yBase,yRange,count,stripeFill=-1,rng){
+  const xs=new Array(count+1).fill(0),ys=new Array(count+1).fill(0),indices=new Array(count+1).fill(0);
+  ys[0]=(yRange?(rng()%yRange):0)+yBase;
+  for(let i=1;i<count+1;i++){
+    const step=xRange?Math.abs(rng()%xRange):0;
+    xs[i]=step+xs[i-1]+xStep;
+    ys[i]=(yRange?(rng()%yRange):0)+yBase;
+    indices[i]=Math.abs(rng()%imageIds.length);
+  }
+  return {imageIds,moveNum,moveDen,xs,ys,indices,groupWidth:xs[count],stripeFill};
+}
+function buildOriginalParallax(levelIndex){
+  const kind=levelIndex<=4?0:(levelIndex<=9?1:2);
+  const rng=javaRandom(levelIndex+1),scaleTiles=1;
+  const defs=kind===0?[
+    {ids:[252],speed:20,x:200,xRange:140,y:-200,yRange:200,count:5,fill:-1},
+    {ids:[251],speed:50,x:100,xRange:70,y:-70,yRange:300,count:5,fill:-1},
+    {ids:[388],speed:80,x:150,xRange:100,y:-70,yRange:300,count:5,fill:-1}
+  ]:kind===1?[
+    {ids:[159,160],speed:20,x:200,xRange:140,y:-200,yRange:200,count:5,fill:-1},
+    {ids:[161],speed:50,x:100,xRange:70,y:-70,yRange:300,count:5,fill:-1},
+    {ids:[373],speed:80,x:150,xRange:100,y:-70,yRange:300,count:5,fill:-1}
+  ]:[
+    {ids:[353],speed:5,x:600,xRange:100,y:-80,yRange:50,count:2,fill:-1},
+    {ids:[114],speed:20,x:((imageMaps.maps['114']?.width)||240),xRange:0,y:-50,yRange:0,count:3,fill:0x15113C},
+    {ids:[113],speed:50,x:((imageMaps.maps['113']?.width)||240),xRange:0,y:-30,yRange:0,count:3,fill:0x02021A}
+  ];
+  return {kind,baseCameraY:cameraY,layers:defs.map(d=>makeParallaxLayer(d.ids,d.speed,100,d.x,d.xRange,d.y,d.yRange,d.count*scaleTiles,d.fill,rng))};
+}
+let parallaxCache=null;
+function drawOriginalParallax(){
+  if(!parallaxCache||parallaxCache.level!==currentLevel.index){
+    parallaxCache={level:currentLevel.index,...buildOriginalParallax(currentLevel.index)};
+  }
+  const layerState=parallaxCache;
+  const gradientColors=layerState.kind===0?['#529ae6','#71d5ff']:
+    layerState.kind===1?['#6ed5c9','#9fffff']:['#7610f4','#02021a'];
+  const bonus=[4,9,14].includes(currentLevel.index);
+  const top=bonus?'#b400bd':gradientColors[0],bottom=bonus?'#fd8c13':gradientColors[1];
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,top);bg.addColorStop(1,bottom);ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  for(const layer of layerState.layers){
+    const group=layer.groupWidth;if(!group)continue;
+    const xMotion=((cameraX+33000)*SCALE*layer.moveNum)/layer.moveDen;
+    let mod=((xMotion%group)+group)%group;
+    const baseX=group-mod;
+    const baseY=H+((cameraY-layerState.baseCameraY)*SCALE*layer.moveNum)/layer.moveDen;
+    for(let i=0;i<layer.xs.length-1;i++){
+      const id=layer.imageIds[layer.indices[i]||0],x=layer.xs[i]+baseX,y=layer.ys[i]+baseY;
+      if(i<2)drawImageMap(id,x,y);
+      if(i>2)drawImageMap(id,x-(group*2),y);
+      drawImageMap(id,x-group,y);
+    }
+    if(layer.stripeFill!==-1){
+      const c=layer.stripeFill;ctx.fillStyle='#'+c.toString(16).padStart(6,'0');
+      const stripeY=layer.ys[0]+baseY;ctx.fillRect(0,stripeY,W,H-stripeY);
+    }
+  }
+}
 function drawFieldMessage(){
   if(!fieldMessage||fieldMessageTimer<=0)return;
   const maxWidth=202,lines=[];ctx.font='9px system-ui';
@@ -504,10 +597,22 @@ function drawFieldMessage(){
   ctx.fillStyle='#f5eddb';ctx.textAlign='center';ctx.textBaseline='top';
   shown.forEach((t,i)=>ctx.fillText(t,120,y+8+i*12,maxWidth));
 }
+function drawOriginalChapterBook(){
+  ctx.fillStyle='#3f1a01';ctx.fillRect(0,0,W>>1,H);
+  ctx.fillStyle='#5e2601';ctx.fillRect(W>>1,0,W>>1,H);
+  drawImageMap(4,0,0);drawImageMap(74,0,0);drawImageMap(75,0,0);drawImageMap(3,0,H);
+  drawImageMap(331,120,160);
+  ctx.fillStyle='#fbf7e3';ctx.fillRect(5,20,230,279);
+  ctx.fillStyle='#000';ctx.fillRect(118,20,4,279);
+}
 function draw(){
   ctx.clearRect(0,0,W,H);
-  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#73b8df');bg.addColorStop(.7,'#b7d9e0');bg.addColorStop(1,'#dce4d1');
-  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  if(mode!==S.play){
+    if(mode===S.select){drawOriginalChapterBook();drawImageMap(COVER_IDS[selectedLevelIndex],120,160);return;}
+    const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#203c54');bg.addColorStop(1,'#111b24');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+    drawImageMap(1,120,145);return;
+  }
+  drawOriginalParallax();
   // Original GameObject depth sorting draws larger zCoord values first, leaving
   // lower zCoord actors in front. Read runtime flags so event opcode 29 can
   // change an object's layer during play.
@@ -538,6 +643,7 @@ function draw(){
     }
   }
   for(const e of bonusEggs){if(!e.collected){const p=screenPoint(e);drawImageMap(208,p.x,p.y);}}
+  particles.draw(ctx,screenPoint,SCALE);
   drawFieldMessage();
   if(toastTimer>0){ctx.fillStyle='#06121dcc';ctx.fillRect(34,276,172,22);ctx.fillStyle='#fff';ctx.font='9px system-ui';ctx.textAlign='center';ctx.fillText(toastText,120,290);}
 }
@@ -546,69 +652,112 @@ function refreshHud(){
   status.textContent=(currentLevel.name.toUpperCase())+'  ·  '+collected+'/'+total+' EGGS';
   eggHud.textContent='FORM '+['BOUNCE','BUMPY','WOLLY'][body?.forme||0];
 }
+function syncPauseButton(){const b=document.getElementById('pause-mini');if(b)b.hidden=mode!==S.play;}
+function hideGameScenes(){
+  for(const id of ['menu','level-screen','pause-layer','complete-layer','guide-layer']){const el=document.getElementById(id);if(el)el.hidden=true;}
+  syncPauseButton();
+}
+function showTitleMenu(){mode=S.title;hideGameScenes();document.getElementById('menu').hidden=false;input.clear();updateMenuSummary();syncPauseButton();}
+function renderLevelCover(index){
+  const cover=document.getElementById('level-cover'),coverCtx=cover?.getContext('2d');if(!coverCtx||!imageMaps)return;
+  coverCtx.clearRect(0,0,cover.width,cover.height);
+  const grad=coverCtx.createLinearGradient(0,0,0,cover.height);grad.addColorStop(0,'#7cb9d7');grad.addColorStop(1,'#d5e2ca');coverCtx.fillStyle=grad;coverCtx.fillRect(0,0,cover.width,cover.height);
+  coverCtx.fillStyle='#234b29';coverCtx.fillRect(0,cover.height-13,cover.width,13);
+  drawImageMap(COVER_IDS[index],cover.width/2,cover.height/2,new Set(),0,coverCtx);
+  if(!BounceOriginalProgression.isUnlocked(progress,index)){coverCtx.fillStyle='#10161499';coverCtx.fillRect(0,0,cover.width,cover.height);coverCtx.fillStyle='#fff0c9';coverCtx.font='bold 10px system-ui';coverCtx.textAlign='center';coverCtx.fillText('LOCKED',cover.width/2,cover.height/2+4);}
+}
+function getLocalizedLevelName(index){return languageStrings?.[LEVEL_TEXT_INDICES[index]]||LEVELS[index]?.name||'Unknown chapter';}
+function updateMenuSummary(){
+  const selected=progress.selected||0,record=progress.records[selected]||progress.records[0];
+  const cont=document.getElementById('continue-game');if(cont)cont.textContent=BounceOriginalProgression.unlockedCount(progress)>1?'CONTINUE ADVENTURE':'START ADVENTURE';
+  const summary=document.getElementById('save-summary');if(summary){const total=BounceOriginalProgression.totalEggs(progress);summary.textContent=getLocalizedLevelName(selected)+' · '+total+' eggs collected';}
+}
+function updateLevelBook(){
+  selectedLevelIndex=clamp(selectedLevelIndex,0,14)|0;const r=progress.records[selectedLevelIndex],unlocked=BounceOriginalProgression.isUnlocked(progress,selectedLevelIndex),required=BONUS_REQUIREMENTS[selectedLevelIndex];
+  const name=document.getElementById('level-name'),chapter=document.getElementById('level-chapter'),record=document.getElementById('level-record'),lock=document.getElementById('level-lock'),pos=document.getElementById('level-position'),play=document.getElementById('play-level');
+  const localized=getLocalizedLevelName(selectedLevelIndex);
+  if(name)name.textContent=localized;
+  const group=BounceOriginalProgression.chapterGroup(selectedLevelIndex),groupNames=['ACT I · GREEN HILL ZONE','ACT II · SPOOKY ZONE','ACT III · MACHINE WORLD'];
+  if(chapter)chapter.textContent=(required?'BONUS CHAPTER · ':'')+groupNames[group];
+  if(record)record.textContent=(r.clearTime>0&&r.clearTime<9999?'BEST '+formatTime(r.clearTime)+' · ':'NOT YET COMPLETED · ')+r.eggs+'/30 EGGS';
+  if(lock){lock.hidden=unlocked;lock.textContent=required?'LOCKED · '+required+' TOTAL EGGS REQUIRED':'LOCKED · COMPLETE THE PREVIOUS CHAPTER';}
+  if(play){play.disabled=!unlocked;play.textContent=unlocked?'PLAY CHAPTER':'CHAPTER LOCKED';}
+  if(pos)pos.textContent=String(selectedLevelIndex+1).padStart(2,'0')+' / 15';
+  renderLevelCover(selectedLevelIndex);
+}
+function formatTime(seconds){const mins=Math.floor(seconds/60),secs=seconds%60;return String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0');}
+function showChapterBook(){mode=S.select;hideGameScenes();document.getElementById('level-screen').hidden=false;input.clear();updateLevelBook();syncPauseButton();}
+function changeBookPage(delta){selectedLevelIndex=clamp(selectedLevelIndex+delta,0,14);updateLevelBook();}
+function openGuide(){mode=S.guide;hideGameScenes();document.getElementById('guide-layer').hidden=false;input.clear();syncPauseButton();}
 function startLevel(){
-  mode=S.play;menu.hidden=true;pauseLayer.hidden=true;input.clear();lastTime=0;
+  mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;
   if(eventEngine){eventEngine.reset();world=eventEngine.world;refreshGeometryWorld(world);}
   spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;cameraFollowSpeed=5;cameraSnap=false;
-  body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce · * changes form when available';body.rotation=0;body.unlockedForme=unlockedForme;body.forme=0;body.slopeCosAbs=1;
+  body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce';body.rotation=0;body.unlockedForme=progress.unlockedForme;body.forme=0;body.slopeCosAbs=1;body.eyeFrame=0;body.idleAnimStartTimer=3000;
   eggs.forEach(e=>e.collected=false);bonusEggs=[];collected=0;elapsed=0;checkpointPosition={x:spawn.x,y:spawn.y};
   trampolines.forEach(t=>{t.active=false;t.progress=0;t.period=0;t.animFrame=0;t.jumpFinished=false;});
   enemies.forEach(e=>{e.x=e.initialX;e.y=e.initialY;BounceOriginalEnemies.reset(e);});
-  waters.forEach(w=>{w.ripples=[];w.bubbles=[];w.ambientTimer=0;w.swimTimer=0;});playerDeathTimer=0;cameraX=body.x;cameraY=body.y+96;refreshHud();
+  waters.forEach(w=>{w.ripples=[];w.bubbles=[];w.ambientTimer=0;w.swimTimer=0;});particles.clear();playerDeathTimer=0;deathAnimationElapsed=0;victoryTimer=0;completionResult=null;cameraX=body.x;cameraY=body.y+96;refreshHud();
+  progress.selected=currentLevel.index;BounceOriginalProgression.save(localStorage,progress);
 }
 let spawn={x:0,y:0};
-async function loadLevel(index){
-  const chosen=LEVELS[index];
-  if(!chosen)throw new Error('Unknown level index '+index);
-  const token=++levelLoadToken;
-  const startButton=document.getElementById('start');
-  const selector=document.getElementById('level-select');
-  const title=document.getElementById('menu-level-name');
-  const detail=document.getElementById('level-detail');
-  if(startButton)startButton.disabled=true;
-  if(title)title.textContent='Loading · '+chosen.name;
-  if(detail)detail.textContent='Reading original RLEF level data…';
-  status.textContent='LOADING '+chosen.name.toUpperCase()+'…';
-  const response=await fetch('assets/original/'+chosen.resource);
-  if(!response.ok)throw new Error('Could not load original level resource '+chosen.resource);
-  const parsed=BounceRLEF.parse(new Uint8Array(await response.arrayBuffer()));
-  if(token!==levelLoadToken)return false;
-  const player=parsed.objects.find(o=>o.type==='player');
-  if(!player)throw new Error(chosen.name+' has no player start record');
-  currentLevel={...chosen,index,objectCount:parsed.objectCount,eventCount:parsed.eventCount};
-  buildRuntime(parsed);
-  spawn={x:body.x,y:body.y};
-  mode=S.title;pauseLayer.hidden=true;menu.hidden=false;input.clear();lastTime=0;
-  if(title)title.textContent='Level '+String(index+1).padStart(2,'0')+' · '+chosen.name;
-  if(detail)detail.textContent='Original level data · '+parsed.objectCount+' objects · '+parsed.eventCount+' event scripts · preview build';
-  if(selector)selector.value=String(index);
-  if(startButton)startButton.disabled=false;
-  refreshHud();
-  status.textContent=chosen.name.toUpperCase()+' · ORIGINAL LEVEL DATA LOADED';
+async function loadLevel(index,options={}){
+  const chosen=LEVELS[index];if(!chosen)throw new Error('Unknown level index '+index);
+  const token=++levelLoadToken;status.textContent='LOADING '+chosen.name.toUpperCase()+'…';
+  const response=await fetch('assets/original/'+chosen.resource);if(!response.ok)throw new Error('Could not load original level resource '+chosen.resource);
+  const parsed=BounceRLEF.parse(new Uint8Array(await response.arrayBuffer()));if(token!==levelLoadToken)return false;
+  const player=parsed.objects.find(o=>o.type==='player');if(!player)throw new Error(chosen.name+' has no player start record');
+  currentLevel={...chosen,index,objectCount:parsed.objectCount,eventCount:parsed.eventCount,name:getLocalizedLevelName(index)};
+  buildRuntime(parsed);spawn={x:body.x,y:body.y};mode=S.title;hideGameScenes();input.clear();lastTime=0;
+  selectedLevelIndex=index;progress.selected=index;BounceOriginalProgression.save(localStorage,progress);
+  refreshHud();status.textContent=chosen.name.toUpperCase()+' · ORIGINAL LEVEL DATA LOADED';
+  if(options.start)startLevel();else if(options.book)showChapterBook();else showTitleMenu();
   return true;
 }
-function pauseGame(){if(mode===S.play){mode=S.pause;pauseLayer.hidden=false;input.clear();}}
-function resumeGame(){if(mode===S.pause){mode=S.play;pauseLayer.hidden=true;input.clear();}}
+function completeCurrentChapter(){
+  if(mode!==S.play||completionResult)return;
+  const previousForms=progress.unlockedForme;
+  completionResult=BounceOriginalProgression.complete(progress,currentLevel.index,collected,elapsed*1000);
+  progress.totalGameTime+=elapsed;progress.selected=currentLevel.index;BounceOriginalProgression.save(localStorage,progress);unlockedForme=progress.unlockedForme;
+  document.getElementById('complete-title').textContent=getLocalizedLevelName(currentLevel.index);
+  document.getElementById('complete-eggs').textContent=completionResult.eggs+' / 30';
+  document.getElementById('complete-stats').textContent='Time '+formatTime(completionResult.seconds)+' · Score '+completionResult.score;
+  const next=document.getElementById('next-level');
+  if(completionResult.nextLevel>=0&&BounceOriginalProgression.isUnlocked(progress,completionResult.nextLevel)){next.textContent='NEXT CHAPTER';next.disabled=false;}
+  else{next.textContent='CHAPTER BOOK';next.disabled=false;}
+  if(progress.unlockedForme>previousForms)toast('NEW FORM UNLOCKED');
+  if(completionResult.nextLevel>=0&&BounceOriginalProgression.isUnlocked(progress,completionResult.nextLevel))progress.selected=completionResult.nextLevel;else progress.selected=currentLevel.index;
+  BounceOriginalProgression.save(localStorage,progress);
+  mode=S.complete;hideGameScenes();document.getElementById('complete-layer').hidden=false;input.clear();updateMenuSummary();syncPauseButton();
+}
+function startSelectedChapter(){
+  const chosen=selectedLevelIndex;
+  if(!BounceOriginalProgression.isUnlocked(progress,chosen)){toast('CHAPTER LOCKED');return;}
+  if(currentLevel.index===chosen&&levelData){startLevel();return;}
+  loadLevel(chosen,{start:true}).catch(error=>{console.error(error);toast('Could not load this chapter');});
+}
+
+function pauseGame(){if(mode===S.play){mode=S.pause;hideGameScenes();document.getElementById('pause-layer').hidden=false;input.clear();syncPauseButton();}}
+function resumeGame(){if(mode===S.pause){mode=S.play;hideGameScenes();syncPauseButton();input.clear();}}
 function cycleForme(){
-  if(mode!==S.play)return;
-  const before=body.forme;body.cycleForme();
-  if(body.forme===before)toast('Other forms unlock later');
-  else{toast('Form '+(body.forme+1));}
-  refreshHud();
+  if(mode!==S.play)return;const before=body.forme;body.cycleForme();
+  if(body.forme===before)toast('Other forms unlock later');else toast('Form '+(body.forme+1));refreshHud();
 }
 function onEdge(id){
   window.dispatchEvent(new CustomEvent('bouncetales:original-key',{detail:{id}}));
-  if(mode===S.play){
-    if(id===5)pauseGame();
-    else if(id===20)cycleForme();
-    else if(id===7&&cannonState)fireCannon();
-  }else if(mode===S.pause){
-    if(id===7||id===1)resumeGame();
-    else if(id===6){pauseLayer.hidden=true;menu.hidden=false;mode=S.title;}
-  }else if(mode===S.title&&(id===7||id===1)){
-    startLevel();
-  }
+  if(mode===S.play){if(id===5)pauseGame();else if(id===20)cycleForme();else if(id===7&&cannonState)fireCannon();}
+  else if(mode===S.title){if(id===7||id===1)startLevel();}
+  else if(mode===S.select){if(id===3)changeBookPage(-1);else if(id===4)changeBookPage(1);else if(id===7||id===1)startSelectedChapter();}
+  else if(mode===S.pause){if(id===7||id===1)resumeGame();else if(id===3||id===4)showChapterBook();}
+  else if(mode===S.complete){if(id===7||id===1)advanceAfterChapter();}
+  else if(mode===S.guide){if(id===7||id===1)showTitleMenu();}
 }
+function advanceAfterChapter(){
+  const next=completionResult?.nextLevel;
+  if(next>=0&&BounceOriginalProgression.isUnlocked(progress,next)){selectedLevelIndex=next;loadLevel(next,{start:true}).catch(error=>{console.error(error);showChapterBook();});}
+  else showChapterBook();
+}
+
 function bindInputs(){
   document.querySelectorAll('[data-key-id]').forEach(btn=>{
     const id=Number(btn.dataset.keyId),activePointers=new Set();
@@ -663,13 +812,15 @@ function loop(now){
   if(showFps){fpsFrames++;if(!fpsStamp)fpsStamp=now;if(now-fpsStamp>=500){displayFps=Math.round(fpsFrames*1000/(now-fpsStamp));fpsFrames=0;fpsStamp=now;const counter=document.getElementById('fps-counter');if(counter)counter.textContent=displayFps+' FPS';}}
   requestAnimationFrame(loop);
 }
-function openSettings(){settingsLayer.hidden=false;}
-function closeSettings(){settingsLayer.hidden=true;}
+function openSettings(){document.getElementById('settings-layer').hidden=false;}
+function closeSettings(){document.getElementById('settings-layer').hidden=true;}
 function applyFpsMode(value){fpsMode=['auto','30','60'].includes(value)?value:'auto';localStorage.setItem('bounce-fps-mode',fpsMode);lastTime=0;lastRenderAt=0;}
 function resetProgress(){
-  if(!confirm('Reset Bounce Tales and restart '+currentLevel.name+'?'))return;
-  unlockedForme=0;closeSettings();if(mode===S.pause)pauseLayer.hidden=true;startLevel();toast('Level reset');
+  if(!confirm('Reset all Bounce Tales progress, unlocked chapters and best records?'))return;
+  progress=BounceOriginalProgression.reset(localStorage);selectedLevelIndex=0;unlockedForme=0;closeSettings();
+  loadLevel(0).catch(error=>{console.error(error);toast('Reset failed');});
 }
+
 async function shareSite(){
   const shareData={title:'Bounce Tales',text:'Play Bounce Tales, an HTML5 browser remaster.',url:'https://prasannaone.github.io/BounceTales/'};
   try{if(navigator.share){await navigator.share(shareData);}else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(shareData.url);toast('Site link copied');}else{prompt('Copy the Bounce Tales link',shareData.url);}}catch(e){if(e?.name!=='AbortError')console.warn('Share unavailable',e);}
@@ -679,31 +830,36 @@ function bindSettings(){
   fps.value=['auto','30','60'].includes(fpsMode)?fpsMode:'auto';fps.addEventListener('change',()=>applyFpsMode(fps.value));
   fpsToggle.checked=showFps;counter.hidden=!showFps;fpsToggle.addEventListener('change',()=>{showFps=fpsToggle.checked;localStorage.setItem('bounce-show-fps',String(showFps));counter.hidden=!showFps;});
   document.getElementById('open-settings').addEventListener('click',openSettings);document.getElementById('close-settings').addEventListener('click',closeSettings);
-  settingsLayer.addEventListener('click',e=>{if(e.target===settingsLayer)closeSettings();});
-  document.getElementById('share-site').addEventListener('click',shareSite);
+  settingsLayer.addEventListener('click',e=>{if(e.target===settingsLayer)closeSettings();});document.getElementById('share-site').addEventListener('click',shareSite);
   document.getElementById('reset-game').addEventListener('click',resetProgress);
   full.addEventListener('click',async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();full.textContent='Exit fullscreen';}else{await document.exitFullscreen();full.textContent='Enter fullscreen';}}catch{toast('Fullscreen unavailable in this browser');}});
   document.addEventListener('fullscreenchange',()=>{full.textContent=document.fullscreenElement?'Exit fullscreen':'Enter fullscreen';});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!settingsLayer.hidden){closeSettings();e.stopPropagation();}});
+  document.getElementById('pause-mini').addEventListener('click',pauseGame);
+  document.getElementById('continue-game').addEventListener('click',()=>{const idx=progress.selected||0;if(currentLevel.index===idx)startLevel();else loadLevel(idx,{start:true}).catch(error=>{console.error(error);toast('Could not load saved chapter');});});
+  document.getElementById('open-chapters').addEventListener('click',showChapterBook);
+  document.getElementById('open-guide').addEventListener('click',openGuide);
+  document.getElementById('level-prev').addEventListener('click',()=>changeBookPage(-1));
+  document.getElementById('level-next').addEventListener('click',()=>changeBookPage(1));
+  document.getElementById('play-level').addEventListener('click',startSelectedChapter);
+  document.getElementById('back-title').addEventListener('click',showTitleMenu);
+  document.getElementById('resume').addEventListener('click',resumeGame);
+  document.getElementById('restart').addEventListener('click',()=>startLevel());
+  document.getElementById('pause-chapters').addEventListener('click',showChapterBook);
+  document.getElementById('next-level').addEventListener('click',advanceAfterChapter);
+  document.getElementById('result-chapters').addEventListener('click',showChapterBook);
+  document.getElementById('guide-back').addEventListener('click',showTitleMenu);
 }
+
 async function boot(){
   try{
     const [mapResp,langResp]=await Promise.all([fetch('src/image-map.json'),fetch('assets/original/lang.xx')]);
     if(!mapResp.ok||!langResp.ok)throw new Error('Could not load original JAR image or language resources');
-    imageMaps=await mapResp.json();atlases=imageMaps.atlases;
-    languageStrings=BounceEventEngine.parseLanguage(new Uint8Array(await langResp.arrayBuffer()));
-    await loadLevel(0);
-    document.getElementById('start').addEventListener('click',startLevel);
-    document.getElementById('resume').addEventListener('click',resumeGame);
-    document.getElementById('back-title').addEventListener('click',()=>{pauseLayer.hidden=true;menu.hidden=false;mode=S.title;input.clear();});
-    document.getElementById('restart').addEventListener('click',startLevel);
-    document.getElementById('level-select').addEventListener('change',async e=>{
-      try{await loadLevel(Number(e.target.value));}
-      catch(error){document.getElementById('level-detail').textContent='Could not load this level: '+error.message;document.getElementById('start').disabled=true;console.error(error);}
-    });
-    bindInputs();bindSettings();menu.hidden=false;requestAnimationFrame(loop);
+    imageMaps=await mapResp.json();atlases=imageMaps.atlases;languageStrings=BounceEventEngine.parseLanguage(new Uint8Array(await langResp.arrayBuffer()));
+    selectedLevelIndex=progress.selected||0;if(!BounceOriginalProgression.isUnlocked(progress,selectedLevelIndex))selectedLevelIndex=0;unlockedForme=progress.unlockedForme;
+    await loadLevel(selectedLevelIndex);bindInputs();bindSettings();showTitleMenu();requestAnimationFrame(loop);
   }catch(error){
-    menu.hidden=false;menu.querySelector('p').textContent='Could not load the original level data: '+error.message;
+    hideGameScenes();document.getElementById('menu').hidden=false;document.getElementById('save-summary').textContent='Could not load original game resources: '+error.message;
     status.textContent='RESOURCE LOAD ERROR';console.error(error);
   }
 }
