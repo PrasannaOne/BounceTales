@@ -1,75 +1,81 @@
-name: Build and deploy Bounce Tales
+name: Extract Bounce Tales ZIP
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+    paths:
+      - "BounceTales_Branch_Deploy_Root.zip"
   workflow_dispatch:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
-  group: bounce-tales-pages
-  cancel-in-progress: true
+  group: extract-bounce-tales
+  cancel-in-progress: false
 
 jobs:
-  build:
+  extract:
+    # The bot's own commit must not start another extraction run.
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+
     steps:
-      - name: Check out repository
+      - name: Check out main
         uses: actions/checkout@v4
         with:
           persist-credentials: true
 
-      - name: Extract ZIP into the repository
+      - name: Extract ZIP into repository root
         shell: bash
         run: |
           set -euo pipefail
-          PACKAGE="BounceTales_HTML_Port_Development_Package.zip"
-          test -f "$PACKAGE"
-          rm -rf game
-          mkdir -p game
-          unzip -q "$PACKAGE" -d _unpacked
-          test -f "_unpacked/BounceTales_HTML_Port/index.html"
-          cp -a "_unpacked/BounceTales_HTML_Port/." game/
-          test -f game/index.html
-          test -f game/game.js
-          test -d game/assets/original
-          rm -rf _unpacked
 
-      - name: Commit extracted website files to main
+          ZIP_FILE="BounceTales_Branch_Deploy_Root.zip"
+          test -f "$ZIP_FILE" || {
+            echo "ERROR: $ZIP_FILE is missing from the repository root."
+            exit 1
+          }
+
+          TEMP_DIR="$(mktemp -d)"
+          trap 'rm -rf "$TEMP_DIR"' EXIT
+
+          # Reject archive entries that could write outside the temporary folder.
+          while IFS= read -r entry; do
+            case "$entry" in
+              /*|../*|*/../*|*/..)
+                echo "ERROR: Unsafe ZIP entry: $entry"
+                exit 1
+                ;;
+            esac
+          done < <(unzip -Z1 "$ZIP_FILE")
+
+          unzip -q "$ZIP_FILE" -d "$TEMP_DIR"
+
+          for required in index.html game.js style.css; do
+            test -s "$TEMP_DIR/$required" || {
+              echo "ERROR: ZIP is missing $required at its root."
+              exit 1
+            }
+          done
+
+          # Copy the website files into main's root.
+          cp -a "$TEMP_DIR/." .
+
+          # Remove the uploaded ZIP after successful extraction.
+          rm -f "$ZIP_FILE"
+
+      - name: Commit extracted files and delete ZIP
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A game
+          git add -A
           if git diff --cached --quiet; then
-            echo "Extracted website is already up to date."
+            echo "No extracted changes to commit."
           else
-            git commit -m "Build extracted Bounce Tales website"
-            git push
+            git commit -m "Extract Bounce Tales website from uploaded ZIP"
+            git push origin HEAD:main
           fi
-
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload deployable website
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: game
-
-  deploy:
-    if: github.actor != 'github-actions[bot]'
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
