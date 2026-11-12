@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');
+const fp=require('../src/fixed-point.js');
+assert.equal(fp.toFixed16(1),65536);
+assert.equal(fp.toFixed16(-1.5),-98304);
+assert.equal(fp.fromFixed16(98304),1.5);
+assert.equal(fp.mul(98304,131072),196608);
+assert.equal(fp.div(98304,131072),49152);
+const point=fp.transformPoint([65536,0,10*65536,0,65536,-4*65536],2*65536,3*65536);
+assert.deepEqual(point,{x:12*65536,y:-1*65536});
+assert.equal(fp.length16(3*65536,4*65536),5*65536);
+assert.equal(fp.lerp(0,100*65536,32768),50*65536);
+console.log('fixed-point tests passed');

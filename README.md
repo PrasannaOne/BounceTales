@@ -1,4 +1,4 @@
-# Bounce Tales · V17 source-parity build
+# Bounce Tales · V18 source-parity build
 
 V16 establishes a repeatable reverse-engineering workflow around the original Bounce Tales 2.0.3 Java ME JAR. It preserves the V15 browser build as the runtime baseline while separating source modules, tests, tooling and reference documentation.
 
@@ -35,7 +35,7 @@ GitHub Actions → **One-time repository cleanup (V16 reset)** → Run workflow.
 This is a reverse-engineering foundation, not a claim of a complete one-to-one port. The original JAR remains the source of truth. Each translated system should carry source references, confidence and regression tests.
 
 
-## V17 · decoded atlas, animation parity and soundtrack
+## V17 baseline · decoded atlas, animation parity and soundtrack
 
 V17 is the first build that consumes the Phase 2 decoded sprite atlas in the browser runtime. Static sprite IDs 0–325 are drawn from the verified descriptor table in `src/sprite-atlas.json`; `src/sprite-atlas.js` validates all 326 crop rectangles, offsets and PNG slots against the legacy image map before gameplay starts.
 
@@ -44,3 +44,14 @@ The reference fixtures in `reference/` are compared against the original binary 
 V17 also wires the original title, act, boss, bonus, lose and win music resources to the existing browser-rendered audio tracks, adds a music setting, removes title-page build/version clutter, and locks the page to a no-scroll viewport.
 
 **Accuracy boundary:** V17 is materially closer to the supplied source data, but it is not honestly describable as a complete one-to-one recreation yet. Remaining gaps include the full fixed-point multi-contact collision solver and exact rounding, some enemy/friend/boss and event edge cases, complete original water/particle behaviour, pixel-identical camera/parallax and MIDP menu/UI rendering, and device-level comparison against the original Java ME game. A passing parser/regression suite establishes data parity for the tested structures, not full gameplay equivalence.
+
+
+## V18 · source-driven physics, enemy and event pass
+
+V18 preserves the verified V17 atlas, original binary resources, audio routes and fixed-screen shell. The player movement implementation keeps the original distinction between 16.16 actor/world transforms and Java-float velocity/acceleration state. The collision solver now uses signed 16.16/BigInt edge and endpoint contact math, the original bounded 16-contact selection, source restitution, gravity/friction selection and torque smoothing. Transformed geometry retains its prior frame vertices so moving contacts can supply surface-relative motion. The browser scheduler runs at a nominal 60 Hz with integer 16/17 ms simulation deltas and render interpolation; that is a deliberate browser adaptation, not the original JAR's variable wall-clock update loop.
+
+Enemy updates now use LP32 path movement for the four source enemy classes, including the previously stationary Bumper, corrected Stalker target extension and source-facing direction. The existing event interpreter handles opcodes 0–32 and the stage-scan test checks all commands in the 15 selectable resources. Water force interpolation, cannon, trampoline, progression, music and effect hooks remain wired. The special-form button is slightly larger within its existing reserved row, with a 5–8 px separation between the viewport and controls; the document and settings shell remain no-scroll.
+
+Validation currently includes 29 Node.js regression scripts, including collision response/moving-surface cases, enemy path/facing, stage opcode coverage, sprite-atlas parity, 15-stage boot/play/pause smoke and all-level terrain-spawn regression. Passing tests establish the tested rules and data structures, not full end-to-end equivalence on original hardware.
+
+**Accuracy boundary:** V18 is a materially closer source-driven port, but it is not yet honestly describable as a completely verified 1:1 recreation. The title, chapter-book, pause and result scenes still use HTML overlays rather than a pixel-identical translation of the MIDP menu renderer; particle/splash/transformation visuals are reconstructed effects; some specialized enemy interactions and object-state branches need direct side-by-side testing; and the browser audio path is not native MIDP MIDI playback. Real-device browser testing and live comparison with the original 2.0.3 JAR remain outstanding.

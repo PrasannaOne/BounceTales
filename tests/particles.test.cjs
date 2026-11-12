@@ -5,5 +5,12 @@ p.emitEgg(10,20,8);assert.equal(p.items.length,8);assert.ok(p.items.every(x=>x.l
 p.update(.1);assert.ok(p.items.every(x=>x.age===.1));
 const c={globalAlpha:1,beginPath(){},arc(){},fill(){}};p.draw(c,point=>point,1);assert.equal(c.globalAlpha,1);
 p.update(2);assert.equal(p.items.length,0);
-p.emitLanding(0,0,1);assert.ok(p.items.length>=3&&p.items.length<=12);p.clear();assert.equal(p.items.length,0);
-console.log('Particles: egg burst, elapsed update, render alpha reset, expiry and landing burst passed');
+p.emitLanding(0,0,1);assert.ok(p.items.length>=3&&p.items.length<=12);
+p.emitTransform(10,20,0,1);assert.ok(p.items.some(x=>x.palette==='transform'&&x.shape==='spark'));
+p.emitSplash(10,20,1);assert.ok(p.items.some(x=>x.palette==='splash'&&x.shape==='drop'));
+p.emitCheckpoint(10,20);assert.ok(p.items.some(x=>x.palette==='checkpoint'));
+p.emitBurst(10,20,14);assert.ok(p.items.some(x=>x.palette==='burst'));
+const rich={globalAlpha:1,beginPath(){},arc(){},ellipse(){},moveTo(){},lineTo(){},closePath(){},fill(){},save(){},restore(){},translate(){},rotate(){}};
+p.draw(rich,point=>point,1);assert.equal(rich.globalAlpha,1,'draw restores the canvas alpha after all particle types');
+p.clear();assert.equal(p.items.length,0);
+console.log('Particles: egg, landing, transformation, splash, checkpoint, transition bursts, update, expiry and alpha reset passed');

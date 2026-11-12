@@ -30,4 +30,4 @@ assert.equal(music.playTitle(),false);
 music.setEnabled(true);assert.equal(music.currentAudio.src,'/audio/boss.ogg');
 music.playCue(34);assert.equal(music.currentAudio.src,'/audio/win.ogg');
 music.dispose();assert.equal(music.currentAudio,null);
-console.log('V17 soundtrack: title, act, boss, bonus, lose and win resource routing, loop/cue behaviour and music setting verified');
+console.log('V18 soundtrack: title, act, boss, bonus, lose and win resource routing, loop/cue behaviour and music setting verified');

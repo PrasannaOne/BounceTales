@@ -20,5 +20,29 @@
     }
     return slices;
   }
-  return {MAX_UPDATE_DELTA_MS,MAX_SUBSTEP_MS,splitElapsedMilliseconds};
+  const FIXED_TICK_RATE=60;
+  const FIXED_STEP_MS=1000/FIXED_TICK_RATE;
+  class FixedStepClock{
+    constructor(){this.accumulatorMs=0;this.tickIndex=0;this.alpha=0;}
+    reset(){this.accumulatorMs=0;this.tickIndex=0;this.alpha=0;}
+    advance(elapsedMs,callback){
+      const incoming=Math.min(MAX_UPDATE_DELTA_MS,Math.max(0,Number(elapsedMs)||0));
+      this.accumulatorMs=Math.min(MAX_UPDATE_DELTA_MS,this.accumulatorMs+incoming);
+      let steps=0;
+      while(this.accumulatorMs+1e-7>=FIXED_STEP_MS&&steps<30){
+        // Integer millisecond deltas follow the source runtime's integer clock,
+        // while the scheduler remains locked to a nominal 60 Hz cadence.
+        const start=Math.floor(this.tickIndex*1000/FIXED_TICK_RATE);
+        const end=Math.floor((this.tickIndex+1)*1000/FIXED_TICK_RATE);
+        const deltaMs=end-start;
+        callback(deltaMs/1000,deltaMs,this.tickIndex);
+        this.tickIndex++;
+        this.accumulatorMs-=FIXED_STEP_MS;
+        steps++;
+      }
+      this.alpha=Math.max(0,Math.min(1,this.accumulatorMs/FIXED_STEP_MS));
+      return {steps,alpha:this.alpha,accumulatorMs:this.accumulatorMs};
+    }
+  }
+  return {MAX_UPDATE_DELTA_MS,MAX_SUBSTEP_MS,splitElapsedMilliseconds,FIXED_TICK_RATE,FIXED_STEP_MS,FixedStepClock};
 });

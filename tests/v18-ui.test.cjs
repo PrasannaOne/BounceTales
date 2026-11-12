@@ -11,4 +11,4 @@ assert.match(css,/html, body\s*\{[^}]*overflow:\s*hidden/s);
 assert.match(css,/body\s*\{[^}]*height:\s*100dvh/s);
 assert.match(css,/overscroll-behavior:\s*none/);
 assert.match(css,/footer\s*\{\s*display:\s*none\s*!important/s);
-console.log('V17 UI: title screen stripped of build/status clutter; fixed viewport and no-scroll rules present');
+console.log('V18 UI: title screen stripped of build/status clutter; fixed viewport and no-scroll rules present');

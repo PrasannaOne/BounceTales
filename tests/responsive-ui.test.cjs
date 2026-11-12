@@ -27,3 +27,10 @@ assert.match(game,/changeBookPage\(dx<0\?1:-1\)/,'chapter book supports swipe na
 assert.match(game,/function syncSceneChrome\(\)/,'scene state updates responsive UI');
 assert.match(game,/cameraSpring\.update\(/,'gameplay uses the source-style camera spring');
 console.log('Responsive UI: phone portrait/landscape, desktop, menu touch, compact options, keyboard/gamepad and swipe hooks passed');
+
+const v18=css.slice(css.lastIndexOf('V18: thumb-control clearance'));
+assert.match(v18,/\.special-control-row \.special\s*\{[^}]*width:\s*42px/s,'star grows slightly on short phone screens');
+assert.match(v18,/\.special-control-row\s*\{\s*height:\s*39px/s,'star grows inside the same reserved control row');
+assert.match(v18,/\.game-wrap\s*\{[^}]*margin-bottom:\s*clamp\(/s,'portrait touch controls retain a deliberate gap under the game');
+assert.match(css,/html, body\s*\{[^}]*overflow:\s*hidden/s,'document remains unscrollable');
+console.log('V18 layout: fixed no-scroll page, control clearance and non-expanding star row passed');

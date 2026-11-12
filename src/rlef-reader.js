@@ -62,8 +62,9 @@
       const faceBits=r.i8();const restF=r.bytes(Math.ceil(faceCount*faceBits/8));const fr=new BitReader(restF);
       const faces=fr.values(faceCount,faceBits,0,false);
       const eventId=r.i16();
-      const vertices=xs.map((x,i)=>[x/65536,ys[i]/65536]);vertices.push(vertices[0].slice());
-      o.type='geometry';o.vertices=vertices;o.faces=faces;o.color=color&0xffffff;o.eventId=eventId;
+      const vertices16=xs.map((x,i)=>[x|0,ys[i]|0]);vertices16.push(vertices16[0].slice());
+      const vertices=vertices16.map(v=>[v[0]/65536,v[1]/65536]);
+      o.type='geometry';o.vertices=vertices;o.vertices16=vertices16;o.faces=faces;o.color=color&0xffffff;o.eventId=eventId;
     }else if(cmd===6){
       o.type='event';o.bbox=[r.i16(),r.i16(),r.i16(),r.i16()];o.eventType=r.i8();o.triggerByLeave=r.i8();o.repeatable=r.i8();o.triggerObjId=r.i16();
       const count=r.i8();o.commands=[];

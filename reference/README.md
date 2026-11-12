@@ -1,6 +1,6 @@
-# V17 decoded reference fixtures
+# V18 decoded reference fixtures
 
-These files were generated from the private Phase 2 decoded reference archive supplied for this project.
+These files were generated from the private Phase 2 decoded reference archive supplied for this project and retained unchanged from V17.
 
 - `../src/sprite-atlas.json` is the verified 326-entry static sprite descriptor table. The browser loads it and draws static sprite IDs 0–325 from its PNG crop rectangles and draw offsets.
 - `animations.json` contains the 316 type-6 animation records and all 1,143 sequence byte streams extracted from the original 16 RLEF level resources.

@@ -61,4 +61,4 @@ assert.equal(triangles,4306);
 assert.equal(events,316);
 assert.equal(sequences,1143);
 assert.equal(animationByObject.size,316);
-console.log('V17 source parity: 105 original assets match SHA-256; 16 RLEF levels, 2,240 object headers, 490 polygons / 5,776 vertices / 4,306 triangles, and 316 animations / 1,143 exact command streams match the decoded reference');
+console.log('V18 source parity: 105 original assets match SHA-256; 16 RLEF levels, 2,240 object headers, 490 polygons / 5,776 vertices / 4,306 triangles, and 316 animations / 1,143 exact command streams match the decoded reference');

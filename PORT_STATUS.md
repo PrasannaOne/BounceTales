@@ -247,3 +247,27 @@ The edge/vertex approach is translated from the original `c.class` collision met
 ## Accuracy boundary
 
 This is not yet a fully verified one-to-one port. The test suite demonstrates exact parity for the extracted static sprites, tested RLEF object headers, polygon geometry, and type-6 animation streams. Gameplay equivalence is still incomplete: the original LP32 fixed-point contact solver and contact ordering are not fully reproduced; not every event branch, enemy/friend/boss state, water/particle effect, progression edge case, camera/parallax layer or MIDP-rendered menu has been compared against a live original JAR session. The soundtrack is browser-playable audio rendered from the original MIDI resources, rather than native MIDP MIDI playback. Real Android and desktop side-by-side testing remains outstanding.
+
+
+# Build 18 status · 2026-11-12
+
+## Implemented
+
+- Preserved the V17 326-entry static sprite atlas, 16 decoded RLEF resources, 316 animated records / 1,143 exact type-6 animation streams, original resource set and eight soundtrack routes.
+- Kept source-accurate 16.16 transform coordinates distinct from Java-float velocity and acceleration values in the player actor. The actor uses a nominal 60 Hz fixed-step browser scheduler with integer 16/17 ms deltas and `requestAnimationFrame` interpolation. This is a requested browser adaptation; the original JAR itself uses elapsed wall-clock milliseconds.
+- Added the original swept edge/vertex collision path in `src/original-collision.js`: 16.16 intersection calculations, nearest contact selection, a bounded 16-contact buffer, form restitution, source gravity/friction choice and torque smoothing. Contact points interpolate previous/current polygon vertices to account for moving-surface displacement. Spawn/event-teleport penetration recovery remains as a fallback.
+- Corrected collision response to use the original form friction × gravity factor × surface-normal gravity expression, without an actor-radius multiplier, and to smooth torque from velocity relative to the contacted surface. Added focused regression cases for this response and translating surfaces.
+- Ported enemy LP32 patrol stepping across the four enemy types, restored Bumper path movement, corrected Stalker look-ahead from its previous destination, and corrected the left-facing flag during patrol. Candle reversal and Mole timer/peek states remain included.
+- Kept the event interpreter's 0–32 opcode dispatch and added a static coverage scan across the 15 playable stage scripts: 316 event records and 1,143 event command instances use the supported opcode range.
+- Added/retained egg, landing, transformation, splash, checkpoint, death and victory burst hooks. Water ripple/bubble presentation and particles are reconstructed browser effects, not proven pixel-identical MIDP rendering.
+- Increased the star/form button to 42×42 px inside its existing 39 px row, so the layout below it does not reflow. Added a 5–8 px viewport-to-controls gap on short portrait screens, recalculating the canvas size to keep the page fixed and unscrollable.
+
+## Validation
+
+- **29/29 Node.js regression scripts pass** in the build runtime. This includes the 15-stage resource boot/play/pause smoke, atlas/reference parity, all-stage spawn/terrain regression, event opcode coverage, source collision response, moving-surface contact, enemy movement/facing, particles and responsive UI.
+- JavaScript source files pass `node --check`.
+- ZIP packaging must retain `index.html` at archive root.
+
+## Accuracy boundary
+
+V18 is a substantial source-driven step, but not a certified one-to-one game recreation. The actor transforms/contact arithmetic are closer to the original source and the tested enemy/event paths are implemented, but special collision/object edge cases still require live 2.0.3 comparison. The title/chapter/pause/results UI remains HTML overlay UI rather than a pixel-identical port of the MIDP menu renderer. Particle and splash effects are reconstructed. Browser audio uses the extracted rendered soundtrack rather than native MIDP MIDI. Real Android/desktop playtesting against the original JAR remains outstanding.

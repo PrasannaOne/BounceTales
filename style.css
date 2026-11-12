@@ -41,18 +41,18 @@ canvas#game{width:100%;height:100%;display:block;image-rendering:pixelated;touch
 .result-score{display:flex;flex-direction:column;align-items:center;padding:9px 0 7px;margin:6px 0;border-top:1px solid #ffffff18;border-bottom:1px solid #ffffff18}
 .result-score strong{font:800 24px Georgia,serif;color:#f5d78d}.result-score span{font-size:7px;letter-spacing:.15em;color:#acb7aa;font-weight:900}
 .guide-panel p{text-align:left;margin:8px 0;color:#d0d9cd;font-size:8px}.guide-panel b{color:#f0d28f}
-.controls{position:relative;width:min(100%,350px);display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.controls{position:relative;width:min(calc(100% - 20px),350px);display:flex;flex-direction:column;gap:6px;align-items:stretch}
 .main-controls{width:100%;display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:9px;align-items:center}
 .control{height:64px;border:1px solid var(--line);background:#27322d;color:var(--cream);border-radius:17px;font-size:24px;font-weight:850;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;box-shadow:inset 0 1px #ffffff16,0 4px 12px #0003;display:flex;align-items:center;justify-content:center}
 .main-controls .control{width:100%;min-width:0}
 .main-controls .jump{background:#71542d;border-color:#bca06b;font-size:13px;letter-spacing:.08em}
 .special-control-row{height:43px;display:flex;justify-content:flex-end;align-items:center;padding-right:10px}
-.special-control-row .special{width:40px;height:40px;min-height:40px;padding:0;border-radius:13px;background:#34302a;color:var(--gold);font-size:20px;box-shadow:inset 0 1px #ffffff18,0 4px 12px #0005}
+.special-control-row .special{width:44px;height:44px;min-height:44px;padding:0;border-radius:13px;background:#34302a;color:var(--gold);font-size:22px;box-shadow:inset 0 1px #ffffff18,0 4px 12px #0005}
 .control:active,.control.pressed{background:#64704e;border-color:#d0b77b;transform:translateY(1px);box-shadow:inset 0 2px 6px #0004}
 .main-controls .jump:active,.main-controls .jump.pressed{background:#9b7139}
 .hint{max-width:320px;color:#98a59c;font-size:9px;line-height:1.4;text-align:center;margin:0}
 footer{width:min(100%,350px);display:flex;justify-content:space-between;align-items:center;gap:8px;color:#819087;font-size:8px}
-@media(max-height:700px){body{align-items:flex-start;padding-top:5px}#app{gap:5px;padding-top:calc(58px + env(safe-area-inset-top))}.game-wrap{width:min(100%,calc((100dvh - 260px)*.75))}.main-controls .control{height:55px}.special-control-row{height:39px}.special-control-row .special{width:36px;height:36px;min-height:36px}.controls{gap:4px}}
+@media(max-height:700px){body{align-items:flex-start;padding-top:5px}#app{gap:5px;padding-top:calc(58px + env(safe-area-inset-top))}.game-wrap{width:min(100%,calc((100dvh - 260px)*.75))}.main-controls .control{height:55px}.special-control-row{height:39px}.special-control-row .special{width:40px;height:40px;min-height:40px}.controls{gap:4px}}
 @media(max-width:350px){.brand{font-size:17px}.game-wrap{width:min(100%,calc((100dvh - 260px)*.75))}.game-panel{max-width:205px;padding:10px}.main-controls{gap:6px}.main-controls .control{height:58px}.controls{width:100%}}
 @media(pointer:coarse){button{cursor:pointer}}
 
@@ -261,7 +261,7 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
 }
 
 
-/* ========================= V17: fixed-screen layout ========================= */
+/* ========================= Fixed-screen layout base ========================= */
 /* The page behaves like a game app. Only the game viewport owns the screen. */
 html, body {
   width: 100%;
@@ -330,5 +330,32 @@ footer { display: none !important; }
   .game-wrap {
     width: min(100%, 320px, calc((100dvh - 178px) * .75));
     max-height: calc(100dvh - 178px);
+  }
+}
+
+
+/* ========================= V18: thumb-control clearance ========================= */
+/* The star grows inside its existing reserved row, so content below does not move. */
+@media (max-height: 700px) {
+  .special-control-row { height: 39px; }
+  .special-control-row .special {
+    width: 42px;
+    height: 42px;
+    min-height: 42px;
+    flex: 0 0 42px;
+  }
+}
+/* Keep a visible breathing gap between the logical game screen and the controls. */
+@media (max-height: 720px) and (orientation: portrait) {
+  .game-wrap {
+    width: min(100%, 360px, calc((100dvh - 228px) * .75));
+    max-height: calc(100dvh - 228px);
+    margin-bottom: clamp(5px, .9vh, 8px);
+  }
+}
+@media (max-height: 540px) {
+  .game-wrap {
+    width: min(100%, 320px, calc((100dvh - 186px) * .75));
+    max-height: calc(100dvh - 186px);
   }
 }

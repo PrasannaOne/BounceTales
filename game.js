@@ -31,6 +31,8 @@ const musicController=typeof BounceAudioController!=='undefined'?new BounceAudio
 let eventEngine=null,playerObjectId=-1,fieldMessage='',fieldMessageTimer=0,languageStrings=[],checkpointPosition=null;
 let spriteAnimations=new Map(),cameraSnap=false,playerDeathTimer=0;
 let lastTime=0,cameraX=0,cameraY=0,cameraSpring=null,unlockedForme=0,toastTimer=0,toastText='';
+const simulationClock=new BounceGameTiming.FixedStepClock();
+let renderAlpha=0;
 let fpsMode=localStorage.getItem('bounce-fps-mode')||'auto',showFps=localStorage.getItem('bounce-show-fps')==='true',fpsFrames=0,fpsStamp=0,displayFps=0,lastRenderAt=0;
 if(!['auto','30','60'].includes(fpsMode))fpsMode='auto';
 const S={play:'play',title:'title',select:'select',pause:'pause',complete:'complete',guide:'guide'};
@@ -99,7 +101,12 @@ function refreshGeometryWorld(nextWorld=world){
   for(const poly of worldGeometry){
     const m=world.get(poly.id);
     if(!m)continue;
-    poly.vertices=poly.localVertices.map(v=>fixedPoint(m,v[0],v[1]));
+    const local16=poly.localVertices16||poly.localVertices.map(v=>[BounceFixed16.toFixed16(v[0]),BounceFixed16.toFixed16(v[1])]);
+    const previousVertices=poly.vertices16;
+    const currentVertices=local16.map(v=>{const p=BounceFixed16.transformPoint(m,v[0],v[1]);return [p.x,p.y];});
+    poly.prevVertices16=previousVertices||currentVertices.map(v=>v.slice());
+    poly.vertices16=currentVertices;
+    poly.vertices=poly.vertices16.map(v=>({x:v[0]/65536,y:v[1]/65536}));
     poly.area=poly.vertices.slice(0,-1).reduce((a,p,i)=>a+p.x*poly.vertices[i+1].y-poly.vertices[i+1].x*p.y,0)/2;
     const flags=poly.object.runtimeFlags??poly.object.flags??0;
     poly.nocollide=(flags&0x20)!==0;
@@ -120,10 +127,12 @@ function buildRuntime(parsed){
       renderObjects.push({type:'player',object:o});
     }else if(o.type==='geometry'){
       const m=transformObject(o);
-      const verts=o.vertices.map(v=>fixedPoint(m,v[0],v[1]));
+      const localVertices16=o.vertices16||o.vertices.map(v=>[BounceFixed16.toFixed16(v[0]),BounceFixed16.toFixed16(v[1])]);
+      const vertices16=localVertices16.map(v=>{const q=BounceFixed16.transformPoint(m,v[0],v[1]);return [q.x,q.y];});
+      const verts=vertices16.map(v=>({x:v[0]/65536,y:v[1]/65536}));
       const area=verts.slice(0,-1).reduce((a,p,i)=>a+p.x*verts[i+1].y-verts[i+1].x*p.y,0)/2;
       const nocollide=(o.flags&0x20)!==0;
-      const poly={id:o.id,object:o,localVertices:o.vertices,vertices:verts,faces:o.faces,color:o.color,area,nocollide};
+      const poly={id:o.id,object:o,localVertices:o.vertices,localVertices16,vertices16,vertices:verts,faces:o.faces,color:o.color,area,nocollide};
       worldGeometry.push(poly);renderObjects.push({type:'geometry',object:o,poly});
     }else if(o.type==='sprite'){
       const m=transformObject(o);renderObjects.push({type:'sprite',object:o,matrix:m});
@@ -158,7 +167,7 @@ function buildRuntime(parsed){
     onFlagsChanged:(obj,flags)=>{const poly=worldGeometry.find(p=>p.id===obj.id);if(poly)poly.nocollide=(flags&0x20)!==0;},
     onCameraTarget:id=>{cameraSnap=true;},
     onCameraParams:(bounce,stabilize,snap)=>{cameraSpring?.setParams(bounce,stabilize);cameraSnap=!!snap;},
-    onCheckpoint:point=>{checkpointPosition={x:point.x,y:point.y};toast('CHECKPOINT');}
+    onCheckpoint:point=>{checkpointPosition={x:point.x,y:point.y};particles.emitCheckpoint(point.x,point.y);toast('CHECKPOINT');}
   });
   world=eventEngine.world;refreshGeometryWorld(world);
   checkpointPosition={x:body.x,y:body.y};
@@ -169,7 +178,13 @@ function buildRuntime(parsed){
 function screenPoint(p){return {x:W/2+(p.x-cameraX)*SCALE,y:H/2-(p.y-cameraY)*SCALE};}
 function resolveTerrain(dt,previous){
   body.radius=BouncePhysics.parameters.radius[body.forme];
-  BounceTerrainCollision.resolveCirclePolygons(body,worldGeometry,dt,8,previous);
+  const result=BounceOriginalCollision.resolve(body,worldGeometry,dt,previous,8);
+  // Penetration recovery is only a safety net for spawns or event teleports that
+  // begin inside terrain; ordinary swept contacts use the c.class LP32 path.
+  if(!result.contacts){
+    BounceTerrainCollision.resolveCirclePolygons(body,worldGeometry,dt,8,previous);
+    body.syncFixedPosition();
+  }
 }
 function collectEggs(){
   for(const e of eggs.concat(bonusEggs)){
@@ -187,7 +202,7 @@ function collideEnemies(previous){
     if(e.dead||((e.object?.runtimeFlags??e.object?.flags??0)&0x20))continue;
     const result=BounceOriginalEnemies.collision(e,body,previous);
     if(!result)continue;
-    if(result.egg)bonusEggs.push({...result.egg,collected:false});
+    if(result.egg){bonusEggs.push({...result.egg,collected:false});particles.emitBurst(result.egg.x,result.egg.y,10);}
     if(result.type==='player-hit'){
       playerDeathTimer=3;deathAnimationElapsed=0;deathBaseY=body.y;body.enabled=false;body.eyeFrame=1;body.resetPhysics();musicController?.playCue(33);toast('TRY AGAIN');
     }
@@ -220,7 +235,7 @@ function updatePlayerEyes(dt){
 }
 
 function updateEnemies(dt){
-  for(const e of enemies)BounceOriginalEnemies.update(e,body,dt);
+  for(const e of enemies){e.prevX=e.x;e.prevY=e.y;BounceOriginalEnemies.update(e,body,dt);}
 }
 function updateTrampolines(dt,previousPosition){
   for(const t of trampolines){
@@ -303,13 +318,13 @@ function updateCannon(dt,held){
 }
 function beginVictory(){
   if(victoryTimer>0||mode!==S.play)return;
-  victoryTimer=3;body.resetPhysics();body.enabled=false;input.clear();musicController?.playCue(34);toast('CHAPTER COMPLETE');
+  victoryTimer=3;particles.emitBurst(body.x,body.y,20);body.resetPhysics();body.enabled=false;input.clear();musicController?.playCue(34);toast('CHAPTER COMPLETE');
 }
 function beginDeath(){
   if(playerDeathTimer>0||victoryTimer>0)return;
-  playerDeathTimer=3;deathAnimationElapsed=0;deathBaseY=body.y;body.enabled=false;body.eyeFrame=1;body.resetPhysics();musicController?.playCue(33);toast('TRY AGAIN');
+  playerDeathTimer=3;deathAnimationElapsed=0;deathBaseY=body.y;particles.emitBurst(body.x,body.y,16);body.enabled=false;body.eyeFrame=1;body.resetPhysics();musicController?.playCue(33);toast('TRY AGAIN');
 }
-function update(dt){
+function update(dt,sourceDeltaMs=Math.round(dt*1000)){
   if(mode!==S.play||!body)return;
   if(victoryTimer>0){
     victoryTimer=Math.max(0,victoryTimer-dt);
@@ -343,11 +358,24 @@ function update(dt){
   if(held.right)body.moveRight(false);
   if(held.jump)body.jump(false);
   const previousPosition={x:body.x,y:body.y};
-  body.update(dt,SCALE);
+  const wasGrounded=body.grounded;
+  const waterRippleHeads=new Map(waters.map(zone=>[zone,zone.ripples[zone.ripples.length-1]||null]));
+  body.update(dt,SCALE,sourceDeltaMs);
   if(body.enabled)updatePlayerEyes(dt);
   resolveTerrain(dt,previousPosition);
+  if(!wasGrounded&&body.grounded){
+    const impact=Math.max(.25,Math.min(2.2,Math.abs(body.lastVy||body.vy)/180));
+    particles.emitLanding(body.x,body.y-body.radius,impact);
+  }
   for(const zone of waters)zone.matrix=world.get(zone.object.id)||zone.matrix;
   BounceOriginalWater.update(waters,body,previousPosition,dt);
+  for(const zone of waters){
+    const head=zone.ripples[zone.ripples.length-1];
+    if(head&&head!==waterRippleHeads.get(zone)){
+      const point=BounceOriginalWater.worldPoint(zone.matrix,head.x,zone.object.areaMinY);
+      particles.emitSplash(point.x,point.y,Math.max(.3,Math.min(2,head.amplitude/8)));
+    }
+  }
   updateTrampolines(dt,previousPosition);
   checkCannonContacts(previousPosition);
   updateEnemies(dt);
@@ -505,7 +533,8 @@ function drawWollyForm(x,y,r){
 }
 function drawPlayer(){
   if(body.visible===false)return;
-  const p=screenPoint(body),r=Math.floor(BouncePhysics.parameters.radius[body.forme]*SCALE)+1;
+  const renderBody={x:body.prevX+(body.x-body.prevX)*renderAlpha,y:body.prevY+(body.y-body.prevY)*renderAlpha};
+  const p=screenPoint(renderBody),r=Math.floor(BouncePhysics.parameters.radius[body.forme]*SCALE)+1;
   if(body.forme===0)drawBounceForm(p.x,p.y,r);
   else if(body.forme===1)drawBumpyForm(p.x,p.y);
   else drawWollyForm(p.x,p.y,r);
@@ -521,7 +550,9 @@ function drawPlayer(){
   }
 }
 function drawEnemy(e){
-  const screen=screenPoint({x:e.x,y:e.y});
+  const renderX=(e.prevX??e.x)+(e.x-(e.prevX??e.x))*renderAlpha;
+  const renderY=(e.prevY??e.y)+(e.y-(e.prevY??e.y))*renderAlpha;
+  const screen=screenPoint({x:renderX,y:renderY});
   if(e.enemyType===0)drawImageMap(467,screen.x,screen.y,new Set(),Math.floor(elapsed*20));
   else if(e.enemyType===2){
     const bodyFrame=e.state===0?Math.floor(elapsed*1000/150)%4:0;
@@ -718,7 +749,7 @@ function showChapterBook(){mode=S.select;hideGameScenes();document.getElementByI
 function changeBookPage(delta){selectedLevelIndex=clamp(selectedLevelIndex+delta,0,14);updateLevelBook();}
 function openGuide(){mode=S.guide;hideGameScenes();document.getElementById('guide-layer').hidden=false;input.clear();syncPauseButton();}
 function startLevel(){
-  mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;musicController?.playLevel(currentLevel.index);
+  mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;simulationClock.reset();renderAlpha=0;musicController?.playLevel(currentLevel.index);
   if(eventEngine){eventEngine.reset();world=eventEngine.world;refreshGeometryWorld(world);}
   spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;cameraSnap=false;
   body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce';body.rotation=0;body.unlockedForme=progress.unlockedForme;body.forme=0;body.slopeCosAbs=1;body.eyeFrame=0;body.idleAnimStartTimer=3000;
@@ -736,7 +767,7 @@ async function loadLevel(index,options={}){
   const parsed=BounceRLEF.parse(new Uint8Array(await response.arrayBuffer()));if(token!==levelLoadToken)return false;
   const player=parsed.objects.find(o=>o.type==='player');if(!player)throw new Error(chosen.name+' has no player start record');
   currentLevel={...chosen,index,objectCount:parsed.objectCount,eventCount:parsed.eventCount,name:getLocalizedLevelName(index)};
-  buildRuntime(parsed);spawn={x:body.x,y:body.y};mode=S.title;hideGameScenes();input.clear();lastTime=0;
+  buildRuntime(parsed);spawn={x:body.x,y:body.y};mode=S.title;hideGameScenes();input.clear();lastTime=0;simulationClock.reset();renderAlpha=0;
   selectedLevelIndex=index;progress.selected=index;BounceOriginalProgression.save(localStorage,progress);
   refreshHud();status.textContent=chosen.name.toUpperCase()+' · ORIGINAL LEVEL DATA LOADED';
   if(options.start)startLevel();else if(options.book)showChapterBook();else showTitleMenu();
@@ -765,11 +796,12 @@ function startSelectedChapter(){
   loadLevel(chosen,{start:true}).catch(error=>{console.error(error);toast('Could not load this chapter');});
 }
 
-function pauseGame(){if(mode===S.play){mode=S.pause;hideGameScenes();document.getElementById('pause-layer').hidden=false;input.clear();syncPauseButton();}}
-function resumeGame(){if(mode===S.pause){mode=S.play;hideGameScenes();syncPauseButton();input.clear();}}
+function pauseGame(){if(mode===S.play){mode=S.pause;simulationClock.reset();renderAlpha=0;hideGameScenes();document.getElementById('pause-layer').hidden=false;input.clear();syncPauseButton();}}
+function resumeGame(){if(mode===S.pause){mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;simulationClock.reset();renderAlpha=0;}}
 function cycleForme(){
   if(mode!==S.play)return;const before=body.forme;body.cycleForme();
-  if(body.forme===before)toast('Other forms unlock later');else toast('Form '+(body.forme+1));refreshHud();
+  if(body.forme===before)toast('Other forms unlock later');else{particles.emitTransform(body.x,body.y,before,body.forme);toast('Form '+(body.forme+1));}
+  refreshHud();
 }
 function onEdge(id){
   window.dispatchEvent(new CustomEvent('bouncetales:original-key',{detail:{id}}));
@@ -863,14 +895,13 @@ function bindInputs(){
 
   const clearAll=()=>{keys.clear();input.clear();gamepadHeld.clear();document.querySelectorAll('[data-key-id]').forEach(b=>b.classList.remove('pressed'));};
   addEventListener('blur',clearAll);
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAll();musicController?.pause();lastTime=0;lastRenderAt=0;fpsStamp=0;fpsFrames=0;}else musicController?.resume();});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAll();musicController?.pause();lastTime=0;simulationClock.reset();renderAlpha=0;lastRenderAt=0;fpsStamp=0;fpsFrames=0;}else musicController?.resume();});
   window.addEventListener('pointerdown',()=>musicController?.unlock(),{once:true});
 }
 
-// Drawing follows requestAnimationFrame. Simulation consumes elapsed time like
-// the original JAR (integer milliseconds, capped at 500 ms), split into small
-// collision-safe chunks only when a browser frame arrives late. This is not a
-// 60 Hz game clock and it does not drop the normal elapsed time.
+// Drawing follows requestAnimationFrame. V18 advances simulation on a nominal
+// 60 Hz fixed-step clock with source-style integer 16/17 ms deltas and a 500 ms
+// catch-up cap. Actor and enemy transforms are interpolated for smooth rendering.
 function loop(now){
   if(window.__bouncePollGamepad)window.__bouncePollGamepad();
   if(!lastTime)lastTime=now;
@@ -879,10 +910,13 @@ function loop(now){
     const frameInterval=1000/requestedCap;
     if(lastRenderAt&&now-lastRenderAt<frameInterval-1){requestAnimationFrame(loop);return;}
   }
-  const elapsedMs=Math.max(0,Math.floor(now-lastTime));
+  const elapsedMs=Math.max(0,now-lastTime);
   lastTime=now;lastRenderAt=now;
   if(mode===S.play){
-    for(const sliceMs of BounceGameTiming.splitElapsedMilliseconds(elapsedMs))update(sliceMs/1000);
+    const timing=simulationClock.advance(elapsedMs,(dt,deltaMs)=>update(dt,deltaMs));
+    renderAlpha=timing.alpha;
+  }else{
+    simulationClock.reset();renderAlpha=0;
   }
   draw();
   if(showFps){fpsFrames++;if(!fpsStamp)fpsStamp=now;if(now-fpsStamp>=500){displayFps=Math.round(fpsFrames*1000/(now-fpsStamp));fpsFrames=0;fpsStamp=now;const counter=document.getElementById('fps-counter');if(counter)counter.textContent=displayFps+' FPS';}}
@@ -907,7 +941,7 @@ function closeSettings(){
   if(settingsReturnFocus?.focus)settingsReturnFocus.focus();settingsReturnFocus=null;
 }
 
-function applyFpsMode(value){fpsMode=['auto','30','60'].includes(value)?value:'auto';localStorage.setItem('bounce-fps-mode',fpsMode);lastTime=0;lastRenderAt=0;}
+function applyFpsMode(value){fpsMode=['auto','30','60'].includes(value)?value:'auto';localStorage.setItem('bounce-fps-mode',fpsMode);lastTime=0;simulationClock.reset();renderAlpha=0;lastRenderAt=0;}
 function resetProgress(){
   if(!confirm('Reset all Bounce Tales progress, unlocked chapters and best records?'))return;
   progress=BounceOriginalProgression.reset(localStorage);selectedLevelIndex=0;unlockedForme=0;closeSettings();

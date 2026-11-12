@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict');
+const {FixedStepClock,FIXED_TICK_RATE}=require('../src/game-timing.js');
+const clock=new FixedStepClock();let deltas=[];
+let result=clock.advance(1000,(dt,ms,index)=>deltas.push({dt,ms,index}));
+assert.equal(FIXED_TICK_RATE,60);
+assert.equal(result.steps,30,'500ms clamp should allow 30 fixed ticks');
+assert.equal(deltas.reduce((a,x)=>a+x.ms,0),500);
+assert.ok(deltas.every(x=>x.ms===16||x.ms===17));
+assert.ok(result.alpha>=0&&result.alpha<1);
+clock.reset();assert.equal(clock.advance(8,()=>{}).steps,0);
+assert.equal(clock.advance(9,()=>{}).steps,1);
+clock.reset();assert.equal(clock.advance(1000,()=>{}).steps,30);
+console.log('fixed-step tests passed');

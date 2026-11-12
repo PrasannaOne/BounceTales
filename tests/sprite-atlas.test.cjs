@@ -16,4 +16,4 @@ assert.equal(atlas.animation_timing.animation_objects,316);
 assert.equal(atlas.animation_timing.sequences,1143);
 assert.equal(atlas.animation_timing.timed_command_count,350);
 assert.throws(()=>api.prepare({...atlas,sprites:atlas.sprites.slice(1)},imageMap),/326 sprites/);
-console.log('V17 atlas: all 326 source-extracted sprite descriptors match the runtime image map; 46 PNG slots and 350 timing annotations verified');
+console.log('V18 atlas: all 326 source-extracted sprite descriptors match the runtime image map; 46 PNG slots and 350 timing annotations verified');

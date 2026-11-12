@@ -28,7 +28,8 @@
 
   class BounceBody{
     constructor(x=0,y=0,unlockedForme=0){
-      this.x=x;this.y=y;this.vx=0;this.vy=0;this.lastVx=0;this.lastVy=0;
+      this.x=x;this.y=y;this.x16=(Math.trunc(x*65536)|0);this.y16=(Math.trunc(y*65536)|0);
+      this.prevX=x;this.prevY=y;this.vx=0;this.vy=0;this.lastVx=0;this.lastVy=0;
       this.gravityX=0;this.gravityY=0;this.pushX=0;this.pushY=0;
       this.torqueX=0;this.torqueY=0;this.forme=0;this.unlockedForme=unlockedForme;
       this.grounded=false;this.slopeSinAbs=0;this.slopeCosAbs=1;this.airTime=0;
@@ -45,7 +46,8 @@
       this.skipAccelStretch=false;
     }
     reset(x,y){
-      this.x=x;this.y=y;this.vx=0;this.vy=0;this.lastVx=0;this.lastVy=0;
+      this.x=x;this.y=y;this.x16=(Math.trunc(x*65536)|0);this.y16=(Math.trunc(y*65536)|0);
+      this.prevX=x;this.prevY=y;this.vx=0;this.vy=0;this.lastVx=0;this.lastVy=0;
       this.gravityX=0;this.gravityY=0;this.pushX=0;this.pushY=0;
       this.torqueX=0;this.torqueY=0;this.grounded=false;this.airTime=0;
       this.curVelocity=0;this.rotation=0;this.eyeFrame=0;this.idleAnimTimer=0;
@@ -89,9 +91,14 @@
       this.radius=P.radius[this.forme];
       return this.forme;
     }
-    update(dt,screenScale=0.660187){
+    update(dt,screenScale=0.660187,sourceDeltaMs=null){
       if(!this.enabled||!(dt>0))return;
-      const updateDelta=Math.max(1,Math.round(dt*1000));
+      // Keep the original actor transform in signed 16.16 LP32 coordinates.
+      // Velocities and accelerations remain Java-float equivalents, as in c.class.
+      if(this.x!==this.x16/65536)this.x16=(Math.trunc(this.x*65536)|0);
+      if(this.y!==this.y16/65536)this.y16=(Math.trunc(this.y*65536)|0);
+      this.prevX=this.x;this.prevY=this.y;
+      const updateDelta=Math.max(1,Math.trunc(sourceDeltaMs??(dt*1000)));
       const mode=this.forme,g=P.gravity[mode],invGravity=1/g;
 
       // Exact acceleration-to-stretch request mapping from the JAR's update method.
@@ -113,8 +120,9 @@
       this.vy+=this.gravityY*invGravity*motionDelta;
       this.vx+=this.pushX*invGravity;
       this.vy+=this.pushY*invGravity;
-      this.x+=this.vx*motionDelta;
-      this.y+=this.vy*motionDelta;
+      this.x16=(this.x16+Math.trunc(this.vx*motionDelta*65536))|0;
+      this.y16=(this.y16+Math.trunc(this.vy*motionDelta*65536))|0;
+      this.x=this.x16/65536;this.y=this.y16/65536;
       this.gravityX=0;this.gravityY=0;this.pushX=0;this.pushY=0;
 
       // The original uses collision-produced torque projected onto the current surface slope.
@@ -181,6 +189,10 @@
       }
       this.torqueX=this.torqueX*.5+dvx*.5;
       this.torqueY=this.torqueY*.5+dvy*.5;
+    }
+    syncFixedPosition(){
+      this.x16=(Math.trunc(this.x*65536)|0);this.y16=(Math.trunc(this.y*65536)|0);
+      this.x=this.x16/65536;this.y=this.y16/65536;
     }
     resetPhysics(){
       this.vx=this.vy=this.gravityX=this.gravityY=this.pushX=this.pushY=this.torqueX=this.torqueY=0;
