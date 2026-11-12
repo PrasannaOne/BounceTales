@@ -1,0 +1,33 @@
+public class RMIDlet extends javax.microedition.midlet.MIDlet {
+  public RMIDlet();
+    Code:
+       0: aload_0
+       1: invokespecial #7                  // Method javax/microedition/midlet/MIDlet."<init>":()V
+       4: return
+
+  protected void startApp();
+    Code:
+       0: getstatic     #5                  // Field o.a:Ljavax/microedition/midlet/MIDlet;
+       3: ifnonnull     15
+       6: aload_0
+       7: putstatic     #5                  // Field o.a:Ljavax/microedition/midlet/MIDlet;
+      10: iconst_1
+      11: invokestatic  #9                  // Method o.h:(I)V
+      14: return
+      15: iconst_3
+      16: invokestatic  #9                  // Method o.h:(I)V
+      19: return
+
+  protected void pauseApp();
+    Code:
+       0: iconst_2
+       1: invokestatic  #9                  // Method o.h:(I)V
+       4: aload_0
+       5: invokevirtual #6                  // Method notifyPaused:()V
+       8: return
+
+  protected void destroyApp(boolean);
+    Code:
+       0: invokestatic  #8                  // Method o.a:()V
+       3: return
+}

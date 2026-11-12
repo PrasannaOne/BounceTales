@@ -1,0 +1,538 @@
+public final class p extends j {
+  public static int[] a;
+
+  public static int[] b;
+
+  private int[] e;
+
+  private int[] f;
+
+  public int[] c;
+
+  public int[] d;
+
+  private short[] a;
+
+  public int a;
+
+  private int b;
+
+  private int c;
+
+  public short a;
+
+  public p();
+    Code:
+       0: aload_0
+       1: invokespecial #32                 // Method j."<init>":()V
+       4: aload_0
+       5: iconst_2
+       6: putfield      #19                 // Field c:B
+       9: return
+
+  public final int a(byte[], int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: invokespecial #34                 // Method j.a:([BI)I
+       6: istore_2
+       7: aload_0
+       8: aload_1
+       9: iload_2
+      10: iinc          2, 1
+      13: baload
+      14: bipush        8
+      16: ishl
+      17: aload_1
+      18: iload_2
+      19: iinc          2, 1
+      22: baload
+      23: sipush        255
+      26: iand
+      27: ior
+      28: i2s
+      29: iconst_1
+      30: iadd
+      31: putfield      #15                 // Field a:I
+      34: aload_0
+      35: aload_1
+      36: iload_2
+      37: iinc          2, 1
+      40: baload
+      41: bipush        8
+      43: ishl
+      44: aload_1
+      45: iload_2
+      46: iinc          2, 1
+      49: baload
+      50: sipush        255
+      53: iand
+      54: ior
+      55: i2s
+      56: putfield      #18                 // Field b:I
+      59: aload_1
+      60: iload_2
+      61: iinc          2, 1
+      64: baload
+      65: sipush        255
+      68: iand
+      69: istore_3
+      70: aload_1
+      71: iload_2
+      72: iinc          2, 1
+      75: baload
+      76: sipush        255
+      79: iand
+      80: istore        4
+      82: aload_1
+      83: iload_2
+      84: iinc          2, 1
+      87: baload
+      88: sipush        255
+      91: iand
+      92: istore        5
+      94: aload_1
+      95: iload_2
+      96: iinc          2, 1
+      99: baload
+     100: sipush        255
+     103: iand
+     104: istore        6
+     106: aload_0
+     107: iload_3
+     108: bipush        24
+     110: ishl
+     111: iload         4
+     113: bipush        16
+     115: ishl
+     116: ior
+     117: iload         5
+     119: bipush        8
+     121: ishl
+     122: ior
+     123: iload         6
+     125: ior
+     126: putfield      #20                 // Field c:I
+     129: aload_0
+     130: aload_0
+     131: getfield      #15                 // Field a:I
+     134: newarray       int
+     136: putfield      #21                 // Field c:[I
+     139: aload_0
+     140: aload_0
+     141: getfield      #15                 // Field a:I
+     144: newarray       int
+     146: putfield      #22                 // Field d:[I
+     149: aload_0
+     150: aload_0
+     151: getfield      #15                 // Field a:I
+     154: newarray       int
+     156: putfield      #24                 // Field e:[I
+     159: aload_0
+     160: aload_0
+     161: getfield      #15                 // Field a:I
+     164: newarray       int
+     166: putfield      #26                 // Field f:[I
+     169: aload_0
+     170: aload_0
+     171: getfield      #18                 // Field b:I
+     174: newarray       short
+     176: putfield      #17                 // Field a:[S
+     179: aload_1
+     180: iload_2
+     181: iinc          2, 1
+     184: baload
+     185: i2b
+     186: istore_3
+     187: aload_1
+     188: iload_2
+     189: iinc          2, 1
+     192: baload
+     193: bipush        8
+     195: ishl
+     196: aload_1
+     197: iload_2
+     198: iinc          2, 1
+     201: baload
+     202: sipush        255
+     205: iand
+     206: ior
+     207: i2s
+     208: istore        4
+     210: aload_0
+     211: getfield      #21                 // Field c:[I
+     214: aload_0
+     215: getfield      #15                 // Field a:I
+     218: iconst_1
+     219: isub
+     220: iload         4
+     222: aload_1
+     223: iload_2
+     224: iload_3
+     225: invokestatic  #40                 // Method a:([III[BII)I
+     228: istore_2
+     229: aload_1
+     230: iload_2
+     231: iinc          2, 1
+     234: baload
+     235: bipush        8
+     237: ishl
+     238: aload_1
+     239: iload_2
+     240: iinc          2, 1
+     243: baload
+     244: sipush        255
+     247: iand
+     248: ior
+     249: i2s
+     250: istore        4
+     252: aload_0
+     253: getfield      #22                 // Field d:[I
+     256: aload_0
+     257: getfield      #15                 // Field a:I
+     260: iconst_1
+     261: isub
+     262: iload         4
+     264: aload_1
+     265: iload_2
+     266: iload_3
+     267: invokestatic  #40                 // Method a:([III[BII)I
+     270: istore_2
+     271: aload_1
+     272: iload_2
+     273: iinc          2, 1
+     276: baload
+     277: i2b
+     278: istore_3
+     279: aload_0
+     280: getfield      #17                 // Field a:[S
+     283: aload_0
+     284: getfield      #18                 // Field b:I
+     287: iconst_0
+     288: iconst_1
+     289: aload_1
+     290: iload_2
+     291: iload_3
+     292: invokestatic  #41                 // Method a:([SIII[BII)I
+     295: istore_2
+     296: aload_0
+     297: getfield      #21                 // Field c:[I
+     300: aload_0
+     301: getfield      #15                 // Field a:I
+     304: iconst_1
+     305: isub
+     306: aload_0
+     307: getfield      #21                 // Field c:[I
+     310: iconst_0
+     311: iaload
+     312: iastore
+     313: aload_0
+     314: getfield      #22                 // Field d:[I
+     317: aload_0
+     318: getfield      #15                 // Field a:I
+     321: iconst_1
+     322: isub
+     323: aload_0
+     324: getfield      #22                 // Field d:[I
+     327: iconst_0
+     328: iaload
+     329: iastore
+     330: aload_0
+     331: aload_1
+     332: iload_2
+     333: iinc          2, 1
+     336: baload
+     337: bipush        8
+     339: ishl
+     340: aload_1
+     341: iload_2
+     342: iinc          2, 1
+     345: baload
+     346: sipush        255
+     349: iand
+     350: ior
+     351: i2s
+     352: putfield      #16                 // Field a:S
+     355: aload_0
+     356: invokevirtual #38                 // Method a:()V
+     359: iload_2
+     360: ireturn
+
+  public final void a();
+    Code:
+       0: aload_0
+       1: invokespecial #33                 // Method j.a:()V
+       4: iconst_0
+       5: istore_1
+       6: iload_1
+       7: aload_0
+       8: getfield      #21                 // Field c:[I
+      11: arraylength
+      12: if_icmpge     67
+      15: aload_0
+      16: getfield      #21                 // Field c:[I
+      19: iload_1
+      20: iaload
+      21: aload_0
+      22: getfield      #23                 // Field e:I
+      25: if_icmpge     38
+      28: aload_0
+      29: aload_0
+      30: getfield      #21                 // Field c:[I
+      33: iload_1
+      34: iaload
+      35: putfield      #23                 // Field e:I
+      38: aload_0
+      39: getfield      #21                 // Field c:[I
+      42: iload_1
+      43: iaload
+      44: aload_0
+      45: getfield      #27                 // Field g:I
+      48: if_icmple     61
+      51: aload_0
+      52: aload_0
+      53: getfield      #21                 // Field c:[I
+      56: iload_1
+      57: iaload
+      58: putfield      #27                 // Field g:I
+      61: iinc          1, 1
+      64: goto          6
+      67: iconst_0
+      68: istore_1
+      69: iload_1
+      70: aload_0
+      71: getfield      #22                 // Field d:[I
+      74: arraylength
+      75: if_icmpge     130
+      78: aload_0
+      79: getfield      #22                 // Field d:[I
+      82: iload_1
+      83: iaload
+      84: aload_0
+      85: getfield      #25                 // Field f:I
+      88: if_icmpge     101
+      91: aload_0
+      92: aload_0
+      93: getfield      #22                 // Field d:[I
+      96: iload_1
+      97: iaload
+      98: putfield      #25                 // Field f:I
+     101: aload_0
+     102: getfield      #22                 // Field d:[I
+     105: iload_1
+     106: iaload
+     107: aload_0
+     108: getfield      #29                 // Field h:I
+     111: if_icmple     124
+     114: aload_0
+     115: aload_0
+     116: getfield      #22                 // Field d:[I
+     119: iload_1
+     120: iaload
+     121: putfield      #29                 // Field h:I
+     124: iinc          1, 1
+     127: goto          69
+     130: return
+
+  public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    Code:
+       0: aload_0
+       1: aload_3
+       2: astore        4
+       4: dup
+       5: astore_2
+       6: getfield      #28                 // Field g:Z
+       9: ifeq          139
+      12: aload_2
+      13: getstatic     #12                 // Field j.a:Ld;
+      16: invokevirtual #39                 // Method a:(Ld;)V
+      19: aload         4
+      21: getfield      #8                  // Field d.c:I
+      24: istore        5
+      26: aload         4
+      28: getfield      #9                  // Field d.f:I
+      31: istore        6
+      33: aload         4
+      35: iconst_0
+      36: putfield      #8                  // Field d.c:I
+      39: aload         4
+      41: iconst_0
+      42: putfield      #9                  // Field d.f:I
+      45: aload         4
+      47: getstatic     #12                 // Field j.a:Ld;
+      50: getstatic     #7                  // Field d.a:Ld;
+      53: invokestatic  #31                 // Method d.a:(Ld;Ld;Ld;)V
+      56: aload         4
+      58: iload         5
+      60: putfield      #8                  // Field d.c:I
+      63: aload         4
+      65: iload         6
+      67: putfield      #9                  // Field d.f:I
+      70: iconst_0
+      71: istore        4
+      73: iload         4
+      75: aload_2
+      76: getfield      #15                 // Field a:I
+      79: if_icmpge     134
+      82: getstatic     #7                  // Field d.a:Ld;
+      85: aload_2
+      86: getfield      #21                 // Field c:[I
+      89: iload         4
+      91: iaload
+      92: aload_2
+      93: getfield      #22                 // Field d:[I
+      96: iload         4
+      98: iaload
+      99: invokevirtual #30                 // Method d.a:(II)V
+     102: aload_2
+     103: getfield      #24                 // Field e:[I
+     106: iload         4
+     108: getstatic     #10                 // Field d.g:I
+     111: bipush        16
+     113: ishr
+     114: iastore
+     115: aload_2
+     116: getfield      #26                 // Field f:[I
+     119: iload         4
+     121: getstatic     #11                 // Field d.h:I
+     124: bipush        16
+     126: ishr
+     127: iastore
+     128: iinc          4, 1
+     131: goto          73
+     134: aload_2
+     135: iconst_0
+     136: putfield      #28                 // Field g:Z
+     139: getstatic     #13                 // Field o.b:I
+     142: iconst_1
+     143: isub
+     144: istore_2
+     145: getstatic     #14                 // Field o.c:I
+     148: iconst_1
+     149: isub
+     150: istore        4
+     152: aload_3
+     153: getfield      #8                  // Field d.c:I
+     156: bipush        16
+     158: ishr
+     159: istore        5
+     161: aload_3
+     162: getfield      #9                  // Field d.f:I
+     165: bipush        16
+     167: ishr
+     168: istore_3
+     169: aload_1
+     170: aload_0
+     171: getfield      #20                 // Field c:I
+     174: invokestatic  #37                 // Method m.c:(I)I
+     177: invokevirtual #36                 // Method javax/microedition/lcdui/Graphics.setColor:(I)V
+     180: iconst_0
+     181: istore        6
+     183: iload         6
+     185: aload_0
+     186: getfield      #18                 // Field b:I
+     189: if_icmpge     383
+     192: aload_0
+     193: getfield      #17                 // Field a:[S
+     196: iload         6
+     198: saload
+     199: istore        7
+     201: aload_0
+     202: getfield      #17                 // Field a:[S
+     205: iload         6
+     207: iconst_1
+     208: iadd
+     209: saload
+     210: istore        8
+     212: aload_0
+     213: getfield      #17                 // Field a:[S
+     216: iload         6
+     218: iconst_2
+     219: iadd
+     220: saload
+     221: istore        9
+     223: aload_0
+     224: getfield      #24                 // Field e:[I
+     227: iload         7
+     229: iaload
+     230: iload         5
+     232: iadd
+     233: istore        10
+     235: aload_0
+     236: getfield      #24                 // Field e:[I
+     239: iload         8
+     241: iaload
+     242: iload         5
+     244: iadd
+     245: istore        11
+     247: aload_0
+     248: getfield      #24                 // Field e:[I
+     251: iload         9
+     253: iaload
+     254: iload         5
+     256: iadd
+     257: istore        12
+     259: aload_0
+     260: getfield      #26                 // Field f:[I
+     263: iload         7
+     265: iaload
+     266: iload_3
+     267: iadd
+     268: istore        7
+     270: aload_0
+     271: getfield      #26                 // Field f:[I
+     274: iload         8
+     276: iaload
+     277: iload_3
+     278: iadd
+     279: istore        8
+     281: aload_0
+     282: getfield      #26                 // Field f:[I
+     285: iload         9
+     287: iaload
+     288: iload_3
+     289: iadd
+     290: istore        9
+     292: iload         10
+     294: ifge          307
+     297: iload         11
+     299: ifge          307
+     302: iload         12
+     304: iflt          377
+     307: iload         7
+     309: ifge          322
+     312: iload         8
+     314: ifge          322
+     317: iload         9
+     319: iflt          377
+     322: iload         10
+     324: iload_2
+     325: if_icmple     340
+     328: iload         11
+     330: iload_2
+     331: if_icmple     340
+     334: iload         12
+     336: iload_2
+     337: if_icmpgt     377
+     340: iload         7
+     342: iload         4
+     344: if_icmple     361
+     347: iload         8
+     349: iload         4
+     351: if_icmple     361
+     354: iload         9
+     356: iload         4
+     358: if_icmpgt     377
+     361: aload_1
+     362: iload         10
+     364: iload         7
+     366: iload         11
+     368: iload         8
+     370: iload         12
+     372: iload         9
+     374: invokevirtual #35                 // Method javax/microedition/lcdui/Graphics.fillTriangle:(IIIIII)V
+     377: iinc          6, 3
+     380: goto          183
+     383: return
+}

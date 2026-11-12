@@ -1,0 +1,61 @@
+public final class a extends j {
+  public a();
+    Code:
+       0: aload_0
+       1: invokespecial #18                 // Method j."<init>":()V
+       4: aload_0
+       5: bipush        9
+       7: putfield      #7                  // Field c:B
+      10: return
+
+  public final int a(byte[], int);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iload_2
+       3: invokespecial #19                 // Method j.a:([BI)I
+       6: dup
+       7: istore_2
+       8: ireturn
+
+  public final void a();
+    Code:
+       0: aload_0
+       1: ldc           #1                  // int -2949120
+       3: putfield      #8                  // Field e:I
+       6: aload_0
+       7: ldc           #2                  // int 2949120
+       9: putfield      #10                 // Field g:I
+      12: aload_0
+      13: ldc           #1                  // int -2949120
+      15: putfield      #9                  // Field f:I
+      18: aload_0
+      19: ldc           #2                  // int 2949120
+      21: putfield      #11                 // Field h:I
+      24: return
+
+  public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    Code:
+       0: aload_0
+       1: getstatic     #15                 // Field j.a:Ld;
+       4: invokevirtual #16                 // Method a:(Ld;)V
+       7: aload_3
+       8: getstatic     #15                 // Field j.a:Ld;
+      11: getstatic     #12                 // Field d.a:Ld;
+      14: invokestatic  #17                 // Method d.a:(Ld;Ld;Ld;)V
+      17: getstatic     #12                 // Field d.a:Ld;
+      20: getfield      #13                 // Field d.c:I
+      23: bipush        16
+      25: ishr
+      26: istore_0
+      27: getstatic     #12                 // Field d.a:Ld;
+      30: getfield      #14                 // Field d.f:I
+      33: bipush        16
+      35: ishr
+      36: istore_1
+      37: iload_0
+      38: iload_1
+      39: sipush        208
+      42: invokestatic  #20                 // Method o.a:(III)V
+      45: return
+}
