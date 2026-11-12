@@ -271,3 +271,14 @@ This is not yet a fully verified one-to-one port. The test suite demonstrates ex
 ## Accuracy boundary
 
 V18 is a substantial source-driven step, but not a certified one-to-one game recreation. The actor transforms/contact arithmetic are closer to the original source and the tested enemy/event paths are implemented, but special collision/object edge cases still require live 2.0.3 comparison. The title/chapter/pause/results UI remains HTML overlay UI rather than a pixel-identical port of the MIDP menu renderer. Particle and splash effects are reconstructed. Browser audio uses the extracted rendered soundtrack rather than native MIDP MIDI. Real Android/desktop playtesting against the original JAR remains outstanding.
+
+
+## V19 · springboard correction, canvas menu pass and offline shell
+
+V19 moves trampoline detection to immediately after the actor's fixed-step integration and before terrain collision response. The supplied `c.java` source shows type-12 spring contact as an intersection between the actor's previous/current path and a local segment from (-70, 95) to (70, 95), conditioned on upward/incoming velocity. The browser helper now uses that segment without an expanded player-radius margin. The spring duration uses the original integer `period / frameCount` division, and launch push retains the source's base-push scaling and cap. A 2-second malformed-state watchdog prevents a broken spring animation from leaving the actor disabled.
+
+V19 adds canvas-painted title, chapter book, high-score, options, instructions, pause and completion screens. The pause scene exposes Resume, Restart Level, Main Menu and Sound controls. Chapter progression and per-stage records remain in localStorage. The outer touch controls stay in the DOM, accept simultaneous pointer contacts, and now retain a 14–20 CSS-pixel canvas-to-controls gap in portrait layouts; compact landscape also retains a 10-pixel gap and a 42-pixel form button. The full document remains overflow-hidden.
+
+The manifest, PWA icons and service worker precache the application shell and extracted game resources for offline use after an initial successful online installation. The 35-script regression suite includes explicit springboard lifecycle, collision/update ordering, watchdog/loop guards, canvas menu/input wiring, precache file existence and responsive spacing tests; all 35 pass in Node.js. All JavaScript files also pass `node --check`. See README for the test command and accuracy boundaries.
+
+**Accuracy boundary:** canvas screens are source-informed reconstructions, not a confirmed pixel-identical MIDP renderer. High Scores shows the stored browser-side stage records; it is not a verified conversion of the original handset's full ranking service. A passing headless suite verifies the covered code paths and resources, but does not prove every object interaction across the game or replace Android/iOS device testing.

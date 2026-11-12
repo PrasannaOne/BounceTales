@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111719">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="assets/original/icon.png">
+<link rel="apple-touch-icon" href="assets/pwa-192.png">
 <meta name="description" content="Bounce Tales, an HTML5 browser port using original game resources.">
 <title>Bounce Tales</title>
 <link rel="stylesheet" href="style.css">
@@ -19,7 +24,7 @@
   </header>
 
   <section class="game-wrap" aria-label="Bounce Tales game" id="game-wrap">
-    <canvas id="game" width="240" height="320" aria-label="Bounce Tales game screen"></canvas>
+    <canvas id="game" width="240" height="320" aria-label="Bounce Tales game screen">Bounce Tales. Hold left or right to move, hold jump to bounce, and use the star button to change an unlocked form.</canvas>
     <div class="statusline" id="statusline">LOADING ORIGINAL GAME…</div>
     <button class="pause-mini" id="pause-mini" type="button" aria-label="Pause game" title="Pause">Ⅱ</button>
     <div class="egg-hud" id="egg-hud">FORM BOUNCE</div>
@@ -148,5 +153,10 @@
 <script src="src/sprite-atlas.js"></script>
 <script src="src/audio-controller.js"></script>
 <script src="game.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+</script>
 </body>
 </html>

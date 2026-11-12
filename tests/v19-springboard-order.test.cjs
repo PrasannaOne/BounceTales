@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const game=fs.readFileSync(path.join(__dirname,'..','game.js'),'utf8');
+const start=game.indexOf('function update(dt,sourceDeltaMs=');
+assert.ok(start>=0,'main update function exists');
+const chunk=game.slice(start,start+9000);
+const bodyUpdate=chunk.indexOf('body.update(dt,SCALE,sourceDeltaMs)');
+const trampoline=chunk.indexOf('updateTrampolines(dt,previousPosition)');
+const terrain=chunk.indexOf('resolveTerrain(dt,previousPosition)');
+assert.ok(bodyUpdate>=0&&trampoline>bodyUpdate&&terrain>trampoline,'spring object is queried after integration but before terrain collision response');
+assert.match(game,/crossesLaunchLine\(prev,now\)/,'trampoline test uses the original segment with no inflated actor radius');
+assert.match(game,/else body\.syncFixedPosition\(\)/,'trampoline-controlled position is synchronized when physics is temporarily disabled');
+console.log('Springboard order: J2ME interaction check precedes terrain response and preserves the source launch-line segment');

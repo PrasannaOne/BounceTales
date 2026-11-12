@@ -79,6 +79,7 @@
     return best;
   }
   function resolveOverlaps(body,polygons,radius,passes=6){
+    passes=Math.max(1,Math.min(8,Math.trunc(Number(passes)||6)));
     let resolved=0;
     for(let pass=0;pass<passes;pass++){
       let best=null;
@@ -134,6 +135,7 @@
     return best;
   }
   function resolveCirclePolygons(body,polygons,dt,passes=6,previous=null){
+    passes=Math.max(1,Math.min(8,Math.trunc(Number(passes)||6)));
     const radius=body.radius;if(!(radius>0)||!Number.isFinite(body.x)||!Number.isFinite(body.y))return 0;
     const start=previous?{x:previous.x,y:previous.y}:{x:body.x,y:body.y};
     let sx=start.x,sy=start.y,ex=body.x,ey=body.y,remaining=Math.max(0,dt),resolved=0;

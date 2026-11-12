@@ -1,0 +1,26 @@
+{
+  "id": "./",
+  "name": "Bounce Tales",
+  "short_name": "Bounce Tales",
+  "description": "An independent browser recreation of Bounce Tales.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111719",
+  "theme_color": "#111719",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/pwa-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/pwa-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

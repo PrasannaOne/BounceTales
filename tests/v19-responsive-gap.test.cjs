@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const css=fs.readFileSync(path.join(__dirname,'..','style.css'),'utf8');
+assert.match(css,/overflow:\s*hidden/);assert.match(css,/overscroll-behavior:\s*none/);
+assert.match(css,/margin-bottom:\s*clamp\(14px,\s*2vh,\s*20px\)/,'canvas is separated from control row on common screens');
+assert.match(css,/width:\s*44px;\s*height:\s*44px;\s*min-height:\s*44px/,'star button stays slightly enlarged inside its reserved row');
+assert.match(css,/\.main-controls\s*\{\s*gap:\s*clamp\(10px,\s*3vw,\s*14px\)/);
+assert.match(css,/@media\s*\(max-height:\s*720px\)/);
+console.log('Responsive layout: no-scroll viewport, thumb spacing, inter-control gaps and enlarged star control verified');

@@ -92,12 +92,14 @@
     const r=new Reader(bytes),magic=r.u32(),version=r.u32();
     if(magic!==0x524c4546)throw new Error('not an RLEF file');
     const objectCount=r.u16();r.u16();const eventCount=r.u16(),objects=[];
-    let terminated=false;
-    while(r.p<r.b.length){
+    let terminated=false,recordGuard=0;
+    while(r.p<r.b.length&&recordGuard++<r.b.length){
+      const recordStart=r.p;
       const cmd=r.i8();
       if(cmd===127){terminated=true;break;}
       const size=r.i16();if(size<0)throw new Error('negative record size');
       const payload=r.bytes(size);objects.push(parsePayload(cmd,payload,objects.length));
+      if(r.p<=recordStart)throw new Error('RLEF parser made no forward progress at '+recordStart);
     }
     if(!terminated)throw new Error('RLEF terminator missing');
     const actualEvents=objects.filter(x=>x.type==='event').length;

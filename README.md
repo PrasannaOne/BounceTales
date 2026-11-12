@@ -1,57 +1,53 @@
-# Bounce Tales · V18 source-parity build
+# Bounce Tales · V19 browser port
 
-V16 establishes a repeatable reverse-engineering workflow around the original Bounce Tales 2.0.3 Java ME JAR. It preserves the V15 browser build as the runtime baseline while separating source modules, tests, tooling and reference documentation.
+An independent HTML5 browser reimplementation of the original Bounce Tales 2.0.3 Java ME game, built from the supplied private Phase 2 reference archive and decoded game resources.
 
-## Repository map
-- `src/`: browser runtime modules (engine, physics, collision, rendering, audio, levels, menus). Existing modules are retained while boundaries are documented.
-- `assets/`: browser-required extracted game assets. The original JAR itself is not included.
-- `reference/`: public, generated metadata only. Do not commit copyrighted decompiled source or the original JAR here.
-- `tools/`: JAR inventory, integrity, RLEF and MIDI catalogue tooling.
-- `tests/`: deterministic Node.js regression checks.
-- `.github/workflows/`: Pages deployment, reference generation and guarded one-time cleanup.
+## Run locally
 
-## Generate a reference pack locally
-Python 3.10+ required. Keep the original JAR in a private folder outside this repository:
+Serve this folder from a local HTTP server or deploy it to a static HTTPS host. The service worker and offline installation require a secure context (`https://` or `localhost`); opening `index.html` directly with `file://` is not supported.
+
+For example, with Python installed:
+
 ```bash
-python tools/build_reference.py /path/to/bounce_tales_2.0.3.jar --output ../BounceTales_Private_Reference
+python -m http.server 8000
 ```
-The output includes resource hashes, class inventory, PNG dimensions, MIDI headers, language resources, RLEF headers and a searchable index. It does not publish raw class files or the JAR.
 
-For readable Java decompilation, obtain CFR from its official release and run:
-```bash
-java -jar cfr.jar /path/to/private-extracted/classes --outputdir ../private-reference/decompiled
-```
-Keep decompiled output private unless you have permission to redistribute it. Obfuscated identifiers are retained alongside proposed semantic labels; labels are hypotheses until verified.
+Then open `http://localhost:8000/`.
 
-## Tests
+## V19 changes
+
+- Keeps the decoded 326-entry sprite atlas, the 1,143 decoded animation command sequences, all 16 parsed level resources, and the original soundtrack resources.
+- Fixes the Level 1 grass springboard trigger ordering: the trampoline segment is checked before the terrain solver can change the incoming vertical velocity. The spring trigger uses the source segment-intersection model, integer Java period/frame division, and source launch-velocity caps.
+- Gives the spring animation a finite watchdog and recovers a disabled player if a damaged or interrupted spring state is encountered.
+- Adds explicit iteration limits to fixed-point square-root fallback, actor/terrain collision passes, and the recursive compound-sprite renderer.
+- Paints the title, chapter book, high-score list, options, instructions, pause and chapter-complete scenes directly into the 240×320 game canvas. The game controls remain outside the canvas.
+- Adds saved chapter progression and per-chapter egg/score/time records through localStorage.
+- Improves mobile touch layout with additional space between the canvas and the control row, thumb-friendly separated controls, a slightly larger `*` button, safe-area handling, simultaneous pointer input, and a no-scroll document viewport. The canvas may shrink on compact displays to preserve the control area.
+- Adds a web app manifest and a service worker that precaches the app shell and game resources for repeat offline use after the first successful online load.
+
+## Controls
+
+- Hold left/right to move.
+- Hold JUMP to jump/bounce.
+- Tap `*` to cycle an unlocked form.
+- Tap the in-game pause control to pause.
+- Keyboard: A/D or arrow keys to move, Space/Enter to jump, Shift/Q to change form, Escape to pause.
+- Standard gamepads are supported where the browser exposes the Gamepad API.
+
+## Regression tests
+
+With Node.js installed, run:
+
 ```bash
 for test in tests/*.cjs; do node "$test" || exit 1; done
 ```
 
-## One-time repo cleanup
-GitHub Actions → **One-time repository cleanup (V16 reset)** → Run workflow. Type exactly `DELETE_REPO_CONTENTS`. It removes tracked files outside `.github/workflows` and preserves all workflow files. This is destructive; create a Git tag or backup branch first.
+The tests cover decoded resource structure, physics and collision modules, the springboard lifecycle and watchdog, all available stage resources, canvas menu wiring, simultaneous pointer-input cleanup and first-tap audio unlock, PWA file references and the responsive no-scroll layout. These are automated code/data regressions, not a full device-lab test or proof of byte-for-byte runtime equivalence to the original Nokia MIDP implementation.
 
-## Accuracy status
-This is a reverse-engineering foundation, not a claim of a complete one-to-one port. The original JAR remains the source of truth. Each translated system should carry source references, confidence and regression tests.
+## Accuracy and known limitations
 
+V19 is a source-driven browser port, not a certified or pixel-identical 1:1 recreation. The main game resources and decoded animation descriptors are retained, and several gameplay systems have been translated from the private decompiled reference. Canvas menus are reconstructed from the available UI resources and source flow; they have not been verified pixel-for-pixel against every original Nokia handset. Some specialized enemy, trigger, score-tally, rendering and timing edge cases still require side-by-side play testing against the original JAR. Browser audio playback also differs from native MIDP audio behavior. Physical Android/iOS testing remains necessary.
 
-## V17 baseline · decoded atlas, animation parity and soundtrack
+## Intellectual property
 
-V17 is the first build that consumes the Phase 2 decoded sprite atlas in the browser runtime. Static sprite IDs 0–325 are drawn from the verified descriptor table in `src/sprite-atlas.json`; `src/sprite-atlas.js` validates all 326 crop rectangles, offsets and PNG slots against the legacy image map before gameplay starts.
-
-The reference fixtures in `reference/` are compared against the original binary RLEF resources. The regression suite verifies all 105 extracted original resources against SHA-256 hashes and proves parity for 16 level resources, 2,240 object headers, 490 polygon records, 5,776 vertices, 4,306 triangles, and 316 animated objects containing 1,143 exact command streams. The event engine executes those parsed source command streams using the recovered millisecond timing semantics.
-
-V17 also wires the original title, act, boss, bonus, lose and win music resources to the existing browser-rendered audio tracks, adds a music setting, removes title-page build/version clutter, and locks the page to a no-scroll viewport.
-
-**Accuracy boundary:** V17 is materially closer to the supplied source data, but it is not honestly describable as a complete one-to-one recreation yet. Remaining gaps include the full fixed-point multi-contact collision solver and exact rounding, some enemy/friend/boss and event edge cases, complete original water/particle behaviour, pixel-identical camera/parallax and MIDP menu/UI rendering, and device-level comparison against the original Java ME game. A passing parser/regression suite establishes data parity for the tested structures, not full gameplay equivalence.
-
-
-## V18 · source-driven physics, enemy and event pass
-
-V18 preserves the verified V17 atlas, original binary resources, audio routes and fixed-screen shell. The player movement implementation keeps the original distinction between 16.16 actor/world transforms and Java-float velocity/acceleration state. The collision solver now uses signed 16.16/BigInt edge and endpoint contact math, the original bounded 16-contact selection, source restitution, gravity/friction selection and torque smoothing. Transformed geometry retains its prior frame vertices so moving contacts can supply surface-relative motion. The browser scheduler runs at a nominal 60 Hz with integer 16/17 ms simulation deltas and render interpolation; that is a deliberate browser adaptation, not the original JAR's variable wall-clock update loop.
-
-Enemy updates now use LP32 path movement for the four source enemy classes, including the previously stationary Bumper, corrected Stalker target extension and source-facing direction. The existing event interpreter handles opcodes 0–32 and the stage-scan test checks all commands in the 15 selectable resources. Water force interpolation, cannon, trampoline, progression, music and effect hooks remain wired. The special-form button is slightly larger within its existing reserved row, with a 5–8 px separation between the viewport and controls; the document and settings shell remain no-scroll.
-
-Validation currently includes 29 Node.js regression scripts, including collision response/moving-surface cases, enemy path/facing, stage opcode coverage, sprite-atlas parity, 15-stage boot/play/pause smoke and all-level terrain-spawn regression. Passing tests establish the tested rules and data structures, not full end-to-end equivalence on original hardware.
-
-**Accuracy boundary:** V18 is a materially closer source-driven port, but it is not yet honestly describable as a completely verified 1:1 recreation. The title, chapter-book, pause and result scenes still use HTML overlays rather than a pixel-identical translation of the MIDP menu renderer; particle/splash/transformation visuals are reconstructed effects; some specialized enemy interactions and object-state branches need direct side-by-side testing; and the browser audio path is not native MIDP MIDI playback. Real-device browser testing and live comparison with the original 2.0.3 JAR remain outstanding.
+The original Bounce Tales sprites, illustrations, audio, fonts, levels, resource data and related game materials are not relicensed by this project. They remain the intellectual property of their respective owners, including Nokia and/or Rovio as applicable. This project is independent and is not affiliated with, sponsored by, or endorsed by Nokia or Rovio. See [`LICENSE`](LICENSE) for the scope of the MIT license on the original reimplementation code only.

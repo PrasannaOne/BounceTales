@@ -9,7 +9,7 @@
   const i32=n=>Number(n)|0;
   const B=n=>BigInt(n|0);
   const sqrt=n=>FP?FP.sqrtBigInt(n):sqrtFallback(n);
-  function sqrtFallback(n){if(n<0n)throw new RangeError('sqrt');if(n<2n)return n;let x=n,y=(x+1n)>>1n;while(y<x){x=y;y=(x+n/x)>>1n;}return x;}
+  function sqrtFallback(n){if(n<0n)throw new RangeError('sqrt');if(n<2n)return n;let x=n,y=(x+1n)>>1n;const limit=Math.min(512,n.toString(2).length*2+8);for(let i=0;i<limit&&y<x;i++){x=y;y=(x+n/x)>>1n;}return x;}
   const wrap=(n)=>Number(BigInt.asIntN(32,BigInt(n)))|0;
   const toFixed=value=>FP?FP.toFixed16(value):wrap(Math.trunc(value*65536));
   const fromFixed=value=>(value|0)/65536;
@@ -159,6 +159,7 @@
 
   function resolve(body,polygons,dt,previous,maxPasses=8){
     if(!body||!Array.isArray(polygons)||!previous)return {contacts:0,iterations:0};
+    maxPasses=Math.max(1,Math.min(8,Math.trunc(Number(maxPasses)||8)));
     body.x16=Number.isInteger(body.x16)?body.x16:toFixed(body.x);
     body.y16=Number.isInteger(body.y16)?body.y16:toFixed(body.y);
     let startX=toFixed(previous.x),startY=toFixed(previous.y),contacts=0,iterations=0;

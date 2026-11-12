@@ -33,9 +33,11 @@ let spriteAnimations=new Map(),cameraSnap=false,playerDeathTimer=0;
 let lastTime=0,cameraX=0,cameraY=0,cameraSpring=null,unlockedForme=0,toastTimer=0,toastText='';
 const simulationClock=new BounceGameTiming.FixedStepClock();
 let renderAlpha=0;
+let canvasMenuHits=[];
+let canvasMenuPointer=null,menuFocusIndex=0;
 let fpsMode=localStorage.getItem('bounce-fps-mode')||'auto',showFps=localStorage.getItem('bounce-show-fps')==='true',fpsFrames=0,fpsStamp=0,displayFps=0,lastRenderAt=0;
 if(!['auto','30','60'].includes(fpsMode))fpsMode='auto';
-const S={play:'play',title:'title',select:'select',pause:'pause',complete:'complete',guide:'guide'};
+const S={play:'play',title:'title',select:'select',pause:'pause',complete:'complete',guide:'guide',scores:'scores',options:'options'};
 const COVER_IDS=[359,363,364,365,328,366,367,368,369,329,370,360,361,362,330];
 const LEVEL_TEXT_INDICES=[20,24,25,26,32,27,28,29,30,33,31,21,22,23,34];
 const BONUS_REQUIREMENTS={4:60,9:200,14:400};
@@ -52,7 +54,7 @@ function imgFor(index){
   const im=new Image();im.src='assets/original/'+atlases[index];loadedImages.set(index,im);return im;
 }
 function drawImageMap(id,x,y,seen=new Set(),frame=0,targetCtx=ctx){
-  if(seen.has(id))return;
+  if(!Number.isInteger(id)||id<0||seen.has(id)||seen.size>=32||!imageMaps?.maps)return;
   seen.add(id);
   // IDs 0–325 use the decoded o.java type-2 descriptor table directly.
   // The catalogue was validated against all 326 legacy image-map records at boot.
@@ -149,7 +151,7 @@ function buildRuntime(parsed){
     }else if(o.type==='water'){
       const zone=BounceOriginalWater.createZone(o,transformObject(o));waters.push(zone);renderObjects.push({type:'water',object:o,water:zone});
     }else if(o.type==='trampoline'){
-      const p=getWorldPos(o);const t={object:o,imageId:BounceOriginalTrampoline.imageForLevel(currentLevel.index||0),basePush:o.basePush,x:p.x,y:p.y,active:false,progress:0,period:0,animFrame:0,calcPush:0,jumpFinished:false};trampolines.push(t);renderObjects.push({type:'trampoline',trampoline:t});
+      const p=getWorldPos(o);const t={object:o,imageId:BounceOriginalTrampoline.imageForLevel(currentLevel.index||0),basePush:o.basePush,x:p.x,y:p.y,active:false,progress:0,period:0,frameStep:0,elapsedMs:0,animFrame:0,calcPush:0,jumpFinished:false};trampolines.push(t);renderObjects.push({type:'trampoline',trampoline:t});
     }else if(o.type==='cannon'){
       const p=getWorldPos(o);const c={object:o,x:p.x,y:p.y,power:o.power|0,animCountdown:0,launched:false};cannons.push(c);renderObjects.push({type:'cannon',cannon:c,object:o,point:p});
     }else if(o.type==='friend'){
@@ -238,21 +240,34 @@ function updateEnemies(dt){
   for(const e of enemies){e.prevX=e.x;e.prevY=e.y;BounceOriginalEnemies.update(e,body,dt);}
 }
 function updateTrampolines(dt,previousPosition){
+  if(!body)return;
   for(const t of trampolines){
-    const m=world.get(t.object.id)||t.object.matrix,p=BounceOriginalWater.worldPoint(m,0,0);t.x=p.x;t.y=p.y;
+    const m=world.get(t.object.id)||t.object.matrix;
+    const p=BounceOriginalWater.worldPoint(m,0,0);t.x=p.x;t.y=p.y;
     if((t.object.runtimeFlags??t.object.flags??0)&0x20)continue;
     if(t.active){BounceOriginalTrampoline.update(t,body,imageMaps,dt);continue;}
-    if(body.vy>=0)continue;
+    if(!body.enabled||body.vy>=0)continue;
+
+    // c.a(j), case 8 in the supplied 2.0.3 c.class bytecode, tests the
+    // previous-to-current actor sweep against the trampoline's local launch
+    // segment (x=-70..70, y=95). Run this BEFORE terrain response: V18 ran it
+    // after resolveTerrain(), which could bounce the actor off nearby grass
+    // first and reverse vy, suppressing the spring activation entirely.
     const prev=BounceOriginalWater.inversePoint(m,previousPosition.x,previousPosition.y);
     const now=BounceOriginalWater.inversePoint(m,body.x,body.y);
-    const dy=now.y-prev.y;
-    if(Math.abs(dy)<1e-9)continue;
-    const fraction=(95-prev.y)/dy;
-    if(fraction<0||fraction>1)continue;
-    const hitX=prev.x+(now.x-prev.x)*fraction;
-    if(hitX>=-70&&hitX<=70)BounceOriginalTrampoline.begin(t,body,imageMaps);
+    if(BounceOriginalTrampoline.crossesLaunchLine(prev,now)&&
+       BounceOriginalTrampoline.begin(t,body,imageMaps))break;
+  }
+  // The original trampoline animation disables Bounce temporarily. Never let
+  // a malformed resource or interrupted state keep the actor disabled forever.
+  if(!body.enabled&&!cannonState&&playerDeathTimer<=0&&victoryTimer<=0&&!trampolines.some(t=>t.active)){
+    body.enabled=true;
+    if(!Number.isFinite(body.vy)||body.vy===0)body.vy=180;
+    body.grounded=false;body.airTime=0;body.skipAccelStretch=true;
+    toast('SPRING RESET');
   }
 }
+
 function cannonAngle(c){
   const m=world.get(c.object.id)||c.object.matrix;
   let a=Math.atan2(m[3],m[0]);
@@ -362,8 +377,12 @@ function update(dt,sourceDeltaMs=Math.round(dt*1000)){
   const waterRippleHeads=new Map(waters.map(zone=>[zone,zone.ripples[zone.ripples.length-1]||null]));
   body.update(dt,SCALE,sourceDeltaMs);
   if(body.enabled)updatePlayerEyes(dt);
-  resolveTerrain(dt,previousPosition);
-  if(!wasGrounded&&body.grounded){
+  // Preserve J2ME object traversal ordering: trampoline (level object type 12)
+  // is tested before the polygon solver can reflect the incoming velocity.
+  updateTrampolines(dt,previousPosition);
+  if(body.enabled)resolveTerrain(dt,previousPosition);
+  else body.syncFixedPosition();
+  if(body.enabled&&!wasGrounded&&body.grounded){
     const impact=Math.max(.25,Math.min(2.2,Math.abs(body.lastVy||body.vy)/180));
     particles.emitLanding(body.x,body.y-body.radius,impact);
   }
@@ -376,7 +395,6 @@ function update(dt,sourceDeltaMs=Math.round(dt*1000)){
       particles.emitSplash(point.x,point.y,Math.max(.3,Math.min(2,head.amplitude/8)));
     }
   }
-  updateTrampolines(dt,previousPosition);
   checkCannonContacts(previousPosition);
   updateEnemies(dt);
   collectEggs();
@@ -657,17 +675,128 @@ function drawOriginalChapterBook(){
   ctx.fillStyle='#fbf7e3';ctx.fillRect(5,20,230,279);
   ctx.fillStyle='#000';ctx.fillRect(118,20,4,279);
 }
-function draw(){
-  ctx.clearRect(0,0,W,H);
-  if(mode!==S.play){
-    if(mode===S.select){drawOriginalChapterBook();drawImageMap(COVER_IDS[selectedLevelIndex],120,160);return;}
-    const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#203c54');bg.addColorStop(1,'#111b24');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-    drawImageMap(1,120,145);return;
-  }
+function menuRoundRect(x,y,w,h,r=5){
+  ctx.beginPath();
+  if(typeof ctx.roundRect==='function')ctx.roundRect(x,y,w,h,r);
+  else ctx.rect(x,y,w,h);
+}
+function menuText(text,x,y,size=8,color='#f7eed9',align='center'){
+  ctx.save();ctx.font=`bold ${size}px "Courier New", monospace`;
+  ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillStyle=color;
+  ctx.shadowColor='#07100d';ctx.shadowBlur=2;ctx.fillText(String(text),x,y,214);ctx.restore();
+}
+function canvasMenuButton(label,x,y,w,h,action,kind='gold',disabled=false){
+  const fills={gold:'#72512b',green:'#2c4035',dark:'#202b27',cream:'#e7dfc7'};
+  const borders={gold:'#d2b477',green:'#81977d',dark:'#718075',cream:'#a18b5c'};
+  ctx.save();menuRoundRect(x,y,w,h,4);ctx.fillStyle=disabled?'#343a34':fills[kind];ctx.fill();
+  ctx.strokeStyle=disabled?'#61665c':borders[kind];ctx.lineWidth=1;ctx.stroke();
+  if(!disabled&&canvasMenuHits.length===menuFocusIndex){ctx.strokeStyle='#f8dda0';ctx.lineWidth=2;ctx.stroke();}
+  menuText(label,x+w/2,y+h/2,8,disabled?'#969b8d':'#fff2d8');ctx.restore();
+  if(!disabled)canvasMenuHits.push({x,y,w,h,action});
+}
+function drawCanvasTitle(){
+  // Gentle source-scene parallax drift keeps the title scene alive without
+  // changing gameplay state; startLevel resets the gameplay camera.
+  cameraX=Math.sin(Date.now()/5200)*220;
+  if(imageMaps)drawOriginalParallax();
+  else{const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#4f94c9');bg.addColorStop(1,'#173a35');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);}
+  ctx.fillStyle='rgba(4,14,13,.54)';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#17241e';menuRoundRect(15,18,210,284,7);ctx.fill();
+  ctx.strokeStyle='#c5a66c';ctx.lineWidth=1;ctx.stroke();
+  if(imageMaps)drawImageMap(1,120,70);else menuText('BOUNCE TALES',120,77,17,'#f4d995');
+  canvasMenuButton('CONTINUE',29,132,182,24,'continue','gold');
+  canvasMenuButton('CHAPTER BOOK',29,162,182,24,'chapters','green');
+  canvasMenuButton('HIGH SCORES',29,192,182,24,'scores','dark');
+  canvasMenuButton('OPTIONS',29,222,182,24,'options','green');
+  canvasMenuButton('INSTRUCTIONS',29,252,182,24,'guide','dark');
+  canvasMenuButton((musicController?.enabled??true)?'SOUND  ON':'SOUND  OFF',75,282,90,17,'sound','dark');
+  menuText('TAP A SELECTION',120,293,6,'#9eac9e');
+}
+function drawCanvasChapterBook(){
+  drawOriginalChapterBook();
+  const record=progress.records[selectedLevelIndex]||{eggs:0,score:0,clearTime:0};
+  const isOpen=BounceOriginalProgression.isUnlocked(progress,selectedLevelIndex);
+  const group=['GREEN HILL','SPOOKY ZONE','MACHINE WORLD'][BounceOriginalProgression.chapterGroup(selectedLevelIndex)];
+  menuText('CHAPTER BOOK',120,34,9,'#65411c');
+  menuText('‹',20,56,18,'#69471f');canvasMenuHits.push({x:4,y:39,w:34,h:34,action:'prev'});
+  menuText(String(selectedLevelIndex+1).padStart(2,'0')+' / 15',120,55,8,'#69471f');
+  menuText('›',220,56,18,'#69471f');canvasMenuHits.push({x:202,y:39,w:34,h:34,action:'next'});
+  drawImageMap(COVER_IDS[selectedLevelIndex],120,137);
+  menuText(getLocalizedLevelName(selectedLevelIndex).toUpperCase(),120,211,9,'#3d301e');
+  menuText((selectedLevelIndex===4||selectedLevelIndex===9||selectedLevelIndex===14?'BONUS · ':'')+group,120,225,6,'#775b32');
+  const time=record.clearTime>0&&record.clearTime<9999?formatTime(record.clearTime):'--:--';
+  menuText((isOpen?'BEST ':'LOCKED · ')+record.eggs+'/30 EGGS',120,239,7,isOpen?'#4f492e':'#8d402e');
+  menuText('SCORE '+(record.score||0)+'   TIME '+time,120,251,6,'#66583c');
+  canvasMenuButton(isOpen?'PLAY CHAPTER':'CHAPTER LOCKED',24,266,192,22,'play','gold',!isOpen);
+  canvasMenuButton('MAIN MENU',55,293,130,18,'title','dark');
+}
+function drawCanvasPause(){
+  ctx.fillStyle='rgba(2,8,8,.67)';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#18251f';menuRoundRect(22,75,196,174,7);ctx.fill();
+  ctx.strokeStyle='#d1b477';ctx.stroke();
+  menuText('GAME PAUSED',120,98,12,'#f2d693');
+  menuText(getLocalizedLevelName(currentLevel.index).toUpperCase(),120,116,6,'#bbc5b6');
+  canvasMenuButton('RESUME',38,128,164,22,'resume','gold');
+  canvasMenuButton('RESTART LEVEL',38,155,164,22,'restart','green');
+  canvasMenuButton('MAIN MENU',38,182,164,22,'title','dark');
+  canvasMenuButton((musicController?.enabled??true)?'SOUND ON':'SOUND OFF',73,211,94,18,'sound','dark');
+}
+function drawCanvasComplete(){
+  ctx.fillStyle='rgba(2,8,8,.64)';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#18251f';menuRoundRect(15,61,210,202,7);ctx.fill();
+  ctx.strokeStyle='#d1b477';ctx.stroke();
+  menuText('CHAPTER COMPLETE',120,83,10,'#f2d693');
+  menuText(getLocalizedLevelName(currentLevel.index).toUpperCase(),120,102,7,'#ece4cd');
+  ctx.strokeStyle='#6b775f';ctx.beginPath();ctx.moveTo(35,117);ctx.lineTo(205,117);ctx.stroke();
+  menuText('EGGS COLLECTED',120,136,7,'#b8c3b5');
+  menuText(`${completionResult?.eggs??collected} / 30`,120,157,20,'#f5d78d');
+  menuText(`SCORE  ${completionResult?.score??0}`,120,180,9,'#f0e8d7');
+  menuText(`TIME  ${formatTime(completionResult?.seconds??Math.floor(elapsed))}`,120,196,8,'#c1c9ba');
+  canvasMenuButton(completionResult?.nextLevel>=0&&BounceOriginalProgression.isUnlocked(progress,completionResult.nextLevel)?'NEXT CHAPTER':'CHAPTER BOOK',26,218,188,20,'next','gold');
+  canvasMenuButton('CHAPTER SELECTION',48,242,144,16,'chapters','dark');
+}
+function drawCanvasGuide(){
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#193d4a');bg.addColorStop(1,'#14241f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#18251f';menuRoundRect(15,43,210,235,7);ctx.fill();ctx.strokeStyle='#c5a66c';ctx.stroke();
+  menuText("BOUNCE'S FIELD GUIDE",120,66,9,'#f2d693');
+  menuText('MOVE',35,100,8,'#f2d693','left');menuText('Hold ◀ / ▶',35,116,8,'#ece4cd','left');
+  menuText('JUMP',35,145,8,'#f2d693','left');menuText('Hold JUMP to bounce',35,161,8,'#ece4cd','left');
+  menuText('CHANGE FORM',35,190,8,'#f2d693','left');menuText('* when a form is unlocked',35,206,7,'#ece4cd','left');
+  menuText('Find eggs and checkpoints.',120,235,7,'#bbc7b9');
+  canvasMenuButton('BACK TO MENU',48,253,144,21,'title','gold');
+}
+function drawCanvasScores(){
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#24434b');bg.addColorStop(1,'#17251f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#18251f';menuRoundRect(14,24,212,270,7);ctx.fill();ctx.strokeStyle='#c5a66c';ctx.stroke();
+  menuText('HIGH SCORES',120,47,12,'#f2d693');
+  const rows=progress.records.map((r,i)=>({...r,index:i,name:getLocalizedLevelName(i)}))
+    .filter(r=>(r.score||0)>0||(r.eggs||0)>0||(r.clearTime||9999)<9999)
+    .sort((a,b)=>(b.score||0)-(a.score||0)||(b.eggs||0)-(a.eggs||0)||(a.clearTime||9999)-(b.clearTime||9999))
+    .slice(0,8);
+  if(!rows.length)menuText('NO RECORDS YET',120,132,9,'#d7d0bb');
+  rows.forEach((r,i)=>{
+    const y=77+i*23;
+    menuText(String(i+1).padStart(2,'0'),27,y,7,'#d3b77e','left');
+    menuText(r.name.toUpperCase().slice(0,18),45,y,6,'#f1e8d1','left');
+    menuText(String(r.score||0),210,y,7,'#e6c77f','right');
+    ctx.strokeStyle='#6a735e';ctx.beginPath();ctx.moveTo(25,y+10);ctx.lineTo(215,y+10);ctx.stroke();
+  });
+  menuText('BEST SCORE BY CHAPTER',120,265,6,'#aebbaa');
+  canvasMenuButton('BACK TO MENU',48,276,144,18,'title','gold');
+}
+function drawCanvasOptions(){
+  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#29424a');bg.addColorStop(1,'#17251f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#18251f';menuRoundRect(15,46,210,226,7);ctx.fill();ctx.strokeStyle='#c5a66c';ctx.stroke();
+  menuText('OPTIONS',120,70,12,'#f2d693');
+  canvasMenuButton((musicController?.enabled??true)?'SOUND  ON':'SOUND  OFF',32,104,176,27,'sound','green');
+  canvasMenuButton('FRAME PACING  '+fpsMode.toUpperCase(),32,141,176,27,'fps','dark');
+  menuText('AUTO MATCHES THE DISPLAY',120,183,6,'#b9c4b6');
+  menuText('GAME SIMULATION STAYS FIXED',120,196,6,'#b9c4b6');
+  canvasMenuButton('BACK TO MENU',48,226,144,22,'title','gold');
+}
+function drawGameplayScene(){
   drawOriginalParallax();
-  // Original GameObject depth sorting draws larger zCoord values first, leaving
-  // lower zCoord actors in front. Read runtime flags so event opcode 29 can
-  // change an object's layer during play.
+  // Match original GameObject depth order while respecting runtime flag changes.
   const orderedObjects=renderObjects.slice().sort((a,b)=>{
     const af=a.object?.runtimeFlags??a.object?.flags??0,bf=b.object?.runtimeFlags??b.object?.flags??0;
     return (bf&31)-(af&31);
@@ -685,9 +814,8 @@ function draw(){
       if(!item.enemy.dead)drawEnemy(item.enemy);
     }else if(item.type==='trampoline'){
       const t=item.trampoline,p=screenPoint(t);drawImageMap(t.imageId,p.x,p.y,new Set(),t.active?t.animFrame:0);
-    }else if(item.type==='water'){
-      drawWater(item.water);
-    }else if(item.type==='friend'){
+    }else if(item.type==='water')drawWater(item.water);
+    else if(item.type==='friend'){
       const p=screenPoint(getWorldPos(item.object));ctx.fillStyle='#ED1C24';ctx.beginPath();ctx.arc(p.x,p.y,Math.round(20*SCALE),0,Math.PI*2);ctx.fill();
     }else if(item.type==='cannon'){
       const p=screenPoint(getWorldPos(item.object)),a=cannonState?.cannon===item.cannon?cannonState.angle:cannonAngle(item.cannon);
@@ -695,10 +823,62 @@ function draw(){
     }
   }
   for(const e of bonusEggs){if(!e.collected){const p=screenPoint(e);drawImageMap(208,p.x,p.y);}}
-  particles.draw(ctx,screenPoint,SCALE);
-  drawFieldMessage();
+  particles.draw(ctx,screenPoint,SCALE);drawFieldMessage();
   if(toastTimer>0){ctx.fillStyle='#06121dcc';ctx.fillRect(34,276,172,22);ctx.fillStyle='#fff';ctx.font='9px system-ui';ctx.textAlign='center';ctx.fillText(toastText,120,290);}
 }
+function draw(){
+  canvasMenuHits=[];ctx.clearRect(0,0,W,H);
+  if(mode===S.play){drawGameplayScene();return;}
+  if(mode===S.pause){drawGameplayScene();drawCanvasPause();return;}
+  if(mode===S.complete){drawGameplayScene();drawCanvasComplete();return;}
+  if(mode===S.select){drawCanvasChapterBook();return;}
+  if(mode===S.guide){drawCanvasGuide();return;}
+  if(mode===S.scores){drawCanvasScores();return;}
+  if(mode===S.options){drawCanvasOptions();return;}
+  drawCanvasTitle();
+}
+function handleCanvasMenuAction(action){
+  if(action==='continue'){
+    const idx=progress.selected||0;
+    if(currentLevel.index===idx)startLevel();
+    else loadLevel(idx,{start:true}).catch(error=>{console.error(error);toast('Could not load saved chapter');});
+  }else if(action==='chapters')showChapterBook();
+  else if(action==='scores'){menuFocusIndex=0;mode=S.scores;hideGameScenes();input.clear();syncPauseButton();}
+  else if(action==='guide')openGuide();
+  else if(action==='options'){menuFocusIndex=0;mode=S.options;hideGameScenes();input.clear();syncPauseButton();}
+  else if(action==='sound')musicController?.setEnabled(!(musicController?.enabled??true));
+  else if(action==='fps'){const order=['auto','60','30'];const next=order[(order.indexOf(fpsMode)+1)%order.length];applyFpsMode(next);}
+  else if(action==='prev')changeBookPage(-1);
+  else if(action==='next'){
+    if(mode===S.select)changeBookPage(1);
+    else if(mode===S.complete)advanceAfterChapter();
+  }else if(action==='play')startSelectedChapter();
+  else if(action==='title')showTitleMenu();
+  else if(action==='resume')resumeGame();
+  else if(action==='restart')startLevel();
+}
+function bindCanvasMenu(){
+  if(!canvas)return;
+  canvas.style.touchAction='none';
+  canvas.addEventListener('pointerdown',e=>{
+    if(mode===S.play)return;
+    e.preventDefault();
+    const r=canvas.getBoundingClientRect();
+    canvasMenuPointer={id:e.pointerId,x:(e.clientX-r.left)*W/Math.max(1,r.width),y:(e.clientY-r.top)*H/Math.max(1,r.height)};
+    try{canvas.setPointerCapture(e.pointerId);}catch{}
+  },{passive:false});
+  canvas.addEventListener('pointerup',e=>{
+    if(!canvasMenuPointer||canvasMenuPointer.id!==e.pointerId)return;
+    const start=canvasMenuPointer;canvasMenuPointer=null;
+    const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*W/Math.max(1,r.width),y=(e.clientY-r.top)*H/Math.max(1,r.height);
+    if(mode===S.select&&Math.abs(x-start.x)>24&&Math.abs(x-start.x)>Math.abs(y-start.y)*1.25){changeBookPage(x<start.x?1:-1);return;}
+    const hit=canvasMenuHits.slice().reverse().find(h=>x>=h.x&&x<=h.x+h.w&&y>=h.y&&y<=h.y+h.h);
+    if(hit){menuFocusIndex=canvasMenuHits.indexOf(hit);handleCanvasMenuAction(hit.action);}
+  });
+  const clear=()=>{canvasMenuPointer=null;};
+  canvas.addEventListener('pointercancel',clear);canvas.addEventListener('lostpointercapture',clear);
+}
+
 function refreshHud(){
   const total=eggs.length+enemies.length;
   status.textContent=(currentLevel.name.toUpperCase())+'  ·  '+collected+'/'+total+' EGGS';
@@ -716,7 +896,7 @@ function hideGameScenes(){
   syncSceneChrome();syncPauseButton();
 }
 
-function showTitleMenu(){mode=S.title;hideGameScenes();document.getElementById('menu').hidden=false;input.clear();musicController?.playTitle();updateMenuSummary();syncPauseButton();}
+function showTitleMenu(){menuFocusIndex=0;mode=S.title;hideGameScenes();document.getElementById('menu').hidden=false;input.clear();musicController?.playTitle();updateMenuSummary();syncPauseButton();}
 function renderLevelCover(index){
   const cover=document.getElementById('level-cover'),coverCtx=cover?.getContext('2d');if(!coverCtx||!imageMaps)return;
   coverCtx.clearRect(0,0,cover.width,cover.height);
@@ -745,16 +925,16 @@ function updateLevelBook(){
   renderLevelCover(selectedLevelIndex);
 }
 function formatTime(seconds){const mins=Math.floor(seconds/60),secs=seconds%60;return String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0');}
-function showChapterBook(){mode=S.select;hideGameScenes();document.getElementById('level-screen').hidden=false;input.clear();updateLevelBook();syncPauseButton();}
+function showChapterBook(){menuFocusIndex=2;mode=S.select;hideGameScenes();document.getElementById('level-screen').hidden=false;input.clear();updateLevelBook();syncPauseButton();}
 function changeBookPage(delta){selectedLevelIndex=clamp(selectedLevelIndex+delta,0,14);updateLevelBook();}
-function openGuide(){mode=S.guide;hideGameScenes();document.getElementById('guide-layer').hidden=false;input.clear();syncPauseButton();}
+function openGuide(){menuFocusIndex=0;mode=S.guide;hideGameScenes();document.getElementById('guide-layer').hidden=false;input.clear();syncPauseButton();}
 function startLevel(){
   mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;simulationClock.reset();renderAlpha=0;musicController?.playLevel(currentLevel.index);
   if(eventEngine){eventEngine.reset();world=eventEngine.world;refreshGeometryWorld(world);}
   spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;cameraSnap=false;
   body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce';body.rotation=0;body.unlockedForme=progress.unlockedForme;body.forme=0;body.slopeCosAbs=1;body.eyeFrame=0;body.idleAnimStartTimer=3000;
   eggs.forEach(e=>e.collected=false);bonusEggs=[];collected=0;elapsed=0;checkpointPosition={x:spawn.x,y:spawn.y};
-  trampolines.forEach(t=>{t.active=false;t.progress=0;t.period=0;t.animFrame=0;t.jumpFinished=false;});
+  trampolines.forEach(t=>BounceOriginalTrampoline.reset(t));
   enemies.forEach(e=>{e.x=e.initialX;e.y=e.initialY;BounceOriginalEnemies.reset(e);});
   waters.forEach(w=>{w.ripples=[];w.bubbles=[];w.ambientTimer=0;w.swimTimer=0;});particles.clear();playerDeathTimer=0;deathAnimationElapsed=0;victoryTimer=0;completionResult=null;cameraX=body.x;cameraY=body.y+96;cameraSpring?.snap(cameraX,cameraY);refreshHud();
   progress.selected=currentLevel.index;BounceOriginalProgression.save(localStorage,progress);
@@ -787,7 +967,7 @@ function completeCurrentChapter(){
   if(progress.unlockedForme>previousForms)toast('NEW FORM UNLOCKED');
   if(completionResult.nextLevel>=0&&BounceOriginalProgression.isUnlocked(progress,completionResult.nextLevel))progress.selected=completionResult.nextLevel;else progress.selected=currentLevel.index;
   BounceOriginalProgression.save(localStorage,progress);
-  mode=S.complete;hideGameScenes();document.getElementById('complete-layer').hidden=false;input.clear();updateMenuSummary();syncPauseButton();
+  menuFocusIndex=0;mode=S.complete;hideGameScenes();document.getElementById('complete-layer').hidden=false;input.clear();updateMenuSummary();syncPauseButton();
 }
 function startSelectedChapter(){
   const chosen=selectedLevelIndex;
@@ -796,21 +976,31 @@ function startSelectedChapter(){
   loadLevel(chosen,{start:true}).catch(error=>{console.error(error);toast('Could not load this chapter');});
 }
 
-function pauseGame(){if(mode===S.play){mode=S.pause;simulationClock.reset();renderAlpha=0;hideGameScenes();document.getElementById('pause-layer').hidden=false;input.clear();syncPauseButton();}}
+function pauseGame(){if(mode===S.play){menuFocusIndex=0;mode=S.pause;simulationClock.reset();renderAlpha=0;hideGameScenes();document.getElementById('pause-layer').hidden=false;input.clear();syncPauseButton();}}
 function resumeGame(){if(mode===S.pause){mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;simulationClock.reset();renderAlpha=0;}}
 function cycleForme(){
   if(mode!==S.play)return;const before=body.forme;body.cycleForme();
   if(body.forme===before)toast('Other forms unlock later');else{particles.emitTransform(body.x,body.y,before,body.forme);toast('Form '+(body.forme+1));}
   refreshHud();
 }
+function moveCanvasMenuFocus(delta){
+  if(!canvasMenuHits.length)return;
+  menuFocusIndex=(menuFocusIndex+delta+canvasMenuHits.length)%canvasMenuHits.length;
+}
+function activateCanvasMenuFocus(){
+  // Refresh the hit map synchronously so a key/gamepad press immediately
+  // after a scene transition cannot activate stale menu coordinates.
+  draw();
+  const hit=canvasMenuHits[menuFocusIndex];if(hit)handleCanvasMenuAction(hit.action);
+}
 function onEdge(id){
   window.dispatchEvent(new CustomEvent('bouncetales:original-key',{detail:{id}}));
   if(mode===S.play){if(id===5)pauseGame();else if(id===20)cycleForme();else if(id===7&&cannonState)fireCannon();}
-  else if(mode===S.title){if(id===7||id===1)startLevel();}
-  else if(mode===S.select){if(id===3)changeBookPage(-1);else if(id===4)changeBookPage(1);else if(id===7||id===1)startSelectedChapter();else if(id===5||id===6)showTitleMenu();}
-  else if(mode===S.pause){if(id===7||id===1||id===5)resumeGame();else if(id===3||id===4||id===6)showChapterBook();}
-  else if(mode===S.complete){if(id===7||id===1)advanceAfterChapter();else if(id===5||id===6)showChapterBook();}
-  else if(mode===S.guide){if(id===7||id===1||id===5||id===6)showTitleMenu();}
+  else if(mode===S.title){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6){}else if(id===3||id===4)showChapterBook();}
+  else if(mode===S.select){if(id===3)changeBookPage(-1);else if(id===4)changeBookPage(1);else if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6)showTitleMenu();}
+  else if(mode===S.pause){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6)resumeGame();}
+  else if(mode===S.complete){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6)showChapterBook();}
+  else if(mode===S.guide||mode===S.scores||mode===S.options){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6)showTitleMenu();}
 }
 function advanceAfterChapter(){
   const next=completionResult?.nextLevel;
@@ -989,7 +1179,7 @@ async function boot(){
     if(decodedAtlas.png_images.some((entry,index)=>entry.png!==atlases[index]))throw new Error('Sprite atlas PNG slot order does not match the original image archive');
     languageStrings=BounceEventEngine.parseLanguage(new Uint8Array(await langResp.arrayBuffer()));
     selectedLevelIndex=progress.selected||0;if(!BounceOriginalProgression.isUnlocked(progress,selectedLevelIndex))selectedLevelIndex=0;unlockedForme=progress.unlockedForme;
-    await loadLevel(selectedLevelIndex);bindInputs();bindSettings();showTitleMenu();requestAnimationFrame(loop);
+    await loadLevel(selectedLevelIndex);bindInputs();bindCanvasMenu();bindSettings();showTitleMenu();requestAnimationFrame(loop);
   }catch(error){
     hideGameScenes();document.getElementById('menu').hidden=false;const summary=document.getElementById('save-summary');if(summary)summary.textContent='Could not load original game resources: '+error.message;
     status.textContent='RESOURCE LOAD ERROR';console.error(error);

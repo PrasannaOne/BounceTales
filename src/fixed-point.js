@@ -22,7 +22,9 @@
     if(value<0n)throw new RangeError('square root of negative integer');
     if(value<2n)return value;
     let x=value,y=(x+1n)>>1n;
-    while(y<x){x=y;y=(x+value/x)>>1n;}
+    const bitLength=value.toString(2).length;
+    const iterationLimit=Math.min(512,bitLength*2+8);
+    for(let i=0;i<iterationLimit&&y<x;i++){x=y;y=(x+value/x)>>1n;}
     return x;
   };
   const length16=(x,y)=>Number(sqrtBigInt(BigInt(x|0)*BigInt(x|0)+BigInt(y|0)*BigInt(y|0)));
