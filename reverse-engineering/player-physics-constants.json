@@ -1,0 +1,56 @@
+{
+  "source_class": "c",
+  "mode_index": "instance field c.d, cycled by c.f() through 0..2; actual form names are not visible in obfuscated bytecode",
+  "static_constants_by_original_obfuscated_field": {
+    "b:[F": [
+      0.6,
+      0.3,
+      0.6
+    ],
+    "c:[F": [
+      0.1,
+      0.1,
+      0.1
+    ],
+    "d:[F": [
+      "cos(0.9599310755729675 rad)",
+      "cos(0.9599310755729675 rad)",
+      "cos(0.9599310755729675 rad)"
+    ],
+    "a:[I": [
+      20,
+      20,
+      20
+    ],
+    "a:[F": [
+      1.0,
+      1.4,
+      0.5
+    ],
+    "e:[F": [
+      500.0,
+      350.0,
+      312.5
+    ],
+    "f:[F": [
+      280.0,
+      350.0,
+      150.0
+    ],
+    "g:[F": [
+      1.5,
+      2.5,
+      1.2
+    ],
+    "h:[F": [
+      288.0,
+      255.0,
+      162.5
+    ]
+  },
+  "other_constants": {
+    "static l:F": 0.0,
+    "static m:F": -400.0
+  },
+  "warning": "Field names are obfuscated and the array semantics are not fully proven yet. Values and three-entry shape are copied from the class initializer; do not assign labels such as gravity, acceleration or jump velocity without tracing each use."
+}

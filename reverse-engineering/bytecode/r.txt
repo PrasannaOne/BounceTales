@@ -1,13 +1,18 @@
 public final class r extends j {
   private short[] c;
+    descriptor: [S
 
   private short[] d;
+    descriptor: [S
 
   short[] a;
+    descriptor: [S
 
   short[] b;
+    descriptor: [S
 
   public r();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #32                 // Method j."<init>":()V
@@ -17,6 +22,7 @@ public final class r extends j {
        9: return
 
   public final int a(byte[], int);
+    descriptor: ([BI)I
     Code:
        0: aload_0
        1: aload_1
@@ -153,6 +159,7 @@ public final class r extends j {
      222: ireturn
 
   private static int a(int);
+    descriptor: (I)I
     Code:
        0: iload_0
        1: lookupswitch  { // 3
@@ -171,6 +178,7 @@ public final class r extends j {
       49: ireturn
 
   public final void a();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #33                 // Method j.a:()V
@@ -310,6 +318,7 @@ public final class r extends j {
      239: return
 
   public final void d();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #35                 // Method j.d:()V
@@ -371,6 +380,7 @@ public final class r extends j {
      101: return
 
   public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;Ld;)V
     Code:
        0: aload_0
        1: getstatic     #14                 // Field j.a:Ld;

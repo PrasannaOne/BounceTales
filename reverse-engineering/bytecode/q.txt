@@ -1,17 +1,22 @@
 public final class q {
   private static q a;
+    descriptor: Lq;
 
   private static java.io.DataInputStream a;
+    descriptor: Ljava/io/DataInputStream;
 
   private static java.lang.String a;
+    descriptor: Ljava/lang/String;
 
   private q();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #36                 // Method java/lang/Object."<init>":()V
        4: return
 
   private static java.lang.String a(java.lang.String, java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     Code:
        0: aload_0
        1: aload_1
@@ -44,6 +49,7 @@ public final class q {
       52: areturn
 
   public static java.lang.String a(int);
+    descriptor: (I)Ljava/lang/String;
     Code:
        0: iload_0
        1: aconst_null
@@ -51,6 +57,7 @@ public final class q {
        5: areturn
 
   public static synchronized java.lang.String a(int, java.lang.String[]);
+    descriptor: (I[Ljava/lang/String;)Ljava/lang/String;
     Code:
        0: getstatic     #24                 // Field a:Ljava/lang/String;
        3: ifnonnull     14
@@ -186,6 +193,7 @@ public final class q {
           90   258   259   Class java/io/IOException
 
   private static boolean a(java.lang.String, java.lang.String, int, int);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;II)Z
     Code:
        0: iload_2
        1: aload_0
@@ -253,6 +261,7 @@ public final class q {
      133: ireturn
 
   private static java.lang.StringBuffer a(java.io.InputStream);
+    descriptor: (Ljava/io/InputStream;)Ljava/lang/StringBuffer;
     Code:
        0: new           #19                 // class java/lang/StringBuffer
        3: dup
@@ -302,6 +311,7 @@ public final class q {
           22    67    70   Class java/io/IOException
 
   static {};
+    descriptor: ()V
     Code:
        0: aconst_null
        1: putstatic     #25                 // Field a:Lq;

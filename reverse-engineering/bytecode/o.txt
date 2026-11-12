@@ -1,163 +1,243 @@
 public final class o extends javax.microedition.lcdui.game.GameCanvas implements java.lang.Runnable,javax.microedition.lcdui.CommandListener {
   private static o a;
+    descriptor: Lo;
 
   private static boolean a;
+    descriptor: Z
 
   private static boolean b;
+    descriptor: Z
 
   private static boolean c;
+    descriptor: Z
 
   private static int d;
+    descriptor: I
 
   private static java.lang.Object a;
+    descriptor: Ljava/lang/Object;
 
   private static java.lang.Object b;
+    descriptor: Ljava/lang/Object;
 
   public static m a;
+    descriptor: Lm;
 
   private static int[] a;
+    descriptor: [I
 
   private static int e;
+    descriptor: I
 
   private static int[] b;
+    descriptor: [I
 
   private static int f;
+    descriptor: I
 
   private static boolean d;
+    descriptor: Z
 
   private static boolean e;
+    descriptor: Z
 
   private static boolean f;
+    descriptor: Z
 
   private static boolean g;
+    descriptor: Z
 
   private static int g;
+    descriptor: I
 
   private static int h;
+    descriptor: I
 
   private static long a;
+    descriptor: J
 
   private static boolean h;
+    descriptor: Z
 
   private static int i;
+    descriptor: I
 
   private static long b;
+    descriptor: J
 
   public static int a;
+    descriptor: I
 
   private static int j;
+    descriptor: I
 
   private static int k;
+    descriptor: I
 
   private static java.lang.String[] a;
+    descriptor: [Ljava/lang/String;
 
   private static java.lang.String[] b;
+    descriptor: [Ljava/lang/String;
 
   private static int[] c;
+    descriptor: [I
 
   private static char[] a;
+    descriptor: [C
 
   public static int b;
+    descriptor: I
 
   public static int c;
+    descriptor: I
 
   private static javax.microedition.lcdui.Graphics a;
+    descriptor: Ljavax/microedition/lcdui/Graphics;
 
   private static javax.microedition.lcdui.Graphics b;
+    descriptor: Ljavax/microedition/lcdui/Graphics;
 
   private static javax.microedition.lcdui.Font[] a;
+    descriptor: [Ljavax/microedition/lcdui/Font;
 
   private static int[] d;
+    descriptor: [I
 
   private static int l;
+    descriptor: I
 
   private static int m;
+    descriptor: I
 
   private static int n;
+    descriptor: I
 
   private static java.util.Vector a;
+    descriptor: Ljava/util/Vector;
 
   private static java.util.Vector b;
+    descriptor: Ljava/util/Vector;
 
   private static o[] a;
+    descriptor: [Lo;
 
   private static java.lang.Object[] a;
+    descriptor: [Ljava/lang/Object;
 
   private static boolean[] a;
+    descriptor: [Z
 
   private static java.lang.String[] c;
+    descriptor: [Ljava/lang/String;
 
   private static int[] e;
+    descriptor: [I
 
   private static short[][] a;
+    descriptor: [[S
 
   private static short[][] b;
+    descriptor: [[S
 
   private static short[] a;
+    descriptor: [S
 
   private static javax.microedition.lcdui.Image[] a;
+    descriptor: [Ljavax/microedition/lcdui/Image;
 
   private static byte[] a;
+    descriptor: [B
 
   private static final short[] b;
+    descriptor: [S
 
   private static int o;
+    descriptor: I
 
   private static java.lang.String[] d;
+    descriptor: [Ljava/lang/String;
 
   private static int p;
+    descriptor: I
 
   private static int q;
+    descriptor: I
 
   private static boolean i;
+    descriptor: Z
 
   private static boolean j;
+    descriptor: Z
 
   private static javax.microedition.media.Player a;
+    descriptor: Ljavax/microedition/media/Player;
 
   private static javax.microedition.media.Player b;
+    descriptor: Ljavax/microedition/media/Player;
 
   private static int r;
+    descriptor: I
 
   private static int s;
+    descriptor: I
 
   public static javax.microedition.midlet.MIDlet a;
+    descriptor: Ljavax/microedition/midlet/MIDlet;
 
   private static int t;
+    descriptor: I
 
   private static int u;
+    descriptor: I
 
   private static int v;
+    descriptor: I
 
   private static int w;
+    descriptor: I
 
   private static int[] f;
+    descriptor: [I
 
   private static int x;
+    descriptor: I
 
   private static boolean k;
+    descriptor: Z
 
   private static long c;
+    descriptor: J
 
   private static int y;
+    descriptor: I
 
   private static int z;
+    descriptor: I
 
   private static long d;
+    descriptor: J
 
   private static boolean l;
+    descriptor: Z
 
   private static int A;
+    descriptor: I
 
   private static char a;
+    descriptor: C
 
   private static char[][] a;
+    descriptor: [[C
 
   private static char[][] b;
+    descriptor: [[C
 
   private static boolean m;
+    descriptor: Z
 
   public o();
+    descriptor: ()V
     Code:
        0: aload_0
        1: iconst_0
@@ -165,6 +245,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
        5: return
 
   private static void i(int);
+    descriptor: (I)V
     Code:
        0: getstatic     #119                // Field o.e:I
        3: bipush        20
@@ -181,6 +262,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       25: return
 
   public static void a(int);
+    descriptor: (I)V
     Code:
        0: getstatic     #122                // Field o.f:I
        3: bipush        40
@@ -200,29 +282,34 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       32: return
 
   public static void a();
+    descriptor: ()V
     Code:
        0: iconst_1
        1: putstatic     #126                // Field o.g:Z
        4: return
 
   public static void b(int);
+    descriptor: (I)V
     Code:
        0: iconst_2
        1: putstatic     #131                // Field o.j:I
        4: return
 
   public static int a();
+    descriptor: ()I
     Code:
        0: getstatic     #131                // Field o.j:I
        3: ireturn
 
   public static void c(int);
+    descriptor: (I)V
     Code:
        0: iload_0
        1: putstatic     #129                // Field o.i:I
        4: return
 
   public static void a(int, java.lang.String, int);
+    descriptor: (ILjava/lang/String;I)V
     Code:
        0: getstatic     #78                 // Field o.a:[Ljava/lang/String;
        3: iload_0
@@ -235,6 +322,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       12: return
 
   public static void b();
+    descriptor: ()V
     Code:
        0: iconst_0
        1: istore_0
@@ -250,6 +338,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       19: return
 
   public static int b();
+    descriptor: ()I
     Code:
        0: iconst_0
        1: invokestatic  #265                // Method o.c:(I)I
@@ -293,6 +382,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       65: ireturn
 
   public static int c();
+    descriptor: ()I
     Code:
        0: invokestatic  #261                // Method o.b:()I
        3: ifeq          10
@@ -302,6 +392,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       11: ireturn
 
   public static int d();
+    descriptor: ()I
     Code:
        0: invokestatic  #261                // Method o.b:()I
        3: ifeq          8
@@ -311,6 +402,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
        9: ireturn
 
   private static int c(int);
+    descriptor: (I)I
     Code:
        0: iload_0
        1: tableswitch   { // 0 to 2
@@ -329,6 +421,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       38: ireturn
 
   public static boolean a();
+    descriptor: ()Z
     Code:
        0: invokestatic  #261                // Method o.b:()I
        3: iconst_3
@@ -342,6 +435,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       17: ireturn
 
   public static boolean b();
+    descriptor: ()Z
     Code:
        0: invokestatic  #261                // Method o.b:()I
        3: iconst_1
@@ -355,6 +449,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       17: ireturn
 
   public static java.lang.String[] a(java.lang.String, int, int, boolean, int, int, boolean);
+    descriptor: (Ljava/lang/String;IIZIIZ)[Ljava/lang/String;
     Code:
        0: iconst_5
        1: anewarray     #36                 // class java/lang/String
@@ -662,11 +757,13 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
          499   503   506   Class java/lang/InterruptedException
 
   public static int e();
+    descriptor: ()I
     Code:
        0: getstatic     #90                 // Field o.b:I
        3: ireturn
 
   public static boolean a(int);
+    descriptor: (I)Z
     Code:
        0: getstatic     #150                // Field o.w:I
        3: iconst_1
@@ -680,6 +777,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       13: ireturn
 
   public static void d(int);
+    descriptor: (I)V
     Code:
        0: iconst_0
        1: putstatic     #148                // Field o.u:I
@@ -688,6 +786,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
        8: return
 
   public static void c();
+    descriptor: ()V
     Code:
        0: iconst_0
        1: putstatic     #148                // Field o.u:I
@@ -702,6 +801,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       20: return
 
   public static void a(java.lang.String, byte[]);
+    descriptor: (Ljava/lang/String;[B)V
     Code:
        0: aconst_null
        1: astore_2
@@ -790,6 +890,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
           93   101   104   Class java/lang/Exception
 
   public static byte[] a(java.lang.String);
+    descriptor: (Ljava/lang/String;)[B
     Code:
        0: aconst_null
        1: astore_1
@@ -912,11 +1013,13 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
          145   153   156   Class java/lang/Exception
 
   public static javax.microedition.lcdui.Graphics a();
+    descriptor: ()Ljavax/microedition/lcdui/Graphics;
     Code:
        0: getstatic     #95                 // Field o.b:Ljavax/microedition/lcdui/Graphics;
        3: areturn
 
   public static void a(javax.microedition.lcdui.Graphics);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;)V
     Code:
        0: aload_0
        1: ifnull        8
@@ -927,6 +1030,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       14: return
 
   public static boolean a(int, int, int, int, int[]);
+    descriptor: (IIII[I)Z
     Code:
        0: getstatic     #95                 // Field o.b:Ljavax/microedition/lcdui/Graphics;
        3: invokevirtual #218                // Method javax/microedition/lcdui/Graphics.getClipX:()I
@@ -1020,6 +1124,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
      147: ireturn
 
   public static int a(int, java.lang.String, int, int);
+    descriptor: (ILjava/lang/String;II)I
     Code:
        0: iload_0
        1: iconst_m1
@@ -1051,6 +1156,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       45: ireturn
 
   public static int a(int);
+    descriptor: (I)I
     Code:
        0: iload_0
        1: iconst_m1
@@ -1081,6 +1187,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       44: ireturn
 
   public static void a(int, int);
+    descriptor: (II)V
     Code:
        0: iload_0
        1: putstatic     #140                // Field o.n:I
@@ -1093,11 +1200,13 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       14: return
 
   public static int f();
+    descriptor: ()I
     Code:
        0: getstatic     #140                // Field o.n:I
        3: ireturn
 
   public static void b(int, int);
+    descriptor: (II)V
     Code:
        0: getstatic     #116                // Field o.d:[I
        3: iload_0
@@ -1106,6 +1215,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
        6: return
 
   public static void a(java.lang.String, int, int, int, int, int);
+    descriptor: (Ljava/lang/String;IIIII)V
     Code:
        0: getstatic     #140                // Field o.n:I
        3: iconst_m1
@@ -1223,6 +1333,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
      217: return
 
   public static void e(int);
+    descriptor: (I)V
     Code:
        0: iload_0
        1: ifge          5
@@ -1246,6 +1357,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       39: return
 
   public static void f(int);
+    descriptor: (I)V
     Code:
        0: iload_0
        1: ifge          5
@@ -1269,6 +1381,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       39: return
 
   public static java.lang.Object a(int);
+    descriptor: (I)Ljava/lang/Object;
     Code:
        0: iload_0
        1: ifge          6
@@ -1284,6 +1397,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       19: areturn
 
   public static boolean b(int);
+    descriptor: (I)Z
     Code:
        0: iload_0
        1: ifge          6
@@ -1301,6 +1415,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       23: ireturn
 
   private static void a(java.io.DataInputStream, int);
+    descriptor: (Ljava/io/DataInputStream;I)V
     Code:
        0: iconst_0
        1: istore_2
@@ -1317,6 +1432,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       18: return
 
   private static byte[] a(java.io.InputStream, int);
+    descriptor: (Ljava/io/InputStream;I)[B
     Code:
        0: iload_1
        1: iconst_m1
@@ -1368,6 +1484,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       73: areturn
 
   private static void e();
+    descriptor: ()V
     Code:
        0: getstatic     #111                // Field o.c:[Ljava/lang/String;
        3: ifnull        7
@@ -1564,6 +1681,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
           11   345   346   Class java/io/IOException
 
   private static void f();
+    descriptor: ()V
     Code:
        0: new           #41                 // class java/util/Vector
        3: dup
@@ -2019,6 +2137,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
          299   849   852   Class java/io/IOException
 
   private static void g();
+    descriptor: ()V
     Code:
        0: iconst_0
        1: istore_0
@@ -2203,6 +2322,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
      375: return
 
   private static short a(byte[], int);
+    descriptor: ([BI)S
     Code:
        0: aload_0
        1: iload_1
@@ -2221,6 +2341,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       17: ireturn
 
   private static java.io.DataInputStream a(int);
+    descriptor: (I)Ljava/io/DataInputStream;
     Code:
        0: getstatic     #121                // Field o.e:[I
        3: iload_0
@@ -2269,6 +2390,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       79: areturn
 
   public final boolean a(java.io.DataInputStream, int);
+    descriptor: (Ljava/io/DataInputStream;I)Z
     Code:
        0: iload_2
        1: tableswitch   { // -1 to 7
@@ -2368,6 +2490,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
      213: ireturn
 
   public final java.lang.Object a(java.io.DataInputStream, int, int, int);
+    descriptor: (Ljava/io/DataInputStream;III)Ljava/lang/Object;
     Code:
        0: iload_3
        1: tableswitch   { // 2 to 7
@@ -2587,6 +2710,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
      401: areturn
 
   public static void g(int);
+    descriptor: (I)V
     Code:
        0: getstatic     #103                // Field o.b:[[S
        3: iconst_0
@@ -2607,6 +2731,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       26: return
 
   public static javax.microedition.lcdui.Image a(int);
+    descriptor: (I)Ljavax/microedition/lcdui/Image;
     Code:
        0: iload_0
        1: invokestatic  #271                // Method o.d:(I)I
@@ -2621,6 +2746,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       16: areturn
 
   public static void a(int, javax.microedition.lcdui.Image);
+    descriptor: (ILjavax/microedition/lcdui/Image;)V
     Code:
        0: iload_0
        1: invokestatic  #271                // Method o.d:(I)I
@@ -2634,6 +2760,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       15: return
 
   private static int d(int);
+    descriptor: (I)I
     Code:
        0: iload_0
        1: iconst_m1
@@ -2773,6 +2900,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
      216: ireturn
 
   public static void a(int, int, int);
+    descriptor: (III)V
     Code:
        0: aconst_null
        1: astore        6
@@ -3156,6 +3284,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
      638: return
 
   public static void a(int, int, int, int);
+    descriptor: (IIII)V
     Code:
        0: iload_0
        1: iload_2
@@ -3224,6 +3353,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       90: return
 
   public static void a(int, int, int, int, int);
+    descriptor: (IIIII)V
     Code:
        0: bipush        6
        2: putstatic     #141                // Field o.o:I
@@ -3235,6 +3365,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       14: return
 
   public static int a(int, int);
+    descriptor: (II)I
     Code:
        0: iload_0
        1: sipush        326
@@ -3330,6 +3461,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
      132: ireturn
 
   public static int b(int, int);
+    descriptor: (II)I
     Code:
        0: getstatic     #83                 // Field o.a:[S
        3: iload_0
@@ -3439,6 +3571,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
      147: ireturn
 
   public static void b(int, int, int, int);
+    descriptor: (IIII)V
     Code:
        0: iload_0
        1: iload_1
@@ -3449,6 +3582,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       10: return
 
   public static int c(int, int);
+    descriptor: (II)I
     Code:
        0: getstatic     #83                 // Field o.a:[S
        3: iload_0
@@ -3495,6 +3629,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       61: ireturn
 
   public static int b(int);
+    descriptor: (I)I
     Code:
        0: getstatic     #83                 // Field o.a:[S
        3: iload_0
@@ -3525,17 +3660,20 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       44: ireturn
 
   public static void a(boolean);
+    descriptor: (Z)V
     Code:
        0: iconst_1
        1: putstatic     #130                // Field o.i:Z
        4: return
 
   public static boolean c();
+    descriptor: ()Z
     Code:
        0: getstatic     #130                // Field o.i:Z
        3: ireturn
 
   private static void a(byte[], int, java.lang.String);
+    descriptor: ([BILjava/lang/String;)V
     Code:
        0: aload_0
        1: ifnonnull     25
@@ -3574,6 +3712,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
           15    21    24   Class java/lang/Exception
 
   public static void c(int, int);
+    descriptor: (II)V
     Code:
        0: getstatic     #93                 // Field o.b:Ljava/lang/Object;
        3: dup
@@ -3658,6 +3797,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
          147   150   147   any
 
   public static void d();
+    descriptor: ()V
     Code:
        0: getstatic     #93                 // Field o.b:Ljava/lang/Object;
        3: dup
@@ -3699,6 +3839,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
           72    75    72   any
 
   public static void b(boolean);
+    descriptor: (Z)V
     Code:
        0: iconst_0
        1: bipush        100
@@ -3706,6 +3847,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
        6: return
 
   public static void h(int);
+    descriptor: (I)V
     Code:
        0: getstatic     #93                 // Field o.b:Ljava/lang/Object;
        3: dup
@@ -3784,6 +3926,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
          126   129   126   any
 
   public final void run();
+    descriptor: ()V
     Code:
        0: getstatic     #71                 // Field o.a:Z
        3: ifeq          60
@@ -4074,6 +4217,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
           60   578   579   Class java/lang/Throwable
 
   private static void h();
+    descriptor: ()V
     Code:
        0: lconst_0
        1: putstatic     #92                 // Field o.b:J
@@ -4083,6 +4227,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       11: return
 
   private static boolean d();
+    descriptor: ()Z
     Code:
        0: getstatic     #64                 // Field o.a:Ljava/util/Vector;
        3: invokevirtual #207                // Method java/util/Vector.size:()I
@@ -4098,6 +4243,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       27: ireturn
 
   private void i();
+    descriptor: ()V
     Code:
        0: iconst_1
        1: putstatic     #123                // Field o.f:Z
@@ -4170,6 +4316,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
          130   133   130   any
 
   private static void j();
+    descriptor: ()V
     Code:
        0: getstatic     #69                 // Field o.a:Lo;
        3: invokevirtual #282                // Method o.getWidth:()I
@@ -4194,6 +4341,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       46: return
 
   private void j(int);
+    descriptor: (I)V
     Code:
        0: iload_1
        1: putstatic     #133                // Field o.k:I
@@ -4212,6 +4360,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       28: return
 
   private static void k();
+    descriptor: ()V
     Code:
        0: invokestatic  #194                // Method java/lang/System.currentTimeMillis:()J
        3: lstore_0
@@ -4287,6 +4436,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
      151: return
 
   private static void l();
+    descriptor: ()V
     Code:
        0: getstatic     #93                 // Field o.b:Ljava/lang/Object;
        3: dup
@@ -4321,6 +4471,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
           41    44    41   any
 
   private void b(javax.microedition.lcdui.Graphics);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;)V
     Code:
        0: getstatic     #133                // Field o.k:I
        3: ifne          7
@@ -4460,6 +4611,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
           62   230   231   Class java/lang/Throwable
 
   private static int e(int);
+    descriptor: (I)I
     Code:
        0: iload_0
        1: bipush        -7
@@ -4560,6 +4712,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
          168   176   179   Class java/lang/IllegalArgumentException
 
   private static void d(int, int);
+    descriptor: (II)V
     Code:
        0: getstatic     #134                // Field o.k:Z
        3: ifeq          7
@@ -4780,6 +4933,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
          307   390   391   Class java/lang/Throwable
 
   private static void k(int);
+    descriptor: (I)V
     Code:
        0: iload_0
        1: getstatic     #57                 // Field o.A:I
@@ -4795,6 +4949,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
       28: return
 
   protected final void keyPressed(int);
+    descriptor: (I)V
     Code:
        0: iload_1
        1: bipush        9
@@ -4802,6 +4957,7 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
        6: return
 
   protected final void keyReleased(int);
+    descriptor: (I)V
     Code:
        0: iload_1
        1: bipush        10
@@ -4809,18 +4965,21 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
        6: return
 
   protected final void showNotify();
+    descriptor: ()V
     Code:
        0: iconst_5
        1: invokestatic  #284                // Method o.h:(I)V
        4: return
 
   protected final void hideNotify();
+    descriptor: ()V
     Code:
        0: iconst_4
        1: invokestatic  #284                // Method o.h:(I)V
        4: return
 
   public final void paint(javax.microedition.lcdui.Graphics);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;)V
     Code:
        0: aload_0
        1: aload_1
@@ -4828,10 +4987,12 @@ public final class o extends javax.microedition.lcdui.game.GameCanvas implements
        5: return
 
   public final void commandAction(javax.microedition.lcdui.Command, javax.microedition.lcdui.Displayable);
+    descriptor: (Ljavax/microedition/lcdui/Command;Ljavax/microedition/lcdui/Displayable;)V
     Code:
        0: return
 
   static {};
+    descriptor: ()V
     Code:
        0: aconst_null
        1: putstatic     #69                 // Field o.a:Lo;

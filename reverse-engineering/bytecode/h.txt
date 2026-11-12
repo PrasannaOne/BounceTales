@@ -1,43 +1,63 @@
 public final class h {
   private java.util.Vector a;
+    descriptor: Ljava/util/Vector;
 
   private int b;
+    descriptor: I
 
   private int c;
+    descriptor: I
 
   public int a;
+    descriptor: I
 
   public int[] a;
+    descriptor: [I
 
   public int[] b;
+    descriptor: [I
 
   private b a;
+    descriptor: Lb;
 
   private int d;
+    descriptor: I
 
   private int e;
+    descriptor: I
 
   private int f;
+    descriptor: I
 
   private int g;
+    descriptor: I
 
   private int[] c;
+    descriptor: [I
 
   private java.lang.String[] a;
+    descriptor: [Ljava/lang/String;
 
   private int[] d;
+    descriptor: [I
 
   private static final int[] e;
+    descriptor: [I
 
   private static final int[] f;
+    descriptor: [I
 
   private static int[] g;
+    descriptor: [I
 
   private static final int[] h;
+    descriptor: [I
 
   private static int[] i;
+    descriptor: [I
 
   public h();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #85                 // Method java/lang/Object."<init>":()V
@@ -91,6 +111,7 @@ public final class h {
       87: return
 
   public final void a(f);
+    descriptor: (Lf;)V
     Code:
        0: aload_0
        1: aload_1
@@ -122,6 +143,7 @@ public final class h {
       47: return
 
   public final void a();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #37                 // Field a:Ljava/util/Vector;
@@ -135,6 +157,7 @@ public final class h {
       17: return
 
   private boolean a(int);
+    descriptor: (I)Z
     Code:
        0: aload_0
        1: getfield      #37                 // Field a:Ljava/util/Vector;
@@ -166,12 +189,14 @@ public final class h {
       47: ireturn
 
   public final int a();
+    descriptor: ()I
     Code:
        0: aload_0
        1: getfield      #40                 // Field b:I
        4: ireturn
 
   public final void a(int);
+    descriptor: (I)V
     Code:
        0: iload_1
        1: aload_0
@@ -268,6 +293,7 @@ public final class h {
      166: return
 
   private f a();
+    descriptor: ()Lf;
     Code:
        0: aload_0
        1: getfield      #40                 // Field b:I
@@ -293,6 +319,7 @@ public final class h {
       41: areturn
 
   public final void a(java.lang.String, int, int);
+    descriptor: (Ljava/lang/String;II)V
     Code:
        0: aload_0
        1: iconst_0
@@ -330,6 +357,7 @@ public final class h {
       59: return
 
   public final void a(int, java.lang.String, int, int, boolean);
+    descriptor: (ILjava/lang/String;IIZ)V
     Code:
        0: aload_0
        1: getfield      #43                 // Field c:[I
@@ -354,6 +382,7 @@ public final class h {
       29: return
 
   public final void a(int, java.lang.String, int);
+    descriptor: (ILjava/lang/String;I)V
     Code:
        0: aload_0
        1: getfield      #43                 // Field c:[I
@@ -376,6 +405,7 @@ public final class h {
       28: return
 
   public final void b(int);
+    descriptor: (I)V
     Code:
        0: aload_0
        1: getfield      #43                 // Field c:[I
@@ -395,6 +425,7 @@ public final class h {
       21: return
 
   public final void b();
+    descriptor: ()V
     Code:
        0: iconst_0
        1: istore_1
@@ -457,6 +488,7 @@ public final class h {
       97: return
 
   private int a(int);
+    descriptor: (I)I
     Code:
        0: iconst_0
        1: istore_2
@@ -484,6 +516,7 @@ public final class h {
       40: ireturn
 
   private static int a(f, int);
+    descriptor: (Lf;I)I
     Code:
        0: aload_0
        1: bipush        6
@@ -511,6 +544,7 @@ public final class h {
       38: ireturn
 
   private int c();
+    descriptor: ()I
     Code:
        0: aload_0
        1: bipush        11
@@ -530,6 +564,7 @@ public final class h {
       30: ireturn
 
   public final int b();
+    descriptor: ()I
     Code:
        0: aload_0
        1: invokespecial #75                 // Method c:()I
@@ -544,6 +579,7 @@ public final class h {
       18: ireturn
 
   private int d();
+    descriptor: ()I
     Code:
        0: aload_0
        1: getfield      #37                 // Field a:Ljava/util/Vector;
@@ -567,6 +603,7 @@ public final class h {
       39: ireturn
 
   private int e();
+    descriptor: ()I
     Code:
        0: aload_0
        1: iconst_5
@@ -590,6 +627,7 @@ public final class h {
       31: ireturn
 
   private int b(int);
+    descriptor: (I)I
     Code:
        0: iload_1
        1: tableswitch   { // 1 to 7
@@ -708,6 +746,7 @@ public final class h {
      227: ireturn
 
   public final void c(int);
+    descriptor: (I)V
     Code:
        0: aload_0
        1: invokespecial #64                 // Method a:()Lf;
@@ -1164,6 +1203,7 @@ public final class h {
      918: return
 
   public final void c();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #36                 // Field a:Lb;
@@ -1281,6 +1321,7 @@ public final class h {
      213: return
 
   public final void d();
+    descriptor: ()V
     Code:
        0: invokestatic  #100                // Method o.a:()Ljavax/microedition/lcdui/Graphics;
        3: astore_1
@@ -2105,6 +2146,7 @@ public final class h {
     1625: return
 
   public final void d(int);
+    descriptor: (I)V
     Code:
        0: iload_1
        1: invokestatic  #102                // Method o.a:(I)Ljava/lang/Object;
@@ -2144,6 +2186,7 @@ public final class h {
           16    62    63   Class java/lang/Exception
 
   private int c(int);
+    descriptor: (I)I
     Code:
        0: iload_1
        1: aload_0
@@ -2153,6 +2196,7 @@ public final class h {
        9: ireturn
 
   public final void a(int, int);
+    descriptor: (II)V
     Code:
        0: aload_0
        1: iload_1
@@ -2165,6 +2209,7 @@ public final class h {
       14: return
 
   public final void b(int, int);
+    descriptor: (II)V
     Code:
        0: aload_0
        1: iload_1
@@ -2177,6 +2222,7 @@ public final class h {
       14: return
 
   private static int[] a(java.io.DataInputStream, int[], int, int);
+    descriptor: (Ljava/io/DataInputStream;[III)[I
     Code:
        0: aload_0
        1: invokevirtual #81                 // Method java/io/DataInputStream.readInt:()I
@@ -2313,6 +2359,7 @@ public final class h {
      207: areturn
 
   public static int a(int, int[], int);
+    descriptor: (I[II)I
     Code:
        0: iload_2
        1: iconst_1
@@ -2356,6 +2403,7 @@ public final class h {
       60: ireturn
 
   public static boolean a(int, int[]);
+    descriptor: (I[I)Z
     Code:
        0: aload_1
        1: ifnull        16
@@ -2373,6 +2421,7 @@ public final class h {
       17: ireturn
 
   public static int[] a(int, int, int[], int);
+    descriptor: (II[II)[I
     Code:
        0: iload_3
        1: iconst_1
@@ -2457,6 +2506,7 @@ public final class h {
      110: areturn
 
   static {};
+    descriptor: ()V
     Code:
        0: iconst_4
        1: newarray       int

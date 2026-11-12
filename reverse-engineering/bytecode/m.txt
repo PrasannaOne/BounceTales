@@ -1,269 +1,402 @@
 public final class m {
   public static final short[] a;
+    descriptor: [S
 
   private static boolean e;
+    descriptor: Z
 
   private h a;
+    descriptor: Lh;
 
   private final h b;
+    descriptor: Lh;
 
   private int i;
+    descriptor: I
 
   private static byte a;
+    descriptor: B
 
   private static final byte[] a;
+    descriptor: [B
 
   private static final byte[] b;
+    descriptor: [B
 
   private static boolean f;
+    descriptor: Z
 
   private static short[] c;
+    descriptor: [S
 
   public static java.util.Random a;
+    descriptor: Ljava/util/Random;
 
   public static int a;
+    descriptor: I
 
   private static int j;
+    descriptor: I
 
   private static int k;
+    descriptor: I
 
   private static int l;
+    descriptor: I
 
   private static int m;
+    descriptor: I
 
   private static int n;
+    descriptor: I
 
   public static int b;
+    descriptor: I
 
   public static int c;
+    descriptor: I
 
   private static int o;
+    descriptor: I
 
   private static float[] a;
+    descriptor: [F
 
   private static int[] c;
+    descriptor: [I
 
   private static int[] d;
+    descriptor: [I
 
   private static int p;
+    descriptor: I
 
   private static short[] d;
+    descriptor: [S
 
   private static short[] e;
+    descriptor: [S
 
   private static short[] f;
+    descriptor: [S
 
   private static short[] g;
+    descriptor: [S
 
   private static short[] h;
+    descriptor: [S
 
   private static short[] i;
+    descriptor: [S
 
   private static short[] j;
+    descriptor: [S
 
   private static short[] k;
+    descriptor: [S
 
   private static short[] l;
+    descriptor: [S
 
   private static short[] m;
+    descriptor: [S
 
   private static short[] n;
+    descriptor: [S
 
   private static short[] o;
+    descriptor: [S
 
   private static short[] p;
+    descriptor: [S
 
   private static short[] q;
+    descriptor: [S
 
   private static short[] r;
+    descriptor: [S
 
   private static short[] s;
+    descriptor: [S
 
   private static short[] t;
+    descriptor: [S
 
   private static short[] u;
+    descriptor: [S
 
   private static short[] v;
+    descriptor: [S
 
   private static int q;
+    descriptor: I
 
   private static int r;
+    descriptor: I
 
   private static int s;
+    descriptor: I
 
   private static int t;
+    descriptor: I
 
   private static int u;
+    descriptor: I
 
   private static int v;
+    descriptor: I
 
   private static int w;
+    descriptor: I
 
   public static final int d;
+    descriptor: I
 
   private static int x;
+    descriptor: I
 
   private static int y;
+    descriptor: I
 
   public static short[] b;
+    descriptor: [S
 
   public static boolean a;
+    descriptor: Z
 
   public static a a;
+    descriptor: La;
 
   private static java.lang.String a;
+    descriptor: Ljava/lang/String;
 
   public static n a;
+    descriptor: Ln;
 
   public static n b;
+    descriptor: Ln;
 
   public static n c;
+    descriptor: Ln;
 
   public static n d;
+    descriptor: Ln;
 
   public static n e;
+    descriptor: Ln;
 
   public static n f;
+    descriptor: Ln;
 
   public static n g;
+    descriptor: Ln;
 
   public static n h;
+    descriptor: Ln;
 
   private static int[] e;
+    descriptor: [I
 
   private static int[] f;
+    descriptor: [I
 
   private static int[] g;
+    descriptor: [I
 
   private static int[] h;
+    descriptor: [I
 
   private static int[] i;
+    descriptor: [I
 
   private static int[] j;
+    descriptor: [I
 
   private static int[] k;
+    descriptor: [I
 
   private static int[] l;
+    descriptor: [I
 
   public static n i;
+    descriptor: Ln;
 
   private static int[] m;
+    descriptor: [I
 
   private static javax.microedition.lcdui.Image[] a;
+    descriptor: [Ljavax/microedition/lcdui/Image;
 
   private static javax.microedition.lcdui.Image[] b;
+    descriptor: [Ljavax/microedition/lcdui/Image;
 
   public static javax.microedition.lcdui.Image a;
+    descriptor: Ljavax/microedition/lcdui/Image;
 
   public static javax.microedition.lcdui.Graphics a;
+    descriptor: Ljavax/microedition/lcdui/Graphics;
 
   public static int[] a;
+    descriptor: [I
 
   public static javax.microedition.lcdui.Image b;
+    descriptor: Ljavax/microedition/lcdui/Image;
 
   public static javax.microedition.lcdui.Graphics b;
+    descriptor: Ljavax/microedition/lcdui/Graphics;
 
   public static int[] b;
+    descriptor: [I
 
   private static boolean g;
+    descriptor: Z
 
   private static int z;
+    descriptor: I
 
   private static int[] n;
+    descriptor: [I
 
   private static java.lang.String[] a;
+    descriptor: [Ljava/lang/String;
 
   private static boolean h;
+    descriptor: Z
 
   private static boolean i;
+    descriptor: Z
 
   private static int A;
+    descriptor: I
 
   private int B;
+    descriptor: I
 
   private static boolean j;
+    descriptor: Z
 
   private int C;
+    descriptor: I
 
   private long a;
+    descriptor: J
 
   private static final int[] o;
+    descriptor: [I
 
   private static final int[] p;
+    descriptor: [I
 
   private static final int[] q;
+    descriptor: [I
 
   private static final int[] r;
+    descriptor: [I
 
   private boolean k;
+    descriptor: Z
 
   public static boolean b;
+    descriptor: Z
 
   public static int e;
+    descriptor: I
 
   private static int D;
+    descriptor: I
 
   private static j[] b;
+    descriptor: [Lj;
 
   public static j[] a;
+    descriptor: [Lj;
 
   public static j a;
+    descriptor: Lj;
 
   private static int E;
+    descriptor: I
 
   private static g[] a;
+    descriptor: [Lg;
 
   public static c a;
+    descriptor: Lc;
 
   public static k a;
+    descriptor: Lk;
 
   public static boolean c;
+    descriptor: Z
 
   public static int f;
+    descriptor: I
 
   public static int g;
+    descriptor: I
 
   public static int h;
+    descriptor: I
 
   private static int F;
+    descriptor: I
 
   public static boolean d;
+    descriptor: Z
 
   private static int G;
+    descriptor: I
 
   private static int[] s;
+    descriptor: [I
 
   private static int[] t;
+    descriptor: [I
 
   private static int[] u;
+    descriptor: [I
 
   private static int[] v;
+    descriptor: [I
 
   private static int[] w;
+    descriptor: [I
 
   private static short[] w;
+    descriptor: [S
 
   private static boolean l;
+    descriptor: Z
 
   private static boolean m;
+    descriptor: Z
 
   private static int H;
+    descriptor: I
 
   private static int I;
+    descriptor: I
 
   private boolean n;
+    descriptor: Z
 
   private boolean o;
+    descriptor: Z
 
   private boolean p;
+    descriptor: Z
 
   private int J;
+    descriptor: I
 
   private int K;
+    descriptor: I
 
   private boolean q;
+    descriptor: Z
 
   public m();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #321                // Method java/lang/Object."<init>":()V
@@ -305,6 +438,7 @@ public final class m {
       65: return
 
   public static int a();
+    descriptor: ()I
     Code:
        0: iconst_0
        1: istore_0
@@ -344,6 +478,7 @@ public final class m {
       67: ireturn
 
   private static boolean b(int);
+    descriptor: (I)Z
     Code:
        0: getstatic     #179                // Field f:[S
        3: iload_0
@@ -359,6 +494,7 @@ public final class m {
       15: ireturn
 
   public static boolean a(int);
+    descriptor: (I)Z
     Code:
        0: iload_0
        1: iconst_2
@@ -383,6 +519,7 @@ public final class m {
       30: ireturn
 
   private static void a(int, short, short, short);
+    descriptor: (ISSS)V
     Code:
        0: iload_0
        1: iconst_2
@@ -439,6 +576,7 @@ public final class m {
       76: return
 
   private static void e(int);
+    descriptor: (I)V
     Code:
        0: getstatic     #179                // Field f:[S
        3: iload_0
@@ -459,6 +597,7 @@ public final class m {
       24: return
 
   private static void f(int);
+    descriptor: (I)V
     Code:
        0: iload_0
        1: iconst_2
@@ -486,6 +625,7 @@ public final class m {
       37: return
 
   private static boolean c(int);
+    descriptor: (I)Z
     Code:
        0: iconst_0
        1: istore_1
@@ -506,6 +646,7 @@ public final class m {
       28: ireturn
 
   private static int c();
+    descriptor: ()I
     Code:
        0: iconst_0
        1: istore_0
@@ -528,6 +669,7 @@ public final class m {
       27: ireturn
 
   private static boolean a();
+    descriptor: ()Z
     Code:
        0: iconst_0
        1: istore_0
@@ -568,6 +710,7 @@ public final class m {
       55: ireturn
 
   private static final void a();
+    descriptor: ()V
     Code:
        0: sipush        20520
        3: istore_0
@@ -602,6 +745,7 @@ public final class m {
       44: return
 
   private void g(int);
+    descriptor: (I)V
     Code:
        0: aload_0
        1: getfield      #150                // Field b:Lh;
@@ -2397,6 +2541,7 @@ public final class m {
     3700: return
 
   private void b();
+    descriptor: ()V
     Code:
        0: aload_0
        1: aconst_null
@@ -2412,6 +2557,7 @@ public final class m {
       22: return
 
   private static void a(h, boolean);
+    descriptor: (Lh;Z)V
     Code:
        0: iconst_0
        1: istore_2
@@ -2444,6 +2590,7 @@ public final class m {
       63: return
 
   private static void a(h);
+    descriptor: (Lh;)V
     Code:
        0: getstatic     #199                // Field k:I
        3: invokestatic  #376                // Method b:(I)Z
@@ -2463,6 +2610,7 @@ public final class m {
       28: return
 
   public static boolean a(h, int, int, int, int, int);
+    descriptor: (Lh;IIIII)Z
     Code:
        0: iconst_1
        1: invokestatic  #424                // Method o.b:(Z)V
@@ -3225,6 +3373,7 @@ public final class m {
     1390: ireturn
 
   private static void a(javax.microedition.lcdui.Graphics);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;)V
     Code:
        0: aload_0
        1: ldc           #7                  // int 4135425
@@ -3269,6 +3418,7 @@ public final class m {
       72: return
 
   private static int d(int);
+    descriptor: (I)I
     Code:
        0: iconst_m1
        1: istore_1
@@ -3319,6 +3469,7 @@ public final class m {
       68: ireturn
 
   private static int e(int);
+    descriptor: (I)I
     Code:
        0: iconst_m1
        1: istore_1
@@ -3375,6 +3526,7 @@ public final class m {
       74: ireturn
 
   private static void a(int, int, int, int, int);
+    descriptor: (IIIII)V
     Code:
        0: iload_2
        1: invokestatic  #374                // Method b:(I)I
@@ -3922,6 +4074,7 @@ public final class m {
     1011: return
 
   private static java.lang.String a(int);
+    descriptor: (I)Ljava/lang/String;
     Code:
        0: iconst_0
        1: istore_1
@@ -3966,6 +4119,7 @@ public final class m {
       80: areturn
 
   private static void a(int, int, javax.microedition.lcdui.Graphics);
+    descriptor: (IILjavax/microedition/lcdui/Graphics;)V
     Code:
        0: iload_0
        1: iload_1
@@ -4030,6 +4184,7 @@ public final class m {
       92: return
 
   public static final void a(int);
+    descriptor: (I)V
     Code:
        0: getstatic     #247                // Field z:I
        3: iconst_5
@@ -4045,6 +4200,7 @@ public final class m {
       23: return
 
   private void c();
+    descriptor: ()V
     Code:
        0: getstatic     #182                // Field g:Z
        3: ifne          59
@@ -4079,6 +4235,7 @@ public final class m {
       59: return
 
   public final void b(int);
+    descriptor: (I)V
     Code:
        0: aload_0
        1: getfield      #132                // Field a:Lh;
@@ -4282,6 +4439,7 @@ public final class m {
      440: return
 
   public final int a(int);
+    descriptor: (I)I
     Code:
        0: aload_0
        1: getfield      #132                // Field a:Lh;
@@ -4854,6 +5012,7 @@ public final class m {
     1237: ireturn
 
   public final int a(int, int);
+    descriptor: (II)I
     Code:
        0: invokestatic  #399                // Method o.a:()Ljavax/microedition/lcdui/Graphics;
        3: astore_1
@@ -5345,6 +5504,7 @@ public final class m {
      903: ireturn
 
   public static void a(java.lang.String, int, int, int, int);
+    descriptor: (Ljava/lang/String;IIII)V
     Code:
        0: iload_1
        1: iconst_1
@@ -5382,6 +5542,7 @@ public final class m {
       62: return
 
   public static int b();
+    descriptor: ()I
     Code:
        0: bipush        -3
        2: invokestatic  #401                // Method o.a:(I)I
@@ -5390,6 +5551,7 @@ public final class m {
        7: ireturn
 
   public final void c(int);
+    descriptor: (I)V
     Code:
        0: iload_1
        1: iconst_1
@@ -5437,6 +5599,7 @@ public final class m {
       94: return
 
   public final int b(int, int);
+    descriptor: (II)I
     Code:
        0: iload_1
        1: bipush        17
@@ -6599,6 +6762,7 @@ public final class m {
     2454: ireturn
 
   private static int d();
+    descriptor: ()I
     Code:
        0: bipush        31
        2: istore_0
@@ -6639,6 +6803,7 @@ public final class m {
       81: ireturn
 
   public static int b(int);
+    descriptor: (I)I
     Code:
        0: iconst_2
        1: istore_1
@@ -6656,6 +6821,7 @@ public final class m {
       18: ireturn
 
   public final void d(int);
+    descriptor: (I)V
     Code:
        0: iload_1
        1: bipush        17
@@ -6758,6 +6924,7 @@ public final class m {
      283: return
 
   private static void d();
+    descriptor: ()V
     Code:
        0: getstatic     #179                // Field f:[S
        3: arraylength
@@ -6801,6 +6968,7 @@ public final class m {
       58: return
 
   private void b(javax.microedition.lcdui.Graphics);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;)V
     Code:
        0: getstatic     #196                // Field j:Z
        3: ifeq          156
@@ -6905,6 +7073,7 @@ public final class m {
      174: return
 
   private void e();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #118                // Field C:I
@@ -6952,6 +7121,7 @@ public final class m {
       80: return
 
   private static void f();
+    descriptor: ()V
     Code:
        0: aconst_null
        1: putstatic     #137                // Field a:Ljavax/microedition/lcdui/Image;
@@ -7049,6 +7219,7 @@ public final class m {
      205: return
 
   private static void g();
+    descriptor: ()V
     Code:
        0: iconst_0
        1: putstatic     #123                // Field H:I
@@ -7230,6 +7401,7 @@ public final class m {
           16   299   300   Class java/lang/Exception
 
   public static int c(int);
+    descriptor: (I)I
     Code:
        0: getstatic     #208                // Field m:Z
        3: ifeq          12
@@ -7301,6 +7473,7 @@ public final class m {
      101: ireturn
 
   private static void a(int, javax.microedition.lcdui.Graphics);
+    descriptor: (ILjavax/microedition/lcdui/Graphics;)V
     Code:
        0: getstatic     #208                // Field m:Z
        3: ifeq          12
@@ -7366,6 +7539,7 @@ public final class m {
       95: return
 
   private static void a(short[], int, int, int, int, int, int, int, int, javax.microedition.lcdui.Graphics);
+    descriptor: ([SIIIIIIIILjavax/microedition/lcdui/Graphics;)V
     Code:
        0: getstatic     #231                // Field s:[I
        3: iconst_0
@@ -7575,6 +7749,7 @@ public final class m {
      351: return
 
   private static void a(com.nokia.mid.ui.DirectGraphics);
+    descriptor: (Lcom/nokia/mid/ui/DirectGraphics;)V
     Code:
        0: invokestatic  #425                // Method o.c:()I
        3: istore_1
@@ -7639,6 +7814,7 @@ public final class m {
       87: return
 
   private static int a(int, int, int, int, boolean);
+    descriptor: (IIIIZ)I
     Code:
        0: iconst_0
        1: istore        5
@@ -7752,6 +7928,7 @@ public final class m {
      187: ireturn
 
   private static java.lang.String b(int);
+    descriptor: (I)Ljava/lang/String;
     Code:
        0: iload_0
        1: dup
@@ -7795,6 +7972,7 @@ public final class m {
       75: areturn
 
   private static void h();
+    descriptor: ()V
     Code:
        0: iconst_0
        1: istore_0
@@ -7823,6 +8001,7 @@ public final class m {
       48: return
 
   private static void i();
+    descriptor: ()V
     Code:
        0: getstatic     #187                // Field h:Z
        3: ifeq          17
@@ -7892,6 +8071,7 @@ public final class m {
      145: return
 
   private void j();
+    descriptor: ()V
     Code:
        0: invokestatic  #391                // Method h:()V
        3: aload_0
@@ -7908,6 +8088,7 @@ public final class m {
       23: return
 
   static {};
+    descriptor: ()V
     Code:
        0: bipush        91
        2: newarray       short

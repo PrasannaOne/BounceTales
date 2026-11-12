@@ -1,21 +1,30 @@
 public final class e extends j {
   short a;
+    descriptor: S
 
   c a;
+    descriptor: Lc;
 
   int a;
+    descriptor: I
 
   private int c;
+    descriptor: I
 
   int b;
+    descriptor: I
 
   float a;
+    descriptor: F
 
   byte a;
+    descriptor: B
 
   boolean a;
+    descriptor: Z
 
   public e();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #45                 // Method j."<init>":()V
@@ -25,6 +34,7 @@ public final class e extends j {
       10: return
 
   public final int a(byte[], int);
+    descriptor: ([BI)I
     Code:
        0: aload_0
        1: aload_1
@@ -86,6 +96,7 @@ public final class e extends j {
      100: ireturn
 
   public final void a();
+    descriptor: ()V
     Code:
        0: aload_0
        1: ldc           #1                  // int -4587520
@@ -102,6 +113,7 @@ public final class e extends j {
       23: return
 
   public final void d();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #47                 // Method j.d:()V
@@ -212,6 +224,7 @@ public final class e extends j {
      206: return
 
   public final void b();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getstatic     #37                 // Field j.a:Ld;
@@ -241,6 +254,7 @@ public final class e extends j {
       53: return
 
   public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;Ld;)V
     Code:
        0: aload_0
        1: getstatic     #37                 // Field j.a:Ld;

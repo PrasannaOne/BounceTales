@@ -1,29 +1,42 @@
 public final class k extends j {
   private short a;
+    descriptor: S
 
   private byte a;
+    descriptor: B
 
   private int r;
+    descriptor: I
 
   private boolean a;
+    descriptor: Z
 
   private int s;
+    descriptor: I
 
   int a;
+    descriptor: I
 
   int b;
+    descriptor: I
 
   int c;
+    descriptor: I
 
   int d;
+    descriptor: I
 
   private static int[] a;
+    descriptor: [I
 
   private static int t;
+    descriptor: I
 
   private static int u;
+    descriptor: I
 
   public k();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #72                 // Method j."<init>":()V
@@ -33,6 +46,7 @@ public final class k extends j {
       10: return
 
   public final int a(byte[], int);
+    descriptor: ([BI)I
     Code:
        0: aload_0
        1: aload_1
@@ -81,6 +95,7 @@ public final class k extends j {
       73: ireturn
 
   public final void a();
+    descriptor: ()V
     Code:
        0: aload_0
        1: ldc           #1                  // int -7864320
@@ -109,6 +124,7 @@ public final class k extends j {
       48: return
 
   public final void b();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #57                 // Field r:I
@@ -151,6 +167,7 @@ public final class k extends j {
       79: return
 
   public final void c();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #58                 // Field s:I
@@ -228,6 +245,7 @@ public final class k extends j {
      157: return
 
   public final void e();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #58                 // Field s:I
@@ -305,6 +323,7 @@ public final class k extends j {
      157: return
 
   public final void f();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #58                 // Field s:I
@@ -315,6 +334,7 @@ public final class k extends j {
       14: return
 
   public final void d();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #76                 // Method j.d:()V
@@ -497,6 +517,7 @@ public final class k extends j {
      342: return
 
   public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;Ld;)V
     Code:
        0: aload_0
        1: getfield      #58                 // Field s:I
@@ -721,6 +742,7 @@ public final class k extends j {
      442: return
 
   static {};
+    descriptor: ()V
     Code:
        0: iconst_3
        1: newarray       int

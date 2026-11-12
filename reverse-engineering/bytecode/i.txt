@@ -1,55 +1,81 @@
 public final class i extends j {
   private int c;
+    descriptor: I
 
   int a;
+    descriptor: I
 
   short a;
+    descriptor: S
 
   private short e;
+    descriptor: S
 
   short b;
+    descriptor: S
 
   short c;
+    descriptor: S
 
   private short f;
+    descriptor: S
 
   private byte[] a;
+    descriptor: [B
 
   private int[] a;
+    descriptor: [I
 
   private int[] b;
+    descriptor: [I
 
   private byte[] b;
+    descriptor: [B
 
   private byte[] c;
+    descriptor: [B
 
   private int[] c;
+    descriptor: [I
 
   private int[] d;
+    descriptor: [I
 
   private byte a;
+    descriptor: B
 
   private byte d;
+    descriptor: B
 
   private byte e;
+    descriptor: B
 
   private byte f;
+    descriptor: B
 
   private int d;
+    descriptor: I
 
   private int r;
+    descriptor: I
 
   private int s;
+    descriptor: I
 
   private int t;
+    descriptor: I
 
   private int u;
+    descriptor: I
 
   int b;
+    descriptor: I
 
   private byte g;
+    descriptor: B
 
   public i();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #87                 // Method j."<init>":()V
@@ -65,6 +91,7 @@ public final class i extends j {
       20: return
 
   public final int a(byte[], int);
+    descriptor: ([BI)I
     Code:
        0: aload_0
        1: aload_1
@@ -413,6 +440,7 @@ public final class i extends j {
      578: ireturn
 
   public final void a();
+    descriptor: ()V
     Code:
        0: aload_0
        1: aload_0
@@ -451,6 +479,7 @@ public final class i extends j {
       61: return
 
   public final void a(int, float, int, c);
+    descriptor: (IFILc;)V
     Code:
        0: aload_0
        1: getfield      #54                 // Field d:I
@@ -617,6 +646,7 @@ public final class i extends j {
      287: return
 
   public final void a(int, int, c);
+    descriptor: (IILc;)V
     Code:
        0: aload_0
        1: dup
@@ -1023,6 +1053,7 @@ public final class i extends j {
      745: return
 
   private void a(int, int, int, int, int, int);
+    descriptor: (IIIIII)V
     Code:
        0: iconst_0
        1: istore        7
@@ -1085,6 +1116,7 @@ public final class i extends j {
      100: return
 
   public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;Ld;)V
     Code:
        0: getstatic     #80                 // Field o.a:I
        3: invokestatic  #96                 // Method o.a:()I
@@ -1954,6 +1986,7 @@ public final class i extends j {
     1547: return
 
   static {};
+    descriptor: ()V
     Code:
        0: return
 }

@@ -1,5 +1,6 @@
 public final class a extends j {
   public a();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #18                 // Method j."<init>":()V
@@ -9,6 +10,7 @@ public final class a extends j {
       10: return
 
   public final int a(byte[], int);
+    descriptor: ([BI)I
     Code:
        0: aload_0
        1: aload_1
@@ -19,6 +21,7 @@ public final class a extends j {
        8: ireturn
 
   public final void a();
+    descriptor: ()V
     Code:
        0: aload_0
        1: ldc           #1                  // int -2949120
@@ -35,6 +38,7 @@ public final class a extends j {
       24: return
 
   public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;Ld;)V
     Code:
        0: aload_0
        1: getstatic     #15                 // Field j.a:Ld;

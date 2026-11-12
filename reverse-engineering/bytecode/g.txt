@@ -1,37 +1,54 @@
 public final class g extends j {
   public static int[] a;
+    descriptor: [I
 
   private byte[][] a;
+    descriptor: [[B
 
   private byte a;
+    descriptor: B
 
   private byte d;
+    descriptor: B
 
   private byte e;
+    descriptor: B
 
   private short a;
+    descriptor: S
 
   private byte f;
+    descriptor: B
 
   private byte g;
+    descriptor: B
 
   private int b;
+    descriptor: I
 
   private int c;
+    descriptor: I
 
   private j[] a;
+    descriptor: [Lj;
 
   private j[] b;
+    descriptor: [Lj;
 
   private static j[] c;
+    descriptor: [Lj;
 
   private static g[] a;
+    descriptor: [Lg;
 
   private static int d;
+    descriptor: I
 
   public static int a;
+    descriptor: I
 
   public g();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #99                 // Method j."<init>":()V
@@ -58,6 +75,7 @@ public final class g extends j {
       40: return
 
   public final int a(byte[], int);
+    descriptor: ([BI)I
     Code:
        0: aload_0
        1: aload_1
@@ -220,6 +238,7 @@ public final class g extends j {
      269: ireturn
 
   protected final void a(int);
+    descriptor: (I)V
     Code:
        0: aload_0
        1: getfield      #34                 // Field a:B
@@ -276,6 +295,7 @@ public final class g extends j {
      107: return
 
   private final void b();
+    descriptor: ()V
     Code:
        0: aload_0
        1: iconst_m1
@@ -372,10 +392,12 @@ public final class g extends j {
      154: return
 
   public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;Ld;)V
     Code:
        0: return
 
   public static void a(g[], c);
+    descriptor: ([Lg;Lc;)V
     Code:
        0: aload_1
        1: getfield      #23                 // Field c.g:I
@@ -511,6 +533,7 @@ public final class g extends j {
      258: return
 
   private static final boolean a(java.lang.Object[], int, java.lang.Object);
+    descriptor: ([Ljava/lang/Object;ILjava/lang/Object;)Z
     Code:
        0: iconst_0
        1: istore_3
@@ -530,6 +553,7 @@ public final class g extends j {
       23: ireturn
 
   public static void a(g[]);
+    descriptor: ([Lg;)V
     Code:
        0: aload_0
        1: putstatic     #38                 // Field a:[Lg;
@@ -2034,6 +2058,7 @@ public final class g extends j {
     3012: return
 
   private static final int c(byte[], int);
+    descriptor: ([BI)I
     Code:
        0: aload_0
        1: iconst_3
@@ -2074,6 +2099,7 @@ public final class g extends j {
       72: ireturn
 
   private static float a(byte);
+    descriptor: (B)F
     Code:
        0: getstatic     #37                 // Field a:[I
        3: iload_0
@@ -2082,6 +2108,7 @@ public final class g extends j {
        8: freturn
 
   private static final void a(byte, float);
+    descriptor: (BF)V
     Code:
        0: getstatic     #37                 // Field a:[I
        3: iload_0
@@ -2091,6 +2118,7 @@ public final class g extends j {
        9: return
 
   private static final float a(byte[], int);
+    descriptor: ([BI)F
     Code:
        0: aload_0
        1: iconst_3
@@ -2212,6 +2240,7 @@ public final class g extends j {
      200: freturn
 
   private static void a(byte[], int, int);
+    descriptor: ([BII)V
     Code:
        0: aload_0
        1: iload_1
@@ -2248,6 +2277,7 @@ public final class g extends j {
       35: return
 
   static {};
+    descriptor: ()V
     Code:
        0: iconst_2
        1: anewarray     #7                  // class j

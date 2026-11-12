@@ -1,23 +1,33 @@
 public final class d {
   public int a;
+    descriptor: I
 
   public int b;
+    descriptor: I
 
   public int c;
+    descriptor: I
 
   public int d;
+    descriptor: I
 
   public int e;
+    descriptor: I
 
   public int f;
+    descriptor: I
 
   public static int g;
+    descriptor: I
 
   public static int h;
+    descriptor: I
 
   public static d a;
+    descriptor: Ld;
 
   public d();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #25                 // Method java/lang/Object."<init>":()V
@@ -30,6 +40,7 @@ public final class d {
       16: return
 
   public final void a(int, int);
+    descriptor: (II)V
     Code:
        0: aload_0
        1: getfield      #12                 // Field a:I
@@ -74,6 +85,7 @@ public final class d {
       58: return
 
   public final void b(int, int);
+    descriptor: (II)V
     Code:
        0: aload_0
        1: getfield      #12                 // Field a:I
@@ -112,6 +124,7 @@ public final class d {
       48: return
 
   public final void a(d);
+    descriptor: (Ld;)V
     Code:
        0: aload_0
        1: aload_1
@@ -140,6 +153,7 @@ public final class d {
       48: return
 
   public final void b(d);
+    descriptor: (Ld;)V
     Code:
        0: aload_0
        1: getfield      #12                 // Field a:I
@@ -284,6 +298,7 @@ public final class d {
      216: return
 
   public static void a(d, d, d);
+    descriptor: (Ld;Ld;Ld;)V
     Code:
        0: aload_0
        1: getfield      #12                 // Field a:I
@@ -428,6 +443,7 @@ public final class d {
      218: return
 
   public final void c(d);
+    descriptor: (Ld;)V
     Code:
        0: aload_0
        1: getfield      #12                 // Field a:I
@@ -541,6 +557,7 @@ public final class d {
      167: athrow
 
   public final void a(float);
+    descriptor: (F)V
     Code:
        0: fload_1
        1: f2d
@@ -574,6 +591,7 @@ public final class d {
       43: return
 
   public final java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
     Code:
        0: new           #10                 // class java/lang/String
        3: dup
@@ -613,6 +631,7 @@ public final class d {
       84: areturn
 
   static {};
+    descriptor: ()V
     Code:
        0: new           #6                  // class d
        3: dup

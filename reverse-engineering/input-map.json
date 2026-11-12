@@ -1,0 +1,84 @@
+{
+  "source": "Bounce Tales original JAR bytecode: o.e(int), o.d(int,int), o.keyPressed(int), o.keyReleased(int); m.a(int), m.b(int); c.b(), c.c(), c.a(boolean), c.f().",
+  "normalization": {
+    "hardware_key_codes": {
+      "-7": 5,
+      "-6": 6,
+      "-5": 7
+    },
+    "ascii_digits": {
+      "0-9": "10-19 (internal code = ASCII code - 38)"
+    },
+    "ascii_symbols": {
+      "*": 20,
+      "#": 21
+    },
+    "midp_game_action_values": {
+      "UP (1)": 1,
+      "LEFT (2)": 3,
+      "RIGHT (5)": 4,
+      "DOWN (6)": 2,
+      "other including FIRE (8)": -1
+    },
+    "mode_2_numeric_remap": {
+      "2 (internal 12)": 1,
+      "4 (internal 14)": 3,
+      "5 (internal 15)": 7,
+      "6 (internal 16)": 4,
+      "8 (internal 18)": 2
+    },
+    "event_flags": {
+      "keyPressed passes 9": "bit 8 normalizes + bit 1 key-down",
+      "keyReleased passes 10": "bit 8 normalizes + bit 2 key-up"
+    }
+  },
+  "active_gameplay_state": {
+    "left": {
+      "internal_codes": [
+        3
+      ],
+      "source": "o.a(3) held-state test calls c.b()"
+    },
+    "right": {
+      "internal_codes": [
+        4
+      ],
+      "source": "o.a(4) held-state test calls c.c()"
+    },
+    "primary_actor_action": {
+      "accepted_internal_codes": [
+        15,
+        12,
+        1,
+        7
+      ],
+      "source": "if any o.a(code) is held, m calls c.a(false)",
+      "meaning": "The bytecode proves this is the primary actor action path; the exact player-facing label (jump/action) is not conclusively named in obfuscated code."
+    },
+    "cycle_actor_mode": {
+      "internal_code": 20,
+      "origin": "ASCII *",
+      "source": "m.b(20) conditionally calls c.f(); c.f() increments c.d, wraps at 2 and clamps against m.a().",
+      "mode_index_range": "0..2"
+    },
+    "pause_menu": {
+      "internal_code": 5,
+      "origin": "Nokia-specific hardware key code -7",
+      "source": "m.b(5) sets a transition flag; the next m.a(int) update calls m.g(25). m.g(25) builds a menu headed by language string ID 83."
+    },
+    "hash": {
+      "internal_code": 21,
+      "origin": "ASCII #",
+      "finding": "Not consumed by the traced active-gameplay input polling/dispatch branches. It may still have a menu/text/platform use; do not add it as a required gameplay control based on this evidence."
+    }
+  },
+  "recommended_touch_mapping_for_future_port": {
+    "left": "internal 3",
+    "right": "internal 4",
+    "primary action": "internal 1 (UP alias)",
+    "actor-mode cycle": "internal 20 (*)",
+    "pause menu": "internal 5 (Nokia hardware -7 alias)",
+    "no_numeric_keypad": "true"
+  },
+  "caveat": "This is the original input dispatcher and active gameplay call map, not a completed browser game engine."
+}

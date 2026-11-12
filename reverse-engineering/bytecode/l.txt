@@ -1,45 +1,66 @@
 public final class l extends j {
   byte a;
+    descriptor: B
 
   private int c;
+    descriptor: I
 
   private int d;
+    descriptor: I
 
   private int r;
+    descriptor: I
 
   private int s;
+    descriptor: I
 
   private int t;
+    descriptor: I
 
   private int u;
+    descriptor: I
 
   private byte e;
+    descriptor: B
 
   private boolean b;
+    descriptor: Z
 
   private int v;
+    descriptor: I
 
   private int w;
+    descriptor: I
 
   int a;
+    descriptor: I
 
   int b;
+    descriptor: I
 
   private byte f;
+    descriptor: B
 
   boolean a;
+    descriptor: Z
 
   byte d;
+    descriptor: B
 
   private static int x;
+    descriptor: I
 
   private static int[] a;
+    descriptor: [I
 
   private static int[] b;
+    descriptor: [I
 
   private static int[] c;
+    descriptor: [I
 
   public l();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #77                 // Method j."<init>":()V
@@ -49,6 +70,7 @@ public final class l extends j {
       10: return
 
   public final int a(byte[], int);
+    descriptor: ([BI)I
     Code:
        0: aload_0
        1: aload_1
@@ -217,6 +239,7 @@ public final class l extends j {
      292: ireturn
 
   public final void a();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getstatic     #50                 // Field c:[I
@@ -249,6 +272,7 @@ public final class l extends j {
       51: return
 
   public final void b();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getstatic     #39                 // Field j.a:Ld;
@@ -337,6 +361,7 @@ public final class l extends j {
      184: return
 
   public final void c();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #40                 // Field a:B
@@ -450,6 +475,7 @@ public final class l extends j {
      244: return
 
   private void f();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getstatic     #39                 // Field j.a:Ld;
@@ -503,6 +529,7 @@ public final class l extends j {
      114: return
 
   public final void e();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #40                 // Field a:B
@@ -524,6 +551,7 @@ public final class l extends j {
       52: return
 
   private static void g();
+    descriptor: ()V
     Code:
        0: getstatic     #70                 // Field m.a:Lc;
        3: getfield      #30                 // Field c.b:F
@@ -560,6 +588,7 @@ public final class l extends j {
       74: return
 
   public final void d();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokevirtual #90                 // Method h:()V
@@ -1108,6 +1137,7 @@ public final class l extends j {
     1013: return
 
   public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;Ld;)V
     Code:
        0: aload_0
        1: getstatic     #39                 // Field j.a:Ld;
@@ -1249,6 +1279,7 @@ public final class l extends j {
      277: return
 
   static {};
+    descriptor: ()V
     Code:
        0: sipush        2000
        3: putstatic     #67                 // Field x:I

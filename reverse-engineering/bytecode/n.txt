@@ -1,49 +1,72 @@
 public final class n extends j {
   private static boolean a;
+    descriptor: Z
 
   private int[] a;
+    descriptor: [I
 
   private int[] b;
+    descriptor: [I
 
   private int[] c;
+    descriptor: [I
 
   private int[] d;
+    descriptor: [I
 
   private int[] e;
+    descriptor: [I
 
   private short[] a;
+    descriptor: [S
 
   private byte[] a;
+    descriptor: [B
 
   private byte[] b;
+    descriptor: [B
 
   private int d;
+    descriptor: I
 
   private int r;
+    descriptor: I
 
   private int s;
+    descriptor: I
 
   private int t;
+    descriptor: I
 
   private int u;
+    descriptor: I
 
   public int a;
+    descriptor: I
 
   private int v;
+    descriptor: I
 
   private int w;
+    descriptor: I
 
   public int b;
+    descriptor: I
 
   public int c;
+    descriptor: I
 
   private int[] f;
+    descriptor: [I
 
   private int x;
+    descriptor: I
 
   private static int[] g;
+    descriptor: [I
 
   public n(int, int, int, int, int, int, int, int[], int, int);
+    descriptor: (IIIIIII[III)V
     Code:
        0: aload_0
        1: invokespecial #50                 // Method j."<init>":()V
@@ -138,6 +161,7 @@ public final class n extends j {
      163: return
 
   public final void c(j);
+    descriptor: (Lj;)V
     Code:
        0: aload_0
        1: aload_1
@@ -176,6 +200,7 @@ public final class n extends j {
       70: return
 
   public final void a(int, int, int, int, int, int, int);
+    descriptor: (IIIIIII)V
     Code:
        0: iload_1
        1: iconst_1
@@ -349,6 +374,7 @@ public final class n extends j {
      313: return
 
   public final void a(int, int, int, int, int, int, int, int, int);
+    descriptor: (IIIIIIIII)V
     Code:
        0: iload_1
        1: iconst_1
@@ -565,6 +591,7 @@ public final class n extends j {
      407: return
 
   public final void a(int, int, int, int, int, int, int, int, int, int);
+    descriptor: (IIIIIIIIII)V
     Code:
        0: bipush        11
        2: aload_0
@@ -682,6 +709,7 @@ public final class n extends j {
      207: return
 
   public final void b(int, int, int, int, int, int, int, int, int, int);
+    descriptor: (IIIIIIIIII)V
     Code:
        0: iconst_0
        1: istore        7
@@ -741,6 +769,7 @@ public final class n extends j {
       93: return
 
   public final void a(int, int, int, int, int, int, int, int, int, int, int);
+    descriptor: (IIIIIIIIIII)V
     Code:
        0: iconst_0
        1: istore        14
@@ -787,6 +816,7 @@ public final class n extends j {
       76: return
 
   public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;Ld;)V
     Code:
        0: getstatic     #47                 // Field o.a:I
        3: invokestatic  #58                 // Method o.a:()I
@@ -1220,6 +1250,7 @@ public final class n extends j {
      742: return
 
   private static void a(int, int, int);
+    descriptor: (III)V
     Code:
        0: getstatic     #20                 // Field m.b:[S
        3: iload_0
@@ -1262,6 +1293,7 @@ public final class n extends j {
       55: return
 
   static {};
+    descriptor: ()V
     Code:
        0: iconst_0
        1: putstatic     #22                 // Field a:Z

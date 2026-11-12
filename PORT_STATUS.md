@@ -1,29 +1,27 @@
-# Port status · playable prototype
+# Bounce Tales · port status
 
-## What works in this build
-- Static HTML5 deployment with a 240×320 logical canvas.
-- Responsive scaling and phone-friendly touch controls.
-- Keyboard input.
-- A playable side-scrolling training stage with movement, jump, platform landing, collectibles, a finish trigger, restart and pause.
-- Local progress storage.
-- Original JAR resources preserved in `assets/original/`.
+## Current website state
+- The browser page remains a playable training-stage prototype.
+- It uses a 240×320 logical canvas and proportionally scales it.
+- The training stage's platforms, stars and movement constants are still approximations, not original game data.
 
-## Not yet equivalent to the original
-- Original level file decoding and all original stages.
-- Exact Bounce Tales movement constants, bounce modes and collision response.
-- Original player sprite animation and full object/enemy interactions.
-- Exact menus, transitions, sound effects and MIDI sequencing.
-- Original save format and full progression.
-- Frame-by-frame comparison with a reference emulator/device.
+## Verified reverse-engineering progress in this build
+- All 106 files in the supplied JAR are preserved under `assets/original/` and verified byte-for-byte.
+- Fresh `javap` bytecode disassemblies are included for all 19 original classes.
+- Original key normalization, gameplay-held inputs, pause-menu event and actor mode-cycle input are traced.
+- The pause menu's original localized strings were recovered.
+- Sixteen `RLEF` resources have their signature/version/header fields inventoried.
+- Three-mode actor physics constants are extracted exactly from `c.class`, with field semantics intentionally left unlabeled where unproven.
+- A reusable JavaScript input mapper is included and has automated tests.
 
-## Acceptance checklist
-- [ ] Decode and load every original level from the JAR.
-- [ ] Match player movement, bounce states, gravity and collision frame-by-frame.
-- [ ] Reproduce original menus, level transitions, enemies, hazards, checkpoints and collectibles.
-- [ ] Match original sprite frames, draw order, particles and effects.
-- [ ] Map all MIDI tracks and sound events to original triggers.
-- [ ] Match pause, restart, save/load and progression.
-- [ ] Compare all stages against the original JAR running in a reference environment.
-- [ ] Test on Android Chrome at multiple screen sizes.
+## Remaining before a faithful remaster
+- [ ] Fully decode the 16 RLEF payloads and prove their relationship to the level/stage system.
+- [ ] Rebuild original level loading from the original resources.
+- [ ] Trace and reproduce the actor physics and all three actor modes.
+- [ ] Map original PNG indexes to sprite sheets, player frames, level tiles, UI and effects.
+- [ ] Rebuild enemies, hazards, collectibles, checkpoints and level completion from original logic/data.
+- [ ] Map MIDI files and playback triggers.
+- [ ] Rebuild menus and progression, including RMS save-data compatibility.
+- [ ] Compare against the JAR running in an original Java ME reference environment.
 
-This package is a playable baseline for comparison, not a claim of completed one-to-one fidelity.
+This is a reverse-engineering build, not a claim of full game completion. See `reverse-engineering/` for bytecode-backed evidence and known unknowns.

@@ -1,91 +1,135 @@
 public class j {
   public static final d a;
+    descriptor: Ld;
 
   public final d b;
+    descriptor: Ld;
 
   public final d c;
+    descriptor: Ld;
 
   private d h;
+    descriptor: Ld;
 
   public final d d;
+    descriptor: Ld;
 
   public final d e;
+    descriptor: Ld;
 
   private j c;
+    descriptor: Lj;
 
   private j d;
+    descriptor: Lj;
 
   private j e;
+    descriptor: Lj;
 
   private j f;
+    descriptor: Lj;
 
   private short a;
+    descriptor: S
 
   private short b;
+    descriptor: S
 
   public int e;
+    descriptor: I
 
   public int f;
+    descriptor: I
 
   public int g;
+    descriptor: I
 
   public int h;
+    descriptor: I
 
   public int i;
+    descriptor: I
 
   public int j;
+    descriptor: I
 
   public int k;
+    descriptor: I
 
   public int l;
+    descriptor: I
 
   public byte b;
+    descriptor: B
 
   public int m;
+    descriptor: I
 
   public boolean e;
+    descriptor: Z
 
   private boolean a;
+    descriptor: Z
 
   public boolean f;
+    descriptor: Z
 
   public boolean g;
+    descriptor: Z
 
   protected short d;
+    descriptor: S
 
   protected byte c;
+    descriptor: B
 
   private static short c;
+    descriptor: S
 
   private static int a;
+    descriptor: I
 
   public static final d f;
+    descriptor: Ld;
 
   private static d i;
+    descriptor: Ld;
 
   public static final d g;
+    descriptor: Ld;
 
   private static d j;
+    descriptor: Ld;
 
   private static d k;
+    descriptor: Ld;
 
   public static j a;
+    descriptor: Lj;
 
   public static int n;
+    descriptor: I
 
   public static int o;
+    descriptor: I
 
   public static int p;
+    descriptor: I
 
   public static int q;
+    descriptor: I
 
   private static int b;
+    descriptor: I
 
   private static j[] a;
+    descriptor: [Lj;
 
   protected static j b;
+    descriptor: Lj;
 
   public j();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #91                 // Method java/lang/Object."<init>":()V
@@ -140,12 +184,14 @@ public class j {
       98: return
 
   public final byte a();
+    descriptor: ()B
     Code:
        0: aload_0
        1: getfield      #33                 // Field c:B
        4: ireturn
 
   public void d();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #43                 // Field e:Z
@@ -178,6 +224,7 @@ public class j {
       62: return
 
   public final void h();
+    descriptor: ()V
     Code:
        0: aload_0
        1: astore_1
@@ -200,6 +247,7 @@ public class j {
       30: return
 
   public final void i();
+    descriptor: ()V
     Code:
        0: aload_0
        1: astore_0
@@ -217,14 +265,17 @@ public class j {
       21: return
 
   public void a(j);
+    descriptor: (Lj;)V
     Code:
        0: return
 
   public void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;Ld;)V
     Code:
        0: return
 
   public final void b(j);
+    descriptor: (Lj;)V
     Code:
        0: aload_1
        1: aload_0
@@ -264,6 +315,7 @@ public class j {
       69: return
 
   public final void j();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #35                 // Field c:Lj;
@@ -314,6 +366,7 @@ public class j {
       98: return
 
   public final void a(d);
+    descriptor: (Ld;)V
     Code:
        0: aload_0
        1: getfield      #47                 // Field f:Z
@@ -327,6 +380,7 @@ public class j {
       19: return
 
   public final void k();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #52                 // Field h:Ld;
@@ -360,6 +414,7 @@ public class j {
       59: return
 
   public final boolean a(j);
+    descriptor: (Lj;)Z
     Code:
        0: aload_0
        1: getfield      #35                 // Field c:Lj;
@@ -379,6 +434,7 @@ public class j {
       25: ireturn
 
   public final j a(j);
+    descriptor: (Lj;)Lj;
     Code:
        0: aload_1
        1: ifnonnull     6
@@ -423,6 +479,7 @@ public class j {
       72: areturn
 
   public final j b(j);
+    descriptor: (Lj;)Lj;
     Code:
        0: aload_1
        1: ifnonnull     6
@@ -461,12 +518,14 @@ public class j {
       60: areturn
 
   public final short a();
+    descriptor: ()S
     Code:
        0: aload_0
        1: getfield      #39                 // Field d:S
        4: ireturn
 
   public final void a(short);
+    descriptor: (S)V
     Code:
        0: aload_0
        1: iload_1
@@ -474,6 +533,7 @@ public class j {
        5: return
 
   public final j a(short);
+    descriptor: (S)Lj;
     Code:
        0: aconst_null
        1: astore_2
@@ -494,6 +554,7 @@ public class j {
       26: areturn
 
   public final j a();
+    descriptor: ()Lj;
     Code:
        0: aload_0
        1: astore_0
@@ -508,6 +569,7 @@ public class j {
       18: areturn
 
   public void a();
+    descriptor: ()V
     Code:
        0: aload_0
        1: ldc           #5                  // int 2147483647
@@ -524,6 +586,7 @@ public class j {
       24: return
 
   public final void l();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getfield      #26                 // Field a:Z
@@ -705,6 +768,7 @@ public class j {
      401: return
 
   public int a(byte[], int);
+    descriptor: ([BI)I
     Code:
        0: aload_0
        1: aload_1
@@ -881,6 +945,7 @@ public class j {
      347: ireturn
 
   public static void a(j[]);
+    descriptor: ([Lj;)V
     Code:
        0: iconst_0
        1: istore_1
@@ -977,6 +1042,7 @@ public class j {
      152: return
 
   public static final short a(byte[], int);
+    descriptor: ([BI)S
     Code:
        0: iconst_0
        1: istore_2
@@ -1005,6 +1071,7 @@ public class j {
       27: ireturn
 
   public static final int b(byte[], int);
+    descriptor: ([BI)I
     Code:
        0: lconst_0
        1: lstore_2
@@ -1065,6 +1132,7 @@ public class j {
       65: ireturn
 
   public static int a(int[], int, int, byte[], int, int);
+    descriptor: ([III[BII)I
     Code:
        0: iconst_0
        1: istore        6
@@ -1149,6 +1217,7 @@ public class j {
      133: ireturn
 
   public static int a(short[], int, int, int, byte[], int, int);
+    descriptor: ([SIII[BII)I
     Code:
        0: iconst_0
        1: istore_3
@@ -1232,6 +1301,7 @@ public class j {
      124: ireturn
 
   public static final boolean a(int, int, int, int, int, int, int, int);
+    descriptor: (IIIIIIII)Z
     Code:
        0: iload         6
        2: iload         4
@@ -1350,6 +1420,7 @@ public class j {
      183: ireturn
 
   public static final boolean b(int, int, int, int, int, int, int, int);
+    descriptor: (IIIIIIII)Z
     Code:
        0: iload_2
        1: iload         4
@@ -1371,6 +1442,7 @@ public class j {
       29: ireturn
 
   public static boolean a(int, int, int, int, int, int);
+    descriptor: (IIIIII)Z
     Code:
        0: iload_0
        1: iload_2
@@ -1392,6 +1464,7 @@ public class j {
       27: ireturn
 
   public static void m();
+    descriptor: ()V
     Code:
        0: iconst_0
        1: putstatic     #61                 // Field n:I
@@ -1402,6 +1475,7 @@ public class j {
       12: return
 
   public static void b(boolean);
+    descriptor: (Z)V
     Code:
        0: getstatic     #65                 // Field o.a:I
        3: istore_1
@@ -1591,6 +1665,7 @@ public class j {
      360: return
 
   public static void a(j, javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics);
+    descriptor: (Lj;Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;)V
     Code:
        0: getstatic     #45                 // Field f:Ld;
        3: getstatic     #54                 // Field i:Ld;
@@ -1887,6 +1962,7 @@ public class j {
      644: return
 
   private static final void a(j[], int, int);
+    descriptor: ([Lj;II)V
     Code:
        0: iload_1
        1: iload_2
@@ -1967,6 +2043,7 @@ public class j {
      119: return
 
   static {};
+    descriptor: ()V
     Code:
        0: new           #7                  // class d
        3: dup

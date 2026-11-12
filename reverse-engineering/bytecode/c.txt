@@ -1,133 +1,198 @@
 public final class c extends j {
   public int a;
+    descriptor: I
 
   private int r;
+    descriptor: I
 
   private static float l;
+    descriptor: F
 
   private static float m;
+    descriptor: F
 
   private static float[] b;
+    descriptor: [F
 
   private static float[] c;
+    descriptor: [F
 
   private static float[] d;
+    descriptor: [F
 
   public static final int[] a;
+    descriptor: [I
 
   public static final float[] a;
+    descriptor: [F
 
   private static float[] e;
+    descriptor: [F
 
   private static float[] f;
+    descriptor: [F
 
   private static float[] g;
+    descriptor: [F
 
   private static float[] h;
+    descriptor: [F
 
   public static int[] b;
+    descriptor: [I
 
   private static int s;
+    descriptor: I
 
   public static int b;
+    descriptor: I
 
   public static int c;
+    descriptor: I
 
   private static int[] c;
+    descriptor: [I
 
   private static short[] a;
+    descriptor: [S
 
   public float a;
+    descriptor: F
 
   public float b;
+    descriptor: F
 
   public float c;
+    descriptor: F
 
   public float d;
+    descriptor: F
 
   public float e;
+    descriptor: F
 
   public float f;
+    descriptor: F
 
   public float g;
+    descriptor: F
 
   public boolean a;
+    descriptor: Z
 
   public boolean b;
+    descriptor: Z
 
   public boolean c;
+    descriptor: Z
 
   private int[] d;
+    descriptor: [I
 
   private int[] e;
+    descriptor: [I
 
   private int[] f;
+    descriptor: [I
 
   private int[] g;
+    descriptor: [I
 
   private int[] h;
+    descriptor: [I
 
   private int[] i;
+    descriptor: [I
 
   public float h;
+    descriptor: F
 
   public float i;
+    descriptor: F
 
   public float j;
+    descriptor: F
 
   public float k;
+    descriptor: F
 
   private float n;
+    descriptor: F
 
   private int t;
+    descriptor: I
 
   private final int[] j;
+    descriptor: [I
 
   private final int[] k;
+    descriptor: [I
 
   private final int[] l;
+    descriptor: [I
 
   private final int[] m;
+    descriptor: [I
 
   private final int[] n;
+    descriptor: [I
 
   private final int[] o;
+    descriptor: [I
 
   private final boolean[] a;
+    descriptor: [Z
 
   private float o;
+    descriptor: F
 
   private int u;
+    descriptor: I
 
   private int v;
+    descriptor: I
 
   private int w;
+    descriptor: I
 
   private static int[] p;
+    descriptor: [I
 
   public int d;
+    descriptor: I
 
   private float p;
+    descriptor: F
 
   private float q;
+    descriptor: F
 
   private float r;
+    descriptor: F
 
   public boolean d;
+    descriptor: Z
 
   private boolean h;
+    descriptor: Z
 
   private static int x;
+    descriptor: I
 
   private static int y;
+    descriptor: I
 
   private static int z;
+    descriptor: I
 
   private static boolean i;
+    descriptor: Z
 
   private static float s;
+    descriptor: F
 
   public c(boolean);
+    descriptor: (Z)V
     Code:
        0: aload_0
        1: invokespecial #245                // Method j."<init>":()V
@@ -232,6 +297,7 @@ public final class c extends j {
      184: return
 
   private void n();
+    descriptor: ()V
     Code:
        0: iconst_0
        1: istore_1
@@ -263,6 +329,7 @@ public final class c extends j {
       41: return
 
   public final void b();
+    descriptor: ()V
     Code:
        0: fconst_0
        1: fstore_1
@@ -329,6 +396,7 @@ public final class c extends j {
      111: return
 
   public final void c();
+    descriptor: ()V
     Code:
        0: fconst_0
        1: fstore_1
@@ -393,6 +461,7 @@ public final class c extends j {
      109: return
 
   public final void a(boolean);
+    descriptor: (Z)V
     Code:
        0: aload_0
        1: getfield      #145                // Field r:F
@@ -456,6 +525,7 @@ public final class c extends j {
      111: return
 
   private void b(int, int);
+    descriptor: (II)V
     Code:
        0: iload_2
        1: ifle          16
@@ -483,6 +553,7 @@ public final class c extends j {
       39: return
 
   public final void a();
+    descriptor: ()V
     Code:
        0: aload_0
        1: getstatic     #87                 // Field a:[I
@@ -521,6 +592,7 @@ public final class c extends j {
       62: return
 
   public final void d();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokevirtual #232                // Method h:()V
@@ -1139,6 +1211,7 @@ public final class c extends j {
     1057: return
 
   public final void a(int, int);
+    descriptor: (II)V
     Code:
        0: aload_0
        1: invokevirtual #231                // Method g:()V
@@ -1203,6 +1276,7 @@ public final class c extends j {
      104: return
 
   public final void a(j);
+    descriptor: (Lj;)V
     Code:
        0: iconst_1
        1: istore_2
@@ -2682,6 +2756,7 @@ public final class c extends j {
     2881: return
 
   private void a(p, int, int, int, int, int, boolean);
+    descriptor: (Lp;IIIIIZ)V
     Code:
        0: iload_2
        1: ifle          175
@@ -2917,6 +2992,7 @@ public final class c extends j {
      426: return
 
   private static boolean c(int, int, int, int, int, int, int, int);
+    descriptor: (IIIIIIII)Z
     Code:
        0: iload_0
        1: iload         5
@@ -3092,6 +3168,7 @@ public final class c extends j {
      259: ireturn
 
   private static boolean a(int, int, int, int, int, int, int, int, int);
+    descriptor: (IIIIIIIII)Z
     Code:
        0: iload         4
        2: i2l
@@ -3363,6 +3440,7 @@ public final class c extends j {
      396: ireturn
 
   public final void e();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokevirtual #232                // Method h:()V
@@ -3411,6 +3489,7 @@ public final class c extends j {
       84: return
 
   public final void a(javax.microedition.lcdui.Graphics, com.nokia.mid.ui.DirectGraphics, d);
+    descriptor: (Ljavax/microedition/lcdui/Graphics;Lcom/nokia/mid/ui/DirectGraphics;Ld;)V
     Code:
        0: aload_0
        1: getfield      #93                 // Field b:Z
@@ -4253,6 +4332,7 @@ public final class c extends j {
     1604: return
 
   public final void f();
+    descriptor: ()V
     Code:
        0: aload_0
        1: dup
@@ -4281,6 +4361,7 @@ public final class c extends j {
       44: return
 
   public final void g();
+    descriptor: ()V
     Code:
        0: aload_0
        1: fconst_0
@@ -4309,6 +4390,7 @@ public final class c extends j {
       40: return
 
   private void a(int, int, int, int, int, javax.microedition.lcdui.Graphics, boolean, boolean);
+    descriptor: (IIIIILjavax/microedition/lcdui/Graphics;ZZ)V
     Code:
        0: aload         6
        2: iload         5
@@ -4424,6 +4506,7 @@ public final class c extends j {
      191: return
 
   static {};
+    descriptor: ()V
     Code:
        0: fconst_0
        1: putstatic     #134                // Field l:F

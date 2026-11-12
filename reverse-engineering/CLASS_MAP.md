@@ -1,20 +1,21 @@
-# Java class map (tentative)
+# Class map (updated from bytecode call paths)
 
-The original class names are heavily obfuscated (`a` through `r`). These roles are working hypotheses based on bytecode signatures, method calls and referenced platform APIs, not final source-level identifications.
+The original class names are obfuscated, so the original identifiers and method descriptors are retained. These roles are now supported by direct bytecode call paths rather than only by class shape.
 
-| Class | Current reading | Confidence |
+| Class | Evidence-backed role | Confidence |
 |---|---|---|
-| `RMIDlet` | MIDlet lifecycle entry point; starts, pauses and destroys the runtime in `o`. | High |
-| `o` | Runtime/thread and platform integration. Contains a run loop and references Nokia `DirectGraphics`, device control and media players. | High |
-| `m` | Main game/controller layer. Holds global level/render/game state and extensive update/draw logic. | Medium |
-| `c` | Player/physics actor candidate. Contains many float state fields and update/collision methods. | Medium |
-| `j` | Sprite/entity base candidate with drawing, transforms, bounds and collision helpers. | Medium |
-| `g` | Binary level/tile or scene-resource decoder candidate; parses byte arrays and draws collections. | Low–medium |
-| `q` | Language/localization string loader. | High |
-| `h` | Collection/route/menu data structure candidate. | Low |
-| `a`, `b`, `d`–`i`, `k`–`p`, `r` | Supporting resource, entity, rendering, UI or animation classes. Their responsibilities need call-graph tracing. | Low |
-| `n` | Renderable geometry/particle or scene primitive candidate. | Low |
+| `RMIDlet` | Java ME MIDlet entry point. `startApp`, `pauseApp` and `destroyApp` delegate lifecycle events to `o.h(int)` / `o.a()`. | High |
+| `o` | Runtime platform layer. Extends `GameCanvas`, owns the run loop, key normalization/event collection, graphics/image loading, Java ME audio players, RecordStore access and Nokia API calls. | High |
+| `m` | Main game controller. Owns the active actor reference, menu/UI state, per-frame update and draw/state transitions; dispatches active gameplay inputs to `c`. | High |
+| `c` | Main actor/player class. Extends `j`; receives left/right and primary action calls from `m`, holds three indexed modes and mode-dependent numeric parameter arrays. | High |
+| `j` | Shared entity/sprite base class. `c` and `g` extend it; it supplies common positioning/rendering/entity state. | Medium–high |
+| `g` | A concrete `j`-derived scene/entity record. Its `a(byte[],int)` parser reads fixed-point fields, flags, a short and nested byte arrays; it is not established as the whole level loader. | Medium |
+| `h` | Menu/widget data and navigation object, held by `m` and called to build, update and navigate menus. | High |
+| `q` | Localization string loader. Reads `lang.<locale>`, falls back to `lang.xx`, resolves offset-indexed UTF strings. | High |
+| `k` | Secondary actor/controller used in an alternate game-state branch; its complete gameplay role remains to be mapped. | Low–medium |
+| `f` | Menu item/callback object constructed by `m` and attached to `h`. | Medium |
+| `n`, `p`, `r`, `a`, `b`, `d`, `e`, `i`, `l` | Supporting rendering, animation, data or UI classes; responsibilities still need focused call-site analysis. | Low–medium |
 
-## Important platform dependencies
+## Platform interfaces that a browser port must replace
 
-The bytecode references Java ME APIs (`MIDlet`, `Graphics`, `Image`, `Player`, `Manager`) and Nokia APIs such as `com.nokia.mid.ui.DirectGraphics` and `DeviceControl`. A native HTML port must replace these with explicit browser-side rendering, audio, input and lifecycle code. It must not simply bundle a Java ME emulator.
+The bytecode references Java ME `MIDlet`, `GameCanvas`, `Graphics`, `Image`, `Player`, `Manager` and `RecordStore`; it also references Nokia `DirectGraphics` and `DeviceControl`. The browser port needs replacements for rendering, lifecycle, audio, input and persistent saves. The input mapping is now separately recovered in `INPUT_TRACE.md`.

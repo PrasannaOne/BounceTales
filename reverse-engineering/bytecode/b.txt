@@ -1,35 +1,51 @@
 public final class b {
   public static final int a;
+    descriptor: I
 
   private int d;
+    descriptor: I
 
   private int e;
+    descriptor: I
 
   private int f;
+    descriptor: I
 
   private int g;
+    descriptor: I
 
   private int h;
+    descriptor: I
 
   private int i;
+    descriptor: I
 
   public int b;
+    descriptor: I
 
   public int c;
+    descriptor: I
 
   private int j;
+    descriptor: I
 
   java.lang.String a;
+    descriptor: Ljava/lang/String;
 
   private java.lang.String[] a;
+    descriptor: [Ljava/lang/String;
 
   private int k;
+    descriptor: I
 
   private int l;
+    descriptor: I
 
   private boolean a;
+    descriptor: Z
 
   public b(java.lang.String, int, int, int, int);
+    descriptor: (Ljava/lang/String;IIII)V
     Code:
        0: aload_0
        1: invokespecial #28                 // Method java/lang/Object."<init>":()V
@@ -154,6 +170,7 @@ public final class b {
      244: return
 
   private void a(java.lang.String);
+    descriptor: (Ljava/lang/String;)V
     Code:
        0: iconst_4
        1: newarray       int
@@ -293,6 +310,7 @@ public final class b {
          162   185   188   Class java/lang/NumberFormatException
 
   public final void a(int, int, int, int);
+    descriptor: (IIII)V
     Code:
        0: aload_0
        1: iload_1
@@ -575,6 +593,7 @@ public final class b {
      524: return
 
   static {};
+    descriptor: ()V
     Code:
        0: iconst_3
        1: newarray       char

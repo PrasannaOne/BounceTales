@@ -1,17 +1,24 @@
 public final class f {
   public h a;
+    descriptor: Lh;
 
   public boolean a;
+    descriptor: Z
 
   public int a;
+    descriptor: I
 
   public b a;
+    descriptor: Lb;
 
   private int[] a;
+    descriptor: [I
 
   public java.lang.String a;
+    descriptor: Ljava/lang/String;
 
   public f();
+    descriptor: ()V
     Code:
        0: aload_0
        1: invokespecial #26                 // Method java/lang/Object."<init>":()V
@@ -30,6 +37,7 @@ public final class f {
       24: return
 
   public f(java.lang.String, int, h, int);
+    descriptor: (Ljava/lang/String;ILh;I)V
     Code:
        0: aload_0
        1: invokespecial #26                 // Method java/lang/Object."<init>":()V
@@ -58,6 +66,7 @@ public final class f {
       41: return
 
   public final int a();
+    descriptor: ()I
     Code:
        0: aload_0
        1: iconst_5
@@ -129,6 +138,7 @@ public final class f {
      133: ireturn
 
   public final int b();
+    descriptor: ()I
     Code:
        0: aload_0
        1: getfield      #12                 // Field a:Lb;
@@ -150,6 +160,7 @@ public final class f {
       31: ireturn
 
   public final boolean a();
+    descriptor: ()Z
     Code:
        0: aload_0
        1: getfield      #11                 // Field a:I
@@ -161,6 +172,7 @@ public final class f {
       11: ireturn
 
   public final void a(int, int);
+    descriptor: (II)V
     Code:
        0: aload_0
        1: iload_1
@@ -173,6 +185,7 @@ public final class f {
       14: return
 
   public final int a(int);
+    descriptor: (I)I
     Code:
        0: iload_1
        1: aload_0
@@ -197,6 +210,7 @@ public final class f {
       40: ireturn
 
   public final void a(java.lang.String, int);
+    descriptor: (Ljava/lang/String;I)V
     Code:
        0: aload_1
        1: ifnonnull     7
