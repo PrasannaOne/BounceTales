@@ -4,78 +4,99 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "BounceTales_Branch_Deploy_Root.zip"
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: extract-bounce-tales
+  group: bounce-tales-zip-extraction
   cancel-in-progress: false
 
 jobs:
   extract:
-    # The bot's own commit must not start another extraction run.
+    # Avoid looping if a later human-triggered run sees a bot-authored push.
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out main
+      - name: Check out repository
         uses: actions/checkout@v4
         with:
+          ref: main
+          fetch-depth: 0
           persist-credentials: true
 
-      - name: Extract ZIP into repository root
+      - name: Validate and extract uploaded ZIP
         shell: bash
         run: |
           set -euo pipefail
 
           ZIP_FILE="BounceTales_Branch_Deploy_Root.zip"
-          test -f "$ZIP_FILE" || {
-            echo "ERROR: $ZIP_FILE is missing from the repository root."
-            exit 1
-          }
+          if [[ ! -f "$ZIP_FILE" ]]; then
+            echo "No $ZIP_FILE found. Nothing to extract."
+            exit 0
+          fi
 
           TEMP_DIR="$(mktemp -d)"
           trap 'rm -rf "$TEMP_DIR"' EXIT
 
-          # Reject archive entries that could write outside the temporary folder.
-          while IFS= read -r entry; do
-            case "$entry" in
-              /*|../*|*/../*|*/..)
-                echo "ERROR: Unsafe ZIP entry: $entry"
-                exit 1
-                ;;
-            esac
-          done < <(unzip -Z1 "$ZIP_FILE")
+          # Reject unsafe paths and symbolic links before extracting.
+          python3 - "$ZIP_FILE" <<'PY'
+          import stat
+          import sys
+          import zipfile
+
+          archive = sys.argv[1]
+          with zipfile.ZipFile(archive) as z:
+              for item in z.infolist():
+                  name = item.filename.replace("\\", "/")
+                  parts = name.split("/")
+                  if name.startswith("/") or any(p == ".." for p in parts):
+                      raise SystemExit(f"Unsafe ZIP path: {item.filename}")
+                  mode = item.external_attr >> 16
+                  if stat.S_ISLNK(mode):
+                      raise SystemExit(f"ZIP symlinks are not allowed: {item.filename}")
+          PY
 
           unzip -q "$ZIP_FILE" -d "$TEMP_DIR"
 
-          for required in index.html game.js style.css; do
-            test -s "$TEMP_DIR/$required" || {
-              echo "ERROR: ZIP is missing $required at its root."
+          # This package is expected to contain the website at its ZIP root.
+          for file in index.html game.js style.css; do
+            if [[ ! -s "$TEMP_DIR/$file" ]]; then
+              echo "ERROR: ZIP is missing $file at its root."
               exit 1
-            }
+            fi
           done
 
-          # Copy the website files into main's root.
-          cp -a "$TEMP_DIR/." .
+          if [[ ! -d "$TEMP_DIR/assets/original" ]]; then
+            echo "ERROR: ZIP is missing assets/original/."
+            exit 1
+          fi
 
-          # Remove the uploaded ZIP after successful extraction.
+          # Mirror the ZIP contents into main's root, preserving Git metadata
+          # and this workflow directory. Old generated site files are removed.
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            "$TEMP_DIR/" ./
+
+          # Delete the uploaded archive only after validation and extraction.
           rm -f "$ZIP_FILE"
 
-      - name: Commit extracted files and delete ZIP
+      - name: Commit extracted website and remove ZIP
         shell: bash
         run: |
           set -euo pipefail
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git add -A
           if git diff --cached --quiet; then
-            echo "No extracted changes to commit."
-          else
-            git commit -m "Extract Bounce Tales website from uploaded ZIP"
-            git push origin HEAD:main
+            echo "No changes to commit."
+            exit 0
           fi
+
+          git commit -m "Extract Bounce Tales website from uploaded ZIP"
+          git push origin HEAD:main
