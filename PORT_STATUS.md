@@ -216,3 +216,10 @@ The edge/vertex approach is translated from the original `c.class` collision met
 - All local Node validation scripts pass, including all 15 RLEF player-start fall/landing paths.
 - All 105 non-manifest JAR resources remain byte-for-byte identical to the freshly uploaded 2.0.3 archive.
 - No reliable real-phone/PC visual test was performed in this build.
+
+# Build 15 status · 2026-11-12
+
+- Removed the visible “Share” text; the header now shows only the conventional share icon while preserving its accessible label and native-share/copy-link behaviour.
+- Retained the previously implemented Build 14 swept edge/vertex collision and terrain-overlap recovery code without changing its solver behaviour in this handoff.
+- All 105 non-manifest files from the newly supplied Bounce Tales 2.0.3 JAR match `assets/original/` byte-for-byte.
+- This package does not claim to have fixed the specific grass fall-through shown in the user's latest screenshot. The existing synthetic grass and 15-stage spawn regression tests pass, but the reported real-phone case still needs a targeted reproduction and on-device verification.

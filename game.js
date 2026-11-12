@@ -156,7 +156,7 @@ function buildRuntime(parsed){
 function screenPoint(p){return {x:W/2+(p.x-cameraX)*SCALE,y:H/2-(p.y-cameraY)*SCALE};}
 function resolveTerrain(dt,previous){
   body.radius=BouncePhysics.parameters.radius[body.forme];
-  BounceTerrainCollision.resolveCirclePolygons(body,worldGeometry,dt,4,previous);
+  BounceTerrainCollision.resolveCirclePolygons(body,worldGeometry,dt,8,previous);
 }
 function collectEggs(){
   for(const e of eggs.concat(bonusEggs)){

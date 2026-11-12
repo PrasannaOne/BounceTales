@@ -71,3 +71,8 @@ See `PORT_STATUS.md` and `REVERSE_ENGINEERING_SUMMARY.md` for the build history 
 - Added grass-platform landing and all-15-stage player-start/fall/landing regression tests.
 
 Validation: all test scripts in `tests/*.cjs` pass in the local Node.js runtime. This validates deterministic logic only; real-device movement feel and screen layout still require phone/PC playtesting. The collision solver is closer to the source's contact geometry but is not yet a byte-for-byte LP32 translation of the complete original `BounceObject.checkCollisions` response.
+
+## Build 15 · 2026-11-12
+- Share control is icon-only, with an accessible label for screen readers.
+- Retains the Build 14 swept edge/vertex terrain collision and overlap-recovery implementation.
+- The collision implementation is still a browser-side approximation of the original LP32 contact solver; real-device grass landing needs validation before claiming the reported fall-through is fixed.

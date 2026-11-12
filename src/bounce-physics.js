@@ -151,25 +151,36 @@
         this.stretchMagnitude[axis]=trunc32(this.stretchMagnitude[axis]+restoring-damping);
       }
     }
-    land(nx,ny,dt){
+    land(nx,ny,dt,preCollisionVelocity=null){
       const n=Math.hypot(nx,ny)||1;nx/=n;ny/=n;
+      const before=preCollisionVelocity||{x:this.vx,y:this.vy};
+      const incomingX=Number.isFinite(before.x)?before.x:this.vx;
+      const incomingY=Number.isFinite(before.y)?before.y:this.vy;
       this.slopeSinAbs=nx;this.slopeCosAbs=ny;this.airTime=0;this.grounded=true;
-      // BounceObject.checkCollisions reflects the normal velocity with the
-      // per-form ricochet factor, then applies friction as a gravity force for
-      // the next elapsed-time update. This keeps contact handling from being
-      // dependent on the browser's display refresh rate.
-      const vn=this.vx*nx+this.vy*ny;
+
+      // Port of the JAR's collision response: reflect the incoming normal
+      // component with the current form's restitution, then use the velocity
+      // delta to choose between the required stopping acceleration and the
+      // friction force produced by gravity along this surface.
+      const vn=incomingX*nx+incomingY*ny;
+      this.vx=incomingX;this.vy=incomingY;
       if(vn<0){const e=P.ricochet[this.forme];this.vx-=(1+e)*vn*nx;this.vy-=(1+e)*vn*ny;}
-      const speed=Math.hypot(this.vx,this.vy);
-      if(speed>1e-7&&dt>1e-6){
-        const gravity=P.gravity[this.forme],force=(-P.baseGravityY*ny)*P.friction[this.forme]*gravity;
-        const fx=(this.vx/speed)*force,fy=(this.vy/speed)*force;
-        const invDelta=gravity/dt,ax=this.vx*invDelta,ay=this.vy*invDelta;
-        if(ax*ax+ay*ay<fx*fx+fy*fy){this.gravityX-=ax;this.gravityY-=ay;}
-        else{this.gravityX-=fx;this.gravityY-=fy;}
+      const dvx=this.vx-incomingX,dvy=this.vy-incomingY;
+      if(dt>1e-6){
+        const gravity=P.gravity[this.forme],inverseDelta=1/dt;
+        const requiredX=dvx*inverseDelta*gravity,requiredY=dvy*inverseDelta*gravity;
+        const changeSpeed=Math.hypot(dvx,dvy);
+        const frictionForce=(-P.baseGravityY*ny)*P.friction[this.forme]*gravity;
+        const frictionX=changeSpeed>1e-7?(dvx/changeSpeed)*frictionForce:0;
+        const frictionY=changeSpeed>1e-7?(dvy/changeSpeed)*frictionForce:0;
+        if(requiredX*requiredX+requiredY*requiredY<frictionX*frictionX+frictionY*frictionY){
+          this.gravityX-=requiredX;this.gravityY-=requiredY;
+        }else{
+          this.gravityX-=frictionX;this.gravityY-=frictionY;
+        }
       }
-      this.torqueX=this.torqueX*.5+this.vx*.5;
-      this.torqueY=this.torqueY*.5+this.vy*.5;
+      this.torqueX=this.torqueX*.5+dvx*.5;
+      this.torqueY=this.torqueY*.5+dvy*.5;
     }
     resetPhysics(){
       this.vx=this.vy=this.gravityX=this.gravityY=this.pushX=this.pushY=this.torqueX=this.torqueY=0;
