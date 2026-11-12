@@ -4,29 +4,32 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#101014">
-<title>Bounce Tales · HTML Playable Prototype</title>
+<title>Bounce Tales · Reverse Engineering Build 04</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main id="app">
-<header class="topbar"><span>BOUNCE TALES</span><span class="build">HTML PLAYABLE PROTOTYPE</span></header>
+<header class="topbar"><span>BOUNCE TALES</span><span class="build">RE ENGINE · BUILD 04</span></header>
 <section class="game-wrap">
 <canvas id="game" width="240" height="320" aria-label="Bounce Tales game viewport"></canvas>
 <div class="statusline" id="statusline">WORLD 1 · TRAINING GROVE</div>
 <div class="overlay" id="menu">
- <div class="panel"><h1>Bounce Tales</h1><p>A playable browser prototype using the original JAR's preserved art resources.<br>Move, jump, collect the stars and reach the flag.</p><button id="start">START GAME</button></div>
+ <div class="panel"><h1>Bounce Tales</h1><p>Research build using the original JAR resources and recovered Java ME input mapping.<br>The current training stage is still provisional.</p><button id="start">START GAME</button></div>
 </div>
 <div class="overlay" id="complete" hidden>
  <div class="panel"><h1>Level clear!</h1><p id="result">You reached the finish.</p><button id="again">PLAY AGAIN</button></div>
 </div>
 </section>
-<section class="controls" aria-label="Game controls">
- <div class="dpad"><button data-key="LEFT" aria-label="Move left">◀</button><button data-key="RIGHT" aria-label="Move right">▶</button></div>
- <div class="system-keys"><button data-key="BACK" aria-label="Pause">Ⅱ</button><button data-key="SELECT" class="select">MENU</button><button data-key="SOFT_RIGHT">↻</button></div>
- <div class="action-keys"><button data-key="UP" aria-label="Jump">▲</button><button data-key="FIRE" class="fire" aria-label="Jump">●</button></div>
+<section class="controls" aria-label="Original game touch controls">
+ <button data-key="LEFT" aria-label="Move left">◀</button>
+ <button data-key="RIGHT" aria-label="Move right">▶</button>
+ <button data-key="ACTION" class="action" aria-label="Primary action">ACTION</button>
+ <button data-key="MODE" aria-label="Cycle character mode">*</button>
+ <button data-key="PAUSE" class="pause" aria-label="Pause game">Ⅱ</button>
 </section>
-<p class="hint">Keyboard: ← → move · ↑ / Space jump · Enter start · R restart</p>
+<p class="hint">Original input map: ← / → move · ↑ primary action · * mode cycle · Esc pause</p>
 <footer><span id="save-state">Progress saved on this device</span><button id="reset-save">Reset progress</button></footer>
 </main>
+<script src="src/original-input-map.js"></script>
 <script src="game.js"></script>
 </body></html>

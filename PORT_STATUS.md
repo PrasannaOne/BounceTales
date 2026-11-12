@@ -1,27 +1,22 @@
-# Bounce Tales · port status
+# Bounce Tales · Build 04 status
 
-## Current website state
-- The browser page remains a playable training-stage prototype.
-- It uses a 240×320 logical canvas and proportionally scales it.
-- The training stage's platforms, stars and movement constants are still approximations, not original game data.
+## Actual website changes
+- Replaced the generic control row with five source-backed touch controls: Left, Right, Action, Mode (`*`) and Pause.
+- Integrated a JavaScript translation of the JAR key normalization and held/edge input model.
+- Browser arrows feed the same normalized IDs as the original Java ME directional actions.
+- Pause routes through original internal ID 5 (Nokia key code -7).
+- Mode-cycle routes through original ID 20 (`*`) and follows the observed 0-2 index cycle.
+- Preserved the proportional 240×320 logical viewport.
 
-## Verified reverse-engineering progress in this build
-- All 106 files in the supplied JAR are preserved under `assets/original/` and verified byte-for-byte.
-- Fresh `javap` bytecode disassemblies are included for all 19 original classes.
-- Original key normalization, gameplay-held inputs, pause-menu event and actor mode-cycle input are traced.
-- The pause menu's original localized strings were recovered.
-- Sixteen `RLEF` resources have their signature/version/header fields inventoried.
-- Three-mode actor physics constants are extracted exactly from `c.class`, with field semantics intentionally left unlabeled where unproven.
-- A reusable JavaScript input mapper is included and has automated tests.
+## Exact versus provisional
+- Exact bytecode-derived mapping and input-state boundary: key IDs, directional mapping, numeric remap profile, held-key semantics, pause event and mode-cycle event.
+- Provisional: training world, player shape, physics, collision, stars, goal and placeholder interpretation of primary action as jump.
+- Original actor mode effects, levels and complete controller state machine remain unported.
 
-## Remaining before a faithful remaster
-- [ ] Fully decode the 16 RLEF payloads and prove their relationship to the level/stage system.
-- [ ] Rebuild original level loading from the original resources.
-- [ ] Trace and reproduce the actor physics and all three actor modes.
-- [ ] Map original PNG indexes to sprite sheets, player frames, level tiles, UI and effects.
-- [ ] Rebuild enemies, hazards, collectibles, checkpoints and level completion from original logic/data.
-- [ ] Map MIDI files and playback triggers.
-- [ ] Rebuild menus and progression, including RMS save-data compatibility.
-- [ ] Compare against the JAR running in an original Java ME reference environment.
-
-This is a reverse-engineering build, not a claim of full game completion. See `reverse-engineering/` for bytecode-backed evidence and known unknowns.
+## Next port targets
+1. Actor update and collision methods in `c`, shared entity/collision code in `j`/`d`.
+2. Controller state transitions and scene loading in `m`.
+3. RLEF payload decoding and mapping to original stage/scene data.
+4. Image-index mapping to sprite animations, tiles and UI.
+5. MIDI playback triggers and save/progression.
+6. Replace provisional systems with translated original systems and verify against a Java ME reference run.

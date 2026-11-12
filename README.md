@@ -1,10 +1,5 @@
-# Bounce Tales · HTML remaster research build
+# Bounce Tales · Reverse Engineering Build 04
 
-A browser-based reconstruction project based on the supplied Bounce Tales Java ME JAR.
+Build 04 integrates a bytecode-derived Java ME input adapter into the actual browser page. It has five source-backed touch controls, original input IDs and held-versus-edge semantics, retained original JAR resources, and a proportional 240×320 viewport.
 
-- Original JAR files are preserved in `assets/original/`.
-- Game viewport target: logical 240×320, proportionally scaled.
-- The current web game is still a training-stage prototype, not a faithful port.
-- This build adds verified bytecode reverse engineering, exact input mappings, resource hashes, RLEF header inventory, actor constants and a tested JavaScript input mapper.
-
-Start with [`reverse-engineering/INPUT_TRACE.md`](reverse-engineering/INPUT_TRACE.md), [`RESOURCE_FORMATS.md`](reverse-engineering/RESOURCE_FORMATS.md), and [`PORT_STATUS.md`](PORT_STATUS.md).
+The game world and physics are still provisional. See `PORT_STATUS.md` and `reverse-engineering/BUILD_04_INPUT_INTEGRATION.md` for exact scope and remaining work.
