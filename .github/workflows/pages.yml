@@ -20,12 +20,33 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload site files
+
+      - name: Extract the uploaded game package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PACKAGE="BounceTales_HTML_Port_Development_Package.zip"
+          test -f "$PACKAGE"
+
+          mkdir -p _site
+          unzip -q "$PACKAGE" -d _site
+
+          GAME_DIR="_site/BounceTales_HTML_Port"
+          test -f "$GAME_DIR/index.html"
+          test -f "$GAME_DIR/game.js"
+          test -d "$GAME_DIR/assets/original"
+
+          # Keep the uploaded ZIP out of the deployed website.
+          rm -f "$PACKAGE"
+
+      - name: Upload extracted game website
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site/BounceTales_HTML_Port
 
   deploy:
     environment:
@@ -37,4 +58,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        
