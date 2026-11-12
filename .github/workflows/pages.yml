@@ -1,4 +1,4 @@
-name: Deploy Bounce Tales HTML Port
+name: Build and deploy Bounce Tales
 
 on:
   push:
@@ -6,49 +6,64 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 concurrency:
-  group: github-pages
+  group: bounce-tales-pages
   cancel-in-progress: true
 
 jobs:
   build:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Extract ZIP into the repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          PACKAGE="BounceTales_HTML_Port_Development_Package.zip"
+          test -f "$PACKAGE"
+          rm -rf game
+          mkdir -p game
+          unzip -q "$PACKAGE" -d _unpacked
+          test -f "_unpacked/BounceTales_HTML_Port/index.html"
+          cp -a "_unpacked/BounceTales_HTML_Port/." game/
+          test -f game/index.html
+          test -f game/game.js
+          test -d game/assets/original
+          rm -rf _unpacked
+
+      - name: Commit extracted website files to main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A game
+          if git diff --cached --quiet; then
+            echo "Extracted website is already up to date."
+          else
+            git commit -m "Build extracted Bounce Tales website"
+            git push
+          fi
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Extract the uploaded game package
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          PACKAGE="BounceTales_HTML_Port_Development_Package.zip"
-          test -f "$PACKAGE"
-
-          mkdir -p _site
-          unzip -q "$PACKAGE" -d _site
-
-          GAME_DIR="_site/BounceTales_HTML_Port"
-          test -f "$GAME_DIR/index.html"
-          test -f "$GAME_DIR/game.js"
-          test -d "$GAME_DIR/assets/original"
-
-          # Keep the uploaded ZIP out of the deployed website.
-          rm -f "$PACKAGE"
-
-      - name: Upload extracted game website
+      - name: Upload deployable website
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site/BounceTales_HTML_Port
+          path: game
 
   deploy:
+    if: github.actor != 'github-actions[bot]'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
