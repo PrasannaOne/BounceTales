@@ -12,6 +12,7 @@ for(const [name,[objects,events]] of Object.entries(levels)){
  assert.equal(parsed.objects.length,objects,name+' records');
  const world=parser.buildWorld(parsed.objects);
  assert.equal(world.size,objects,name+' world matrices');
+ for(const enemy of parsed.objects.filter(o=>o.type==='enemy'))assert.equal(enemy.movePoints.length,2,name+' enemy movement points decoded');
  assert.ok(parsed.objects.some(o=>o.type==='player')||name==='bu',name+' player exists');
 }
 const first=parser.parse(fs.readFileSync(path.join(__dirname,'../assets/original/bf')));
@@ -23,4 +24,4 @@ assert.equal(Math.round(pm[2]/65536),-1740);assert.equal(Math.round(pm[5]/65536)
 const imageMap=JSON.parse(fs.readFileSync(path.join(__dirname,'../src/image-map.json')));
 assert.equal(imageMap.atlases.length,46);assert.equal(Object.keys(imageMap.maps).length,540);
 for(const id of [17,20,28,447,452,454,456,458,460,462])assert.ok(imageMap.maps[String(id)],'original Bounce visual map '+id+' exists');
-console.log('RLEF: all 16 levels validated; Misty Morning objects, spawn, image map and transforms verified');
+console.log('RLEF: all 15 campaign/bonus stages plus cannon test resource validated; enemy patrol points, Misty Morning objects, image map and transforms verified');

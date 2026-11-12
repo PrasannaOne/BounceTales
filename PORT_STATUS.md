@@ -117,3 +117,55 @@ for test in tests/*.cjs; do node "$test" || exit 1; done
 ```
 
 The suite covers original input mapping, physics, elapsed-time pacing, settings, all 16 RLEF resources, terrain collisions, browser runtime boot, original RLEF event scripts and sprite animation timing. Passing tests validate the covered paths, not full-game equivalence.
+
+
+---
+
+# Build 10 status · 2026-11-12
+
+## Implemented in Build 10
+- Added an original-resource level selector for all 15 campaign/bonus stages. The catalogue follows the original `BounceGame.LEVEL_RESIDS` and `LEVEL_NAME_MESSAGE_IDS` ordering from the readable reference decompilation, cross-checked against the 2.0.3 JAR resource table and the already decoded RLEF resource-to-name map.
+- All 15 selected level files are fetched from `assets/original/`, parsed by the same RLEF reader and passed through the shared scene builder. Every one has a player start record. The separate `bu` cannon-object test resource is deliberately excluded because it has no player start and is not a campaign level.
+- Fixed enemy patrol-point decoding in `src/rlef-reader.js`. The two local movement points are now retained on each enemy record and transformed through the level's parent matrix by the runtime.
+- Corrected the player's stretch spring recovery to use full-precision wide products for the original `long` calculations in `c.class`, instead of incorrectly overflowing 32-bit multiplication. Added a convergence/bounds regression test to catch extreme visual deformation.
+- Added initial CannonObject interactions based on the original class: contact entry uses its ±40 world-unit load box expanded by Bounce's 20-unit radius; Bounce is hidden/disabled while loaded; Left/Right aim the cannon; Jump starts the authored 900 ms firing cycle; launch occurs when the countdown enters the final 300 ms, using the resource's power and transform.
+- Cannon visuals now use original image-map 48 and rotate with the cannon's aim state. The mobile hint changes while loaded.
+- Updated mobile layout to three primary touch buttons (Left, Right, Jump) with a smaller, lower-positioned `*` form button. The share header action is icon-only; Settings retains its styled icon and label.
+- Existing creator links, Auto/30/60 rendering caps, the elapsed-time simulation timing, and original stage event support are retained.
+
+## Validation
+- All 15 campaign/bonus RLEF resources load through the browser runtime smoke harness, start, and advance the display loop without throwing.
+- All 16 RLEF files still parse, validate object/event counts and resolve their parent transforms.
+- Enemy patrol-point fields are checked in the RLEF validation test.
+- Stretch spring recovery test covers the corrected wide multiplication path.
+- Cannon functionality is source-derived and included in runtime; detailed on-device aiming, entry, and firing still needs real-phone playtesting.
+- The browser port is still not a finished one-to-one implementation. Enemy/object-specific behaviour, full collision response, water/swimming effects, camera/parallax, full save/progression, win/lose/results UI, particle simulation and MIDI/audio remain incomplete or approximate. The all-level selector exposes the original stages for preview/testing; it does not mean every chapter's mechanics are fully complete.
+
+The full local Node test suite passes. Real Android browser playtesting is still needed to validate touch feel, cannon aim direction, stage transitions and performance.
+
+
+---
+
+# Build 11 status · 2026-11-12
+
+## Implemented in Build 11
+- Added `src/original-enemies.js`: LP32-aware movement speed conversion; Candle patrol/avoidance; Mole wait/peek/vulnerability and patrol phases; enemy bounds and swept segment contact; Candle/Mole stomp and egg-drop handling; Bumper form interaction; Stalker movement and reset-on-hit path. Enemy types marked unused by the original class retain the original invalid-resource visual fallback.
+- Added `src/original-water.js`: transformed local-space tests for original water/air-tunnel zones; source-style un-clamped gravity interpolation; gravity contribution, torque damping and water-only velocity drag; surface crossing ripples and browser-side bubble effects. Surface-wave/particle details are approximations, not the complete original splash mesh and particle engine.
+- Added `src/original-trampoline.js`: original level-zone sprite selection (image 497 for levels 0–4, 509 for 5–9, 490 for 10–14), clamped launch-period calculation, integer `period/frameCount` threshold, body freeze and release velocity. The compound-sprite anchor is mapped through the browser's 240×320 scale; transformed-parent trampoline positioning still needs comparison with the original runtime.
+- Refined `BounceBody.land()` with original per-form ricochet, gravity/friction force comparison and torque blending. The swept browser polygon collision remains an approximation of the original LP32 multi-contact solver.
+- Added `src/midp-graphics.js` to translate MIDP's positive counter-clockwise arc convention to Canvas. Bounce's stretch quadrants and Wolly form segments now use the same arc orientation as the original MIDP drawing calls.
+- Added a regression gate so player idle-eye timing advances only while the actor's physics is enabled, matching the original actor update path.
+
+## Build 11 validation
+- Enemy movement speed conversion and selected collision/state paths are covered by `tests/enemies.test.cjs`.
+- Water/air-tunnel force, drag and surface crossing are covered by `tests/water.test.cjs`.
+- Trampoline stage image, integer frame threshold and launch behaviour are covered by `tests/trampoline.test.cjs`.
+- MIDP-to-Canvas counter-clockwise arc mapping is covered by `tests/midp-graphics.test.cjs`.
+- Runtime smoke still loads each of the 15 original stage resources, starts each preview and runs the browser loop.
+
+## Remaining one-to-one gaps
+- The original LP32 swept collision/contact collection and multi-contact solver is not fully translated; current terrain response remains a browser implementation with source-derived response terms.
+- Enemy handling is still partial: Candle/Mole and selected unused types are implemented from class behaviour, but not every enemy state/animation/collision interaction has been validated against a live JAR.
+- Water rendering, splash deformation, particle systems and air-tunnel particles are simplified. Cannon geometry morphing/aim response, friend/companion logic, all stage event triggers, level completion, boss systems and exact camera/parallax remain incomplete.
+- Title/chapter/results UI, persistent save/progression, all MIDI tracks and sound effects remain outstanding. All 15 scenes are selectable previews; they are not yet 15 fully playable chapters.
+- No real-phone Android browser playtest has been performed in this build.

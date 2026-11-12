@@ -25,10 +25,11 @@ function element(id){
   };
 }
 const paragraph=element('menu-paragraph');
-const ids=['game','menu','pause-layer','settings-layer','statusline','egg-hud','fps-counter','start','resume','restart','back-title','fps-mode','show-fps','fullscreen-btn','open-settings','close-settings','share-site','reset-game'];
+const ids=['game','menu','pause-layer','settings-layer','statusline','egg-hud','fps-counter','start','resume','restart','back-title','fps-mode','show-fps','fullscreen-btn','open-settings','close-settings','share-site','reset-game','level-select','menu-level-name','level-detail','game-hint'];
 const els=Object.fromEntries(ids.map(id=>[id,element(id)]));
 els.game.getContext=()=>ctx2d;
 const buttons=['left','right','jump','star','pause'].map(element);
+els['level-select'].value='0';
 const document={
   hidden:false,fullscreenElement:null,documentElement:{requestFullscreen:async()=>{document.fullscreenElement=document.documentElement;}},exitFullscreen:async()=>{document.fullscreenElement=null;},
   getElementById:id=>els[id],
@@ -50,7 +51,7 @@ const sandbox={
 };
 sandbox.window=sandbox;
 vm.createContext(sandbox);
-for(const file of ['src/original-input-map.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','game.js']){
+for(const file of ['src/original-input-map.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','game.js']){
   vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),sandbox,{filename:file});
 }
 (async()=>{
@@ -58,14 +59,19 @@ for(const file of ['src/original-input-map.js','src/rlef-reader.js','src/bounce-
   assert.match(els.statusline.textContent,/ORIGINAL LEVEL DATA LOADED/);
   assert.equal(els['fps-mode'].value,'auto','outdated 90/120 FPS preferences should safely fall back to Auto');
   assert.equal(raf.length,1,'boot should start the animation loop');
-  els.start.fire('click');
   let now=1000;
-  for(let i=0;i<12;i++){
-    const next=raf.shift();assert.equal(typeof next,'function');
-    next(now);now+=1000/60;
+  const stageNames=['Misty Morning','Unfriendly Friends','Seeking Answers','Bumpy Cracks','Secret Stalkway','Into the Mines','A Gloomy Path','Rumbling Sounds','Trapped in Machine','Tunnel of Treasures','Wicked Circus','Hunting Colours','Almost There','Final Ride','Fantastic Fair'];
+  const tick=frames=>{for(let i=0;i<frames;i++){const next=raf.shift();assert.equal(typeof next,'function');next(now);now+=1000/60;}};
+  els.start.fire('click');tick(3);els['back-title'].fire('click');
+  for(let i=1;i<stageNames.length;i++){
+    els['level-select'].fire('change',{target:{value:String(i)}});
+    await new Promise(resolve=>setImmediate(resolve));
+    assert.match(els['menu-level-name'].textContent,new RegExp(stageNames[i].replace(/[.*+?^${}()|[\]\\]/g,'\\$&')),'selected stage title');
+    assert.equal(els.start.disabled,false,'level '+i+' should load and enable Start');
+    els.start.fire('click');tick(4);els['back-title'].fire('click');
   }
   assert.ok(raf.length>=1,'game loop should continue scheduling frames');
   document.hidden=true;for(const fn of listeners.get('document:visibilitychange')||[])fn();
   assert.equal(typeof listeners.get('document:visibilitychange')?.[0],'function','visibility handler should remain available');
-  console.log('Runtime smoke: original level and event engine booted, Start activated, display-driven loop ran and visibility reset did not throw');
+  console.log('Runtime smoke: all 15 original levels loaded from RLEF, Start activated for each, display-driven loop and visibility reset passed');
 })().catch(err=>{console.error(err);process.exitCode=1;});

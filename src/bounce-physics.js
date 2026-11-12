@@ -143,23 +143,33 @@
         this.stretchMagnitude[axis]=clamp(this.stretchMagnitude[axis],-70*65536,70*65536)|0;
         this.stretchResult[axis]=Math.imul(1,this.stretchResult[axis]+Math.imul(this.stretchMagnitude[axis],updateDelta));
         this.stretchResultAbs[axis]=Math.imul((this.stretchResult[axis]>>16),scale16)>>16;
-        const restoring=Math.imul(Math.imul(updateDelta,7),-this.stretchResult[axis])>>16;
-        const damping=Math.imul(Math.imul(updateDelta,120),this.stretchMagnitude[axis])>>16;
+        // The original class promotes these products to Java long before shifting.
+        // Keep the products in JS Number precision, then apply a signed arithmetic
+        // shift equivalent (floor division by 2^16). Math.imul here would overflow.
+        const restoring=Math.floor((updateDelta*7*(-this.stretchResult[axis]))/65536);
+        const damping=Math.floor((updateDelta*120*this.stretchMagnitude[axis])/65536);
         this.stretchMagnitude[axis]=trunc32(this.stretchMagnitude[axis]+restoring-damping);
       }
     }
     land(nx,ny,dt){
       const n=Math.hypot(nx,ny)||1;nx/=n;ny/=n;
       this.slopeSinAbs=nx;this.slopeCosAbs=ny;this.airTime=0;this.grounded=true;
+      // BounceObject.checkCollisions reflects the normal velocity with the
+      // per-form ricochet factor, then applies friction as a gravity force for
+      // the next elapsed-time update. This keeps contact handling from being
+      // dependent on the browser's display refresh rate.
       const vn=this.vx*nx+this.vy*ny;
-      if(vn<0){
-        const e=P.ricochet[this.forme];
-        this.vx-=(1+e)*vn*nx;this.vy-=(1+e)*vn*ny;
+      if(vn<0){const e=P.ricochet[this.forme];this.vx-=(1+e)*vn*nx;this.vy-=(1+e)*vn*ny;}
+      const speed=Math.hypot(this.vx,this.vy);
+      if(speed>1e-7&&dt>1e-6){
+        const gravity=P.gravity[this.forme],force=(-P.baseGravityY*ny)*P.friction[this.forme]*gravity;
+        const fx=(this.vx/speed)*force,fy=(this.vy/speed)*force;
+        const invDelta=gravity/dt,ax=this.vx*invDelta,ay=this.vy*invDelta;
+        if(ax*ax+ay*ay<fx*fx+fy*fy){this.gravityX-=ax;this.gravityY-=ay;}
+        else{this.gravityX-=fx;this.gravityY-=fy;}
       }
-      // First-pass contact friction remains approximate until the full swept solver is ported.
-      const vn2=this.vx*nx+this.vy*ny,tx=this.vx-vn2*nx,ty=this.vy-vn2*ny,tm=Math.hypot(tx,ty);
-      const maxF=P.friction[this.forme]*400*Math.max(0,dt);
-      if(tm>0){const reduction=Math.min(tm,maxF);this.vx-=tx/tm*reduction;this.vy-=ty/tm*reduction;}
+      this.torqueX=this.torqueX*.5+this.vx*.5;
+      this.torqueY=this.torqueY*.5+this.vy*.5;
     }
     resetPhysics(){
       this.vx=this.vy=this.gravityX=this.gravityY=this.pushX=this.pushY=this.torqueX=this.torqueY=0;

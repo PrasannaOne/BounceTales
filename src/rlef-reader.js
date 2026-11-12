@@ -77,12 +77,12 @@
         const idata=r.bytes(count*2),ir=new BitReader(idata);for(let i=0;i<count;i++)o.sprites.push([xs[i],ys[i],ir.signed(16)]);
       }
     }else if(cmd===10){
-      o.type='water';o.areaMinX=r.i16();o.areaMaxY=r.i16();o.areaMaxX=r.i16();o.areaMinY=r.i16();o.gravityYTop=r.i8();o.gravityXRight=r.i8();o.gravityYBottom=r.i8();o.gravityXLeft=r.i8();o.color=r.u32()&0xffffff;
+      o.type='water';o.areaMinX=r.i16();o.areaMaxY=r.i16();o.areaMaxX=r.i16();o.areaMinY=r.i16();o.gravityYTop=r.i8();o.gravityXRight=r.i8();o.gravityYBottom=r.i8();o.gravityXLeft=r.i8();o.color=r.u32()&0xffffff;o.region=(o.color&255)===16?1:0;o.isAirTunnel=o.color===0;
     }else if(cmd===11){o.type='cannon';o.targetObject=r.i16();o.power=r.i8();}
     else if(cmd===12){o.type='trampoline';o.imageId=r.i16();o.basePush=r.i8();}
     else if(cmd===13){o.type='egg';}
     else if(cmd===14){o.type='friend';}
-    else if(cmd===15){o.type='enemy';o.movePoint1X=r.i16();o.movePoint1Y=r.i16();o.movePoint2X=r.i16();o.movePoint2Y=r.i16();o.enemyType=r.i8();}
+    else if(cmd===15){o.type='enemy';o.movePoint1X=r.i16();o.movePoint1Y=r.i16();o.movePoint2X=r.i16();o.movePoint2Y=r.i16();o.movePoints=[[o.movePoint1X,o.movePoint1Y],[o.movePoint2X,o.movePoint2Y]];o.enemyType=r.i8();}
     else{o.type='root';}
     if(r.p!==r.b.length)throw new Error('record '+id+' cmd '+cmd+' consumed '+r.p+'/'+r.b.length);
     return o;
