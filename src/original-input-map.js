@@ -22,12 +22,14 @@
     return id;
   }
   function browserKeyId(key){
-    const directional={ArrowUp:1,ArrowDown:2,ArrowLeft:3,ArrowRight:4};
+    const lower=String(key).toLowerCase();
+    const directional={ArrowUp:1,w:1,ArrowDown:2,s:2,ArrowLeft:3,a:3,ArrowRight:4,d:4};
     if(directional[key]!==undefined)return directional[key];
+    if(directional[lower]!==undefined)return directional[lower];
     if(key==='Enter'||key===' ')return 7;
     if(key==='Escape')return 5;
-    if(key==='Backspace'||key==='q'||key==='Q')return 6;
-    if(key==='*')return 20;
+    if(key==='Backspace')return 6;
+    if(key==='Shift'||key==='*'||lower==='q')return 20;
     if(key==='#')return 21;
     return -1;
   }

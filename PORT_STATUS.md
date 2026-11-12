@@ -169,3 +169,32 @@ The full local Node test suite passes. Real Android browser playtesting is still
 - Water rendering, splash deformation, particle systems and air-tunnel particles are simplified. Cannon geometry morphing/aim response, friend/companion logic, all stage event triggers, level completion, boss systems and exact camera/parallax remain incomplete.
 - Title/chapter/results UI, persistent save/progression, all MIDI tracks and sound effects remain outstanding. All 15 scenes are selectable previews; they are not yet 15 fully playable chapters.
 - No real-phone Android browser playtest has been performed in this build.
+
+---
+
+# Build 13 status · 2026-11-12
+
+## Implemented
+
+- Reworked the responsive shell for portrait phones, landscape phones, tablets and desktop. The original game canvas retains its 240×320 logical viewport and 3:4 aspect ratio.
+- Removed the gameplay control pad from all non-gameplay scenes. Title, chapter book, guide, pause and chapter-completion menu buttons remain real touch/mouse targets inside the game viewport.
+- Added swipe/trackpad chapter-book paging in addition to visible page-arrow buttons.
+- Added desktop keyboard aliases (A/D or arrows, Space/Enter, Shift/Q/*, Escape) and standard-mapping gamepad polling. Existing original Java ME key IDs and mobile touch controls remain intact.
+- Rebuilt Options/About as two tabs in a compact, fixed, non-scrolling panel. Added the original project creator text, Telegram link and full GitHub repository URL.
+- Added `src/original-camera.js`, a source-shaped camera spring using the recovered 15 ms integration quantum, velocity anticipation, 90/140 default spring parameters, configurable event parameters and snap support.
+- Added camera spring, responsive UI and expanded PC input regression tests.
+
+## Validation
+
+- The full Node.js suite passes, including the 15-stage runtime smoke test.
+- RLEF files and the 105 non-manifest original JAR game resources are checked separately against the supplied JAR.
+- Runtime smoke confirms each original stage resource can load, start and enter its pause flow. It does not establish that every chapter's mechanics are complete.
+- A headless Chromium screenshot attempt did not complete reliably in this environment, so the responsive layout still needs review on actual Android and desktop browsers.
+
+## Remaining fidelity work
+
+- Complete original LP32 collision/contact solver and contact ordering.
+- Full scene/menu art and layout reproduction from the original MIDP UI resources rather than the current HTML overlay implementation.
+- Every enemy, friend, object, boss and event command edge case, plus full chapter progression/records.
+- Exact water mesh and particle systems, audio playback/mix, camera/parallax visual tuning and side-by-side JAR comparison.
+- Real Android touch feel and desktop/gamepad testing.

@@ -42,3 +42,11 @@ Build 10 makes all original stages accessible for preview, but does not claim co
 - The terrain solver now applies source-derived friction/ricochet/torque response but does not reproduce the full fixed-point multi-contact solver.
 
 Build 11's all-level smoke check proves the 15 resources load and the shared scene runtime can start, not that every stage is complete or fully playable. The public readable decompilation is 2.0.25 and is used only as a naming/logic aid; the user's supplied 2.0.3 JAR and exact assets remain the project authority.
+
+## Build 13 · adaptive controls and camera pass
+
+Build 13 retains the uploaded 2.0.3 JAR resources as the data source. The camera update structure is translated from the readable Bounce Tales `GameObject.updateCamera` implementation used as a reference: it predicts camera target motion, keeps the player roughly one-fifth down the viewport, and integrates a damped spring in 15 ms quanta. The Java implementation uses fixed-point matrices and a global camera matrix; the JavaScript port expresses the spring in world units and should be checked visually against the original game before treating it as pixel-identical.
+
+The shell now fits phone portrait, phone landscape and desktop; gameplay touch controls are hidden on non-gameplay scenes. DOM menu controls are tappable/clickable directly, while the in-game book also accepts swipe and trackpad paging. Keyboard and standard gamepad inputs feed the same original input-ID state used by the touch controls.
+
+**Accuracy boundary:** this is an incremental behavior port. The custom DOM menu is not a complete reproduction of the original MIDP menu renderer, and the 15 playable-stage claim is still limited to loading and starting each RLEF scene. Complete collision, full event/object coverage, sound and every chapter's expected gameplay remain unfinished.

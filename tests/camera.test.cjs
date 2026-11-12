@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict');
+const {CameraSpring}=require('../src/original-camera.js');
+const c=new CameraSpring(0,0,{width:240,height:320,scale:.660187});
+const target=c.targetFromActor({x:100,y:200,vx:100,vy:-50});
+assert(target.x>100,'camera anticipates horizontal actor movement');
+assert(target.y>200,'camera retains original lower-screen actor anchor');
+const first=c.update(.015,{x:100,y:200},{actor:{vx:0,vy:0},offsetY:96});
+assert(first.x>0&&first.x<100,'spring eases toward a target rather than snapping');
+const prior=first.x;
+c.update(.015,{x:100,y:200},{actor:{vx:0,vy:0},offsetY:96});
+assert(c.x>prior,'spring continues moving in the same direction');
+c.setParams(180,220);assert.equal(c.bounceFactor,180);assert.equal(c.stabilizeSpeed,220);
+const snapped=c.update(.016,{x:40,y:60},{actor:{vx:0,vy:0},offsetY:96,snap:true});
+assert.equal(snapped.x,40);assert.equal(snapped.y,156);assert.equal(snapped.vx,0);
+const small=new CameraSpring(0,0);small.update(.007,{x:100,y:100},{actor:{vx:0,vy:0},offsetY:0});assert.equal(small.x,0,'sub-15 ms frame waits for original camera quantum');
+small.update(.008,{x:100,y:100},{actor:{vx:0,vy:0},offsetY:0});assert(small.x>0,'camera integrates when 15 ms has accumulated');
+console.log('Original camera spring: prediction, 15 ms cadence, damping and snap tests passed');

@@ -1,51 +1,62 @@
-# Bounce Tales · HTML5 Remaster · Build 11
+# Bounce Tales · HTML5 Remaster · Build 13
 
-A browser-based reverse-engineering port built around the supplied Bounce Tales 2.0.3 JAR. The 15 original campaign and bonus RLEF stages are selectable as preview scenes. The goal is faithful behaviour, not a redesigned game.
+A browser-based reverse-engineering port built around the supplied Bounce Tales 2.0.3 Java ME JAR. The original 240×320 game viewport and extracted resources are retained. This is still an incremental port, not a completed one-to-one replacement.
 
-## Existing systems retained through Build 10
+## Build 13 changes
 
-- Kept **Auto**, **30 FPS** and **60 FPS** render pacing. Auto follows the browser's `requestAnimationFrame`; gameplay time remains based on elapsed milliseconds and the original JAR's 500 ms ceiling.
-- Added the original RLEF event interpreter (opcodes 0–32) and runtime decoding of the original 91-string `lang.xx` resource.
-- Misty Morning's autostart and area-triggered scripts now play their original localized messages and perform their authored sprite-animation, object-flag, attach/detach and timed-wait actions.
-- Translated the original sprite event mappings 118→485, 334→474 and 342→480, including 150 ms frames and the 750 ms plus 1500 ms fade sequence.
-- Added event-based checkpoints and original-style scene depth sorting, including runtime depth-flag changes.
-- Retained the source-derived Bounce stretch/eye/form rendering, separate mobile buttons, fixed header, settings and About links.
+- Responsive game shell for phone portrait, phone landscape, tablet and desktop layouts. The game viewport keeps its 3:4 aspect ratio and scales as a single unit.
+- Gameplay touch controls appear only while playing. The title, chapter book, guide, pause and result screens are directly touchable HTML controls inside the game viewport.
+- Chapter-book paging supports on-screen arrows, swipe/trackpad gestures and keyboard/gamepad input.
+- PC controls: A/D or Left/Right to move, Space/Enter to jump, Shift/Q/* to change form, Escape to pause. A standard-mapping gamepad is also supported.
+- Options/About has two compact tabs and a fixed, non-scrolling panel. Auto/30/60 FPS pacing, FPS counter, fullscreen and reset progress remain available.
+- Replaced the simple exponential camera chase with a source-shaped damped camera spring using the original 15 ms integration quantum and 90/140 default spring parameters. This is a careful translation of the recovered camera routine, not yet visually validated against the original JAR on a device.
+- The Share icon is icon-only; About includes Made by Prasanna ❤️, Telegram and the full GitHub repository address.
 
+## Existing gameplay systems retained
 
-## Touch controls
+- All 15 original campaign and bonus RLEF resources are included and can be loaded from the in-game chapter book.
+- Original RLEF object transforms, events and localized language strings are used by the browser scene runtime.
+- The event interpreter covers command IDs 0–32, including messages, timed waits, object transforms, visibility/collision flags, forces, checkpoints and camera directives.
+- Bounce actor stretch/eye/form rendering, enemy patrol/state behaviour, water/air-tunnel forces, trampoline timing, cannon entry/aim/fire, parallax layers and particle effects have incremental source-derived implementations.
+- Progress records and unlock state are stored locally in the browser.
 
-- **◀ / ▶**: move left and right. Hold for continuous movement.
-- **JUMP**: original primary gameplay action. Hold while the original slope/ground check permits it.
-- **\***: cycle through unlocked forms.
-- **Ⅱ**: pause through the original softkey route.
+## Controls
 
-Numeric keys 1–9 and `#` are not shown on the touch interface.
+| Input | Action |
+|---|---|
+| Touch Left / Right | Move |
+| Touch Jump | Jump / primary action |
+| Touch `*` | Change to an unlocked form |
+| Keyboard A/D or ←/→ | Move |
+| Space / Enter | Jump / select |
+| Shift / Q / `*` | Change form |
+| Escape | Pause |
+| Gamepad left stick / D-pad | Move or page through the chapter book |
+| Gamepad A / B / Start | Jump or select / form / pause |
+
+Menus do not use the gameplay control pad. Their on-screen options, book arrows and dialog buttons are direct touch/mouse targets.
 
 ## Run locally
 
-Serve this folder over HTTP. The browser fetches RLEF and image-map resources, so opening `index.html` directly as a `file://` URL may fail.
+Serve this folder over HTTP. The browser loads original RLEF, language and image-map resources with `fetch`, so opening `index.html` directly as a `file://` URL may fail.
 
-## Accuracy boundary
+## Validation
 
-Build 11 is a closer incremental port, **not yet a complete one-to-one game**. The supplied 2.0.3 JAR and exact stage resources ground the translated actor, timing and Misty Morning event systems. Some event commands, camera behaviour, dialogue presentation and object interactions remain approximations; the complete original LP32 collision solver, all enemy/special-object state machines, full chapter progression, save/progression, MIDI music and sound effects are not complete. All 15 campaign/bonus scenes can be selected, but full chapter progression and every level-specific event are not implemented. Real-phone gameplay still needs testing.
-See `PORT_STATUS.md`, `reverse-engineering/BUILD_08_ENGINE_PORT.md` and `reverse-engineering/BUILD_09_EVENT_SCRIPTING.md` for implementation boundaries and source notes.
-
-
-## Build 10
-Build 10 introduced the original 15-stage selector, enemy patrol-point decoding, wide-integer stretch recovery, and the first cannon load/aim/fire path.
-
-## Build 11
-- Added source-derived Candle and Mole patrol/state behaviour, LP32 speed conversion, stomp/egg-drop paths, and the unused Stalker reset-on-hit path.
-- Added water/air-tunnel gravity interpolation, water velocity drag, torque damping, surface ripples and bubble effects.
-- Added trampoline animation timing, integer frame thresholds, launch velocity and the original level-zone trampoline image selection (hill/spooky/bonus).
-- Improved terrain contact response with the original per-form ricochet, friction-force comparison and torque low-pass behaviour.
-- Corrected Canvas arc orientation to match MIDP's counter-clockwise `fillArc`, for Bounce's four stretch quadrants and Wolly's six segments. This is a likely contributor to the detached/deformed-looking player in earlier screenshots.
-- Kept the 15 original stage selector, cannon, events, mobile controls and settings.
-
-Build 11 brings more original object systems into the shared runtime. It does **not** yet make all 15 chapters fully playable: level-specific triggers, object scripts, enemies and win/lose/progression still need deeper coverage.
-
-Run the complete test suite:
+Run all included Node.js checks from this folder:
 
 ```sh
 for test in tests/*.cjs; do node "$test" || exit 1; done
 ```
+
+The tests cover the RLEF resources, original input mapping, elapsed-time simulation, event engine, progression, enemies, water, trampolines, cannon mechanics, menu flow, responsive UI wiring and camera spring. These are automated code/runtime checks. They do not replace real Android touch testing or visual comparison with the original Nokia runtime.
+
+## Known one-to-one gaps
+
+- The complete original LP32/16.16 swept collision and multi-contact solver is not fully translated. Current polygon response is a robust browser implementation with source-derived response terms.
+- Not every enemy, friend, special object, boss phase, event edge case or chapter-specific interaction has been validated against a live original runtime.
+- Water-surface mesh deformation, complete particle behaviour, exact camera/parallax timing and sprite composition still need side-by-side comparison.
+- MIDI tracks and sound effects are preserved in the extracted resources but are not yet reproduced as the original audio mix.
+- Chapter unlock/progression and result screens are approximations of the original game flow. All 15 stages load, but that does not mean all 15 are fully playable or complete.
+- Real-phone Android browser testing is still required. A local headless-browser screenshot attempt was unreliable in this environment.
+
+See `PORT_STATUS.md` and `REVERSE_ENGINEERING_SUMMARY.md` for the build history and specific source/accuracy boundaries.

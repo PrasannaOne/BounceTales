@@ -28,8 +28,8 @@ let cannonState=null;
 let currentLevel=LEVELS[0],levelLoadToken=0;
 let atlases=[],imageMaps=null,loadedImages=new Map(),collected=0,elapsed=0,mode='title';
 let eventEngine=null,playerObjectId=-1,fieldMessage='',fieldMessageTimer=0,languageStrings=[],checkpointPosition=null;
-let spriteAnimations=new Map(),cameraFollowSpeed=5,cameraSnap=false,playerDeathTimer=0;
-let lastTime=0,cameraX=0,cameraY=0,unlockedForme=0,toastTimer=0,toastText='';
+let spriteAnimations=new Map(),cameraSnap=false,playerDeathTimer=0;
+let lastTime=0,cameraX=0,cameraY=0,cameraSpring=null,unlockedForme=0,toastTimer=0,toastText='';
 let fpsMode=localStorage.getItem('bounce-fps-mode')||'auto',showFps=localStorage.getItem('bounce-show-fps')==='true',fpsFrames=0,fpsStamp=0,displayFps=0,lastRenderAt=0;
 if(!['auto','30','60'].includes(fpsMode))fpsMode='auto';
 const S={play:'play',title:'title',select:'select',pause:'pause',complete:'complete',guide:'guide'};
@@ -136,20 +136,21 @@ function buildRuntime(parsed){
   }
   collected=0;elapsed=0;victoryTimer=0;deathAnimationElapsed=0;completionResult=null;particles.clear();
   spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;
+  cameraSpring=new BounceOriginalCamera.CameraSpring(body.x,body.y+96,{width:W,height:H,scale:SCALE});
   eventEngine=new BounceEventEngine.EventEngine(parsed.objects,{
     strings:languageStrings,playerObjectId,
     onWorldChanged:next=>refreshGeometryWorld(next),
     onMessage:(id,text)=>{fieldMessage=text;fieldMessageTimer=6.5;},
     onAnimate:id=>startSpriteAnimation(id),
     onFlagsChanged:(obj,flags)=>{const poly=worldGeometry.find(p=>p.id===obj.id);if(poly)poly.nocollide=(flags&0x20)!==0;},
-    onCameraTarget:id=>{cameraSnap=false;},
-    onCameraParams:(bounce,stabilize,snap)=>{cameraFollowSpeed=clamp(stabilize/28,1.5,10);cameraSnap=!!snap;},
+    onCameraTarget:id=>{cameraSnap=true;},
+    onCameraParams:(bounce,stabilize,snap)=>{cameraSpring?.setParams(bounce,stabilize);cameraSnap=!!snap;},
     onCheckpoint:point=>{checkpointPosition={x:point.x,y:point.y};toast('CHECKPOINT');}
   });
   world=eventEngine.world;refreshGeometryWorld(world);
   checkpointPosition={x:body.x,y:body.y};
   const ys=worldGeometry.flatMap(poly=>poly.vertices.map(v=>v.y));worldMinY=ys.length?Math.min(...ys):-Infinity;worldMaxY=ys.length?Math.max(...ys):Infinity;
-  cameraX=body.x;cameraY=body.y+96;
+  cameraX=body.x;cameraY=body.y+96;cameraSpring?.snap(cameraX,cameraY);
   refreshHud();
 }
 function screenPoint(p){return {x:W/2+(p.x-cameraX)*SCALE,y:H/2-(p.y-cameraY)*SCALE};}
@@ -311,7 +312,7 @@ function update(dt){
     const pos=screenPoint(body);if(pos.y>H+25)cameraY+=Math.min(80,dt*90);
     particles.update(dt);updateSpriteAnimations(dt);
     if(playerDeathTimer===0){
-      const pos=checkpointPosition||spawn;body.reset(pos.x,pos.y);body.enabled=true;body.visible=true;body.eyeFrame=0;body.idleAnimStartTimer=3000;cameraX=body.x;cameraY=body.y+96;eventEngine?.vars.fill(0);toast('CHECKPOINT');
+      const pos=checkpointPosition||spawn;body.reset(pos.x,pos.y);body.enabled=true;body.visible=true;body.eyeFrame=0;body.idleAnimStartTimer=3000;cameraX=body.x;cameraY=body.y+96;cameraSpring?.snap(cameraX,cameraY);eventEngine?.vars.fill(0);toast('CHECKPOINT');
     }
     if(toastTimer>0)toastTimer-=dt;
     return;
@@ -343,13 +344,17 @@ function update(dt){
   if(eventEngine?.vars[0]===1)beginDeath();
   if(eventEngine?.vars[0]===2||(BONUS_REQUIREMENTS[currentLevel.index]&&collected>=30))beginVictory();
   if(Number.isFinite(worldMinY)&&body.y<worldMinY-160)beginDeath();
-  let targetX=body.x,targetY=body.y+96;
+  let targetX=body.x,targetY=body.y;
   if(eventEngine&&eventEngine.cameraTargetId>=0&&eventEngine.cameraTargetId!==playerObjectId){
     const target=world.get(eventEngine.cameraTargetId);
     if(target){targetX=target[2]/65536;targetY=target[5]/65536;}
   }
-  const cameraStep=Math.min(1,dt*cameraFollowSpeed);
-  if(cameraSnap){cameraX=targetX;cameraY=targetY;}else{cameraX+=(targetX-cameraX)*cameraStep;cameraY+=(targetY-cameraY)*cameraStep;}
+  if(!cameraSpring)cameraSpring=new BounceOriginalCamera.CameraSpring(cameraX,cameraY,{width:W,height:H,scale:SCALE});
+  if(eventEngine){cameraSpring.setParams(eventEngine.cameraBounceFactor,eventEngine.cameraStabilizeSpeed);}
+  const cameraActor=(eventEngine&&eventEngine.cameraTargetId>=0&&eventEngine.cameraTargetId!==playerObjectId)?{vx:0,vy:0}:body;
+  const cameraPos=cameraSpring.update(dt,{x:targetX,y:targetY},{actor:cameraActor,offsetY:H/(5*SCALE),snap:cameraSnap});
+  cameraX=cameraPos.x;cameraY=cameraPos.y;cameraSnap=false;
+  if(eventEngine)eventEngine.cameraSnap=false;
   particles.update(dt);
   if(toastTimer>0)toastTimer-=dt;
   if(fieldMessageTimer>0)fieldMessageTimer=Math.max(0,fieldMessageTimer-dt);
@@ -652,11 +657,18 @@ function refreshHud(){
   status.textContent=(currentLevel.name.toUpperCase())+'  ·  '+collected+'/'+total+' EGGS';
   eggHud.textContent='FORM '+['BOUNCE','BUMPY','WOLLY'][body?.forme||0];
 }
+function syncSceneChrome(){
+  const app=document.getElementById('app');if(app)app.dataset.mode=mode;
+  const playing=mode===S.play;
+  status.hidden=!playing;eggHud.hidden=!playing;
+  const fps=document.getElementById('fps-counter');if(fps)fps.hidden=!(playing&&showFps);
+}
 function syncPauseButton(){const b=document.getElementById('pause-mini');if(b)b.hidden=mode!==S.play;}
 function hideGameScenes(){
   for(const id of ['menu','level-screen','pause-layer','complete-layer','guide-layer']){const el=document.getElementById(id);if(el)el.hidden=true;}
-  syncPauseButton();
+  syncSceneChrome();syncPauseButton();
 }
+
 function showTitleMenu(){mode=S.title;hideGameScenes();document.getElementById('menu').hidden=false;input.clear();updateMenuSummary();syncPauseButton();}
 function renderLevelCover(index){
   const cover=document.getElementById('level-cover'),coverCtx=cover?.getContext('2d');if(!coverCtx||!imageMaps)return;
@@ -692,12 +704,12 @@ function openGuide(){mode=S.guide;hideGameScenes();document.getElementById('guid
 function startLevel(){
   mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;
   if(eventEngine){eventEngine.reset();world=eventEngine.world;refreshGeometryWorld(world);}
-  spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;cameraFollowSpeed=5;cameraSnap=false;
+  spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;cameraSnap=false;
   body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce';body.rotation=0;body.unlockedForme=progress.unlockedForme;body.forme=0;body.slopeCosAbs=1;body.eyeFrame=0;body.idleAnimStartTimer=3000;
   eggs.forEach(e=>e.collected=false);bonusEggs=[];collected=0;elapsed=0;checkpointPosition={x:spawn.x,y:spawn.y};
   trampolines.forEach(t=>{t.active=false;t.progress=0;t.period=0;t.animFrame=0;t.jumpFinished=false;});
   enemies.forEach(e=>{e.x=e.initialX;e.y=e.initialY;BounceOriginalEnemies.reset(e);});
-  waters.forEach(w=>{w.ripples=[];w.bubbles=[];w.ambientTimer=0;w.swimTimer=0;});particles.clear();playerDeathTimer=0;deathAnimationElapsed=0;victoryTimer=0;completionResult=null;cameraX=body.x;cameraY=body.y+96;refreshHud();
+  waters.forEach(w=>{w.ripples=[];w.bubbles=[];w.ambientTimer=0;w.swimTimer=0;});particles.clear();playerDeathTimer=0;deathAnimationElapsed=0;victoryTimer=0;completionResult=null;cameraX=body.x;cameraY=body.y+96;cameraSpring?.snap(cameraX,cameraY);refreshHud();
   progress.selected=currentLevel.index;BounceOriginalProgression.save(localStorage,progress);
 }
 let spawn={x:0,y:0};
@@ -747,10 +759,10 @@ function onEdge(id){
   window.dispatchEvent(new CustomEvent('bouncetales:original-key',{detail:{id}}));
   if(mode===S.play){if(id===5)pauseGame();else if(id===20)cycleForme();else if(id===7&&cannonState)fireCannon();}
   else if(mode===S.title){if(id===7||id===1)startLevel();}
-  else if(mode===S.select){if(id===3)changeBookPage(-1);else if(id===4)changeBookPage(1);else if(id===7||id===1)startSelectedChapter();}
-  else if(mode===S.pause){if(id===7||id===1)resumeGame();else if(id===3||id===4)showChapterBook();}
-  else if(mode===S.complete){if(id===7||id===1)advanceAfterChapter();}
-  else if(mode===S.guide){if(id===7||id===1)showTitleMenu();}
+  else if(mode===S.select){if(id===3)changeBookPage(-1);else if(id===4)changeBookPage(1);else if(id===7||id===1)startSelectedChapter();else if(id===5||id===6)showTitleMenu();}
+  else if(mode===S.pause){if(id===7||id===1||id===5)resumeGame();else if(id===3||id===4||id===6)showChapterBook();}
+  else if(mode===S.complete){if(id===7||id===1)advanceAfterChapter();else if(id===5||id===6)showChapterBook();}
+  else if(mode===S.guide){if(id===7||id===1||id===5||id===6)showTitleMenu();}
 }
 function advanceAfterChapter(){
   const next=completionResult?.nextLevel;
@@ -778,16 +790,62 @@ function bindInputs(){
     btn.addEventListener('pointercancel',release);
     btn.addEventListener('lostpointercapture',release);
   });
+
+  // Desktop keyboard: arrows or A/D move, Space/Enter jump, Shift/Q changes
+  // form, Escape pauses. W/S remain usable for vertical/original menu input.
   const keys=new Set();
+  const editableTarget=target=>{
+    const el=target instanceof Element?target:null;
+    return !!el?.closest('input,textarea,select,[contenteditable="true"]');
+  };
   addEventListener('keydown',e=>{
-    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Enter','Escape','Backspace','q','Q','*'].includes(e.key)){
-      if(e.key.startsWith('Arrow')||e.key===' ')e.preventDefault();
-      const id=BounceOriginalInput.browserKeyId(e.key);
-      if(id>=0&&!keys.has(e.key)){keys.add(e.key);const was=input.isHeld(id);input.press(id);if(!was)onEdge(id);}
+    if(!settingsLayer.hidden){if(e.key==='Escape')closeSettings();return;}
+    if(editableTarget(e.target))return;
+    const accepted=['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Enter','Escape','Backspace','Shift','*','#','w','W','a','A','s','S','d','D','q','Q'];
+    if(!accepted.includes(e.key))return;
+    if(e.key.startsWith('Arrow')||e.key===' ')e.preventDefault();
+    const id=BounceOriginalInput.browserKeyId(e.key);
+    if(id>=0&&!keys.has(e.key)){
+      keys.add(e.key);const was=input.isHeld(id);input.press(id);if(!was)onEdge(id);
     }
   });
   addEventListener('keyup',e=>{const id=BounceOriginalInput.browserKeyId(e.key);if(id>=0){keys.delete(e.key);input.release(id);}});
-  const clearAll=()=>{keys.clear();input.clear();document.querySelectorAll('[data-key-id]').forEach(b=>b.classList.remove('pressed'));};
+
+  // A standard-mapping gamepad works in the same way as the phone controls.
+  // D-pad / left stick: move or page; A: jump/select; B: form; Start: pause.
+  let gamepadHeld=new Set();
+  function pollGamepad(){
+    const pads=navigator.getGamepads?.();if(!pads)return;
+    const pad=Array.from(pads).find(p=>p&&p.connected);const next=new Set();
+    if(pad){
+      const axis=pad.axes?.[0]||0;
+      if(axis<-.35||pad.buttons?.[14]?.pressed)next.add(3);
+      if(axis>.35||pad.buttons?.[15]?.pressed)next.add(4);
+      if((pad.axes?.[1]||0)<-.55||pad.buttons?.[12]?.pressed)next.add(1);
+      if((pad.axes?.[1]||0)>.55||pad.buttons?.[13]?.pressed)next.add(2);
+      if(pad.buttons?.[0]?.pressed)next.add(7);
+      if(pad.buttons?.[1]?.pressed)next.add(20);
+      if(pad.buttons?.[9]?.pressed)next.add(5);
+    }
+    for(const id of gamepadHeld)if(!next.has(id))input.release(id);
+    for(const id of next)if(!gamepadHeld.has(id)){const was=input.isHeld(id);input.press(id);if(!was)onEdge(id);}
+    gamepadHeld=next;
+  }
+  window.__bouncePollGamepad=pollGamepad;
+
+  // Swipe the original chapter book left/right on touch or a trackpad.
+  const book=typeof document.querySelector==='function'?document.querySelector('#level-screen .book-panel'):null;let swipe=null;
+  if(book){
+    book.addEventListener('pointerdown',e=>{if(e.target.closest('button,a'))return;swipe={x:e.clientX,y:e.clientY,id:e.pointerId};try{book.setPointerCapture(e.pointerId);}catch{}});
+    book.addEventListener('pointerup',e=>{
+      if(!swipe||swipe.id!==e.pointerId)return;
+      const dx=e.clientX-swipe.x,dy=e.clientY-swipe.y;swipe=null;
+      if(Math.abs(dx)>34&&Math.abs(dx)>Math.abs(dy)*1.2)changeBookPage(dx<0?1:-1);
+    });
+    book.addEventListener('pointercancel',()=>{swipe=null;});
+  }
+
+  const clearAll=()=>{keys.clear();input.clear();gamepadHeld.clear();document.querySelectorAll('[data-key-id]').forEach(b=>b.classList.remove('pressed'));};
   addEventListener('blur',clearAll);
   document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAll();lastTime=0;lastRenderAt=0;fpsStamp=0;fpsFrames=0;}});
 }
@@ -797,6 +855,7 @@ function bindInputs(){
 // collision-safe chunks only when a browser frame arrives late. This is not a
 // 60 Hz game clock and it does not drop the normal elapsed time.
 function loop(now){
+  if(window.__bouncePollGamepad)window.__bouncePollGamepad();
   if(!lastTime)lastTime=now;
   const requestedCap=fpsMode==='auto'?0:Number(fpsMode)||0;
   if(requestedCap){
@@ -812,8 +871,25 @@ function loop(now){
   if(showFps){fpsFrames++;if(!fpsStamp)fpsStamp=now;if(now-fpsStamp>=500){displayFps=Math.round(fpsFrames*1000/(now-fpsStamp));fpsFrames=0;fpsStamp=now;const counter=document.getElementById('fps-counter');if(counter)counter.textContent=displayFps+' FPS';}}
   requestAnimationFrame(loop);
 }
-function openSettings(){document.getElementById('settings-layer').hidden=false;}
-function closeSettings(){document.getElementById('settings-layer').hidden=true;}
+let settingsReturnFocus=null;
+function setSettingsTab(tab){
+  const about=tab==='about';
+  document.getElementById('settings-game-pane').hidden=about;
+  document.getElementById('settings-about-pane').hidden=!about;
+  for(const key of ['game','about']){
+    const button=document.querySelector('[data-settings-tab="'+key+'"]');
+    const active=key===tab;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));
+  }
+}
+function openSettings(){
+  settingsReturnFocus=document.activeElement;const layer=document.getElementById('settings-layer');layer.hidden=false;
+  setSettingsTab('game');document.getElementById('settings-game-tab').focus();
+}
+function closeSettings(){
+  document.getElementById('settings-layer').hidden=true;
+  if(settingsReturnFocus?.focus)settingsReturnFocus.focus();settingsReturnFocus=null;
+}
+
 function applyFpsMode(value){fpsMode=['auto','30','60'].includes(value)?value:'auto';localStorage.setItem('bounce-fps-mode',fpsMode);lastTime=0;lastRenderAt=0;}
 function resetProgress(){
   if(!confirm('Reset all Bounce Tales progress, unlocked chapters and best records?'))return;
@@ -834,6 +910,7 @@ function bindSettings(){
   document.getElementById('reset-game').addEventListener('click',resetProgress);
   full.addEventListener('click',async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();full.textContent='Exit fullscreen';}else{await document.exitFullscreen();full.textContent='Enter fullscreen';}}catch{toast('Fullscreen unavailable in this browser');}});
   document.addEventListener('fullscreenchange',()=>{full.textContent=document.fullscreenElement?'Exit fullscreen':'Enter fullscreen';});
+  document.querySelectorAll('[data-settings-tab]').forEach(button=>button.addEventListener('click',()=>setSettingsTab(button.dataset.settingsTab)));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!settingsLayer.hidden){closeSettings();e.stopPropagation();}});
   document.getElementById('pause-mini').addEventListener('click',pauseGame);
   document.getElementById('continue-game').addEventListener('click',()=>{const idx=progress.selected||0;if(currentLevel.index===idx)startLevel();else loadLevel(idx,{start:true}).catch(error=>{console.error(error);toast('Could not load saved chapter');});});
