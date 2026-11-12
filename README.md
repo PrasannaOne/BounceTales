@@ -1,8 +1,8 @@
-# Bounce Tales · HTML5 Remaster · Build 13
+# Bounce Tales · HTML5 Remaster · Build 14
 
 A browser-based reverse-engineering port built around the supplied Bounce Tales 2.0.3 Java ME JAR. The original 240×320 game viewport and extracted resources are retained. This is still an incremental port, not a completed one-to-one replacement.
 
-## Build 13 changes
+## Build 14 changes
 
 - Responsive game shell for phone portrait, phone landscape, tablet and desktop layouts. The game viewport keeps its 3:4 aspect ratio and scales as a single unit.
 - Gameplay touch controls appear only while playing. The title, chapter book, guide, pause and result screens are directly touchable HTML controls inside the game viewport.
@@ -10,7 +10,7 @@ A browser-based reverse-engineering port built around the supplied Bounce Tales 
 - PC controls: A/D or Left/Right to move, Space/Enter to jump, Shift/Q/* to change form, Escape to pause. A standard-mapping gamepad is also supported.
 - Options/About has two compact tabs and a fixed, non-scrolling panel. Auto/30/60 FPS pacing, FPS counter, fullscreen and reset progress remain available.
 - Replaced the simple exponential camera chase with a source-shaped damped camera spring using the original 15 ms integration quantum and 90/140 default spring parameters. This is a careful translation of the recovered camera routine, not yet visually validated against the original JAR on a device.
-- The Share icon is icon-only; About includes Made by Prasanna ❤️, Telegram and the full GitHub repository address.
+- The Share button uses a familiar connected-node share glyph with a visible Share label; About includes Made by Prasanna ❤️, Telegram and the full GitHub repository address.
 
 ## Existing gameplay systems retained
 
@@ -48,7 +48,7 @@ Run all included Node.js checks from this folder:
 for test in tests/*.cjs; do node "$test" || exit 1; done
 ```
 
-The tests cover the RLEF resources, original input mapping, elapsed-time simulation, event engine, progression, enemies, water, trampolines, cannon mechanics, menu flow, responsive UI wiring and camera spring. These are automated code/runtime checks. They do not replace real Android touch testing or visual comparison with the original Nokia runtime.
+The 21 test scripts cover the RLEF resources, original input mapping, elapsed-time simulation, event engine, progression, enemies, water, trampolines, cannon mechanics, menu flow, responsive UI wiring, camera spring and collision/landing regressions across all 15 stages. These are automated code/runtime checks. They do not replace real Android touch testing or visual comparison with the original Nokia runtime.
 
 ## Known one-to-one gaps
 
@@ -60,3 +60,14 @@ The tests cover the RLEF resources, original input mapping, elapsed-time simulat
 - Real-phone Android browser testing is still required. A local headless-browser screenshot attempt was unreliable in this environment.
 
 See `PORT_STATUS.md` and `REVERSE_ENGINEERING_SUMMARY.md` for the build history and specific source/accuracy boundaries.
+
+
+## Build 14 · 2026-11-12
+
+- Replaced the icon-only vertical-ellipsis header affordance with the standard connected-node Share glyph and a visible Share label.
+- Added extra separation between the 240×320 game viewport and the mobile thumb controls; retained the compact lower Star control.
+- Reworked circle-vs-RLEF contour collision around the original JAR's swept offset-edge and vertex-contact construction.
+- Changed terrain penetration recovery to resolve the smallest correction first when multiple solid meshes overlap, reducing the chance of ejecting Bounce through a distant or underside contour.
+- Added grass-platform landing and all-15-stage player-start/fall/landing regression tests.
+
+Validation: all test scripts in `tests/*.cjs` pass in the local Node.js runtime. This validates deterministic logic only; real-device movement feel and screen layout still require phone/PC playtesting. The collision solver is closer to the source's contact geometry but is not yet a byte-for-byte LP32 translation of the complete original `BounceObject.checkCollisions` response.

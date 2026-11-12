@@ -198,3 +198,21 @@ The full local Node test suite passes. Real Android browser playtesting is still
 - Every enemy, friend, object, boss and event command edge case, plus full chapter progression/records.
 - Exact water mesh and particle systems, audio playback/mix, camera/parallax visual tuning and side-by-side JAR comparison.
 - Real Android touch feel and desktop/gamepad testing.
+
+
+# Build 14 status · 2026-11-12
+
+## Changes
+- Standard connected-node Share icon plus readable Share text.
+- Increased breathing room between the game viewport and touch controls on portrait phones; controls remain beside the canvas on wider and landscape layouts.
+- Terrain collision now follows the original JAR's key contact construction: sweep the ball centre against the radius-offset polygon edges, test rounded vertices, then resolve remaining overlap.
+- Multi-mesh recovery chooses the smallest correction first instead of preferring the deepest overlap. This targets the reported case where Bounce appears embedded in grass.
+- Added an all-15-stage spawn/fall/landing regression check in addition to synthetic grass and overlapping-mesh tests.
+
+## Accuracy boundary
+The edge/vertex approach is translated from the original `c.class` collision method and cross-checked against the readable `BounceObject` reference. The exact JAR uses LP32 fixed-point transforms, a 16-point contact buffer, nearest-contact selection, and a multi-pass collision response. Build 14 improves the browser implementation but does not yet reproduce every fixed-point rounding and multiple-contact detail.
+
+## Validation
+- All local Node validation scripts pass, including all 15 RLEF player-start fall/landing paths.
+- All 105 non-manifest JAR resources remain byte-for-byte identical to the freshly uploaded 2.0.3 archive.
+- No reliable real-phone/PC visual test was performed in this build.

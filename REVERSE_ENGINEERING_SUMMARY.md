@@ -50,3 +50,10 @@ Build 13 retains the uploaded 2.0.3 JAR resources as the data source. The camera
 The shell now fits phone portrait, phone landscape and desktop; gameplay touch controls are hidden on non-gameplay scenes. DOM menu controls are tappable/clickable directly, while the in-game book also accepts swipe and trackpad paging. Keyboard and standard gamepad inputs feed the same original input-ID state used by the touch controls.
 
 **Accuracy boundary:** this is an incremental behavior port. The custom DOM menu is not a complete reproduction of the original MIDP menu renderer, and the 15 playable-stage claim is still limited to loading and starting each RLEF scene. Complete collision, full event/object coverage, sound and every chapter's expected gameplay remain unfinished.
+
+
+## Build 14 · source-shaped terrain contact and shell spacing
+
+Build 14 changes the header share affordance to a connected-node Share icon with visible text and gives the portrait game viewport more visual separation from the touch controls.
+
+The terrain resolver now sweeps against radius-offset contour edges and rounded vertices, then performs smallest-correction-first overlap recovery. This is a closer translation of the original collision method's edge/vertex contact construction. Synthetic grass and layered-mesh tests pass, and a 5-second initial-fall/landing simulation for each of the 15 RLEF stages finishes with the player outside solid polygons. The original LP32 contact buffer and complete fixed-point response remain to be ported.
