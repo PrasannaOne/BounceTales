@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
+const js=fs.readFileSync(require('node:path').join(__dirname,'../game.js'),'utf8');
+const fps=html.match(/<select id="fps-mode">([\s\S]*?)<\/select>/)?.[1]||'';
+assert.match(fps,/value="auto"/);
+assert.match(fps,/value="30"/);
+assert.match(fps,/value="60"/);
+assert.doesNotMatch(fps,/value="90"|value="120"/);
+assert.match(html,/Made by Prasanna ❤️/);
+assert.match(html,/https:\/\/t\.me\/prasannaone/);
+assert.match(html,/https:\/\/github\.com\/PrasannaOne\/BounceTales/);
+assert.match(js,/https:\/\/prasannaone\.github\.io\/BounceTales\//);
+console.log('Settings: Auto/30/60 only, creator links and site share URL are present');

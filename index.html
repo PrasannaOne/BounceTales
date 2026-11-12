@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111719">
+<meta name="description" content="Bounce Tales, an HTML5 browser port using original game resources.">
+<title>Bounce Tales · HTML5 Remaster Build 15</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="app">
+  <header class="topbar">
+    <a class="brand" href="https://prasannaone.github.io/BounceTales/" aria-label="Bounce Tales home">Bounce Tales</a>
+    <div class="header-actions">
+      <button class="header-btn share-only" id="share-site" type="button" aria-label="Share Bounce Tales" title="Share"><svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12 16.2 6.7M8 12l8.2 5.3"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="5.5" r="2.6"/><circle cx="18" cy="18.5" r="2.6"/></svg></button>
+      <button class="header-btn settings-trigger" id="open-settings" type="button" aria-label="Settings" title="Settings"><span aria-hidden="true">⚙</span></button>
+    </div>
+  </header>
+
+  <section class="game-wrap" aria-label="Bounce Tales game" id="game-wrap">
+    <canvas id="game" width="240" height="320" aria-label="Bounce Tales game screen"></canvas>
+    <div class="statusline" id="statusline">LOADING ORIGINAL GAME…</div>
+    <button class="pause-mini" id="pause-mini" type="button" aria-label="Pause game" title="Pause">Ⅱ</button>
+    <div class="egg-hud" id="egg-hud">FORM BOUNCE</div>
+    <div class="fps-counter" id="fps-counter" hidden>-- FPS</div>
+
+    <!-- Original-style game title scene. All menu scenes remain inside the 240×320 game viewport. -->
+    <div class="overlay game-scene" id="menu" aria-label="Main menu">
+      <div class="game-panel title-panel">
+        <p class="eyebrow">THE ORIGINAL ADVENTURE</p>
+        <h1>Bounce Tales</h1>
+        <p class="title-subtitle">A little bounce goes a long way.</p>
+        <div class="title-actions">
+          <button id="continue-game" class="game-primary">CONTINUE</button>
+          <button id="open-chapters" class="game-secondary">CHAPTERS</button>
+          <button id="open-guide" class="game-tertiary">HOW TO PLAY</button>
+        </div>
+        <p class="menu-footnote" id="save-summary">Misty Morning · New adventure</p>
+      </div>
+    </div>
+
+    <div class="overlay game-scene" id="level-screen" hidden aria-label="Chapter selection">
+      <div class="game-panel book-panel">
+        <p class="eyebrow">CHAPTER BOOK</p>
+        <div class="book-topline"><button id="level-prev" class="page-arrow" aria-label="Previous chapter">‹</button><span id="level-position">01 / 15</span><button id="level-next" class="page-arrow" aria-label="Next chapter">›</button></div>
+        <canvas id="level-cover" width="160" height="104" aria-label="Original chapter cover art"></canvas>
+        <h2 id="level-name">Misty Morning</h2>
+        <p id="level-chapter" class="chapter-label">CHAPTER 1 · GREEN HILL</p>
+        <p id="level-record" class="level-record">Not yet completed · 0/30 eggs</p>
+        <p id="level-lock" class="level-lock" hidden>LOCKED · COLLECT MORE EGGS</p>
+        <button id="play-level" class="game-primary">PLAY CHAPTER</button>
+        <button id="back-title" class="game-tertiary">MAIN MENU</button>
+      </div>
+    </div>
+
+    <div class="overlay game-scene" id="pause-layer" hidden aria-label="Pause menu">
+      <div class="game-panel pause-panel">
+        <p class="eyebrow">GAME PAUSED</p><h2>Pause Menu</h2>
+        <button id="resume" class="game-primary">RESUME</button>
+        <button id="restart" class="game-secondary">RESTART CHAPTER</button>
+        <button id="pause-chapters" class="game-tertiary">CHAPTER SELECTION</button>
+      </div>
+    </div>
+
+    <div class="overlay game-scene" id="complete-layer" hidden aria-label="Chapter complete">
+      <div class="game-panel result-panel">
+        <p class="eyebrow">CHAPTER COMPLETE</p><h2 id="complete-title">Misty Morning</h2>
+        <div class="result-score"><strong id="complete-eggs">0 / 30</strong><span>EGGS COLLECTED</span></div>
+        <p id="complete-stats" class="level-record">Time 00:00 · Score 0</p>
+        <button id="next-level" class="game-primary">NEXT CHAPTER</button>
+        <button id="result-chapters" class="game-tertiary">CHAPTER BOOK</button>
+      </div>
+    </div>
+
+    <div class="overlay game-scene" id="guide-layer" hidden aria-label="How to play">
+      <div class="game-panel guide-panel">
+        <p class="eyebrow">BOUNCE'S FIELD GUIDE</p><h2>How to Play</h2>
+        <p><b>◀ / ▶</b> Move Bounce across the level.</p>
+        <p><b>JUMP</b> Bounce from the ground and obstacles. Hold for the normal jump action.</p>
+        <p><b>*</b> Change form when a new form has been unlocked. Some obstacles need a particular form.</p>
+        <p><b>Eggs</b> Collect them, find checkpoints and discover the level's hidden routes.</p>
+        <p><b>PC</b> A/D or arrows move · Space jumps · Shift or Q changes form · Escape pauses. Standard gamepads work too.</p>
+        <button id="guide-back" class="game-primary">GOT IT</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="controls" id="game-controls" aria-label="Gameplay controls">
+    <div class="main-controls">
+      <button data-key-id="3" class="control direction" aria-label="Move left">◀</button>
+      <button data-key-id="4" class="control direction" aria-label="Move right">▶</button>
+      <button data-key-id="7" class="control jump" aria-label="Jump">JUMP</button>
+    </div>
+    <div class="special-control-row"><button data-key-id="20" class="control special" aria-label="Change form" title="Change form">*</button></div>
+  </section>
+  <p class="hint" id="game-hint">Hold ◀ / ▶ to move · Hold JUMP to bounce</p>
+  <p class="keyboard-hint" id="keyboard-hint">Keyboard: A / D or ← / → move · Space jump · Shift form · Esc pause</p>
+  <footer><span>Original JAR resources · 240×320 game viewport</span><span>Build 15</span></footer>
+</main>
+
+<section class="settings-overlay" id="settings-layer" hidden aria-modal="true" role="dialog" aria-labelledby="settings-title">
+  <div class="settings-panel">
+    <div class="settings-heading">
+      <div><p class="eyebrow">BOUNCE TALES</p><h2 id="settings-title">Options</h2></div>
+      <button id="close-settings" class="close-settings" type="button" aria-label="Close options">×</button>
+    </div>
+    <div class="settings-tabs" role="tablist" aria-label="Options sections">
+      <button type="button" class="settings-tab active" id="settings-game-tab" role="tab" aria-selected="true" aria-controls="settings-game-pane" data-settings-tab="game">GAME</button>
+      <button type="button" class="settings-tab" id="settings-about-tab" role="tab" aria-selected="false" aria-controls="settings-about-pane" data-settings-tab="about">ABOUT</button>
+    </div>
+    <section class="settings-pane" id="settings-game-pane" role="tabpanel" aria-labelledby="settings-game-tab">
+      <label class="setting-row compact" for="fps-mode"><span><strong>Frame pacing</strong><small>Auto follows the display. Original game timing is preserved.</small></span>
+        <select id="fps-mode"><option value="auto">Auto</option><option value="30">30 FPS</option><option value="60">60 FPS</option></select>
+      </label>
+      <label class="setting-row compact" for="show-fps"><span><strong>FPS counter</strong><small>Show rendering rate.</small></span><input id="show-fps" type="checkbox"></label>
+      <div class="settings-actions-row">
+        <button id="fullscreen-btn" class="settings-action" type="button">⛶ Fullscreen</button>
+        <button id="reset-game" class="settings-action danger" type="button">Reset progress</button>
+      </div>
+      <p class="settings-note">Game simulation uses elapsed time from the original JAR, independently of the display refresh rate.</p>
+    </section>
+    <section class="settings-pane about-pane" id="settings-about-pane" role="tabpanel" aria-labelledby="settings-about-tab" hidden>
+      <div class="about-brand-row"><div class="about-mark">B</div><div><p class="eyebrow">INDEPENDENT HTML5 PORT</p><h3>Bounce Tales</h3></div></div>
+      <p class="about-copy">A preservation-minded browser recreation using the original 2.0.3 Java ME game resources.</p>
+      <div class="creator-line"><span>PROJECT CREATOR</span><strong>Made by Prasanna ❤️</strong></div>
+      <div class="about-links-row">
+        <a class="about-link" href="https://t.me/prasannaone" target="_blank" rel="noopener noreferrer"><span class="link-icon">↗</span><span><strong>Telegram</strong><small>@prasannaone</small></span></a>
+        <a class="about-link" href="https://github.com/PrasannaOne/BounceTales" target="_blank" rel="noopener noreferrer"><span class="link-icon">⌘</span><span><strong>GitHub</strong><small>github.com/PrasannaOne/BounceTales</small></span></a>
+      </div>
+      <p class="about-disclaimer">Not affiliated with Nokia or Rovio. Original game assets remain the property of their respective owners.</p>
+    </section>
+  </div>
+</section>
+<script src="src/original-input-map.js"></script>
+<script src="src/original-camera.js"></script>
+<script src="src/rlef-reader.js"></script>
+<script src="src/bounce-physics.js"></script>
+<script src="src/terrain-collision.js"></script>
+<script src="src/game-timing.js"></script>
+<script src="src/event-engine.js"></script>
+<script src="src/original-sprite-animation.js"></script>
+<script src="src/original-enemies.js"></script>
+<script src="src/original-water.js"></script>
+<script src="src/original-trampoline.js"></script>
+<script src="src/midp-graphics.js"></script>
+<script src="src/original-progression.js"></script>
+<script src="src/game-particles.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

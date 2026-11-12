@@ -1,0 +1,16 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const html=fs.readFileSync(require('node:path').join(__dirname,'..','index.html'),'utf8');
+const game=fs.readFileSync(require('node:path').join(__dirname,'..','game.js'),'utf8');
+assert.match(html,/<div class="overlay game-scene" id="menu"/);
+assert.match(html,/<div class="overlay game-scene" id="level-screen"/);
+assert.match(html,/id="level-prev"/);assert.match(html,/id="level-next"/);
+assert.match(html,/id="pause-layer"/);assert.match(html,/id="complete-layer"/);
+assert.doesNotMatch(html,/id="level-select"|<select[^>]+level/i,'no developer-style level dropdown');
+assert.match(html,/id="share-site"[^>]+aria-label="Share Bounce Tales"/);
+assert.match(html,/id="open-settings"[^>]+aria-label="Settings"/);
+assert.match(html,/id="pause-mini"/);
+assert.match(game,/function drawOriginalChapterBook\(\)/);
+assert.match(game,/drawImageMap\(331,120,160\)/,'uses the original JAR book-frame compound sprite');
+assert.match(game,/drawImageMap\(COVER_IDS\[selectedLevelIndex\],120,160\)/,'renders the original chapter cover inside the book scene');
+console.log('Menu flow: embedded title, book carousel, pause, completion scenes and clean header structure passed');

@@ -1,0 +1,10 @@
+const assert=require('node:assert/strict');
+const W=require('../src/original-water.js');
+const identity=[65536,0,0,0,65536,0];
+const water={areaMinX:0,areaMaxX:100,areaMinY:100,areaMaxY:0,gravityYTop:8,gravityXRight:4,gravityYBottom:2,gravityXLeft:0,color:0x00ff00};
+let zone=W.createZone(water,identity),body={x:50,y:80,vx:100,vy:-100,torqueX:40,torqueY:20,radius:20,forme:0,gravityX:0,gravityY:0};
+const applied=W.updateZone(zone,body,{x:50,y:90},.016);assert.equal(applied,true);assert.ok(body.gravityY>0);assert.ok(body.gravityX>0);assert.ok(body.vx<100&&body.vy>-100);assert.ok(body.torqueX<40&&body.torqueY<20);
+zone=W.createZone({...water,color:0},identity);body={x:50,y:80,vx:100,vy:-100,torqueX:40,torqueY:20,radius:20,forme:0,gravityX:0,gravityY:0};W.updateZone(zone,body,{x:50,y:90},.016);assert.equal(body.vx,100,'air tunnels apply their directional force without water drag');assert.equal(body.gravityY>0,true);
+zone=W.createZone(water,identity);body={x:50,y:90,vx:0,vy:-200,torqueX:30,torqueY:0,radius:20,forme:0,gravityX:0,gravityY:0};W.updateZone(zone,body,{x:45,y:120},.016);assert.equal(zone.ripples.length,1,'crossing the original water surface creates a ripple');
+zone=W.createZone({...water,gravityXRight:8},identity);body={x:115,y:80,vx:0,vy:0,torqueX:0,torqueY:0,radius:20,forme:0,gravityX:0,gravityY:0};W.updateZone(zone,body,{x:115,y:80},.016);assert.equal(body.gravityX,9*32,'source gravity interpolation extrapolates instead of clamping at the water boundary');
+console.log('Water: RLEF gravity interpolation, swim drag, air-tunnel force and surface contact passed');
