@@ -259,3 +259,39 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
   .header-btn.share-only{width:58px;min-width:58px;padding:0;}
   .share-icon{width:17px;height:17px;}
 }
+
+
+/* ========================= BUILD 16: fixed-screen game shell ========================= */
+/* The game is an app-like viewport: the document itself never scrolls. */
+html, body {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+body {
+  height: 100vh;
+  height: 100dvh;
+  padding: 0 10px env(safe-area-inset-bottom);
+}
+#app {
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+  justify-content: center;
+  padding-top: calc(58px + env(safe-area-inset-top));
+  padding-bottom: max(6px, env(safe-area-inset-bottom));
+}
+footer { display: none !important; }
+.game-wrap { flex-shrink: 1; }
+.menu-footnote { display: none !important; }
+@media (max-height: 720px) {
+  #app { gap: 6px; padding-top: calc(54px + env(safe-area-inset-top)); }
+  .game-wrap { margin-bottom: 0; }
+  .controls { margin-top: 0; gap: 5px; }
+}
+@media (max-height: 620px) and (orientation: landscape) {
+  #app { padding-top: calc(54px + env(safe-area-inset-top)); }
+}

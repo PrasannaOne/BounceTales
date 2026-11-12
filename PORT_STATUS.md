@@ -223,3 +223,21 @@ The edge/vertex approach is translated from the original `c.class` collision met
 - Retained the previously implemented Build 14 swept edge/vertex collision and terrain-overlap recovery code without changing its solver behaviour in this handoff.
 - All 105 non-manifest files from the newly supplied Bounce Tales 2.0.3 JAR match `assets/original/` byte-for-byte.
 - This package does not claim to have fixed the specific grass fall-through shown in the user's latest screenshot. The existing synthetic grass and 15-stage spawn regression tests pass, but the reported real-phone case still needs a targeted reproduction and on-device verification.
+
+
+# Build 16 status · 2026-11-12
+
+## Changes in this handoff
+- Removed the build number and technical resource/viewport footer from the player-facing home screen.
+- Removed the extra home-screen eyebrow and save-summary footnote so the title screen contains only the game title, short tagline and actual menu actions.
+- Locked the document to the device viewport with `overflow: hidden` and `overscroll-behavior: none`; the page no longer scrolls behind the game.
+- Kept the original logical 240×320 canvas and the existing game controls/menu flow intact.
+- Updated the document title to the plain game name.
+
+## Validation
+- All 21 Node regression scripts pass after the shell changes.
+- The archive still includes the original game resources, source modules, tests and reverse-engineering notes.
+- The no-scroll change is a CSS viewport constraint; final confirmation of safe-area behaviour and touch feel still requires testing on the target Android browser.
+
+## Accuracy statement
+This is a presentation and packaging pass, not a completed one-to-one game port. The original 2.0.3 JAR remains the authority. Known gameplay gaps documented above remain open, including the complete LP32 multi-contact collision solver, exhaustive enemy/object/event behaviour, exact chapter progression, original MIDP menu reproduction, full audio/MIDI pipeline and side-by-side runtime verification. The 15 RLEF stages being loadable or selectable does not establish that all 15 are fully playable or mechanically equivalent.

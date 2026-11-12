@@ -1,6 +1,6 @@
-# Bounce Tales HTML5 Port · V16 Foundation
+# Bounce Tales · HTML5 browser port
 
-V16 establishes a repeatable reverse-engineering workflow around the original Bounce Tales 2.0.3 Java ME JAR. It preserves the V15 browser build as the runtime baseline while separating source modules, tests, tooling and reference documentation.
+The current browser build is an incremental port based on the original Bounce Tales 2.0.3 Java ME resources. Build 16 tightens the phone-first presentation and removes document scrolling and build labels from the game screen. It does not claim complete one-to-one gameplay equivalence.
 
 ## Repository map
 - `src/`: browser runtime modules (engine, physics, collision, rendering, audio, levels, menus). Existing modules are retained while boundaries are documented.
