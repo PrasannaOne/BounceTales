@@ -4,22 +4,28 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#121a1d">
-<title>Bounce Tales · HTML5 Remaster Research Build 05</title>
+<title>Bounce Tales · HTML5 Remaster Build 09</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main id="app">
-  <header class="topbar"><span>BOUNCE TALES</span><span class="build">HTML5 REMASTER · BUILD 05</span></header>
+  <header class="topbar">
+    <a class="brand" href="https://prasannaone.github.io/BounceTales/" aria-label="Bounce Tales home">Bounce Tales</a>
+    <div class="header-actions">
+      <button class="header-btn" id="share-site" type="button" aria-label="Share Bounce Tales"><span class="share-dots">•••</span><span>Share</span></button>
+      <button class="header-btn settings-trigger" id="open-settings" type="button" aria-label="Open settings"><span aria-hidden="true">⚙</span><span>Settings</span></button>
+    </div>
+  </header>
   <section class="game-wrap" aria-label="Bounce Tales game">
     <canvas id="game" width="240" height="320" aria-label="Original Misty Morning level"></canvas>
-    <div class="statusline" id="statusline">LOADING ORIGINAL LEVEL…</div>
-    <div class="egg-hud" id="egg-hud">FORM BOUNCE</div>
+    <div class="statusline" id="statusline">LOADING ORIGINAL LEVEL…</div><button class="pause-mini" data-key-id="5" aria-label="Pause game">Ⅱ</button>
+    <div class="egg-hud" id="egg-hud">FORM BOUNCE</div><div class="fps-counter" id="fps-counter" hidden>-- FPS</div>
     <div class="overlay" id="menu">
       <div class="panel">
         <p class="eyebrow">THE ORIGINAL ADVENTURE</p>
         <h1>Bounce Tales</h1>
         <p>Chapter 1 · Misty Morning</p>
-        <p class="detail">The first level is loaded from the supplied Nokia JAR. This is an early engine port, not the complete remaster yet.</p>
+        <p class="detail">Original Nokia game resources · early browser engine port</p>
         <button id="start">START GAME</button>
       </div>
     </div>
@@ -33,23 +39,38 @@
       </div>
     </div>
   </section>
-  <section class="controls" aria-label="Original game controls, with number keys omitted">
-    <button data-key-id="6" class="soft" aria-label="Left soft key">L</button>
-    <button data-key-id="1" aria-label="Up">▲</button>
-    <button data-key-id="20" class="special" aria-label="Star, cycle form">*</button>
-    <button data-key-id="3" aria-label="Left">◀</button>
-    <button data-key-id="7" class="action" aria-label="Middle soft key, jump or select">OK</button>
-    <button data-key-id="4" aria-label="Right">▶</button>
-    <button data-key-id="21" class="special" aria-label="Hash, original pound key">#</button>
-    <button data-key-id="2" aria-label="Down">▼</button>
-    <button data-key-id="5" class="soft pause" aria-label="Right soft key, pause">R</button>
+  <section class="controls" aria-label="Touch controls">
+    <div class="move-controls">
+      <button data-key-id="3" class="control direction" aria-label="Move left">◀</button>
+      <button data-key-id="4" class="control direction" aria-label="Move right">▶</button>
+    </div>
+    <div class="action-controls">
+      <button data-key-id="7" class="control jump" aria-label="Jump or confirm">JUMP</button>
+      <button data-key-id="20" class="control special" aria-label="Change form">*</button>
+    </div>
   </section>
-  <p class="hint">Arrows: move / jump · OK: jump / select · *: form · #: original key · L / R: soft keys</p>
-  <footer><span>Original JAR data · 240×320 viewport · number keys omitted</span><span>Build 05</span></footer>
+  <section class="settings-overlay" id="settings-layer" hidden aria-modal="true" role="dialog" aria-labelledby="settings-title">
+    <div class="settings-panel">
+      <div class="settings-heading"><div><p class="eyebrow">GAME OPTIONS</p><h2 id="settings-title">Settings</h2></div><button id="close-settings" class="close-settings" aria-label="Close settings">×</button></div>
+      <label class="setting-row" for="fps-mode"><span><strong>Frame rate</strong><small>Auto follows browser refresh; gameplay time is preserved</small></span>
+        <select id="fps-mode"><option value="auto">Device refresh · Auto</option><option value="30">30 FPS</option><option value="60">60 FPS</option></select>
+      </label>
+      <label class="setting-row" for="show-fps"><span><strong>FPS counter</strong><small>Show live rendering performance</small></span><input id="show-fps" type="checkbox"></label>
+      <button id="fullscreen-btn" class="settings-action">Enter fullscreen</button>
+      <button id="reset-game" class="settings-action danger">Reset game</button>
+      <div class="about-block"><strong>About</strong><p>Bounce Tales · HTML5 browser remaster</p><p>Made by Prasanna ❤️</p><p>Telegram · <a href="https://t.me/prasannaone" target="_blank" rel="noopener noreferrer">@prasannaone</a></p><p>GitHub · <a href="https://github.com/PrasannaOne/BounceTales" target="_blank" rel="noopener noreferrer">BounceTales repository</a></p><small>An independent fan-made browser port.</small></div>
+    </div>
+  </section>
+  <p class="hint">Hold ◀ / ▶ to move · Hold JUMP to bounce · * changes form</p>
+  <footer><span>Original JAR assets · 240×320 game viewport</span><span>Build 09</span></footer>
 </main>
 <script src="src/original-input-map.js"></script>
 <script src="src/rlef-reader.js"></script>
 <script src="src/bounce-physics.js"></script>
+<script src="src/terrain-collision.js"></script>
+<script src="src/game-timing.js"></script>
+<script src="src/event-engine.js"></script>
+<script src="src/original-sprite-animation.js"></script>
 <script src="game.js"></script>
 </body>
 </html>

@@ -22,4 +22,5 @@ const world=parser.buildWorld(first.objects),player=first.objects.find(o=>o.type
 assert.equal(Math.round(pm[2]/65536),-1740);assert.equal(Math.round(pm[5]/65536),918);
 const imageMap=JSON.parse(fs.readFileSync(path.join(__dirname,'../src/image-map.json')));
 assert.equal(imageMap.atlases.length,46);assert.equal(Object.keys(imageMap.maps).length,540);
+for(const id of [17,20,28,447,452,454,456,458,460,462])assert.ok(imageMap.maps[String(id)],'original Bounce visual map '+id+' exists');
 console.log('RLEF: all 16 levels validated; Misty Morning objects, spawn, image map and transforms verified');

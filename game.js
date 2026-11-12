@@ -1,13 +1,18 @@
 (() => {
 'use strict';
 const W=240,H=320,SCALE=0.660187;
+const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
-const menu=document.getElementById('menu'),pauseLayer=document.getElementById('pause-layer');
+const menu=document.getElementById('menu'),pauseLayer=document.getElementById('pause-layer'),settingsLayer=document.getElementById('settings-layer');
 const status=document.getElementById('statusline'),eggHud=document.getElementById('egg-hud');
 const input=new BounceOriginalInput.OriginalInputState();
 let levelData=null,world=null,body=null,worldGeometry=[],renderObjects=[],eggs=[],enemies=[],trampolines=[],bonusEggs=[];
 let atlases=[],imageMaps=null,loadedImages=new Map(),collected=0,elapsed=0,mode='title';
+let eventEngine=null,playerObjectId=-1,fieldMessage='',fieldMessageTimer=0,languageStrings=[],checkpointPosition=null;
+let spriteAnimations=new Map(),cameraFollowSpeed=5,cameraSnap=false;
 let lastTime=0,cameraX=0,cameraY=0,unlockedForme=0,toastTimer=0,toastText='';
+let fpsMode=localStorage.getItem('bounce-fps-mode')||'auto',showFps=localStorage.getItem('bounce-show-fps')==='true',fpsFrames=0,fpsStamp=0,displayFps=0,lastRenderAt=0;
+if(!['auto','30','60'].includes(fpsMode))fpsMode='auto';
 const S={play:'play',title:'title',pause:'pause'};
 function toast(t){toastText=t;toastTimer=1.3;}
 function fixedPoint(m,x,y){return {x:(m[0]*x+m[1]*y)/65536+m[2]/65536,y:(m[3]*x+m[4]*y)/65536+m[5]/65536};}
@@ -38,35 +43,60 @@ function drawImageMap(id,x,y,seen=new Set(),frame=0){
   seen.delete(id);
 }
 function transformObject(o){
-  const m=world.get(o.id);return m;
+  return world.get(o.id);
+}
+function startSpriteAnimation(id){
+  const object=levelData?.objects.find(o=>o.id===id&&o.type==='sprite');
+  if(!object)return;
+  const state=BounceOriginalSpriteAnimation.start(object.sprites);
+  if(state.slots.some(Boolean))spriteAnimations.set(id,state);
+}
+function updateSpriteAnimations(dt){
+  for(const [id,state] of spriteAnimations){
+    if(!BounceOriginalSpriteAnimation.update(state,dt*1000))spriteAnimations.delete(id);
+  }
+}
+function refreshGeometryWorld(nextWorld=world){
+  if(nextWorld)world=nextWorld;
+  for(const poly of worldGeometry){
+    const m=world.get(poly.id);
+    if(!m)continue;
+    poly.vertices=poly.localVertices.map(v=>fixedPoint(m,v[0],v[1]));
+    poly.area=poly.vertices.slice(0,-1).reduce((a,p,i)=>a+p.x*poly.vertices[i+1].y-poly.vertices[i+1].x*p.y,0)/2;
+    const flags=poly.object.runtimeFlags??poly.object.flags??0;
+    poly.nocollide=(flags&0x20)!==0;
+  }
 }
 function buildRuntime(parsed){
   world=BounceRLEF.buildWorld(parsed.objects);
   levelData=parsed;
   const player=parsed.objects.find(o=>o.type==='player');
   if(!player)throw new Error('The first level has no player start record');
+  playerObjectId=player.id;
   const spawn=getWorldPos(player);
   body=new BouncePhysics.BounceBody(spawn.x,spawn.y,unlockedForme);
   body.slopeCosAbs=1;
   worldGeometry=[];renderObjects=[];eggs=[];enemies=[];trampolines=[];bonusEggs=[];
   for(const o of parsed.objects){
-    if(o.type==='geometry'){
+    if(o.type==='player'){
+      renderObjects.push({type:'player',object:o});
+    }else if(o.type==='geometry'){
       const m=transformObject(o);
       const verts=o.vertices.map(v=>fixedPoint(m,v[0],v[1]));
       const area=verts.slice(0,-1).reduce((a,p,i)=>a+p.x*verts[i+1].y-verts[i+1].x*p.y,0)/2;
       const nocollide=(o.flags&0x20)!==0;
-      const poly={id:o.id,vertices:verts,faces:o.faces,color:o.color,area,nocollide};
+      const poly={id:o.id,object:o,localVertices:o.vertices,vertices:verts,faces:o.faces,color:o.color,area,nocollide};
       worldGeometry.push(poly);renderObjects.push({type:'geometry',object:o,poly});
     }else if(o.type==='sprite'){
       const m=transformObject(o);renderObjects.push({type:'sprite',object:o,matrix:m});
     }else if(o.type==='egg'){
-      const p=getWorldPos(o);eggs.push({id:o.id,x:p.x,y:p.y,collected:false});renderObjects.push({type:'egg',object:o,point:p});
+      const p=getWorldPos(o);eggs.push({id:o.id,x:p.x,y:p.y,collected:false,object:o});renderObjects.push({type:'egg',object:o,point:p});
     }else if(o.type==='enemy'){
       const p=getWorldPos(o);const m=transformObject(o);
       const parentM=o.parent>=0?(world.get(o.parent)||[65536,0,0,0,65536,0]):[65536,0,0,0,65536,0];
       const localX=o.matrix[2]/65536,localY=o.matrix[5]/65536;
       const mp=(o.movePoints||[[0,0],[0,0]]).map(q=>fixedPoint(parentM,localX+q[0],localY+q[1]));
-      const e={...o,x:p.x,y:p.y,initialX:p.x,initialY:p.y,matrix:m,dead:false,moveWorld:mp,state:1,propelType:1,waitTimer:2000,peekTimer:0,peekPeriod:800,vulnerable:false,rechargeTimer:0,curMovePoint:0,facingLeft:(o.movePoints?.[0]?.[0]||0)<(o.movePoints?.[1]?.[0]||0)};
+      const e={...o,object:o,x:p.x,y:p.y,initialX:p.x,initialY:p.y,matrix:m,dead:false,moveWorld:mp,state:1,propelType:1,waitTimer:2000,peekTimer:0,peekPeriod:800,vulnerable:false,rechargeTimer:0,curMovePoint:0,facingLeft:(o.movePoints?.[0]?.[0]||0)<(o.movePoints?.[1]?.[0]||0)};
       enemies.push(e);renderObjects.push({type:'enemy',enemy:e});
     }else if(o.type==='water'){
       const p=getWorldPos(o);renderObjects.push({type:'water',object:o,point:p});
@@ -79,52 +109,34 @@ function buildRuntime(parsed){
     }
   }
   collected=0;elapsed=0;
+  spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;
+  eventEngine=new BounceEventEngine.EventEngine(parsed.objects,{
+    strings:languageStrings,playerObjectId,
+    onWorldChanged:next=>refreshGeometryWorld(next),
+    onMessage:(id,text)=>{fieldMessage=text;fieldMessageTimer=6.5;},
+    onAnimate:id=>startSpriteAnimation(id),
+    onFlagsChanged:(obj,flags)=>{const poly=worldGeometry.find(p=>p.id===obj.id);if(poly)poly.nocollide=(flags&0x20)!==0;},
+    onCameraTarget:id=>{cameraSnap=false;},
+    onCameraParams:(bounce,stabilize,snap)=>{cameraFollowSpeed=clamp(stabilize/28,1.5,10);cameraSnap=!!snap;},
+    onCheckpoint:point=>{checkpointPosition={x:point.x,y:point.y};}
+  });
+  world=eventEngine.world;refreshGeometryWorld(world);
+  checkpointPosition={x:body.x,y:body.y};
   cameraX=body.x;cameraY=body.y+96;
   refreshHud();
 }
 function screenPoint(p){return {x:W/2+(p.x-cameraX)*SCALE,y:H/2-(p.y-cameraY)*SCALE};}
-function insidePolygon(x,y,poly){
-  let inside=false,vs=poly.vertices;
-  for(let i=0,j=vs.length-2;i<vs.length-1;j=i++){
-    const a=vs[i],b=vs[j];
-    if(((a.y>y)!==(b.y>y))&&(x<(b.x-a.x)*(y-a.y)/(b.y-a.y+1e-12)+a.x))inside=!inside;
-  }
-  return inside;
-}
-function resolveTerrain(dt){
-  const r=BouncePhysics.parameters.radius[body.forme];
-  for(let pass=0;pass<3;pass++){
-    let best=null;
-    for(const poly of worldGeometry){
-      if(poly.nocollide||poly.vertices.length<3)continue;
-      const vs=poly.vertices,area=poly.area;
-      for(let i=0;i<vs.length-1;i++){
-        const a=vs[i],b=vs[i+1],dx=b.x-a.x,dy=b.y-a.y,len2=dx*dx+dy*dy;
-        if(len2<1e-6)continue;
-        const t=Math.max(0,Math.min(1,((body.x-a.x)*dx+(body.y-a.y)*dy)/len2));
-        const qx=a.x+t*dx,qy=a.y+t*dy;
-        const d2=(body.x-qx)**2+(body.y-qy)**2;
-        if(d2>(r+2)**2)continue;
-        const len=Math.sqrt(len2);
-        // RLEF contours are ordered. This selects the polygon's outward normal.
-        const nx=(area<0?-dy:dy)/len,ny=(area<0?dx:-dx)/len;
-        const signed=(body.x-qx)*nx+(body.y-qy)*ny;
-        if(signed>=r)continue;
-        const approaching=body.vx*nx+body.vy*ny<0;
-        if(signed>0&&!approaching)continue;
-        const penetration=r-signed;
-        if(!best||penetration>best.penetration)best={nx,ny,penetration};
-      }
-    }
-    if(!best)break;
-    body.x+=best.nx*best.penetration;body.y+=best.ny*best.penetration;
-    body.land(best.nx,best.ny,dt);
-  }
+function resolveTerrain(dt,previous){
+  body.radius=BouncePhysics.parameters.radius[body.forme];
+  BounceTerrainCollision.resolveCirclePolygons(body,worldGeometry,dt,4,previous);
 }
 function collectEggs(){
   for(const e of eggs.concat(bonusEggs)){
     if(e.collected)continue;
-    const dx=body.x-e.x,dy=body.y-e.y;
+    const flags=e.object?(e.object.runtimeFlags??e.object.flags??0):0;
+    if(flags&0x20)continue;
+    const p=e.object?getWorldPos(e.object):e;
+    const dx=body.x-p.x,dy=body.y-p.y;
     if(dx*dx+dy*dy<2025){e.collected=true;collected++;}
   }
   refreshHud();
@@ -132,7 +144,7 @@ function collectEggs(){
 function collideEnemies(){
   const r=BouncePhysics.parameters.radius[body.forme];
   for(const e of enemies){
-    if(e.dead)continue;
+    if(e.dead||((e.object?.runtimeFlags??e.object?.flags??0)&0x20))continue;
     const width=e.enemyType===0?50:(e.enemyType===2?100:100);
     const height=e.enemyType===0?100:(e.enemyType===2?80:50);
     const dx=body.x-e.x,dy=body.y-e.y;
@@ -148,6 +160,31 @@ function collideEnemies(){
     }
   }
 }
+function updatePlayerEyes(dt){
+  const ms=dt*1000;
+  if(body.idleAnimTimer>0){
+    body.idleAnimTimer-=ms;
+    body.idleAnimStartTimer=3000;
+    if(body.idleAnimTimer<=0){
+      if(body.eyeFrame<2||body.eyeFrame>8){
+        body.idleAnimTimer=0;body.eyeFrame=0;
+      }else{
+        body.eyeFrame=(Math.floor(Math.random()*3)===0)?3:(Math.floor(Math.random()*6)+3);
+        body.idleAnimTimer=body.eyeFrame===3?600:1500;
+      }
+    }
+  }else if(Math.abs(body.vx)<40&&Math.abs(body.vy)<40){
+    body.idleAnimStartTimer-=ms;
+    if(body.idleAnimStartTimer<=0){
+      body.idleAnimTimer=600;body.eyeFrame=2;body.idleAnimStartTimer=3000;
+    }
+  }
+  if(Math.abs(body.vx)>=40||Math.abs(body.vy)>=40){
+    if(body.eyeFrame!==1)body.eyeFrame=0;
+    body.idleAnimStartTimer=3000;
+  }
+}
+
 function updateEnemies(dt){
   const ms=dt*1000;
   for(const e of enemies){
@@ -181,6 +218,8 @@ function updateEnemies(dt){
 }
 function updateTrampolines(dt,previousY){
   for(const t of trampolines){
+    const wp=getWorldPos(t.object);t.x=wp.x;t.y=wp.y;
+    if((t.object.runtimeFlags??t.object.flags??0)&0x20)continue;
     if(t.active){
       t.progress+=dt*1000;
       const count=imageMaps.maps[String(t.object.imageId)]?.frames?.length||6;
@@ -209,18 +248,32 @@ function update(dt){
   if(held.left)body.moveLeft(false);
   if(held.right)body.moveRight(false);
   if(held.jump)body.jump(false);
+  const previousPosition={x:body.x,y:body.y};
   const previousY=body.y;
-  body.update(dt);
-  body.rotation+=body.vx*dt/20;
-  resolveTerrain(dt);
+  body.update(dt,SCALE);
+  // Rolling orientation remains a provisional contact approximation until the
+  // original swept-contact torque solver is translated in full.
+  if(body.grounded)body.rotation+=body.vx*dt/20;
+  updatePlayerEyes(dt);
+  resolveTerrain(dt,previousPosition);
   updateTrampolines(dt,previousY);
   updateEnemies(dt);
   collectEggs();
   collideEnemies();
-  const targetX=body.x,targetY=body.y+96;
-  cameraX+=(targetX-cameraX)*Math.min(1,dt*5);
-  cameraY+=(targetY-cameraY)*Math.min(1,dt*5);
+  if(eventEngine){
+    eventEngine.update(body,previousPosition,dt,playerObjectId);
+    world=eventEngine.world;
+  }
+  let targetX=body.x,targetY=body.y+96;
+  if(eventEngine&&eventEngine.cameraTargetId>=0&&eventEngine.cameraTargetId!==playerObjectId){
+    const target=world.get(eventEngine.cameraTargetId);
+    if(target){targetX=target[2]/65536;targetY=target[5]/65536;}
+  }
+  const cameraStep=Math.min(1,dt*cameraFollowSpeed);
+  if(cameraSnap){cameraX=targetX;cameraY=targetY;}else{cameraX+=(targetX-cameraX)*cameraStep;cameraY+=(targetY-cameraY)*cameraStep;}
   if(toastTimer>0)toastTimer-=dt;
+  if(fieldMessageTimer>0)fieldMessageTimer=Math.max(0,fieldMessageTimer-dt);
+  updateSpriteAnimations(dt);
 }
 function drawGeometry(poly){
   const vs=poly.vertices,faces=poly.faces;
@@ -233,24 +286,103 @@ function drawGeometry(poly){
   ctx.fill();
 }
 function drawSprite(o,m){
-  for(const s of o.sprites||[]){
-    const p=fixedPoint(m,s[0],s[1]),screen=screenPoint(p);
-    drawImageMap(s[2],screen.x,screen.y,new Set(),Math.floor(elapsed*6));
+  if(!m)return;
+  const anim=spriteAnimations.get(o.id);
+  for(let i=0;i<(o.sprites||[]).length;i++){
+    const s=o.sprites[i],p=fixedPoint(m,s[0],s[1]),screen=screenPoint(p);
+    const visual=anim?BounceOriginalSpriteAnimation.frame(anim,i,elapsed*1000):null;
+    if(visual){
+      ctx.save();
+      const priorAlpha=ctx.globalAlpha;
+      ctx.globalAlpha=(typeof priorAlpha==='number'?priorAlpha:1)*visual.alpha;
+      drawImageMap(visual.imageId,screen.x,screen.y,new Set(),visual.frame);
+      ctx.restore();
+    }else drawImageMap(s[2],screen.x,screen.y);
   }
 }
+// BounceObject.fillStretchedCircle translated from the public readable
+// decompilation and checked against c.class's 2.0.3 stretch state arrays.
+function drawStretchedCircle(cx,cy,radius,stretchRadius,color,writeBuffer=false,expand=false){
+  const st=body.stretch,abs=st.resultAbs,balance=st.balance;
+  let axisIndex=2;
+  ctx.fillStyle=color;
+  for(let axis=0;axis<4;axis++){
+    let width=radius-(((abs[axisIndex]+balance[axisIndex])>>10)*radius/stretchRadius);
+    const height=radius-(((abs[axis>>1]+balance[axis>>1])>>10)*radius/stretchRadius);
+    if(expand)width++;
+    const w=Math.max(0.5,width),h=Math.max(0.5,height);
+    if(writeBuffer)body.stretchBuffer[axis]=Math.min(w,h);
+    const offsetY=(abs[1]+balance[1])>>10;
+    const start=axis*Math.PI/2,end=start+Math.PI/2;
+    ctx.beginPath();ctx.moveTo(cx,cy+offsetY);
+    ctx.ellipse(cx,cy+offsetY,w,h,0,start,end);
+    ctx.closePath();ctx.fill();
+    if(axis===0)axisIndex++;
+    if(axis===2)axisIndex--;
+  }
+}
+function drawBounceForm(x,y,r){
+  for(let a=0;a<4;a++){
+    let balance=0;for(let b=0;b<4;b++)if(a!==b)balance-=body.stretchResultAbs[b]>>1;
+    body.stretchDirBalance[a]=balance;
+  }
+  body.stretchBuffer.fill(999);
+  drawStretchedCircle(x,y,r+2,r+2,'#000000');
+  drawStretchedCircle(x,y,r,r,'#ed1c24',true);
+  const inner=Math.floor(r*.9);
+  drawStretchedCircle(x,y+2,inner,r,'#af1100');
+  drawStretchedCircle(x+1,y-1,inner,r,'#ed1c24',false,true);
+  const top=body.stretchBuffer[1]>>1;
+  const inset=(body.stretchBuffer[1]-top)+1;
+  const highlightX=x+Math.trunc(Math.cos(5.3)*inset);
+  const highlightY=y+Math.trunc(Math.sin(5.3)*inset);
+  for(let i=0;i<12;i++){
+    const imageId=(i&1)+31,percent=100-(i<<2),angle=body.rotation+i*.8;
+    const base=(body.stretchResultAbs[1]+body.stretchDirBalance[1])>>10;
+    for(let quadrant=0;quadrant<4;quadrant++){
+      const buffer=body.stretchBuffer[quadrant];
+      const distance=((buffer-((buffer>>1)>>1))*percent)/100;
+      const sx=x+Math.trunc(Math.cos(angle)*distance);
+      const sy=y+Math.trunc(Math.sin(angle)*distance);
+      const inside=quadrant===0?(sx>=x&&sy<=y):quadrant===1?(sx<=x&&sy<=y):quadrant===2?(sx<=x&&sy>=y):(sx>=x&&sy>=y);
+      if(inside){drawImageMap(imageId,sx,quadrant===0?sy:base+sy);break;}
+    }
+  }
+  drawImageMap(17,x,y);
+  drawStretchedCircle(highlightX,highlightY,top>>1,r,'#ffffff');
+  drawImageMap(28,x,y);
+}
+function drawBumpyForm(x,y){
+  const ids=[211,212,223,234,237,238,239,240,241,242,213,214,215,216,217,218,219,220,221,222,224,225,226,227,228,229,230,231,232,233,235,236];
+  let degrees=Math.trunc(body.rotation*180/Math.PI)%360;if(degrees<0)degrees+=360;
+  const index=31-Math.trunc(degrees/11.25);
+  drawImageMap(ids[index],x,y);
+}
+function drawWollyForm(x,y,r){
+  const colors=['#ededed','#0064bc','#ededed','#e11900','#ededed','#e8df05'];
+  ctx.fillStyle='#000000';ctx.beginPath();ctx.arc(x,y,r+2,0,Math.PI*2);ctx.fill();
+  for(let i=0;i<6;i++){
+    const start=(i*60-body.rotation*180/Math.PI)*Math.PI/180;
+    ctx.fillStyle=colors[i];ctx.beginPath();ctx.moveTo(x,y);ctx.arc(x,y,r,start,start+Math.PI/3);ctx.closePath();ctx.fill();
+  }
+  const center=Math.floor(r)>>2;ctx.fillStyle=colors[0];ctx.beginPath();ctx.arc(x,y,center,0,Math.PI*2);ctx.fill();
+  drawImageMap(5,x,y);
+}
 function drawPlayer(){
-  const p=screenPoint(body),r=21*SCALE;
-  ctx.save();
-  ctx.translate(p.x,p.y);
-  ctx.rotate(body.rotation);
-  const g=ctx.createRadialGradient(-r*.34,-r*.42,1,r*.12,r*.14,r*1.18);
-  g.addColorStop(0,'#ff534d');g.addColorStop(.45,'#ed1c24');g.addColorStop(1,'#af1100');
-  ctx.fillStyle='#100d0a';ctx.beginPath();ctx.arc(0,0,r+1.3,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#af1100';ctx.beginPath();ctx.ellipse(0,r*.18,r*.88,r*.74,0,0,Math.PI);ctx.fill();
-  ctx.fillStyle='#ed1c24';ctx.beginPath();ctx.ellipse(r*.04,-r*.08,r*.88,r*.75,-.08,Math.PI,Math.PI*2);ctx.fill();
-  ctx.fillStyle='#ffffffb8';ctx.beginPath();ctx.ellipse(-r*.28,-r*.45,r*.22,r*.10,-.35,0,Math.PI*2);ctx.fill();
-  ctx.restore();
+  const p=screenPoint(body),r=Math.floor(BouncePhysics.parameters.radius[body.forme]*SCALE)+1;
+  if(body.forme===0)drawBounceForm(p.x,p.y,r);
+  else if(body.forme===1)drawBumpyForm(p.x,p.y);
+  else drawWollyForm(p.x,p.y,r);
+  // The eyes are original image-map animations, drawn after the active form.
+  if(body.eyeFrame===1){
+    drawImageMap(20,p.x,p.y);
+  }else if(body.eyeFrame===2||body.eyeFrame===3){
+    const count=body.eyeFrame===2?2:4;
+    const frameInv=Math.min(count-1,Math.floor((body.idleAnimTimer*count)/600));
+    drawImageMap(body.eyeFrame===2?462:447,p.x,p.y,new Set(),(count-1)-frameInv);
+  }else if(body.eyeFrame>=4&&body.eyeFrame<=8){
+    drawImageMap([458,460,454,452,456][body.eyeFrame-4],p.x,p.y);
+  }
 }
 function drawEnemy(e){
   const screen=screenPoint({x:e.x,y:e.y});
@@ -264,33 +396,55 @@ function drawEnemy(e){
     }
   }
 }
+function drawFieldMessage(){
+  if(!fieldMessage||fieldMessageTimer<=0)return;
+  const maxWidth=202,lines=[];ctx.font='9px system-ui';
+  const words=fieldMessage.replace(/[’‘]/g,"'").split(/\s+/);let line='';
+  for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;}else line=test;}
+  if(line)lines.push(line);
+  const shown=lines.slice(0,4),height=shown.length*12+15,y=H-height-9;
+  const alpha=Math.min(0.92,fieldMessageTimer<0.4?fieldMessageTimer/0.4:0.92);
+  ctx.fillStyle='rgba(7,17,19,'+alpha+')';ctx.fillRect(9,y,W-18,height);
+  ctx.strokeStyle='rgba(242,232,205,.45)';ctx.strokeRect(9.5,y+.5,W-19,height-1);
+  ctx.fillStyle='#f5eddb';ctx.textAlign='center';ctx.textBaseline='top';
+  shown.forEach((t,i)=>ctx.fillText(t,120,y+8+i*12,maxWidth));
+}
 function draw(){
   ctx.clearRect(0,0,W,H);
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#73b8df');bg.addColorStop(.7,'#b7d9e0');bg.addColorStop(1,'#dce4d1');
   ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  // Draw order follows level-record order so terrain, scenery, eggs and actors retain scene layering.
-  for(const item of renderObjects){
-    if(item.type==='geometry')drawGeometry(item.poly);
-    else if(item.type==='sprite')drawSprite(item.object,item.matrix);
+  // Original GameObject depth sorting draws larger zCoord values first, leaving
+  // lower zCoord actors in front. Read runtime flags so event opcode 29 can
+  // change an object's layer during play.
+  const orderedObjects=renderObjects.slice().sort((a,b)=>{
+    const af=a.object?.runtimeFlags??a.object?.flags??0,bf=b.object?.runtimeFlags??b.object?.flags??0;
+    return (bf&31)-(af&31);
+  });
+  for(const item of orderedObjects){
+    const flags=item.object?.runtimeFlags??item.object?.flags??0;
+    if(flags&0x80)continue;
+    if(item.type==='player')drawPlayer();
+    else if(item.type==='geometry')drawGeometry(item.poly);
+    else if(item.type==='sprite')drawSprite(item.object,transformObject(item.object));
     else if(item.type==='egg'){
-      const p=screenPoint(item.point);const e=eggs.find(x=>x.id===item.object.id);
+      const p=screenPoint(getWorldPos(item.object));const e=eggs.find(x=>x.id===item.object.id);
       if(e&&!e.collected)drawImageMap(208,p.x,p.y);
     }else if(item.type==='enemy'){
       if(!item.enemy.dead)drawEnemy(item.enemy);
     }else if(item.type==='trampoline'){
       const t=item.trampoline,p=screenPoint(t);drawImageMap(t.object.imageId,p.x,p.y,new Set(),t.active?t.animFrame:0);
     }else if(item.type==='water'){
-      const o=item.object,p=item.point;
+      const o=item.object,p=getWorldPos(o);
       const a=screenPoint({x:p.x+o.areaMinX,y:p.y+o.areaMinY}),b=screenPoint({x:p.x+o.areaMaxX,y:p.y+o.areaMaxY});
       ctx.fillStyle='rgba(65,166,208,.42)';ctx.fillRect(a.x,b.y,b.x-a.x,a.y-b.y);
     }else if(item.type==='friend'){
-      const p=screenPoint(item.point);ctx.fillStyle='#d84b44';ctx.beginPath();ctx.arc(p.x,p.y,12,0,7);ctx.fill();
+      const p=screenPoint(getWorldPos(item.object));ctx.fillStyle='#d84b44';ctx.beginPath();ctx.arc(p.x,p.y,12,0,7);ctx.fill();
     }else if(item.type==='cannon'){
-      const p=screenPoint(item.point);drawImageMap(342,p.x,p.y);
+      const p=screenPoint(getWorldPos(item.object));drawImageMap(342,p.x,p.y);
     }
   }
   for(const e of bonusEggs){if(!e.collected){const p=screenPoint(e);drawImageMap(208,p.x,p.y);}}
-  if(body)drawPlayer();
+  drawFieldMessage();
   if(toastTimer>0){ctx.fillStyle='#06121dcc';ctx.fillRect(34,276,172,22);ctx.fillStyle='#fff';ctx.font='9px system-ui';ctx.textAlign='center';ctx.fillText(toastText,120,290);}
 }
 function refreshHud(){
@@ -298,9 +452,11 @@ function refreshHud(){
   eggHud.textContent='FORM '+['BOUNCE','BUMPY','WOLLY'][body?.forme||0];
 }
 function startLevel(){
-  mode=S.play;menu.hidden=true;pauseLayer.hidden=true;input.clear();
+  mode=S.play;menu.hidden=true;pauseLayer.hidden=true;input.clear();lastTime=0;
+  if(eventEngine){eventEngine.reset();world=eventEngine.world;refreshGeometryWorld(world);}
+  spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;cameraFollowSpeed=5;cameraSnap=false;
   body.reset(spawn.x,spawn.y);body.enabled=true;body.rotation=0;body.unlockedForme=unlockedForme;body.forme=0;body.slopeCosAbs=1;
-  eggs.forEach(e=>e.collected=false);bonusEggs=[];collected=0;elapsed=0;
+  eggs.forEach(e=>e.collected=false);bonusEggs=[];collected=0;elapsed=0;checkpointPosition={x:spawn.x,y:spawn.y};
   trampolines.forEach(t=>{t.active=false;t.progress=0;t.period=0;t.animFrame=0;});
   enemies.forEach(e=>{e.x=e.initialX;e.y=e.initialY;e.dead=false;e.state=1;e.propelType=1;e.waitTimer=2000;e.peekTimer=0;e.peekPeriod=800;e.vulnerable=false;e.rechargeTimer=0;e.curMovePoint=0;});cameraX=body.x;cameraY=body.y+96;refreshHud();
 }
@@ -328,34 +484,89 @@ function onEdge(id){
 }
 function bindInputs(){
   document.querySelectorAll('[data-key-id]').forEach(btn=>{
-    const id=Number(btn.dataset.keyId);
+    const id=Number(btn.dataset.keyId),activePointers=new Set();
     btn.addEventListener('contextmenu',e=>e.preventDefault());
-    btn.addEventListener('pointerdown',e=>{e.preventDefault();btn.setPointerCapture?.(e.pointerId);btn.classList.add('pressed');const was=input.isHeld(id);input.press(id);if(!was)onEdge(id);});
-    for(const event of ['pointerup','pointercancel','lostpointercapture'])btn.addEventListener(event,()=>{btn.classList.remove('pressed');input.release(id);});
+    btn.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      if(activePointers.has(e.pointerId))return;
+      activePointers.add(e.pointerId);
+      try{btn.setPointerCapture(e.pointerId);}catch{}
+      btn.classList.add('pressed');
+      if(activePointers.size===1){const was=input.isHeld(id);input.press(id);if(!was)onEdge(id);}
+    });
+    const release=e=>{
+      if(!activePointers.delete(e.pointerId))return;
+      if(activePointers.size===0){btn.classList.remove('pressed');input.release(id);}
+    };
+    btn.addEventListener('pointerup',release);
+    btn.addEventListener('pointercancel',release);
+    btn.addEventListener('lostpointercapture',release);
   });
   const keys=new Set();
   addEventListener('keydown',e=>{
-    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Enter','Escape','Backspace','q','Q','*','#'].includes(e.key)){
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' ','Enter','Escape','Backspace','q','Q','*'].includes(e.key)){
       if(e.key.startsWith('Arrow')||e.key===' ')e.preventDefault();
       const id=BounceOriginalInput.browserKeyId(e.key);
       if(id>=0&&!keys.has(e.key)){keys.add(e.key);const was=input.isHeld(id);input.press(id);if(!was)onEdge(id);}
     }
   });
   addEventListener('keyup',e=>{const id=BounceOriginalInput.browserKeyId(e.key);if(id>=0){keys.delete(e.key);input.release(id);}});
-  addEventListener('blur',()=>{keys.clear();input.clear();});
+  const clearAll=()=>{keys.clear();input.clear();document.querySelectorAll('[data-key-id]').forEach(b=>b.classList.remove('pressed'));};
+  addEventListener('blur',clearAll);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAll();lastTime=0;lastRenderAt=0;fpsStamp=0;fpsFrames=0;}});
 }
+
+// Drawing follows requestAnimationFrame. Simulation consumes elapsed time like
+// the original JAR (integer milliseconds, capped at 500 ms), split into small
+// collision-safe chunks only when a browser frame arrives late. This is not a
+// 60 Hz game clock and it does not drop the normal elapsed time.
 function loop(now){
   if(!lastTime)lastTime=now;
-  const dt=Math.min(.05,Math.max(0,(now-lastTime)/1000));lastTime=now;
-  update(dt);draw();requestAnimationFrame(loop);
+  const requestedCap=fpsMode==='auto'?0:Number(fpsMode)||0;
+  if(requestedCap){
+    const frameInterval=1000/requestedCap;
+    if(lastRenderAt&&now-lastRenderAt<frameInterval-1){requestAnimationFrame(loop);return;}
+  }
+  const elapsedMs=Math.max(0,Math.floor(now-lastTime));
+  lastTime=now;lastRenderAt=now;
+  if(mode===S.play){
+    for(const sliceMs of BounceGameTiming.splitElapsedMilliseconds(elapsedMs))update(sliceMs/1000);
+  }
+  draw();
+  if(showFps){fpsFrames++;if(!fpsStamp)fpsStamp=now;if(now-fpsStamp>=500){displayFps=Math.round(fpsFrames*1000/(now-fpsStamp));fpsFrames=0;fpsStamp=now;const counter=document.getElementById('fps-counter');if(counter)counter.textContent=displayFps+' FPS';}}
+  requestAnimationFrame(loop);
+}
+function openSettings(){settingsLayer.hidden=false;}
+function closeSettings(){settingsLayer.hidden=true;}
+function applyFpsMode(value){fpsMode=['auto','30','60'].includes(value)?value:'auto';localStorage.setItem('bounce-fps-mode',fpsMode);lastTime=0;lastRenderAt=0;}
+function resetProgress(){
+  if(!confirm('Reset Bounce Tales and restart Misty Morning?'))return;
+  unlockedForme=0;closeSettings();if(mode===S.pause)pauseLayer.hidden=true;startLevel();toast('Level reset');
+}
+async function shareSite(){
+  const shareData={title:'Bounce Tales',text:'Play Bounce Tales, an HTML5 browser remaster.',url:'https://prasannaone.github.io/BounceTales/'};
+  try{if(navigator.share){await navigator.share(shareData);}else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(shareData.url);toast('Site link copied');}else{prompt('Copy the Bounce Tales link',shareData.url);}}catch(e){if(e?.name!=='AbortError')console.warn('Share unavailable',e);}
+}
+function bindSettings(){
+  const fps=document.getElementById('fps-mode'),fpsToggle=document.getElementById('show-fps'),counter=document.getElementById('fps-counter'),full=document.getElementById('fullscreen-btn');
+  fps.value=['auto','30','60'].includes(fpsMode)?fpsMode:'auto';fps.addEventListener('change',()=>applyFpsMode(fps.value));
+  fpsToggle.checked=showFps;counter.hidden=!showFps;fpsToggle.addEventListener('change',()=>{showFps=fpsToggle.checked;localStorage.setItem('bounce-show-fps',String(showFps));counter.hidden=!showFps;});
+  document.getElementById('open-settings').addEventListener('click',openSettings);document.getElementById('close-settings').addEventListener('click',closeSettings);
+  settingsLayer.addEventListener('click',e=>{if(e.target===settingsLayer)closeSettings();});
+  document.getElementById('share-site').addEventListener('click',shareSite);
+  document.getElementById('reset-game').addEventListener('click',resetProgress);
+  full.addEventListener('click',async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();full.textContent='Exit fullscreen';}else{await document.exitFullscreen();full.textContent='Enter fullscreen';}}catch{toast('Fullscreen unavailable in this browser');}});
+  document.addEventListener('fullscreenchange',()=>{full.textContent=document.fullscreenElement?'Exit fullscreen':'Enter fullscreen';});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!settingsLayer.hidden){closeSettings();e.stopPropagation();}});
 }
 async function boot(){
   try{
-    const [mapResp,levelResp]=await Promise.all([
-      fetch('src/image-map.json'),fetch('assets/original/bf')
+    const [mapResp,levelResp,langResp]=await Promise.all([
+      fetch('src/image-map.json'),fetch('assets/original/bf'),fetch('assets/original/lang.xx')
     ]);
-    if(!mapResp.ok||!levelResp.ok)throw new Error('Could not load original JAR resources');
+    if(!mapResp.ok||!levelResp.ok||!langResp.ok)throw new Error('Could not load original JAR resources');
     imageMaps=await mapResp.json();atlases=imageMaps.atlases;
+    languageStrings=BounceEventEngine.parseLanguage(new Uint8Array(await langResp.arrayBuffer()));
     const bytes=new Uint8Array(await levelResp.arrayBuffer());
     const parsed=BounceRLEF.parse(bytes);
     buildRuntime(parsed);
@@ -364,7 +575,7 @@ async function boot(){
     document.getElementById('resume').addEventListener('click',resumeGame);
     document.getElementById('back-title').addEventListener('click',()=>{pauseLayer.hidden=true;menu.hidden=false;mode=S.title;});
     document.getElementById('restart').addEventListener('click',startLevel);
-    bindInputs();menu.hidden=false;status.textContent='MISTY MORNING · ORIGINAL LEVEL DATA LOADED';requestAnimationFrame(loop);
+    bindInputs();bindSettings();menu.hidden=false;status.textContent='MISTY MORNING · ORIGINAL LEVEL DATA LOADED';requestAnimationFrame(loop);
   }catch(error){
     menu.hidden=false;menu.querySelector('p').textContent='Could not load the original first-level data: '+error.message;
     status.textContent='RESOURCE LOAD ERROR';console.error(error);

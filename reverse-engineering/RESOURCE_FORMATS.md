@@ -75,3 +75,12 @@ The runtime has two Java ME `Player` fields and creates/starts players through `
 ## Unclassified resources
 
 The remaining opaque files `a`, `b`, `be` and `bv` are retained exactly and listed with hashes. Their structures have not yet been conclusively identified.
+
+
+## RLEF event records and localization (Build 09)
+
+RLEF command type `6` is an event object. After the shared object transform/flags, the payload contains a local bounding rectangle, initial event state, enter/leave trigger mode, repeatability flag, trigger object ID, and a counted list of counted command byte arrays. The exact supplied `g.class` bytecode contains a switch for command IDs `0` through `32`; Build 09 ports that command family in `src/event-engine.js`.
+
+`lang.xx` is an offset-indexed string resource. The first offset indicates the index-table length; each entry points to a big-endian length followed by the encoded string bytes. `src/event-engine.js` parses the 91 entries used by this JAR. Misty Morning's event scripts reference scenario message indices 58–67.
+
+See `BUILD_09_EVENT_SCRIPTING.md` for the opcode and execution details, including tested Misty Morning event sequences and known approximation boundaries.

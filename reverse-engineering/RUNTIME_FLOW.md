@@ -51,3 +51,10 @@ The `m.g(25)` state builder requests language resource IDs that resolve in `lang
 - ID 39: `Chapter selection`
 
 The same state also sets its soft-key labels using IDs 48 (`Select`) and 47 (`Quit`). This confirms that the input code `5` reached from the Nokia-specific key code `-7` is the pause-menu path, not a guessed star/hash mapping.
+
+
+## Event scripting (Build 09)
+
+The exact supplied `g.class` is the RLEF event object/interpreter. It holds initial event state, trigger bounds, enter/leave mode, repeatability, a trigger object ID and arrays of command byte arrays. The interpreter is updated with the level and player state; it starts or stops scripts as actors cross event bounds, then advances active commands using the same elapsed-millisecond delta as the gameplay update.
+
+The browser port now parses the `bf` event records and `lang.xx` localization table, updates the corresponding scene-object hierarchy/flags/transforms, issues sprite animation requests, and presents script messages in a simple overlay. The detailed command map and tested stage paths are recorded in `BUILD_09_EVENT_SCRIPTING.md`.
