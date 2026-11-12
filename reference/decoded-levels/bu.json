@@ -1,0 +1,3200 @@
+{
+  "format": "RLEF",
+  "version": 1,
+  "header_hex": "524c454600010000000d000c0000",
+  "declared_object_count": 13,
+  "parsed_object_count": 13,
+  "count_matches": true,
+  "objects": [
+    {
+      "index": 0,
+      "type_code": 0,
+      "type_name": "unknown_0",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": -1,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "ffffffff010000000000000000"
+    },
+    {
+      "index": 1,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 97,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 28049408,
+          "ty_fixed": -21495808
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 84,
+      "payload_hex": "0000ffff0101acfeb80000001900120030ff000000070037369b4d960a55ea6669727abe57442819ffff1dff180c3693b35975e0622a6d341f100609722447d31c86922c4bc324cd62388d513805210c02510801f4001010014ff01441f138ffff",
+      "polygon_geometry": {
+        "vertex_count": 19,
+        "triangle_index_count": 48,
+        "triangle_count": 16,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 7,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 7143424,
+            "y_fixed": 1835008,
+            "x": 109.0,
+            "y": 28.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 7143424,
+            "y_fixed": -196608,
+            "x": 109.0,
+            "y": -3.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 7143424,
+            "y_fixed": -1966080,
+            "x": 109.0,
+            "y": -30.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 6881280,
+            "y_fixed": -2162688,
+            "x": 105.0,
+            "y": -33.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 6291456,
+            "y_fixed": -2162688,
+            "x": 96.0,
+            "y": -33.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 5767168,
+            "y_fixed": -1769472,
+            "x": 88.0,
+            "y": -27.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 4980736,
+            "y_fixed": -1900544,
+            "x": 76.0,
+            "y": -29.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 2883584,
+            "y_fixed": -2621440,
+            "x": 44.0,
+            "y": -40.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 1900544,
+            "y_fixed": -2621440,
+            "x": 29.0,
+            "y": -40.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 589824,
+            "y_fixed": -1507328,
+            "x": 9.0,
+            "y": -23.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 0,
+            "y_fixed": 0,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 655360,
+            "y_fixed": 1441792,
+            "x": 10.0,
+            "y": 22.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 1966080,
+            "y_fixed": 2424832,
+            "x": 30.0,
+            "y": 37.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 3014656,
+            "y_fixed": 2359296,
+            "x": 46.0,
+            "y": 36.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 4980736,
+            "y_fixed": 1703936,
+            "x": 76.0,
+            "y": 26.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 5832704,
+            "y_fixed": 1638400,
+            "x": 89.0,
+            "y": 25.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 6225920,
+            "y_fixed": 1966080,
+            "x": 95.0,
+            "y": 30.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 6881280,
+            "y_fixed": 2031616,
+            "x": 105.0,
+            "y": 31.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 7143424,
+            "y_fixed": 1835008,
+            "x": 109.0,
+            "y": 28.0
+          }
+        ],
+        "triangle_indices": [
+          9,
+          8,
+          7,
+          9,
+          7,
+          13,
+          13,
+          7,
+          6,
+          10,
+          9,
+          11,
+          11,
+          13,
+          12,
+          9,
+          13,
+          11,
+          6,
+          14,
+          13,
+          6,
+          5,
+          14,
+          5,
+          4,
+          2,
+          3,
+          2,
+          4,
+          5,
+          2,
+          1,
+          16,
+          15,
+          0,
+          16,
+          0,
+          17,
+          0,
+          15,
+          1,
+          15,
+          5,
+          1,
+          5,
+          15,
+          14
+        ],
+        "triangles": [
+          [
+            9,
+            8,
+            7
+          ],
+          [
+            9,
+            7,
+            13
+          ],
+          [
+            13,
+            7,
+            6
+          ],
+          [
+            10,
+            9,
+            11
+          ],
+          [
+            11,
+            13,
+            12
+          ],
+          [
+            9,
+            13,
+            11
+          ],
+          [
+            6,
+            14,
+            13
+          ],
+          [
+            6,
+            5,
+            14
+          ],
+          [
+            5,
+            4,
+            2
+          ],
+          [
+            3,
+            2,
+            4
+          ],
+          [
+            5,
+            2,
+            1
+          ],
+          [
+            16,
+            15,
+            0
+          ],
+          [
+            16,
+            0,
+            17
+          ],
+          [
+            0,
+            15,
+            1
+          ],
+          [
+            15,
+            5,
+            1
+          ],
+          [
+            5,
+            15,
+            14
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 97
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 2,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 97,
+      "base_header": {
+        "parent_index": 1,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 84,
+      "payload_hex": "0001ffff01000000000000001800120030ff99999907003722156c369bc154a14afd5c6556cff60affff978e67d3278bc7e93397cb0e5446a30c06cca2300a042949c3380ef430909344508244047218c5411c45000cc1200c000120040244ffff",
+      "polygon_geometry": {
+        "vertex_count": 19,
+        "triangle_index_count": 48,
+        "triangle_count": 16,
+        "color_rgba_bytes": [
+          255,
+          153,
+          153,
+          153
+        ],
+        "color_argb_hex": "#FF999999",
+        "coordinate_bit_width": 7,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 5832704,
+            "y_fixed": 1441792,
+            "x": 89.0,
+            "y": 22.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 6356992,
+            "y_fixed": 1835008,
+            "x": 97.0,
+            "y": 28.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 6750208,
+            "y_fixed": 1900544,
+            "x": 103.0,
+            "y": 29.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 6946816,
+            "y_fixed": 1703936,
+            "x": 106.0,
+            "y": 26.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 6946816,
+            "y_fixed": -262144,
+            "x": 106.0,
+            "y": -4.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 6946816,
+            "y_fixed": -1900544,
+            "x": 106.0,
+            "y": -29.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 6750208,
+            "y_fixed": -2031616,
+            "x": 103.0,
+            "y": -31.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 6356992,
+            "y_fixed": -1966080,
+            "x": 97.0,
+            "y": -30.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 5767168,
+            "y_fixed": -1572864,
+            "x": 88.0,
+            "y": -24.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 4980736,
+            "y_fixed": -1703936,
+            "x": 76.0,
+            "y": -26.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 2883584,
+            "y_fixed": -2424832,
+            "x": 44.0,
+            "y": -37.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 1966080,
+            "y_fixed": -2424832,
+            "x": 30.0,
+            "y": -37.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 786432,
+            "y_fixed": -1376256,
+            "x": 12.0,
+            "y": -21.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 196608,
+            "y_fixed": 0,
+            "x": 3.0,
+            "y": 0.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 786432,
+            "y_fixed": 1310720,
+            "x": 12.0,
+            "y": 20.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 1966080,
+            "y_fixed": 2228224,
+            "x": 30.0,
+            "y": 34.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 2949120,
+            "y_fixed": 2228224,
+            "x": 45.0,
+            "y": 34.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 4980736,
+            "y_fixed": 1572864,
+            "x": 76.0,
+            "y": 24.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 5832704,
+            "y_fixed": 1441792,
+            "x": 89.0,
+            "y": 22.0
+          }
+        ],
+        "triangle_indices": [
+          12,
+          11,
+          10,
+          12,
+          10,
+          16,
+          16,
+          10,
+          9,
+          13,
+          12,
+          14,
+          14,
+          16,
+          15,
+          12,
+          16,
+          14,
+          9,
+          17,
+          16,
+          9,
+          8,
+          17,
+          4,
+          8,
+          7,
+          6,
+          5,
+          7,
+          4,
+          7,
+          5,
+          1,
+          0,
+          3,
+          1,
+          3,
+          2,
+          3,
+          0,
+          4,
+          0,
+          8,
+          4,
+          8,
+          0,
+          17
+        ],
+        "triangles": [
+          [
+            12,
+            11,
+            10
+          ],
+          [
+            12,
+            10,
+            16
+          ],
+          [
+            16,
+            10,
+            9
+          ],
+          [
+            13,
+            12,
+            14
+          ],
+          [
+            14,
+            16,
+            15
+          ],
+          [
+            12,
+            16,
+            14
+          ],
+          [
+            9,
+            17,
+            16
+          ],
+          [
+            9,
+            8,
+            17
+          ],
+          [
+            4,
+            8,
+            7
+          ],
+          [
+            6,
+            5,
+            7
+          ],
+          [
+            4,
+            7,
+            5
+          ],
+          [
+            1,
+            0,
+            3
+          ],
+          [
+            1,
+            3,
+            2
+          ],
+          [
+            3,
+            0,
+            4
+          ],
+          [
+            0,
+            8,
+            4
+          ],
+          [
+            8,
+            0,
+            17
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 97
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 3,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 60,
+      "base_header": {
+        "parent_index": 1,
+        "child_index": 2,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 47,
+      "payload_hex": "00010002010000000000000017000a0018ffffcc0006002b87b1b734bb1bc704fffe3a6bc740b4500700054390420c3284088008380625048008ffff",
+      "polygon_geometry": {
+        "vertex_count": 11,
+        "triangle_index_count": 24,
+        "triangle_count": 8,
+        "color_rgba_bytes": [
+          255,
+          255,
+          204,
+          0
+        ],
+        "color_argb_hex": "#FFFFCC00",
+        "coordinate_bit_width": 6,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 3276800,
+            "y_fixed": -524288,
+            "x": 50.0,
+            "y": -8.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 3211264,
+            "y_fixed": -1441792,
+            "x": 49.0,
+            "y": -22.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 2490368,
+            "y_fixed": -786432,
+            "x": 38.0,
+            "y": -12.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 1572864,
+            "y_fixed": -1114112,
+            "x": 24.0,
+            "y": -17.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 2031616,
+            "y_fixed": -131072,
+            "x": 31.0,
+            "y": -2.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 1507328,
+            "y_fixed": 983040,
+            "x": 23.0,
+            "y": 15.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 2490368,
+            "y_fixed": 589824,
+            "x": 38.0,
+            "y": 9.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 3211264,
+            "y_fixed": 1179648,
+            "x": 49.0,
+            "y": 18.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 3276800,
+            "y_fixed": 327680,
+            "x": 50.0,
+            "y": 5.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 4063232,
+            "y_fixed": -131072,
+            "x": 62.0,
+            "y": -2.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 3276800,
+            "y_fixed": -524288,
+            "x": 50.0,
+            "y": -8.0
+          }
+        ],
+        "triangle_indices": [
+          3,
+          2,
+          4,
+          5,
+          4,
+          6,
+          8,
+          6,
+          4,
+          4,
+          2,
+          0,
+          8,
+          4,
+          0,
+          7,
+          6,
+          8,
+          9,
+          8,
+          0,
+          0,
+          2,
+          1
+        ],
+        "triangles": [
+          [
+            3,
+            2,
+            4
+          ],
+          [
+            5,
+            4,
+            6
+          ],
+          [
+            8,
+            6,
+            4
+          ],
+          [
+            4,
+            2,
+            0
+          ],
+          [
+            8,
+            4,
+            0
+          ],
+          [
+            7,
+            6,
+            8
+          ],
+          [
+            9,
+            8,
+            0
+          ],
+          [
+            0,
+            2,
+            1
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 60
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 4,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 97,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 27656192,
+          "ty_fixed": -28639232
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 84,
+      "payload_hex": "000000010101a6fe4b0000001900120030ff00000007002aa3d4e8a39130ecebaeb5bbb62726990fffffa7bfb66a2d6f9bcdb2a0339b9d3eaa150609721c46a22485b33c4bc3348bf32c4a911805210c02510801f4001010014ff01441f128ffff",
+      "polygon_geometry": {
+        "vertex_count": 19,
+        "triangle_index_count": 48,
+        "triangle_count": 16,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 7,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 5046272,
+            "y_fixed": 2490368,
+            "x": 77.0,
+            "y": 38.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 5439488,
+            "y_fixed": -131072,
+            "x": 83.0,
+            "y": -2.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 5046272,
+            "y_fixed": -2555904,
+            "x": 77.0,
+            "y": -39.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 4784128,
+            "y_fixed": -2883584,
+            "x": 73.0,
+            "y": -44.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 4456448,
+            "y_fixed": -2818048,
+            "x": 68.0,
+            "y": -43.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 3932160,
+            "y_fixed": -1835008,
+            "x": 60.0,
+            "y": -28.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 3538944,
+            "y_fixed": -2490368,
+            "x": 54.0,
+            "y": -38.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 2097152,
+            "y_fixed": -3407872,
+            "x": 32.0,
+            "y": -52.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 1376256,
+            "y_fixed": -3407872,
+            "x": 21.0,
+            "y": -52.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 458752,
+            "y_fixed": -1835008,
+            "x": 7.0,
+            "y": -28.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 0,
+            "y_fixed": 65536,
+            "x": 0.0,
+            "y": 1.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 458752,
+            "y_fixed": 1835008,
+            "x": 7.0,
+            "y": 28.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 1376256,
+            "y_fixed": 3276800,
+            "x": 21.0,
+            "y": 50.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 2097152,
+            "y_fixed": 3276800,
+            "x": 32.0,
+            "y": 50.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 3342336,
+            "y_fixed": 2490368,
+            "x": 51.0,
+            "y": 38.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 3997696,
+            "y_fixed": 1966080,
+            "x": 61.0,
+            "y": 30.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 4390912,
+            "y_fixed": 2686976,
+            "x": 67.0,
+            "y": 41.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 4784128,
+            "y_fixed": 2752512,
+            "x": 73.0,
+            "y": 42.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 5046272,
+            "y_fixed": 2490368,
+            "x": 77.0,
+            "y": 38.0
+          }
+        ],
+        "triangle_indices": [
+          9,
+          8,
+          7,
+          7,
+          6,
+          9,
+          10,
+          9,
+          5,
+          14,
+          11,
+          15,
+          11,
+          13,
+          12,
+          13,
+          11,
+          14,
+          15,
+          11,
+          10,
+          5,
+          9,
+          6,
+          5,
+          4,
+          2,
+          3,
+          2,
+          4,
+          5,
+          2,
+          1,
+          16,
+          15,
+          0,
+          16,
+          0,
+          17,
+          0,
+          15,
+          1,
+          15,
+          5,
+          1,
+          5,
+          15,
+          10
+        ],
+        "triangles": [
+          [
+            9,
+            8,
+            7
+          ],
+          [
+            7,
+            6,
+            9
+          ],
+          [
+            10,
+            9,
+            5
+          ],
+          [
+            14,
+            11,
+            15
+          ],
+          [
+            11,
+            13,
+            12
+          ],
+          [
+            13,
+            11,
+            14
+          ],
+          [
+            15,
+            11,
+            10
+          ],
+          [
+            5,
+            9,
+            6
+          ],
+          [
+            5,
+            4,
+            2
+          ],
+          [
+            3,
+            2,
+            4
+          ],
+          [
+            5,
+            2,
+            1
+          ],
+          [
+            16,
+            15,
+            0
+          ],
+          [
+            16,
+            0,
+            17
+          ],
+          [
+            0,
+            15,
+            1
+          ],
+          [
+            15,
+            5,
+            1
+          ],
+          [
+            5,
+            15,
+            10
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 97
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 5,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 97,
+      "base_header": {
+        "parent_index": 4,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 65536
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 84,
+      "payload_hex": "0004ffff01000000010000001800120030ff99999907002915ce4774127d389305de0dce82ddf804fffe99d349f4ef62b5ea2e147a166c60301206cca22809d33048e4000ef4404e04380dc224c85118c5811444000cc1200c000120040234ffff",
+      "polygon_geometry": {
+        "vertex_count": 19,
+        "triangle_index_count": 48,
+        "triangle_count": 16,
+        "color_rgba_bytes": [
+          255,
+          153,
+          153,
+          153
+        ],
+        "color_argb_hex": "#FF999999",
+        "coordinate_bit_width": 7,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 4063232,
+            "y_fixed": 1507328,
+            "x": 62.0,
+            "y": 23.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 4521984,
+            "y_fixed": 2424832,
+            "x": 69.0,
+            "y": 37.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 4718592,
+            "y_fixed": 2424832,
+            "x": 72.0,
+            "y": 37.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 4915200,
+            "y_fixed": 2097152,
+            "x": 75.0,
+            "y": 32.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 5242880,
+            "y_fixed": -196608,
+            "x": 80.0,
+            "y": -3.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 4915200,
+            "y_fixed": -2424832,
+            "x": 75.0,
+            "y": -37.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 4718592,
+            "y_fixed": -2752512,
+            "x": 72.0,
+            "y": -42.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 4521984,
+            "y_fixed": -2621440,
+            "x": 69.0,
+            "y": -40.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 3932160,
+            "y_fixed": -1572864,
+            "x": 60.0,
+            "y": -24.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 3407872,
+            "y_fixed": -2424832,
+            "x": 52.0,
+            "y": -37.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 2162688,
+            "y_fixed": -3276800,
+            "x": 33.0,
+            "y": -50.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 1507328,
+            "y_fixed": -3276800,
+            "x": 23.0,
+            "y": -50.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 589824,
+            "y_fixed": -1769472,
+            "x": 9.0,
+            "y": -27.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 131072,
+            "y_fixed": 0,
+            "x": 2.0,
+            "y": 0.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 589824,
+            "y_fixed": 1638400,
+            "x": 9.0,
+            "y": 25.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 1507328,
+            "y_fixed": 3014656,
+            "x": 23.0,
+            "y": 46.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 2162688,
+            "y_fixed": 3014656,
+            "x": 33.0,
+            "y": 46.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 3276800,
+            "y_fixed": 2228224,
+            "x": 50.0,
+            "y": 34.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 4063232,
+            "y_fixed": 1507328,
+            "x": 62.0,
+            "y": 23.0
+          }
+        ],
+        "triangle_indices": [
+          12,
+          11,
+          10,
+          10,
+          9,
+          12,
+          13,
+          12,
+          8,
+          17,
+          14,
+          0,
+          14,
+          16,
+          15,
+          16,
+          14,
+          17,
+          0,
+          14,
+          13,
+          8,
+          12,
+          9,
+          8,
+          7,
+          5,
+          6,
+          5,
+          7,
+          8,
+          5,
+          4,
+          1,
+          0,
+          3,
+          1,
+          3,
+          2,
+          3,
+          0,
+          4,
+          0,
+          8,
+          4,
+          8,
+          0,
+          13
+        ],
+        "triangles": [
+          [
+            12,
+            11,
+            10
+          ],
+          [
+            10,
+            9,
+            12
+          ],
+          [
+            13,
+            12,
+            8
+          ],
+          [
+            17,
+            14,
+            0
+          ],
+          [
+            14,
+            16,
+            15
+          ],
+          [
+            16,
+            14,
+            17
+          ],
+          [
+            0,
+            14,
+            13
+          ],
+          [
+            8,
+            12,
+            9
+          ],
+          [
+            8,
+            7,
+            5
+          ],
+          [
+            6,
+            5,
+            7
+          ],
+          [
+            8,
+            5,
+            4
+          ],
+          [
+            1,
+            0,
+            3
+          ],
+          [
+            1,
+            3,
+            2
+          ],
+          [
+            3,
+            0,
+            4
+          ],
+          [
+            0,
+            8,
+            4
+          ],
+          [
+            8,
+            0,
+            13
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 97
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 6,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 60,
+      "base_header": {
+        "parent_index": 4,
+        "child_index": 5,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 65536
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 47,
+      "payload_hex": "00040005010000000100000017000a0018ffffcc0006001e45d1cfb8dc178503fffe7729afbfe568c90f054390420c32840810804808a0630022ffff",
+      "polygon_geometry": {
+        "vertex_count": 11,
+        "triangle_index_count": 24,
+        "triangle_count": 8,
+        "color_rgba_bytes": [
+          255,
+          255,
+          204,
+          0
+        ],
+        "color_argb_hex": "#FFFFCC00",
+        "coordinate_bit_width": 6,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 2293760,
+            "y_fixed": -720896,
+            "x": 35.0,
+            "y": -11.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 2293760,
+            "y_fixed": -1900544,
+            "x": 35.0,
+            "y": -29.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 1769472,
+            "y_fixed": -1048576,
+            "x": 27.0,
+            "y": -16.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 1114112,
+            "y_fixed": -1507328,
+            "x": 17.0,
+            "y": -23.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 1441792,
+            "y_fixed": -196608,
+            "x": 22.0,
+            "y": -3.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 1048576,
+            "y_fixed": 1310720,
+            "x": 16.0,
+            "y": 20.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 1769472,
+            "y_fixed": 786432,
+            "x": 27.0,
+            "y": 12.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 2293760,
+            "y_fixed": 1572864,
+            "x": 35.0,
+            "y": 24.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 2293760,
+            "y_fixed": 458752,
+            "x": 35.0,
+            "y": 7.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 2883584,
+            "y_fixed": -196608,
+            "x": 44.0,
+            "y": -3.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 2293760,
+            "y_fixed": -720896,
+            "x": 35.0,
+            "y": -11.0
+          }
+        ],
+        "triangle_indices": [
+          3,
+          2,
+          4,
+          5,
+          4,
+          6,
+          8,
+          6,
+          4,
+          4,
+          2,
+          0,
+          1,
+          0,
+          2,
+          9,
+          8,
+          0,
+          8,
+          7,
+          6,
+          0,
+          8,
+          4
+        ],
+        "triangles": [
+          [
+            3,
+            2,
+            4
+          ],
+          [
+            5,
+            4,
+            6
+          ],
+          [
+            8,
+            6,
+            4
+          ],
+          [
+            4,
+            2,
+            0
+          ],
+          [
+            1,
+            0,
+            2
+          ],
+          [
+            9,
+            8,
+            0
+          ],
+          [
+            8,
+            7,
+            6
+          ],
+          [
+            0,
+            8,
+            4
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 60
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 7,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 101,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 4,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 27852800,
+          "ty_fixed": -36241408
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 88,
+      "payload_hex": "000000040101a9fdd70000001900120030ff00000008004c474b47392d1cf0dcc1b7b4b8c2ddf21c2e37000016ffe9eaefeee4e3eff90008111c1b111014064b822007633487922ccc821c0d63388d513805f11043100cc2434051000411440450f138ffff",
+      "polygon_geometry": {
+        "vertex_count": 19,
+        "triangle_index_count": 48,
+        "triangle_count": 16,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 8,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 9633792,
+            "y_fixed": 1441792,
+            "x": 147.0,
+            "y": 22.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 9895936,
+            "y_fixed": -65536,
+            "x": 151.0,
+            "y": -1.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 9633792,
+            "y_fixed": -1507328,
+            "x": 147.0,
+            "y": -23.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 8716288,
+            "y_fixed": -1441792,
+            "x": 133.0,
+            "y": -22.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 7929856,
+            "y_fixed": -1114112,
+            "x": 121.0,
+            "y": -17.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 6815744,
+            "y_fixed": -1179648,
+            "x": 104.0,
+            "y": -18.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 3932160,
+            "y_fixed": -1835008,
+            "x": 60.0,
+            "y": -28.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 2621440,
+            "y_fixed": -1900544,
+            "x": 40.0,
+            "y": -29.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 851968,
+            "y_fixed": -1114112,
+            "x": 13.0,
+            "y": -17.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 196608,
+            "y_fixed": -458752,
+            "x": 3.0,
+            "y": -7.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 0,
+            "y_fixed": 0,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 262144,
+            "y_fixed": 524288,
+            "x": 4.0,
+            "y": 8.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 917504,
+            "y_fixed": 1114112,
+            "x": 14.0,
+            "y": 17.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 2686976,
+            "y_fixed": 1835008,
+            "x": 41.0,
+            "y": 28.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 4063232,
+            "y_fixed": 1769472,
+            "x": 62.0,
+            "y": 27.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 6815744,
+            "y_fixed": 1114112,
+            "x": 104.0,
+            "y": 17.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 7995392,
+            "y_fixed": 1048576,
+            "x": 122.0,
+            "y": 16.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 8585216,
+            "y_fixed": 1310720,
+            "x": 131.0,
+            "y": 20.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 9633792,
+            "y_fixed": 1441792,
+            "x": 147.0,
+            "y": 22.0
+          }
+        ],
+        "triangle_indices": [
+          11,
+          9,
+          8,
+          8,
+          7,
+          12,
+          6,
+          13,
+          7,
+          10,
+          9,
+          11,
+          12,
+          11,
+          8,
+          7,
+          13,
+          12,
+          6,
+          14,
+          13,
+          6,
+          5,
+          14,
+          5,
+          4,
+          15,
+          4,
+          3,
+          1,
+          1,
+          3,
+          2,
+          15,
+          4,
+          16,
+          17,
+          1,
+          0,
+          1,
+          17,
+          16,
+          4,
+          1,
+          16,
+          5,
+          15,
+          14
+        ],
+        "triangles": [
+          [
+            11,
+            9,
+            8
+          ],
+          [
+            8,
+            7,
+            12
+          ],
+          [
+            6,
+            13,
+            7
+          ],
+          [
+            10,
+            9,
+            11
+          ],
+          [
+            12,
+            11,
+            8
+          ],
+          [
+            7,
+            13,
+            12
+          ],
+          [
+            6,
+            14,
+            13
+          ],
+          [
+            6,
+            5,
+            14
+          ],
+          [
+            5,
+            4,
+            15
+          ],
+          [
+            4,
+            3,
+            1
+          ],
+          [
+            1,
+            3,
+            2
+          ],
+          [
+            15,
+            4,
+            16
+          ],
+          [
+            17,
+            1,
+            0
+          ],
+          [
+            1,
+            17,
+            16
+          ],
+          [
+            4,
+            1,
+            16
+          ],
+          [
+            5,
+            15,
+            14
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 101
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 8,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 101,
+      "base_header": {
+        "parent_index": 7,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 88,
+      "payload_hex": "0007ffff01000000000000001800120030ff99999908004c2e3a4548453a2e1cf1ddc4bbb8bcc5ddf21c00000e1214ffebecf2f0e6e5f0f90008101a190f06cda22889833c09b3344ea3248f83400f7240871119c53014446400c1200c01600cc01141ffff",
+      "polygon_geometry": {
+        "vertex_count": 19,
+        "triangle_index_count": 48,
+        "triangle_count": 16,
+        "color_rgba_bytes": [
+          255,
+          153,
+          153,
+          153
+        ],
+        "color_argb_hex": "#FF999999",
+        "coordinate_bit_width": 8,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 7995392,
+            "y_fixed": 917504,
+            "x": 122.0,
+            "y": 14.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 8781824,
+            "y_fixed": 1179648,
+            "x": 134.0,
+            "y": 18.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 9502720,
+            "y_fixed": 1310720,
+            "x": 145.0,
+            "y": 20.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 9699328,
+            "y_fixed": -65536,
+            "x": 148.0,
+            "y": -1.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 9502720,
+            "y_fixed": -1376256,
+            "x": 145.0,
+            "y": -21.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 8781824,
+            "y_fixed": -1310720,
+            "x": 134.0,
+            "y": -20.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 7995392,
+            "y_fixed": -917504,
+            "x": 122.0,
+            "y": -14.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 6815744,
+            "y_fixed": -1048576,
+            "x": 104.0,
+            "y": -16.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 3997696,
+            "y_fixed": -1703936,
+            "x": 61.0,
+            "y": -26.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 2686976,
+            "y_fixed": -1769472,
+            "x": 41.0,
+            "y": -27.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 1048576,
+            "y_fixed": -1048576,
+            "x": 16.0,
+            "y": -16.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 458752,
+            "y_fixed": -458752,
+            "x": 7.0,
+            "y": -7.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 262144,
+            "y_fixed": 0,
+            "x": 4.0,
+            "y": 0.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 524288,
+            "y_fixed": 524288,
+            "x": 8.0,
+            "y": 8.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 1114112,
+            "y_fixed": 1048576,
+            "x": 17.0,
+            "y": 16.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 2686976,
+            "y_fixed": 1703936,
+            "x": 41.0,
+            "y": 26.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 4063232,
+            "y_fixed": 1638400,
+            "x": 62.0,
+            "y": 25.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 6815744,
+            "y_fixed": 983040,
+            "x": 104.0,
+            "y": 15.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 7995392,
+            "y_fixed": 917504,
+            "x": 122.0,
+            "y": 14.0
+          }
+        ],
+        "triangle_indices": [
+          13,
+          11,
+          10,
+          10,
+          9,
+          14,
+          8,
+          15,
+          9,
+          12,
+          11,
+          13,
+          14,
+          13,
+          10,
+          9,
+          15,
+          14,
+          8,
+          16,
+          15,
+          8,
+          7,
+          16,
+          7,
+          6,
+          17,
+          6,
+          5,
+          3,
+          3,
+          5,
+          4,
+          17,
+          6,
+          0,
+          1,
+          3,
+          2,
+          3,
+          1,
+          0,
+          6,
+          3,
+          0,
+          7,
+          17,
+          16
+        ],
+        "triangles": [
+          [
+            13,
+            11,
+            10
+          ],
+          [
+            10,
+            9,
+            14
+          ],
+          [
+            8,
+            15,
+            9
+          ],
+          [
+            12,
+            11,
+            13
+          ],
+          [
+            14,
+            13,
+            10
+          ],
+          [
+            9,
+            15,
+            14
+          ],
+          [
+            8,
+            16,
+            15
+          ],
+          [
+            8,
+            7,
+            16
+          ],
+          [
+            7,
+            6,
+            17
+          ],
+          [
+            6,
+            5,
+            3
+          ],
+          [
+            3,
+            5,
+            4
+          ],
+          [
+            17,
+            6,
+            0
+          ],
+          [
+            1,
+            3,
+            2
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            6,
+            3,
+            0
+          ],
+          [
+            7,
+            17,
+            16
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 101
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 9,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 60,
+      "base_header": {
+        "parent_index": 7,
+        "child_index": 8,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 47,
+      "payload_hex": "00070008010000000000000017000a0018ffffcc0006003a4aa29f70a927ca06ffff7c9cd740833c0500054390428c214200830c380625048008ffff",
+      "polygon_geometry": {
+        "vertex_count": 11,
+        "triangle_index_count": 24,
+        "triangle_count": 8,
+        "color_rgba_bytes": [
+          255,
+          255,
+          204,
+          0
+        ],
+        "color_argb_hex": "#FFFFCC00",
+        "coordinate_bit_width": 6,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 4456448,
+            "y_fixed": -327680,
+            "x": 68.0,
+            "y": -5.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 4390912,
+            "y_fixed": -1048576,
+            "x": 67.0,
+            "y": -16.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 3407872,
+            "y_fixed": -524288,
+            "x": 52.0,
+            "y": -8.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 2162688,
+            "y_fixed": -786432,
+            "x": 33.0,
+            "y": -12.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 2752512,
+            "y_fixed": -65536,
+            "x": 42.0,
+            "y": -1.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 2031616,
+            "y_fixed": 786432,
+            "x": 31.0,
+            "y": 12.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 3407872,
+            "y_fixed": 458752,
+            "x": 52.0,
+            "y": 7.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 4390912,
+            "y_fixed": 917504,
+            "x": 67.0,
+            "y": 14.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 4456448,
+            "y_fixed": 262144,
+            "x": 68.0,
+            "y": 4.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 5570560,
+            "y_fixed": -65536,
+            "x": 85.0,
+            "y": -1.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 4456448,
+            "y_fixed": -327680,
+            "x": 68.0,
+            "y": -5.0
+          }
+        ],
+        "triangle_indices": [
+          3,
+          2,
+          4,
+          5,
+          4,
+          6,
+          6,
+          4,
+          2,
+          2,
+          0,
+          6,
+          8,
+          6,
+          0,
+          7,
+          6,
+          8,
+          9,
+          8,
+          0,
+          0,
+          2,
+          1
+        ],
+        "triangles": [
+          [
+            3,
+            2,
+            4
+          ],
+          [
+            5,
+            4,
+            6
+          ],
+          [
+            6,
+            4,
+            2
+          ],
+          [
+            2,
+            0,
+            6
+          ],
+          [
+            8,
+            6,
+            0
+          ],
+          [
+            7,
+            6,
+            8
+          ],
+          [
+            9,
+            8,
+            0
+          ],
+          [
+            0,
+            2,
+            1
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 60
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 10,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 97,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 7,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 28246016,
+          "ty_fixed": -42270720
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 84,
+      "payload_hex": "000000070101affd7b0000001900120030ff000000070037369b4d960a55ea6669727abe57442819ffff1dff180c3693b35975e0622a6d341f100609722447d31c86922c4bc324cd62388d513805210c02510801f4001010014ff01441f138ffff",
+      "polygon_geometry": {
+        "vertex_count": 19,
+        "triangle_index_count": 48,
+        "triangle_count": 16,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 7,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 7143424,
+            "y_fixed": 1835008,
+            "x": 109.0,
+            "y": 28.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 7143424,
+            "y_fixed": -196608,
+            "x": 109.0,
+            "y": -3.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 7143424,
+            "y_fixed": -1966080,
+            "x": 109.0,
+            "y": -30.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 6881280,
+            "y_fixed": -2162688,
+            "x": 105.0,
+            "y": -33.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 6291456,
+            "y_fixed": -2162688,
+            "x": 96.0,
+            "y": -33.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 5767168,
+            "y_fixed": -1769472,
+            "x": 88.0,
+            "y": -27.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 4980736,
+            "y_fixed": -1900544,
+            "x": 76.0,
+            "y": -29.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 2883584,
+            "y_fixed": -2621440,
+            "x": 44.0,
+            "y": -40.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 1900544,
+            "y_fixed": -2621440,
+            "x": 29.0,
+            "y": -40.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 589824,
+            "y_fixed": -1507328,
+            "x": 9.0,
+            "y": -23.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 0,
+            "y_fixed": 0,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 655360,
+            "y_fixed": 1441792,
+            "x": 10.0,
+            "y": 22.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 1966080,
+            "y_fixed": 2424832,
+            "x": 30.0,
+            "y": 37.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 3014656,
+            "y_fixed": 2359296,
+            "x": 46.0,
+            "y": 36.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 4980736,
+            "y_fixed": 1703936,
+            "x": 76.0,
+            "y": 26.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 5832704,
+            "y_fixed": 1638400,
+            "x": 89.0,
+            "y": 25.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 6225920,
+            "y_fixed": 1966080,
+            "x": 95.0,
+            "y": 30.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 6881280,
+            "y_fixed": 2031616,
+            "x": 105.0,
+            "y": 31.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 7143424,
+            "y_fixed": 1835008,
+            "x": 109.0,
+            "y": 28.0
+          }
+        ],
+        "triangle_indices": [
+          9,
+          8,
+          7,
+          9,
+          7,
+          13,
+          13,
+          7,
+          6,
+          10,
+          9,
+          11,
+          11,
+          13,
+          12,
+          9,
+          13,
+          11,
+          6,
+          14,
+          13,
+          6,
+          5,
+          14,
+          5,
+          4,
+          2,
+          3,
+          2,
+          4,
+          5,
+          2,
+          1,
+          16,
+          15,
+          0,
+          16,
+          0,
+          17,
+          0,
+          15,
+          1,
+          15,
+          5,
+          1,
+          5,
+          15,
+          14
+        ],
+        "triangles": [
+          [
+            9,
+            8,
+            7
+          ],
+          [
+            9,
+            7,
+            13
+          ],
+          [
+            13,
+            7,
+            6
+          ],
+          [
+            10,
+            9,
+            11
+          ],
+          [
+            11,
+            13,
+            12
+          ],
+          [
+            9,
+            13,
+            11
+          ],
+          [
+            6,
+            14,
+            13
+          ],
+          [
+            6,
+            5,
+            14
+          ],
+          [
+            5,
+            4,
+            2
+          ],
+          [
+            3,
+            2,
+            4
+          ],
+          [
+            5,
+            2,
+            1
+          ],
+          [
+            16,
+            15,
+            0
+          ],
+          [
+            16,
+            0,
+            17
+          ],
+          [
+            0,
+            15,
+            1
+          ],
+          [
+            15,
+            5,
+            1
+          ],
+          [
+            5,
+            15,
+            14
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 97
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 11,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 97,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 84,
+      "payload_hex": "000affff01000000000000001800120030ff99999907003722156c369bc154a24afd5c6556cff60affff978e67d3278bc7e93397cb0e5446a30c06cca2300a042949c3380ef430909344508244c85118c5811444000cc1200c000120040244ffff",
+      "polygon_geometry": {
+        "vertex_count": 19,
+        "triangle_index_count": 48,
+        "triangle_count": 16,
+        "color_rgba_bytes": [
+          255,
+          153,
+          153,
+          153
+        ],
+        "color_argb_hex": "#FF999999",
+        "coordinate_bit_width": 7,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 5832704,
+            "y_fixed": 1441792,
+            "x": 89.0,
+            "y": 22.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 6356992,
+            "y_fixed": 1835008,
+            "x": 97.0,
+            "y": 28.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 6750208,
+            "y_fixed": 1900544,
+            "x": 103.0,
+            "y": 29.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 6946816,
+            "y_fixed": 1703936,
+            "x": 106.0,
+            "y": 26.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 6946816,
+            "y_fixed": -262144,
+            "x": 106.0,
+            "y": -4.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 6946816,
+            "y_fixed": -1900544,
+            "x": 106.0,
+            "y": -29.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 6750208,
+            "y_fixed": -2031616,
+            "x": 103.0,
+            "y": -31.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 6356992,
+            "y_fixed": -1966080,
+            "x": 97.0,
+            "y": -30.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 5832704,
+            "y_fixed": -1572864,
+            "x": 89.0,
+            "y": -24.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 4980736,
+            "y_fixed": -1703936,
+            "x": 76.0,
+            "y": -26.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 2883584,
+            "y_fixed": -2424832,
+            "x": 44.0,
+            "y": -37.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 1966080,
+            "y_fixed": -2424832,
+            "x": 30.0,
+            "y": -37.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 786432,
+            "y_fixed": -1376256,
+            "x": 12.0,
+            "y": -21.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 196608,
+            "y_fixed": 0,
+            "x": 3.0,
+            "y": 0.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 786432,
+            "y_fixed": 1310720,
+            "x": 12.0,
+            "y": 20.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 1966080,
+            "y_fixed": 2228224,
+            "x": 30.0,
+            "y": 34.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 2949120,
+            "y_fixed": 2228224,
+            "x": 45.0,
+            "y": 34.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 4980736,
+            "y_fixed": 1572864,
+            "x": 76.0,
+            "y": 24.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 5832704,
+            "y_fixed": 1441792,
+            "x": 89.0,
+            "y": 22.0
+          }
+        ],
+        "triangle_indices": [
+          12,
+          11,
+          10,
+          12,
+          10,
+          16,
+          16,
+          10,
+          9,
+          13,
+          12,
+          14,
+          14,
+          16,
+          15,
+          12,
+          16,
+          14,
+          9,
+          17,
+          16,
+          9,
+          8,
+          17,
+          8,
+          7,
+          5,
+          6,
+          5,
+          7,
+          8,
+          5,
+          4,
+          1,
+          0,
+          3,
+          1,
+          3,
+          2,
+          3,
+          0,
+          4,
+          0,
+          8,
+          4,
+          8,
+          0,
+          17
+        ],
+        "triangles": [
+          [
+            12,
+            11,
+            10
+          ],
+          [
+            12,
+            10,
+            16
+          ],
+          [
+            16,
+            10,
+            9
+          ],
+          [
+            13,
+            12,
+            14
+          ],
+          [
+            14,
+            16,
+            15
+          ],
+          [
+            12,
+            16,
+            14
+          ],
+          [
+            9,
+            17,
+            16
+          ],
+          [
+            9,
+            8,
+            17
+          ],
+          [
+            8,
+            7,
+            5
+          ],
+          [
+            6,
+            5,
+            7
+          ],
+          [
+            8,
+            5,
+            4
+          ],
+          [
+            1,
+            0,
+            3
+          ],
+          [
+            1,
+            3,
+            2
+          ],
+          [
+            3,
+            0,
+            4
+          ],
+          [
+            0,
+            8,
+            4
+          ],
+          [
+            8,
+            0,
+            17
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 97
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 12,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 60,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": 11,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 47,
+      "payload_hex": "000a000b010000000000000017000a0018ffffcc0006002b87b1b734bb1bc704fffe3a6bc740b4500700054390420c3284088008380625048008ffff",
+      "polygon_geometry": {
+        "vertex_count": 11,
+        "triangle_index_count": 24,
+        "triangle_count": 8,
+        "color_rgba_bytes": [
+          255,
+          255,
+          204,
+          0
+        ],
+        "color_argb_hex": "#FFFFCC00",
+        "coordinate_bit_width": 6,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 3276800,
+            "y_fixed": -524288,
+            "x": 50.0,
+            "y": -8.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 3211264,
+            "y_fixed": -1441792,
+            "x": 49.0,
+            "y": -22.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 2490368,
+            "y_fixed": -786432,
+            "x": 38.0,
+            "y": -12.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 1572864,
+            "y_fixed": -1114112,
+            "x": 24.0,
+            "y": -17.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 2031616,
+            "y_fixed": -131072,
+            "x": 31.0,
+            "y": -2.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 1507328,
+            "y_fixed": 983040,
+            "x": 23.0,
+            "y": 15.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 2490368,
+            "y_fixed": 589824,
+            "x": 38.0,
+            "y": 9.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 3211264,
+            "y_fixed": 1179648,
+            "x": 49.0,
+            "y": 18.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 3276800,
+            "y_fixed": 327680,
+            "x": 50.0,
+            "y": 5.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 4063232,
+            "y_fixed": -131072,
+            "x": 62.0,
+            "y": -2.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 3276800,
+            "y_fixed": -524288,
+            "x": 50.0,
+            "y": -8.0
+          }
+        ],
+        "triangle_indices": [
+          3,
+          2,
+          4,
+          5,
+          4,
+          6,
+          8,
+          6,
+          4,
+          4,
+          2,
+          0,
+          8,
+          4,
+          0,
+          7,
+          6,
+          8,
+          9,
+          8,
+          0,
+          0,
+          2,
+          1
+        ],
+        "triangles": [
+          [
+            3,
+            2,
+            4
+          ],
+          [
+            5,
+            4,
+            6
+          ],
+          [
+            8,
+            6,
+            4
+          ],
+          [
+            4,
+            2,
+            0
+          ],
+          [
+            8,
+            4,
+            0
+          ],
+          [
+            7,
+            6,
+            8
+          ],
+          [
+            9,
+            8,
+            0
+          ],
+          [
+            0,
+            2,
+            1
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 60
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    }
+  ],
+  "terminator_offset": 1090,
+  "trailing_bytes": 0
+}

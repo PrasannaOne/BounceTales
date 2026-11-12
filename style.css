@@ -261,8 +261,8 @@ button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{ou
 }
 
 
-/* ========================= BUILD 16: fixed-screen game shell ========================= */
-/* The game is an app-like viewport: the document itself never scrolls. */
+/* ========================= V17: fixed-screen layout ========================= */
+/* The page behaves like a game app. Only the game viewport owns the screen. */
 html, body {
   width: 100%;
   height: 100%;
@@ -273,25 +273,62 @@ html, body {
 body {
   height: 100vh;
   height: 100dvh;
+  min-height: 0;
   padding: 0 10px env(safe-area-inset-bottom);
+  overflow: hidden;
 }
 #app {
+  width: min(100%, 430px);
   height: 100%;
   min-height: 0;
   max-height: 100%;
   overflow: hidden;
   justify-content: center;
-  padding-top: calc(58px + env(safe-area-inset-top));
-  padding-bottom: max(6px, env(safe-area-inset-bottom));
+  gap: clamp(4px, 1vh, 10px);
+  padding-top: calc(64px + env(safe-area-inset-top));
+  padding-bottom: max(5px, env(safe-area-inset-bottom));
 }
+.game-wrap {
+  width: min(100%, 360px, calc((100dvh - 238px) * .75));
+  max-height: calc(100dvh - 238px);
+  flex: 0 1 auto;
+  margin-bottom: 0;
+}
+.controls { margin-top: 0; }
 footer { display: none !important; }
-.game-wrap { flex-shrink: 1; }
-.menu-footnote { display: none !important; }
-@media (max-height: 720px) {
-  #app { gap: 6px; padding-top: calc(54px + env(safe-area-inset-top)); }
-  .game-wrap { margin-bottom: 0; }
-  .controls { margin-top: 0; gap: 5px; }
+.menu-footnote, .title-subtitle { display: none !important; }
+.settings-overlay { overflow: hidden; }
+.settings-panel {
+  max-height: calc(100dvh - 88px - env(safe-area-inset-top));
+  overflow: hidden;
+}
+@media (max-height: 720px) and (orientation: portrait) {
+  #app { gap: 4px; padding-top: calc(60px + env(safe-area-inset-top)); }
+  .game-wrap {
+    width: min(100%, 360px, calc((100dvh - 220px) * .75));
+    max-height: calc(100dvh - 220px);
+  }
+  .controls { gap: 4px; }
+  .main-controls { gap: 7px; }
 }
 @media (max-height: 620px) and (orientation: landscape) {
-  #app { padding-top: calc(54px + env(safe-area-inset-top)); }
+  #app {
+    height: 100%;
+    max-height: 100%;
+    padding-top: calc(56px + env(safe-area-inset-top));
+    padding-bottom: 4px;
+    overflow: hidden;
+  }
+  .game-wrap {
+    width: min(100%, 345px, calc((100dvh - 68px) * .75));
+    max-height: calc(100dvh - 68px);
+  }
+}
+@media (max-height: 540px) {
+  .hint, .keyboard-hint { display: none !important; }
+  #app { gap: 3px; }
+  .game-wrap {
+    width: min(100%, 320px, calc((100dvh - 178px) * .75));
+    max-height: calc(100dvh - 178px);
+  }
 }

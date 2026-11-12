@@ -26,7 +26,8 @@ const input=new BounceOriginalInput.OriginalInputState();
 let levelData=null,world=null,body=null,worldGeometry=[],renderObjects=[],eggs=[],enemies=[],waters=[],trampolines=[],cannons=[],bonusEggs=[];
 let cannonState=null;
 let currentLevel=LEVELS[0],levelLoadToken=0;
-let atlases=[],imageMaps=null,loadedImages=new Map(),collected=0,elapsed=0,mode='title';
+let atlases=[],imageMaps=null,spriteCatalogue=null,loadedImages=new Map(),collected=0,elapsed=0,mode='title';
+const musicController=typeof BounceAudioController!=='undefined'?new BounceAudioController.AudioController({storage:localStorage}):null;
 let eventEngine=null,playerObjectId=-1,fieldMessage='',fieldMessageTimer=0,languageStrings=[],checkpointPosition=null;
 let spriteAnimations=new Map(),cameraSnap=false,playerDeathTimer=0;
 let lastTime=0,cameraX=0,cameraY=0,cameraSpring=null,unlockedForme=0,toastTimer=0,toastText='';
@@ -49,9 +50,21 @@ function imgFor(index){
   const im=new Image();im.src='assets/original/'+atlases[index];loadedImages.set(index,im);return im;
 }
 function drawImageMap(id,x,y,seen=new Set(),frame=0,targetCtx=ctx){
-  const map=imageMaps.maps[String(id)];
-  if(!map||seen.has(id))return;
+  if(seen.has(id))return;
   seen.add(id);
+  // IDs 0–325 use the decoded o.java type-2 descriptor table directly.
+  // The catalogue was validated against all 326 legacy image-map records at boot.
+  const exact=spriteCatalogue?.get(id);
+  if(exact){
+    const crop=exact.crop,offset=exact.draw_offset,im=imgFor(exact.image_slot);
+    if(im&&im.complete&&im.naturalWidth){
+      targetCtx.drawImage(im,crop.x,crop.y,crop.width,crop.height,
+        Math.round(x-offset.x),Math.round(y-offset.y),crop.width,crop.height);
+    }
+    seen.delete(id);return;
+  }
+  const map=imageMaps.maps[String(id)];
+  if(!map){seen.delete(id);return;}
   if(map.type==='simple'){
     if(map.width<=0||map.height<=0){seen.delete(id);return;}
     const im=imgFor(map.image);
@@ -176,7 +189,7 @@ function collideEnemies(previous){
     if(!result)continue;
     if(result.egg)bonusEggs.push({...result.egg,collected:false});
     if(result.type==='player-hit'){
-      playerDeathTimer=3;deathAnimationElapsed=0;deathBaseY=body.y;body.enabled=false;body.eyeFrame=1;body.resetPhysics();toast('TRY AGAIN');
+      playerDeathTimer=3;deathAnimationElapsed=0;deathBaseY=body.y;body.enabled=false;body.eyeFrame=1;body.resetPhysics();musicController?.playCue(33);toast('TRY AGAIN');
     }
   }
   refreshHud();
@@ -290,11 +303,11 @@ function updateCannon(dt,held){
 }
 function beginVictory(){
   if(victoryTimer>0||mode!==S.play)return;
-  victoryTimer=3;body.resetPhysics();body.enabled=false;input.clear();toast('CHAPTER COMPLETE');
+  victoryTimer=3;body.resetPhysics();body.enabled=false;input.clear();musicController?.playCue(34);toast('CHAPTER COMPLETE');
 }
 function beginDeath(){
   if(playerDeathTimer>0||victoryTimer>0)return;
-  playerDeathTimer=3;deathAnimationElapsed=0;deathBaseY=body.y;body.enabled=false;body.eyeFrame=1;body.resetPhysics();toast('TRY AGAIN');
+  playerDeathTimer=3;deathAnimationElapsed=0;deathBaseY=body.y;body.enabled=false;body.eyeFrame=1;body.resetPhysics();musicController?.playCue(33);toast('TRY AGAIN');
 }
 function update(dt){
   if(mode!==S.play||!body)return;
@@ -312,7 +325,7 @@ function update(dt){
     const pos=screenPoint(body);if(pos.y>H+25)cameraY+=Math.min(80,dt*90);
     particles.update(dt);updateSpriteAnimations(dt);
     if(playerDeathTimer===0){
-      const pos=checkpointPosition||spawn;body.reset(pos.x,pos.y);body.enabled=true;body.visible=true;body.eyeFrame=0;body.idleAnimStartTimer=3000;cameraX=body.x;cameraY=body.y+96;cameraSpring?.snap(cameraX,cameraY);eventEngine?.vars.fill(0);toast('CHECKPOINT');
+      const pos=checkpointPosition||spawn;body.reset(pos.x,pos.y);body.enabled=true;body.visible=true;body.eyeFrame=0;body.idleAnimStartTimer=3000;cameraX=body.x;cameraY=body.y+96;cameraSpring?.snap(cameraX,cameraY);eventEngine?.vars.fill(0);musicController?.playLevel(currentLevel.index);toast('CHECKPOINT');
     }
     if(toastTimer>0)toastTimer-=dt;
     return;
@@ -515,7 +528,10 @@ function drawEnemy(e){
     drawImageMap(504,screen.x,screen.y,new Set(),bodyFrame);
     if(e.state!==0){
       const peekY=(e.molePeekTimer*61)/Math.max(1,e.molePeekPeriod);
+      // Original l.java clips the peeking face at the mole's centre line.
+      ctx.save();ctx.beginPath();ctx.rect(0,0,W,clamp(screen.y,0,H));ctx.clip();
       drawImageMap(e.facingLeft?189:194,screen.x,screen.y+61-peekY);
+      ctx.restore();
     }
   }else if(e.enemyType===1||e.enemyType===3){
     // The supplied runtime resolves these two legacy image IDs as the original
@@ -641,7 +657,7 @@ function draw(){
     }else if(item.type==='water'){
       drawWater(item.water);
     }else if(item.type==='friend'){
-      const p=screenPoint(getWorldPos(item.object));ctx.fillStyle='#d84b44';ctx.beginPath();ctx.arc(p.x,p.y,12,0,7);ctx.fill();
+      const p=screenPoint(getWorldPos(item.object));ctx.fillStyle='#ED1C24';ctx.beginPath();ctx.arc(p.x,p.y,Math.round(20*SCALE),0,Math.PI*2);ctx.fill();
     }else if(item.type==='cannon'){
       const p=screenPoint(getWorldPos(item.object)),a=cannonState?.cannon===item.cannon?cannonState.angle:cannonAngle(item.cannon);
       ctx.save();ctx.translate(p.x,p.y);ctx.rotate(-a);drawImageMap(48,0,0);ctx.restore();
@@ -669,7 +685,7 @@ function hideGameScenes(){
   syncSceneChrome();syncPauseButton();
 }
 
-function showTitleMenu(){mode=S.title;hideGameScenes();document.getElementById('menu').hidden=false;input.clear();updateMenuSummary();syncPauseButton();}
+function showTitleMenu(){mode=S.title;hideGameScenes();document.getElementById('menu').hidden=false;input.clear();musicController?.playTitle();updateMenuSummary();syncPauseButton();}
 function renderLevelCover(index){
   const cover=document.getElementById('level-cover'),coverCtx=cover?.getContext('2d');if(!coverCtx||!imageMaps)return;
   coverCtx.clearRect(0,0,cover.width,cover.height);
@@ -702,7 +718,7 @@ function showChapterBook(){mode=S.select;hideGameScenes();document.getElementByI
 function changeBookPage(delta){selectedLevelIndex=clamp(selectedLevelIndex+delta,0,14);updateLevelBook();}
 function openGuide(){mode=S.guide;hideGameScenes();document.getElementById('guide-layer').hidden=false;input.clear();syncPauseButton();}
 function startLevel(){
-  mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;
+  mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;musicController?.playLevel(currentLevel.index);
   if(eventEngine){eventEngine.reset();world=eventEngine.world;refreshGeometryWorld(world);}
   spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;cameraSnap=false;
   body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce';body.rotation=0;body.unlockedForme=progress.unlockedForme;body.forme=0;body.slopeCosAbs=1;body.eyeFrame=0;body.idleAnimStartTimer=3000;
@@ -847,7 +863,8 @@ function bindInputs(){
 
   const clearAll=()=>{keys.clear();input.clear();gamepadHeld.clear();document.querySelectorAll('[data-key-id]').forEach(b=>b.classList.remove('pressed'));};
   addEventListener('blur',clearAll);
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAll();lastTime=0;lastRenderAt=0;fpsStamp=0;fpsFrames=0;}});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAll();musicController?.pause();lastTime=0;lastRenderAt=0;fpsStamp=0;fpsFrames=0;}else musicController?.resume();});
+  window.addEventListener('pointerdown',()=>musicController?.unlock(),{once:true});
 }
 
 // Drawing follows requestAnimationFrame. Simulation consumes elapsed time like
@@ -905,6 +922,7 @@ function bindSettings(){
   const fps=document.getElementById('fps-mode'),fpsToggle=document.getElementById('show-fps'),counter=document.getElementById('fps-counter'),full=document.getElementById('fullscreen-btn');
   fps.value=['auto','30','60'].includes(fpsMode)?fpsMode:'auto';fps.addEventListener('change',()=>applyFpsMode(fps.value));
   fpsToggle.checked=showFps;counter.hidden=!showFps;fpsToggle.addEventListener('change',()=>{showFps=fpsToggle.checked;localStorage.setItem('bounce-show-fps',String(showFps));counter.hidden=!showFps;});
+  const musicToggle=document.getElementById('music-enabled');if(musicToggle){musicToggle.checked=musicController?.enabled??true;musicToggle.addEventListener('change',()=>musicController?.setEnabled(musicToggle.checked));}
   document.getElementById('open-settings').addEventListener('click',openSettings);document.getElementById('close-settings').addEventListener('click',closeSettings);
   settingsLayer.addEventListener('click',e=>{if(e.target===settingsLayer)closeSettings();});document.getElementById('share-site').addEventListener('click',shareSite);
   document.getElementById('reset-game').addEventListener('click',resetProgress);
@@ -930,13 +948,16 @@ function bindSettings(){
 
 async function boot(){
   try{
-    const [mapResp,langResp]=await Promise.all([fetch('src/image-map.json'),fetch('assets/original/lang.xx')]);
-    if(!mapResp.ok||!langResp.ok)throw new Error('Could not load original JAR image or language resources');
-    imageMaps=await mapResp.json();atlases=imageMaps.atlases;languageStrings=BounceEventEngine.parseLanguage(new Uint8Array(await langResp.arrayBuffer()));
+    const [mapResp,atlasResp,langResp]=await Promise.all([fetch('src/image-map.json'),fetch('src/sprite-atlas.json'),fetch('assets/original/lang.xx')]);
+    if(!mapResp.ok||!atlasResp.ok||!langResp.ok)throw new Error('Could not load original JAR image, sprite atlas or language resources');
+    imageMaps=await mapResp.json();atlases=imageMaps.atlases;
+    const decodedAtlas=await atlasResp.json();spriteCatalogue=BounceSpriteAtlas.prepare(decodedAtlas,imageMaps);
+    if(decodedAtlas.png_images.some((entry,index)=>entry.png!==atlases[index]))throw new Error('Sprite atlas PNG slot order does not match the original image archive');
+    languageStrings=BounceEventEngine.parseLanguage(new Uint8Array(await langResp.arrayBuffer()));
     selectedLevelIndex=progress.selected||0;if(!BounceOriginalProgression.isUnlocked(progress,selectedLevelIndex))selectedLevelIndex=0;unlockedForme=progress.unlockedForme;
     await loadLevel(selectedLevelIndex);bindInputs();bindSettings();showTitleMenu();requestAnimationFrame(loop);
   }catch(error){
-    hideGameScenes();document.getElementById('menu').hidden=false;document.getElementById('save-summary').textContent='Could not load original game resources: '+error.message;
+    hideGameScenes();document.getElementById('menu').hidden=false;const summary=document.getElementById('save-summary');if(summary)summary.textContent='Could not load original game resources: '+error.message;
     status.textContent='RESOURCE LOAD ERROR';console.error(error);
   }
 }

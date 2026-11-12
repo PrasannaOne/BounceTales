@@ -1,6 +1,6 @@
-# Bounce Tales · HTML5 browser port
+# Bounce Tales · V17 source-parity build
 
-The current browser build is an incremental port based on the original Bounce Tales 2.0.3 Java ME resources. Build 16 tightens the phone-first presentation and removes document scrolling and build labels from the game screen. It does not claim complete one-to-one gameplay equivalence.
+V16 establishes a repeatable reverse-engineering workflow around the original Bounce Tales 2.0.3 Java ME JAR. It preserves the V15 browser build as the runtime baseline while separating source modules, tests, tooling and reference documentation.
 
 ## Repository map
 - `src/`: browser runtime modules (engine, physics, collision, rendering, audio, levels, menus). Existing modules are retained while boundaries are documented.
@@ -33,3 +33,14 @@ GitHub Actions → **One-time repository cleanup (V16 reset)** → Run workflow.
 
 ## Accuracy status
 This is a reverse-engineering foundation, not a claim of a complete one-to-one port. The original JAR remains the source of truth. Each translated system should carry source references, confidence and regression tests.
+
+
+## V17 · decoded atlas, animation parity and soundtrack
+
+V17 is the first build that consumes the Phase 2 decoded sprite atlas in the browser runtime. Static sprite IDs 0–325 are drawn from the verified descriptor table in `src/sprite-atlas.json`; `src/sprite-atlas.js` validates all 326 crop rectangles, offsets and PNG slots against the legacy image map before gameplay starts.
+
+The reference fixtures in `reference/` are compared against the original binary RLEF resources. The regression suite verifies all 105 extracted original resources against SHA-256 hashes and proves parity for 16 level resources, 2,240 object headers, 490 polygon records, 5,776 vertices, 4,306 triangles, and 316 animated objects containing 1,143 exact command streams. The event engine executes those parsed source command streams using the recovered millisecond timing semantics.
+
+V17 also wires the original title, act, boss, bonus, lose and win music resources to the existing browser-rendered audio tracks, adds a music setting, removes title-page build/version clutter, and locks the page to a no-scroll viewport.
+
+**Accuracy boundary:** V17 is materially closer to the supplied source data, but it is not honestly describable as a complete one-to-one recreation yet. Remaining gaps include the full fixed-point multi-contact collision solver and exact rounding, some enemy/friend/boss and event edge cases, complete original water/particle behaviour, pixel-identical camera/parallax and MIDP menu/UI rendering, and device-level comparison against the original Java ME game. A passing parser/regression suite establishes data parity for the tested structures, not full gameplay equivalence.

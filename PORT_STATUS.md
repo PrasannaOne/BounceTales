@@ -225,19 +225,25 @@ The edge/vertex approach is translated from the original `c.class` collision met
 - This package does not claim to have fixed the specific grass fall-through shown in the user's latest screenshot. The existing synthetic grass and 15-stage spawn regression tests pass, but the reported real-phone case still needs a targeted reproduction and on-device verification.
 
 
-# Build 16 status · 2026-11-12
+# Build 17 status · 2026-11-12
 
-## Changes in this handoff
-- Removed the build number and technical resource/viewport footer from the player-facing home screen.
-- Removed the extra home-screen eyebrow and save-summary footnote so the title screen contains only the game title, short tagline and actual menu actions.
-- Locked the document to the device viewport with `overflow: hidden` and `overscroll-behavior: none`; the page no longer scrolls behind the game.
-- Kept the original logical 240×320 canvas and the existing game controls/menu flow intact.
-- Updated the document title to the plain game name.
+## Implemented
+
+- Loaded the Phase 2 decoded static sprite atlas into the browser runtime. Static IDs 0–325 now draw through the extracted 326-entry descriptor table, with exact PNG slot, crop rectangle and draw offset checked against the existing image map at startup.
+- Included decoded reference fixtures for all 16 original RLEF resources and all 316 type-6 animation records. The runtime still parses the original binary level files; the fixture copies are used for regression parity.
+- Verified the parser against all 16 original resources: 2,240 object headers, 490 polygon records, 5,776 polygon vertices, 4,306 triangles, and 316 animated objects containing 1,143 exact command sequences.
+- Kept the recovered opcode timing model: elapsed milliseconds, one update pass, 500 ms maximum elapsed per update. Duration operands for opcodes 6, 16 and 17 are retained in the decoded atlas timing annotations.
+- Wired title, three act themes, boss, bonus, lose and win tracks to browser audio playback using the source resource IDs. Added a persisted music toggle, pause/resume on tab visibility, and user-gesture unlock for browser autoplay restrictions.
+- Corrected the Mole peek face clipping and restored the source friend object's red fill and radius.
+- Removed title-page explanatory/version/build text and the footer. The page now uses a fixed, non-scrolling viewport with safe-area handling.
 
 ## Validation
-- All 21 Node regression scripts pass after the shell changes.
-- The archive still includes the original game resources, source modules, tests and reverse-engineering notes.
-- The no-scroll change is a CSS viewport constraint; final confirmation of safe-area behaviour and touch feel still requires testing on the target Android browser.
 
-## Accuracy statement
-This is a presentation and packaging pass, not a completed one-to-one game port. The original 2.0.3 JAR remains the authority. Known gameplay gaps documented above remain open, including the complete LP32 multi-contact collision solver, exhaustive enemy/object/event behaviour, exact chapter progression, original MIDP menu reproduction, full audio/MIDI pipeline and side-by-side runtime verification. The 15 RLEF stages being loadable or selectable does not establish that all 15 are fully playable or mechanically equivalent.
+- All 105 original extracted JAR resources match the supplied reference archive byte-for-byte using SHA-256.
+- **25/25 Node.js regression tests pass.**
+- New V17 tests validate all 326 static sprite descriptors against the runtime image map, compare all 16 decoded level resources against the parser, check exact type-6 command streams, and verify soundtrack routing and no-scroll UI rules.
+- The 15 selectable campaign levels still load and enter gameplay/pause flows; the 16th RLEF file remains a non-campaign cannon test resource.
+
+## Accuracy boundary
+
+This is not yet a fully verified one-to-one port. The test suite demonstrates exact parity for the extracted static sprites, tested RLEF object headers, polygon geometry, and type-6 animation streams. Gameplay equivalence is still incomplete: the original LP32 fixed-point contact solver and contact ordering are not fully reproduced; not every event branch, enemy/friend/boss state, water/particle effect, progression edge case, camera/parallax layer or MIDP-rendered menu has been compared against a live original JAR session. The soundtrack is browser-playable audio rendered from the original MIDI resources, rather than native MIDP MIDI playback. Real Android and desktop side-by-side testing remains outstanding.

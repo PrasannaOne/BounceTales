@@ -29,7 +29,6 @@
     <div class="overlay game-scene" id="menu" aria-label="Main menu">
       <div class="game-panel title-panel">
         <h1>Bounce Tales</h1>
-        <p class="title-subtitle">A little bounce goes a long way.</p>
         <div class="title-actions">
           <button id="continue-game" class="game-primary">CONTINUE</button>
           <button id="open-chapters" class="game-secondary">CHAPTERS</button>
@@ -111,6 +110,7 @@
         <select id="fps-mode"><option value="auto">Auto</option><option value="30">30 FPS</option><option value="60">60 FPS</option></select>
       </label>
       <label class="setting-row compact" for="show-fps"><span><strong>FPS counter</strong><small>Show rendering rate.</small></span><input id="show-fps" type="checkbox"></label>
+      <label class="setting-row compact" for="music-enabled"><span><strong>Original music</strong><small>Play the game’s soundtrack.</small></span><input id="music-enabled" type="checkbox" checked></label>
       <div class="settings-actions-row">
         <button id="fullscreen-btn" class="settings-action" type="button">⛶ Fullscreen</button>
         <button id="reset-game" class="settings-action danger" type="button">Reset progress</button>
@@ -143,6 +143,8 @@
 <script src="src/midp-graphics.js"></script>
 <script src="src/original-progression.js"></script>
 <script src="src/game-particles.js"></script>
+<script src="src/sprite-atlas.js"></script>
+<script src="src/audio-controller.js"></script>
 <script src="game.js"></script>
 </body>
 </html>

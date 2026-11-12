@@ -1,0 +1,6629 @@
+{
+  "format": "RLEF",
+  "version": 1,
+  "header_hex": "524c454600010000006c001e000f",
+  "declared_object_count": 108,
+  "parsed_object_count": 108,
+  "count_matches": true,
+  "objects": [
+    {
+      "index": 0,
+      "type_code": 0,
+      "type_name": "unknown_0",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": -1,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "ffffffff010000000000000000"
+    },
+    {
+      "index": 1,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 41,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 53936128,
+          "ty_fixed": -149553152
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 28,
+      "payload_hex": "0000ffff010337f7160000001500030003ff0037000b02fe02ede7c000fe669a31b39e01031100ffff",
+      "polygon_geometry": {
+        "vertex_count": 4,
+        "triangle_index_count": 3,
+        "triangle_count": 1,
+        "color_rgba_bytes": [
+          255,
+          0,
+          55,
+          0
+        ],
+        "color_argb_hex": "#FF003700",
+        "coordinate_bit_width": 11,
+        "index_bit_width": 3,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 0,
+            "y_fixed": 0,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "index": 1,
+            "x_fixed": -327680,
+            "y_fixed": -53739520,
+            "x": -5.0,
+            "y": -820.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 100728832,
+            "y_fixed": -52428800,
+            "x": 1537.0,
+            "y": -800.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 0,
+            "y_fixed": 0,
+            "x": 0.0,
+            "y": 0.0
+          }
+        ],
+        "triangle_indices": [
+          1,
+          2,
+          0
+        ],
+        "triangles": [
+          [
+            1,
+            2,
+            0
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 41
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 2,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 42,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 3211264,
+          "ty_fixed": 18481152
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 29,
+      "payload_hex": "00000001010031011a0000001800040006ff0c431d0aff9b16aba34ec5fe0befc5f7e08503589401ffff",
+      "polygon_geometry": {
+        "vertex_count": 5,
+        "triangle_index_count": 6,
+        "triangle_count": 2,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 10,
+        "index_bit_width": 3,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": -21954560,
+            "y_fixed": -393216,
+            "x": -335.0,
+            "y": -6.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 8716288,
+            "y_fixed": -262144,
+            "x": 133.0,
+            "y": -4.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 8716288,
+            "y_fixed": -65404928,
+            "x": 133.0,
+            "y": -998.0
+          },
+          {
+            "index": 3,
+            "x_fixed": -22020096,
+            "y_fixed": -64880640,
+            "x": -336.0,
+            "y": -990.0
+          },
+          {
+            "index": 4,
+            "x_fixed": -21954560,
+            "y_fixed": -393216,
+            "x": -335.0,
+            "y": -6.0
+          }
+        ],
+        "triangle_indices": [
+          0,
+          3,
+          1,
+          2,
+          1,
+          3
+        ],
+        "triangles": [
+          [
+            0,
+            3,
+            1
+          ],
+          [
+            2,
+            1,
+            3
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 42
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 3,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 88,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 2,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 191692800,
+          "ty_fixed": -166920192
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 75,
+      "payload_hex": "00000002010b6df60d000000150010002aff0c431d0800669ac30337535d646b675b4729d6b49d950008f8081a2527241e0af1e1dbd9dce2eaf105c0b5d09860eb39005a6022ac2154420a8d81ce38c414720c516301ffff",
+      "polygon_geometry": {
+        "vertex_count": 17,
+        "triangle_index_count": 42,
+        "triangle_count": 14,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 8,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 0,
+            "y_fixed": 0,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 2686976,
+            "y_fixed": 1048576,
+            "x": 41.0,
+            "y": 16.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 6881280,
+            "y_fixed": 2228224,
+            "x": 105.0,
+            "y": 34.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 10289152,
+            "y_fixed": 2949120,
+            "x": 157.0,
+            "y": 45.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 12124160,
+            "y_fixed": 3080192,
+            "x": 185.0,
+            "y": 47.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 12779520,
+            "y_fixed": 2883584,
+            "x": 195.0,
+            "y": 44.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 13238272,
+            "y_fixed": 2490368,
+            "x": 202.0,
+            "y": 38.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 13697024,
+            "y_fixed": 1179648,
+            "x": 209.0,
+            "y": 18.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 13434880,
+            "y_fixed": -458752,
+            "x": 205.0,
+            "y": -7.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 12648448,
+            "y_fixed": -1507328,
+            "x": 193.0,
+            "y": -23.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 11337728,
+            "y_fixed": -1900544,
+            "x": 173.0,
+            "y": -29.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 9371648,
+            "y_fixed": -2031616,
+            "x": 143.0,
+            "y": -31.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 3932160,
+            "y_fixed": -1835008,
+            "x": 60.0,
+            "y": -28.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 1703936,
+            "y_fixed": -1441792,
+            "x": 26.0,
+            "y": -22.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 196608,
+            "y_fixed": -917504,
+            "x": 3.0,
+            "y": -14.0
+          },
+          {
+            "index": 15,
+            "x_fixed": -327680,
+            "y_fixed": -458752,
+            "x": -5.0,
+            "y": -7.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 0,
+            "y_fixed": 0,
+            "x": 0.0,
+            "y": 0.0
+          }
+        ],
+        "triangle_indices": [
+          0,
+          14,
+          13,
+          1,
+          13,
+          12,
+          2,
+          12,
+          11,
+          15,
+          14,
+          0,
+          0,
+          13,
+          1,
+          12,
+          2,
+          1,
+          11,
+          3,
+          2,
+          10,
+          9,
+          8,
+          10,
+          8,
+          3,
+          3,
+          8,
+          7,
+          3,
+          7,
+          4,
+          6,
+          5,
+          4,
+          7,
+          6,
+          4,
+          10,
+          3,
+          11
+        ],
+        "triangles": [
+          [
+            0,
+            14,
+            13
+          ],
+          [
+            1,
+            13,
+            12
+          ],
+          [
+            2,
+            12,
+            11
+          ],
+          [
+            15,
+            14,
+            0
+          ],
+          [
+            0,
+            13,
+            1
+          ],
+          [
+            12,
+            2,
+            1
+          ],
+          [
+            11,
+            3,
+            2
+          ],
+          [
+            10,
+            9,
+            8
+          ],
+          [
+            10,
+            8,
+            3
+          ],
+          [
+            3,
+            8,
+            7
+          ],
+          [
+            3,
+            7,
+            4
+          ],
+          [
+            6,
+            5,
+            4
+          ],
+          [
+            7,
+            6,
+            4
+          ],
+          [
+            10,
+            3,
+            11
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 88
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 4,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 79,
+      "base_header": {
+        "parent_index": 3,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 20,
+        "layer_or_type_bits": 4
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 66,
+      "payload_hex": "0003ffff0100000000000000140f08006400199c9cadbecfdff10c2641474d535965e7e7eef5fc02090f14191919191813090102010201020102010201010101010101000100010001000104010a01"
+    },
+    {
+      "index": 5,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 3,
+        "child_index": 4,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 6422528,
+          "ty_fixed": 2097152
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "000300040100620020000000190100000000003d00"
+    },
+    {
+      "index": 6,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 3,
+        "child_index": 5,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 4718592,
+          "ty_fixed": 4063232
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "00030005010048003e00000013"
+    },
+    {
+      "index": 7,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 3,
+        "child_index": 6,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 10813440,
+          "ty_fixed": 6225920
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "000300060100a5005f00000013"
+    },
+    {
+      "index": 8,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 3,
+        "child_index": 7,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 6094848,
+          "ty_fixed": 8716288
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0003000701005d008500000013"
+    },
+    {
+      "index": 9,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 162,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 3,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 197132288,
+          "ty_fixed": -152371200
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 149,
+      "payload_hex": "00000003010bc0f6eb00000018001b004bff0c431d0b013864c513a77e900fad98a52c5d89ca4ae0010a3c38a1f8335738bbb31dec41bbd9cb521e728e01ff8c33d29361c53c79131cc10b6db803233ce18a59d06215a910c52512c18604c4fffce55ffffc010696965d1966559a955d5a4501d444011a30495204400f104100f038845008c47018816014c8111842d03081d3044a122c01132c4a82044e0000ffff",
+      "polygon_geometry": {
+        "vertex_count": 28,
+        "triangle_index_count": 75,
+        "triangle_count": 25,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 11,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": -23330816,
+            "y_fixed": 29294592,
+            "x": -356.0,
+            "y": 447.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 61865984,
+            "y_fixed": 33947648,
+            "x": 944.0,
+            "y": 518.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 64225280,
+            "y_fixed": -49152000,
+            "x": 980.0,
+            "y": -750.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 24576000,
+            "y_fixed": -34734080,
+            "x": 375.0,
+            "y": -530.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 36765696,
+            "y_fixed": -14745600,
+            "x": 561.0,
+            "y": -225.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 43122688,
+            "y_fixed": -5111808,
+            "x": 658.0,
+            "y": -78.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 43909120,
+            "y_fixed": -2949120,
+            "x": 670.0,
+            "y": -45.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 43843584,
+            "y_fixed": -1441792,
+            "x": 669.0,
+            "y": -22.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 43319296,
+            "y_fixed": -458752,
+            "x": 661.0,
+            "y": -7.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 42532864,
+            "y_fixed": 196608,
+            "x": 649.0,
+            "y": 3.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 40042496,
+            "y_fixed": 1572864,
+            "x": 611.0,
+            "y": 24.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 36175872,
+            "y_fixed": 2752512,
+            "x": 552.0,
+            "y": 42.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 30932992,
+            "y_fixed": 3801088,
+            "x": 472.0,
+            "y": 58.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 28311552,
+            "y_fixed": 4128768,
+            "x": 432.0,
+            "y": 63.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 25559040,
+            "y_fixed": 4194304,
+            "x": 390.0,
+            "y": 64.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 16580608,
+            "y_fixed": 3604480,
+            "x": 253.0,
+            "y": 55.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 7012352,
+            "y_fixed": 3473408,
+            "x": 107.0,
+            "y": 53.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 4325376,
+            "y_fixed": 3014656,
+            "x": 66.0,
+            "y": 46.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 2359296,
+            "y_fixed": 2293760,
+            "x": 36.0,
+            "y": 35.0
+          },
+          {
+            "index": 19,
+            "x_fixed": 1114112,
+            "y_fixed": 1376256,
+            "x": 17.0,
+            "y": 21.0
+          },
+          {
+            "index": 20,
+            "x_fixed": -458752,
+            "y_fixed": -524288,
+            "x": -7.0,
+            "y": -8.0
+          },
+          {
+            "index": 21,
+            "x_fixed": -4521984,
+            "y_fixed": -7012352,
+            "x": -69.0,
+            "y": -107.0
+          },
+          {
+            "index": 22,
+            "x_fixed": -5898240,
+            "y_fixed": -8585216,
+            "x": -90.0,
+            "y": -131.0
+          },
+          {
+            "index": 23,
+            "x_fixed": -6946816,
+            "y_fixed": -9240576,
+            "x": -106.0,
+            "y": -141.0
+          },
+          {
+            "index": 24,
+            "x_fixed": -7733248,
+            "y_fixed": -9371648,
+            "x": -118.0,
+            "y": -143.0
+          },
+          {
+            "index": 25,
+            "x_fixed": -8716288,
+            "y_fixed": -8978432,
+            "x": -133.0,
+            "y": -137.0
+          },
+          {
+            "index": 26,
+            "x_fixed": -9371648,
+            "y_fixed": -8454144,
+            "x": -143.0,
+            "y": -129.0
+          },
+          {
+            "index": 27,
+            "x_fixed": -23330816,
+            "y_fixed": 29294592,
+            "x": -356.0,
+            "y": 447.0
+          }
+        ],
+        "triangle_indices": [
+          22,
+          26,
+          25,
+          23,
+          25,
+          24,
+          22,
+          21,
+          26,
+          22,
+          25,
+          23,
+          26,
+          21,
+          20,
+          0,
+          20,
+          19,
+          20,
+          0,
+          26,
+          0,
+          19,
+          18,
+          18,
+          17,
+          0,
+          16,
+          15,
+          0,
+          17,
+          16,
+          0,
+          0,
+          15,
+          14,
+          4,
+          2,
+          5,
+          2,
+          4,
+          3,
+          7,
+          6,
+          1,
+          2,
+          6,
+          5,
+          8,
+          7,
+          1,
+          6,
+          2,
+          1,
+          13,
+          12,
+          1,
+          14,
+          13,
+          1,
+          10,
+          9,
+          1,
+          11,
+          1,
+          12,
+          1,
+          11,
+          10,
+          9,
+          8,
+          1,
+          14,
+          1,
+          0
+        ],
+        "triangles": [
+          [
+            22,
+            26,
+            25
+          ],
+          [
+            23,
+            25,
+            24
+          ],
+          [
+            22,
+            21,
+            26
+          ],
+          [
+            22,
+            25,
+            23
+          ],
+          [
+            26,
+            21,
+            20
+          ],
+          [
+            0,
+            20,
+            19
+          ],
+          [
+            20,
+            0,
+            26
+          ],
+          [
+            0,
+            19,
+            18
+          ],
+          [
+            18,
+            17,
+            0
+          ],
+          [
+            16,
+            15,
+            0
+          ],
+          [
+            17,
+            16,
+            0
+          ],
+          [
+            0,
+            15,
+            14
+          ],
+          [
+            4,
+            2,
+            5
+          ],
+          [
+            2,
+            4,
+            3
+          ],
+          [
+            7,
+            6,
+            1
+          ],
+          [
+            2,
+            6,
+            5
+          ],
+          [
+            8,
+            7,
+            1
+          ],
+          [
+            6,
+            2,
+            1
+          ],
+          [
+            13,
+            12,
+            1
+          ],
+          [
+            14,
+            13,
+            1
+          ],
+          [
+            10,
+            9,
+            1
+          ],
+          [
+            11,
+            1,
+            12
+          ],
+          [
+            1,
+            11,
+            10
+          ],
+          [
+            9,
+            8,
+            1
+          ],
+          [
+            14,
+            1,
+            0
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 162
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 10,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 203,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 9,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 80805888,
+          "ty_fixed": -49086464
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 190,
+      "payload_hex": "000000090104d1fd13000000150021005dff0c431d0b0721ee45b5e0d95f011c20c215c748863280210c68a883381542d29e2e452a514d0a50441a0f622cb28b2e7480abab05f7e774288316b83006375ca215c7504635f241108744c4210801c83cc8110d61a02212530840efdf9ef384bf1bde630007a00f6020f008021e4fe0d3210c089c0287d0e90c3c86c22600f8681087066371306c389b4206a179243209444673d84430978b4592c13c2a138b63a158381a0e45e2e1484c24960804739144200f0c655201ffff",
+      "polygon_geometry": {
+        "vertex_count": 34,
+        "triangle_index_count": 93,
+        "triangle_count": 31,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 11,
+        "index_bit_width": 7,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 84869120,
+            "y_fixed": -128253952,
+            "x": 1295.0,
+            "y": -1957.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 97058816,
+            "y_fixed": -129236992,
+            "x": 1481.0,
+            "y": -1972.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 111345664,
+            "y_fixed": -129957888,
+            "x": 1699.0,
+            "y": -1983.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 118292480,
+            "y_fixed": -129826816,
+            "x": 1805.0,
+            "y": -1981.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 120979456,
+            "y_fixed": -129368064,
+            "x": 1846.0,
+            "y": -1974.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 123273216,
+            "y_fixed": -128647168,
+            "x": 1881.0,
+            "y": -1963.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 128516096,
+            "y_fixed": -125960192,
+            "x": 1961.0,
+            "y": -1922.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 131006464,
+            "y_fixed": -124518400,
+            "x": 1999.0,
+            "y": -1900.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 132644864,
+            "y_fixed": -122814464,
+            "x": 2024.0,
+            "y": -1874.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 132775936,
+            "y_fixed": -122617856,
+            "x": 2026.0,
+            "y": -1871.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 132841472,
+            "y_fixed": -121896960,
+            "x": 2027.0,
+            "y": -1860.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 132186112,
+            "y_fixed": -119537664,
+            "x": 2017.0,
+            "y": -1824.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 132317184,
+            "y_fixed": -118816768,
+            "x": 2019.0,
+            "y": -1813.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 133234688,
+            "y_fixed": -118161408,
+            "x": 2033.0,
+            "y": -1803.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 134938624,
+            "y_fixed": -117964800,
+            "x": 2059.0,
+            "y": -1800.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 149225472,
+            "y_fixed": -118161408,
+            "x": 2277.0,
+            "y": -1803.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 154533888,
+            "y_fixed": -118554624,
+            "x": 2358.0,
+            "y": -1809.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 157876224,
+            "y_fixed": -119078912,
+            "x": 2409.0,
+            "y": -1817.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 161218560,
+            "y_fixed": -119930880,
+            "x": 2460.0,
+            "y": -1830.0
+          },
+          {
+            "index": 19,
+            "x_fixed": 163053568,
+            "y_fixed": -120913920,
+            "x": 2488.0,
+            "y": -1845.0
+          },
+          {
+            "index": 20,
+            "x_fixed": 163905536,
+            "y_fixed": -122159104,
+            "x": 2501.0,
+            "y": -1864.0
+          },
+          {
+            "index": 21,
+            "x_fixed": 163774464,
+            "y_fixed": -123142144,
+            "x": 2499.0,
+            "y": -1879.0
+          },
+          {
+            "index": 22,
+            "x_fixed": 162791424,
+            "y_fixed": -124846080,
+            "x": 2484.0,
+            "y": -1905.0
+          },
+          {
+            "index": 23,
+            "x_fixed": 161546240,
+            "y_fixed": -126353408,
+            "x": 2465.0,
+            "y": -1928.0
+          },
+          {
+            "index": 24,
+            "x_fixed": 157614080,
+            "y_fixed": -130416640,
+            "x": 2405.0,
+            "y": -1990.0
+          },
+          {
+            "index": 25,
+            "x_fixed": 151257088,
+            "y_fixed": -135790592,
+            "x": 2308.0,
+            "y": -2072.0
+          },
+          {
+            "index": 26,
+            "x_fixed": 145293312,
+            "y_fixed": -140247040,
+            "x": 2217.0,
+            "y": -2140.0
+          },
+          {
+            "index": 27,
+            "x_fixed": 137822208,
+            "y_fixed": -145358848,
+            "x": 2103.0,
+            "y": -2218.0
+          },
+          {
+            "index": 28,
+            "x_fixed": 131858432,
+            "y_fixed": -148897792,
+            "x": 2012.0,
+            "y": -2272.0
+          },
+          {
+            "index": 29,
+            "x_fixed": 125698048,
+            "y_fixed": -152043520,
+            "x": 1918.0,
+            "y": -2320.0
+          },
+          {
+            "index": 30,
+            "x_fixed": 121503744,
+            "y_fixed": -153747456,
+            "x": 1854.0,
+            "y": -2346.0
+          },
+          {
+            "index": 31,
+            "x_fixed": 75300864,
+            "y_fixed": -153681920,
+            "x": 1149.0,
+            "y": -2345.0
+          },
+          {
+            "index": 32,
+            "x_fixed": 80478208,
+            "y_fixed": -129368064,
+            "x": 1228.0,
+            "y": -1974.0
+          },
+          {
+            "index": 33,
+            "x_fixed": 84869120,
+            "y_fixed": -128253952,
+            "x": 1295.0,
+            "y": -1957.0
+          }
+        ],
+        "triangle_indices": [
+          32,
+          31,
+          0,
+          3,
+          2,
+          30,
+          2,
+          1,
+          30,
+          30,
+          1,
+          31,
+          29,
+          4,
+          3,
+          4,
+          28,
+          5,
+          28,
+          4,
+          29,
+          29,
+          3,
+          30,
+          6,
+          5,
+          27,
+          1,
+          0,
+          31,
+          26,
+          8,
+          7,
+          13,
+          12,
+          11,
+          7,
+          6,
+          27,
+          28,
+          27,
+          5,
+          25,
+          8,
+          26,
+          15,
+          9,
+          25,
+          9,
+          8,
+          25,
+          26,
+          7,
+          27,
+          17,
+          24,
+          23,
+          23,
+          22,
+          18,
+          25,
+          24,
+          15,
+          21,
+          19,
+          22,
+          14,
+          11,
+          10,
+          11,
+          14,
+          13,
+          14,
+          10,
+          9,
+          15,
+          14,
+          9,
+          19,
+          18,
+          22,
+          17,
+          16,
+          24,
+          23,
+          18,
+          17,
+          16,
+          15,
+          24,
+          20,
+          19,
+          21
+        ],
+        "triangles": [
+          [
+            32,
+            31,
+            0
+          ],
+          [
+            3,
+            2,
+            30
+          ],
+          [
+            2,
+            1,
+            30
+          ],
+          [
+            30,
+            1,
+            31
+          ],
+          [
+            29,
+            4,
+            3
+          ],
+          [
+            4,
+            28,
+            5
+          ],
+          [
+            28,
+            4,
+            29
+          ],
+          [
+            29,
+            3,
+            30
+          ],
+          [
+            6,
+            5,
+            27
+          ],
+          [
+            1,
+            0,
+            31
+          ],
+          [
+            26,
+            8,
+            7
+          ],
+          [
+            13,
+            12,
+            11
+          ],
+          [
+            7,
+            6,
+            27
+          ],
+          [
+            28,
+            27,
+            5
+          ],
+          [
+            25,
+            8,
+            26
+          ],
+          [
+            15,
+            9,
+            25
+          ],
+          [
+            9,
+            8,
+            25
+          ],
+          [
+            26,
+            7,
+            27
+          ],
+          [
+            17,
+            24,
+            23
+          ],
+          [
+            23,
+            22,
+            18
+          ],
+          [
+            25,
+            24,
+            15
+          ],
+          [
+            21,
+            19,
+            22
+          ],
+          [
+            14,
+            11,
+            10
+          ],
+          [
+            11,
+            14,
+            13
+          ],
+          [
+            14,
+            10,
+            9
+          ],
+          [
+            15,
+            14,
+            9
+          ],
+          [
+            19,
+            18,
+            22
+          ],
+          [
+            17,
+            16,
+            24
+          ],
+          [
+            23,
+            18,
+            17
+          ],
+          [
+            16,
+            15,
+            24
+          ],
+          [
+            20,
+            19,
+            21
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 203
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 11,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 43,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 77791232,
+          "ty_fixed": -131006464
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 30,
+      "payload_hex": "000affff0104a3f83100000010050a01af003a51220d424ab001c62f2f7bf74e000c010c010c010c010c01"
+    },
+    {
+      "index": 12,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 41,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": 11,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 91881472,
+          "ty_fixed": -119865344
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 28,
+      "payload_hex": "000a000b01057af8db000000100509ff9affbc6618ad814f1744c08876fd190d010d010d010d010d01"
+    },
+    {
+      "index": 13,
+      "type_code": 10,
+      "type_name": "environmental_entity_i",
+      "record_bytes": 29,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": 12,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 135659520,
+          "ty_fixed": -120455168
+        },
+        "packed_flags": 22,
+        "layer_or_type_bits": 6
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 16,
+      "payload_hex": "000a000c010816f8d200000016fd47ff5fffe4fff809000900ff003700"
+    },
+    {
+      "index": 14,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": 13,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 134283264,
+          "ty_fixed": -114622464
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "000a000d010801f92b00000013"
+    },
+    {
+      "index": 15,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 79,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": 14,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 132841472,
+          "ty_fixed": -118816768
+        },
+        "packed_flags": 20,
+        "layer_or_type_bits": 4
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 66,
+      "payload_hex": "000a000e0107ebf8eb000000140e09009e001067cfe65d0cbd020c1b3c842019e32713faf5ff1f50c0800103060c1818f05f3f090102010201fe00ff00fd0000010001000100010601060106010a01"
+    },
+    {
+      "index": 16,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": 15,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 150339584,
+          "ty_fixed": -117768192
+        },
+        "packed_flags": 26,
+        "layer_or_type_bits": 10
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "000a000f0108f6f8fb0000001a0100000000003d00"
+    },
+    {
+      "index": 17,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 27,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": 16,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 136249344,
+          "ty_fixed": -120651776
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 14,
+      "payload_hex": "000a001001081ff8cf000000100208006300039d63fd040d010d01"
+    },
+    {
+      "index": 18,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": 17,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 104660992,
+          "ty_fixed": -120782848
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "000a001101063df8cd00000017"
+    },
+    {
+      "index": 19,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 10,
+        "child_index": 18,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 80936960,
+          "ty_fixed": -126287872
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "000a00120104d3f87900000017"
+    },
+    {
+      "index": 20,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 135,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 10,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 80805888,
+          "ty_fixed": -49086464
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 122,
+      "payload_hex": "0000000a0104d1fd13000000150017003fff0c431d0a02f4802b2e79e9bdff220f43156144d141de5843cd35dfc0a3107689a10837f8313995f4d1461a1985945038b914513c9d1892471644d0804206a66ea1150604f40c10f13884d3104305150403585500548350059540344c0451123551520455d4612446b128c692204762284bc100ffff",
+      "polygon_geometry": {
+        "vertex_count": 24,
+        "triangle_index_count": 63,
+        "triangle_count": 21,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 10,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 41156608,
+            "y_fixed": -110493696,
+            "x": 628.0,
+            "y": -1686.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 41811968,
+            "y_fixed": -111804416,
+            "x": 638.0,
+            "y": -1706.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 42336256,
+            "y_fixed": -112197632,
+            "x": 646.0,
+            "y": -1712.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 43581440,
+            "y_fixed": -112459776,
+            "x": 665.0,
+            "y": -1716.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 45154304,
+            "y_fixed": -112525312,
+            "x": 689.0,
+            "y": -1717.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 62062592,
+            "y_fixed": -109641728,
+            "x": 947.0,
+            "y": -1673.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 65404928,
+            "y_fixed": -109510656,
+            "x": 998.0,
+            "y": -1671.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 67108864,
+            "y_fixed": -109903872,
+            "x": 1024.0,
+            "y": -1677.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 67698688,
+            "y_fixed": -110559232,
+            "x": 1033.0,
+            "y": -1687.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 67895296,
+            "y_fixed": -111214592,
+            "x": 1036.0,
+            "y": -1697.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 67633152,
+            "y_fixed": -113115136,
+            "x": 1032.0,
+            "y": -1726.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 66781184,
+            "y_fixed": -115212288,
+            "x": 1019.0,
+            "y": -1758.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 64094208,
+            "y_fixed": -120717312,
+            "x": 978.0,
+            "y": -1842.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 63569920,
+            "y_fixed": -122224640,
+            "x": 970.0,
+            "y": -1865.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 63438848,
+            "y_fixed": -123076608,
+            "x": 968.0,
+            "y": -1878.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 63635456,
+            "y_fixed": -125173760,
+            "x": 971.0,
+            "y": -1910.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 64159744,
+            "y_fixed": -126550016,
+            "x": 979.0,
+            "y": -1931.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 65273856,
+            "y_fixed": -127598592,
+            "x": 996.0,
+            "y": -1947.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 66977792,
+            "y_fixed": -128385024,
+            "x": 1022.0,
+            "y": -1959.0
+          },
+          {
+            "index": 19,
+            "x_fixed": 80478208,
+            "y_fixed": -129368064,
+            "x": 1228.0,
+            "y": -1974.0
+          },
+          {
+            "index": 20,
+            "x_fixed": 75300864,
+            "y_fixed": -153681920,
+            "x": 1149.0,
+            "y": -2345.0
+          },
+          {
+            "index": 21,
+            "x_fixed": 18612224,
+            "y_fixed": -125042688,
+            "x": 284.0,
+            "y": -1908.0
+          },
+          {
+            "index": 22,
+            "x_fixed": 40108032,
+            "y_fixed": -108331008,
+            "x": 612.0,
+            "y": -1653.0
+          },
+          {
+            "index": 23,
+            "x_fixed": 41156608,
+            "y_fixed": -110493696,
+            "x": 628.0,
+            "y": -1686.0
+          }
+        ],
+        "triangle_indices": [
+          4,
+          16,
+          15,
+          3,
+          16,
+          4,
+          15,
+          14,
+          4,
+          14,
+          13,
+          4,
+          3,
+          21,
+          16,
+          5,
+          4,
+          12,
+          0,
+          22,
+          21,
+          1,
+          0,
+          21,
+          3,
+          2,
+          21,
+          1,
+          21,
+          2,
+          4,
+          13,
+          12,
+          17,
+          16,
+          20,
+          18,
+          20,
+          19,
+          20,
+          18,
+          17,
+          16,
+          21,
+          20,
+          7,
+          6,
+          9,
+          6,
+          5,
+          11,
+          10,
+          6,
+          11,
+          9,
+          8,
+          7,
+          9,
+          6,
+          10,
+          11,
+          5,
+          12
+        ],
+        "triangles": [
+          [
+            4,
+            16,
+            15
+          ],
+          [
+            3,
+            16,
+            4
+          ],
+          [
+            15,
+            14,
+            4
+          ],
+          [
+            14,
+            13,
+            4
+          ],
+          [
+            3,
+            21,
+            16
+          ],
+          [
+            5,
+            4,
+            12
+          ],
+          [
+            0,
+            22,
+            21
+          ],
+          [
+            1,
+            0,
+            21
+          ],
+          [
+            3,
+            2,
+            21
+          ],
+          [
+            1,
+            21,
+            2
+          ],
+          [
+            4,
+            13,
+            12
+          ],
+          [
+            17,
+            16,
+            20
+          ],
+          [
+            18,
+            20,
+            19
+          ],
+          [
+            20,
+            18,
+            17
+          ],
+          [
+            16,
+            21,
+            20
+          ],
+          [
+            7,
+            6,
+            9
+          ],
+          [
+            6,
+            5,
+            11
+          ],
+          [
+            10,
+            6,
+            11
+          ],
+          [
+            9,
+            8,
+            7
+          ],
+          [
+            9,
+            6,
+            10
+          ],
+          [
+            11,
+            5,
+            12
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 135
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 21,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 47,
+      "base_header": {
+        "parent_index": 20,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 47644672,
+          "ty_fixed": -114229248
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 34,
+      "payload_hex": "0014ffff0102d7f93100000010060a004bffe9b50b3bcc303e7902170043840a8fff0c0b010b010b010b010b010b01"
+    },
+    {
+      "index": 22,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 20,
+        "child_index": 21,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 66256896,
+          "ty_fixed": -123273216
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "001400150103f3f8a700000017"
+    },
+    {
+      "index": 23,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 20,
+        "child_index": 22,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 64552960,
+          "ty_fixed": -105840640
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "001400160103d9f9b100000017"
+    },
+    {
+      "index": 24,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 20,
+        "child_index": 23,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 45154304,
+          "ty_fixed": -108331008
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "001400170102b1f98b00000017"
+    },
+    {
+      "index": 25,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 60,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 20,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 80805888,
+          "ty_fixed": -49086464
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 47,
+      "payload_hex": "000000140104d1fd130000001500080012ff0c431d0b00612e098a50a8322068f49722f9c82eb14628fc307c5d8fa02804671270624553123752ffff",
+      "polygon_geometry": {
+        "vertex_count": 9,
+        "triangle_index_count": 18,
+        "triangle_count": 6,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 11,
+        "index_bit_width": 4,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 26148864,
+            "y_fixed": -84541440,
+            "x": 399.0,
+            "y": -1290.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 27394048,
+            "y_fixed": -90308608,
+            "x": 418.0,
+            "y": -1378.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 27459584,
+            "y_fixed": -93782016,
+            "x": 419.0,
+            "y": -1431.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 28639232,
+            "y_fixed": -96075776,
+            "x": 437.0,
+            "y": -1466.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 40108032,
+            "y_fixed": -108331008,
+            "x": 612.0,
+            "y": -1653.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 19988480,
+            "y_fixed": -125698048,
+            "x": 305.0,
+            "y": -1918.0
+          },
+          {
+            "index": 6,
+            "x_fixed": -27394048,
+            "y_fixed": -102039552,
+            "x": -418.0,
+            "y": -1557.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 24444928,
+            "y_fixed": -83034112,
+            "x": 373.0,
+            "y": -1267.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 26148864,
+            "y_fixed": -84541440,
+            "x": 399.0,
+            "y": -1290.0
+          }
+        ],
+        "triangle_indices": [
+          7,
+          6,
+          2,
+          1,
+          0,
+          7,
+          2,
+          6,
+          5,
+          4,
+          3,
+          5,
+          2,
+          1,
+          7,
+          3,
+          2,
+          5
+        ],
+        "triangles": [
+          [
+            7,
+            6,
+            2
+          ],
+          [
+            1,
+            0,
+            7
+          ],
+          [
+            2,
+            6,
+            5
+          ],
+          [
+            4,
+            3,
+            5
+          ],
+          [
+            2,
+            1,
+            7
+          ],
+          [
+            3,
+            2,
+            5
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 60
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 26,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 41,
+      "base_header": {
+        "parent_index": 25,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 49283072,
+          "ty_fixed": -84279296
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 28,
+      "payload_hex": "0019ffff0102f0fafa000000100509ff48ff14b890ba9d1c08ec70d1073f110d010d010d010d010d01"
+    },
+    {
+      "index": 27,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 47,
+      "base_header": {
+        "parent_index": 25,
+        "child_index": 26,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 31064064,
+          "ty_fixed": -98828288
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 34,
+      "payload_hex": "0019001a0101dafa1c000000180707003cffbd476d1b3031e5003e5505c0be0a015100510051005100510051005100"
+    },
+    {
+      "index": 28,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 25,
+        "child_index": 27,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 27394048,
+          "ty_fixed": -91947008
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "0019001b0101a2fa85000000180100000000005000"
+    },
+    {
+      "index": 29,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 25,
+        "child_index": 28,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 28246016,
+          "ty_fixed": -85917696
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0019001c0101affae100000017"
+    },
+    {
+      "index": 30,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 282,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 25,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 111017984,
+          "ty_fixed": -49152000
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 269,
+      "payload_hex": "0000001901069efd12000000150030008aff0c431d0b02e06a799080def31aa8b8031014007fef496ff9c847bef3f65f80054830820e5020ffe02f7ec5c9cdeb501b5ace4cce718b51ac621b2bd9daf0ee77c1171ef076c79716fad98daf35a70d3de50ecb57babfdded6e817bdce87257bf78d674adf76df29c23bdeb643fbbd7bf4ef6b6039ef2cdb7bf0672a004294881063830c21506010b68008548079ed3e704fa804e21932874f2741c8d056773ea704e999466a34191462553e83412994ca5510aa5c9a852acd5abc57aad5498d306e56abd160dc663a178281208c8e31081201e89c5c361881c241103a04028480c0708024018582a00c0ea7259612c80cba40098480a8300e0b502002813408512180830aa0cffff",
+      "polygon_geometry": {
+        "vertex_count": 49,
+        "triangle_index_count": 138,
+        "triangle_count": 46,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 11,
+        "index_bit_width": 7,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 71958528,
+            "y_fixed": -93978624,
+            "x": 1098.0,
+            "y": -1434.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 82771968,
+            "y_fixed": -108134400,
+            "x": 1263.0,
+            "y": -1650.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 81920000,
+            "y_fixed": -109772800,
+            "x": 1250.0,
+            "y": -1675.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 80674816,
+            "y_fixed": -111214592,
+            "x": 1231.0,
+            "y": -1697.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 76480512,
+            "y_fixed": -114556928,
+            "x": 1167.0,
+            "y": -1748.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 70254592,
+            "y_fixed": -118095872,
+            "x": 1072.0,
+            "y": -1802.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 63832064,
+            "y_fixed": -120913920,
+            "x": 974.0,
+            "y": -1845.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 56623104,
+            "y_fixed": -123011072,
+            "x": 864.0,
+            "y": -1877.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 49545216,
+            "y_fixed": -124256256,
+            "x": 756.0,
+            "y": -1896.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 46137344,
+            "y_fixed": -124518400,
+            "x": 704.0,
+            "y": -1900.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 43843584,
+            "y_fixed": -124518400,
+            "x": 669.0,
+            "y": -1900.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 42205184,
+            "y_fixed": -124190720,
+            "x": 644.0,
+            "y": -1895.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 41287680,
+            "y_fixed": -123731968,
+            "x": 630.0,
+            "y": -1888.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 40960000,
+            "y_fixed": -123076608,
+            "x": 625.0,
+            "y": -1878.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 40960000,
+            "y_fixed": -122355712,
+            "x": 625.0,
+            "y": -1867.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 41746432,
+            "y_fixed": -120389632,
+            "x": 637.0,
+            "y": -1837.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 47579136,
+            "y_fixed": -112132096,
+            "x": 726.0,
+            "y": -1711.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 48955392,
+            "y_fixed": -109903872,
+            "x": 747.0,
+            "y": -1677.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 49676288,
+            "y_fixed": -108134400,
+            "x": 758.0,
+            "y": -1650.0
+          },
+          {
+            "index": 19,
+            "x_fixed": 50593792,
+            "y_fixed": -103546880,
+            "x": 772.0,
+            "y": -1580.0
+          },
+          {
+            "index": 20,
+            "x_fixed": 50528256,
+            "y_fixed": -100728832,
+            "x": 771.0,
+            "y": -1537.0
+          },
+          {
+            "index": 21,
+            "x_fixed": 50135040,
+            "y_fixed": -99483648,
+            "x": 765.0,
+            "y": -1518.0
+          },
+          {
+            "index": 22,
+            "x_fixed": 49545216,
+            "y_fixed": -98500608,
+            "x": 756.0,
+            "y": -1503.0
+          },
+          {
+            "index": 23,
+            "x_fixed": 47775744,
+            "y_fixed": -97124352,
+            "x": 729.0,
+            "y": -1482.0
+          },
+          {
+            "index": 24,
+            "x_fixed": 46137344,
+            "y_fixed": -96665600,
+            "x": 704.0,
+            "y": -1475.0
+          },
+          {
+            "index": 25,
+            "x_fixed": 44367872,
+            "y_fixed": -96468992,
+            "x": 677.0,
+            "y": -1472.0
+          },
+          {
+            "index": 26,
+            "x_fixed": 32833536,
+            "y_fixed": -97058816,
+            "x": 501.0,
+            "y": -1481.0
+          },
+          {
+            "index": 27,
+            "x_fixed": 29622272,
+            "y_fixed": -96993280,
+            "x": 452.0,
+            "y": -1480.0
+          },
+          {
+            "index": 28,
+            "x_fixed": 27000832,
+            "y_fixed": -96665600,
+            "x": 412.0,
+            "y": -1475.0
+          },
+          {
+            "index": 29,
+            "x_fixed": 25231360,
+            "y_fixed": -96075776,
+            "x": 385.0,
+            "y": -1466.0
+          },
+          {
+            "index": 30,
+            "x_fixed": 23461888,
+            "y_fixed": -94830592,
+            "x": 358.0,
+            "y": -1447.0
+          },
+          {
+            "index": 31,
+            "x_fixed": 22151168,
+            "y_fixed": -93519872,
+            "x": 338.0,
+            "y": -1427.0
+          },
+          {
+            "index": 32,
+            "x_fixed": 19660800,
+            "y_fixed": -89784320,
+            "x": 300.0,
+            "y": -1370.0
+          },
+          {
+            "index": 33,
+            "x_fixed": 18415616,
+            "y_fixed": -87097344,
+            "x": 281.0,
+            "y": -1329.0
+          },
+          {
+            "index": 34,
+            "x_fixed": 17629184,
+            "y_fixed": -84738048,
+            "x": 269.0,
+            "y": -1293.0
+          },
+          {
+            "index": 35,
+            "x_fixed": 17301504,
+            "y_fixed": -82706432,
+            "x": 264.0,
+            "y": -1262.0
+          },
+          {
+            "index": 36,
+            "x_fixed": 17432576,
+            "y_fixed": -81592320,
+            "x": 266.0,
+            "y": -1245.0
+          },
+          {
+            "index": 37,
+            "x_fixed": 18219008,
+            "y_fixed": -81068032,
+            "x": 278.0,
+            "y": -1237.0
+          },
+          {
+            "index": 38,
+            "x_fixed": 19529728,
+            "y_fixed": -81068032,
+            "x": 298.0,
+            "y": -1237.0
+          },
+          {
+            "index": 39,
+            "x_fixed": 28704768,
+            "y_fixed": -83034112,
+            "x": 438.0,
+            "y": -1267.0
+          },
+          {
+            "index": 40,
+            "x_fixed": 30408704,
+            "y_fixed": -82771968,
+            "x": 464.0,
+            "y": -1263.0
+          },
+          {
+            "index": 41,
+            "x_fixed": 31260672,
+            "y_fixed": -81854464,
+            "x": 477.0,
+            "y": -1249.0
+          },
+          {
+            "index": 42,
+            "x_fixed": 31784960,
+            "y_fixed": -80740352,
+            "x": 485.0,
+            "y": -1232.0
+          },
+          {
+            "index": 43,
+            "x_fixed": 32178176,
+            "y_fixed": -77856768,
+            "x": 491.0,
+            "y": -1188.0
+          },
+          {
+            "index": 44,
+            "x_fixed": 31522816,
+            "y_fixed": -74907648,
+            "x": 481.0,
+            "y": -1143.0
+          },
+          {
+            "index": 45,
+            "x_fixed": 30212096,
+            "y_fixed": -72810496,
+            "x": 461.0,
+            "y": -1111.0
+          },
+          {
+            "index": 46,
+            "x_fixed": 13697024,
+            "y_fixed": -65470464,
+            "x": 209.0,
+            "y": -999.0
+          },
+          {
+            "index": 47,
+            "x_fixed": 60030976,
+            "y_fixed": -48431104,
+            "x": 916.0,
+            "y": -739.0
+          },
+          {
+            "index": 48,
+            "x_fixed": 71958528,
+            "y_fixed": -93978624,
+            "x": 1098.0,
+            "y": -1434.0
+          }
+        ],
+        "triangle_indices": [
+          30,
+          39,
+          31,
+          39,
+          32,
+          31,
+          32,
+          39,
+          33,
+          38,
+          34,
+          33,
+          39,
+          30,
+          29,
+          14,
+          13,
+          11,
+          28,
+          27,
+          39,
+          29,
+          28,
+          39,
+          25,
+          41,
+          26,
+          27,
+          26,
+          40,
+          36,
+          35,
+          37,
+          38,
+          33,
+          39,
+          35,
+          34,
+          38,
+          38,
+          37,
+          35,
+          41,
+          40,
+          26,
+          25,
+          42,
+          41,
+          44,
+          43,
+          47,
+          45,
+          44,
+          47,
+          43,
+          42,
+          24,
+          39,
+          27,
+          40,
+          46,
+          45,
+          47,
+          11,
+          13,
+          12,
+          15,
+          11,
+          10,
+          15,
+          10,
+          9,
+          8,
+          16,
+          15,
+          7,
+          17,
+          16,
+          8,
+          15,
+          9,
+          11,
+          15,
+          14,
+          6,
+          17,
+          7,
+          18,
+          17,
+          6,
+          0,
+          5,
+          4,
+          5,
+          18,
+          6,
+          7,
+          16,
+          8,
+          0,
+          4,
+          3,
+          22,
+          21,
+          0,
+          0,
+          43,
+          23,
+          23,
+          43,
+          24,
+          22,
+          0,
+          23,
+          19,
+          5,
+          0,
+          19,
+          18,
+          5,
+          3,
+          1,
+          0,
+          47,
+          43,
+          0,
+          0,
+          20,
+          19,
+          0,
+          21,
+          20,
+          1,
+          3,
+          2,
+          24,
+          42,
+          25
+        ],
+        "triangles": [
+          [
+            30,
+            39,
+            31
+          ],
+          [
+            39,
+            32,
+            31
+          ],
+          [
+            32,
+            39,
+            33
+          ],
+          [
+            38,
+            34,
+            33
+          ],
+          [
+            39,
+            30,
+            29
+          ],
+          [
+            14,
+            13,
+            11
+          ],
+          [
+            28,
+            27,
+            39
+          ],
+          [
+            29,
+            28,
+            39
+          ],
+          [
+            25,
+            41,
+            26
+          ],
+          [
+            27,
+            26,
+            40
+          ],
+          [
+            36,
+            35,
+            37
+          ],
+          [
+            38,
+            33,
+            39
+          ],
+          [
+            35,
+            34,
+            38
+          ],
+          [
+            38,
+            37,
+            35
+          ],
+          [
+            41,
+            40,
+            26
+          ],
+          [
+            25,
+            42,
+            41
+          ],
+          [
+            44,
+            43,
+            47
+          ],
+          [
+            45,
+            44,
+            47
+          ],
+          [
+            43,
+            42,
+            24
+          ],
+          [
+            39,
+            27,
+            40
+          ],
+          [
+            46,
+            45,
+            47
+          ],
+          [
+            11,
+            13,
+            12
+          ],
+          [
+            15,
+            11,
+            10
+          ],
+          [
+            15,
+            10,
+            9
+          ],
+          [
+            8,
+            16,
+            15
+          ],
+          [
+            7,
+            17,
+            16
+          ],
+          [
+            8,
+            15,
+            9
+          ],
+          [
+            11,
+            15,
+            14
+          ],
+          [
+            6,
+            17,
+            7
+          ],
+          [
+            18,
+            17,
+            6
+          ],
+          [
+            0,
+            5,
+            4
+          ],
+          [
+            5,
+            18,
+            6
+          ],
+          [
+            7,
+            16,
+            8
+          ],
+          [
+            0,
+            4,
+            3
+          ],
+          [
+            22,
+            21,
+            0
+          ],
+          [
+            0,
+            43,
+            23
+          ],
+          [
+            23,
+            43,
+            24
+          ],
+          [
+            22,
+            0,
+            23
+          ],
+          [
+            19,
+            5,
+            0
+          ],
+          [
+            19,
+            18,
+            5
+          ],
+          [
+            3,
+            1,
+            0
+          ],
+          [
+            47,
+            43,
+            0
+          ],
+          [
+            0,
+            20,
+            19
+          ],
+          [
+            0,
+            21,
+            20
+          ],
+          [
+            1,
+            3,
+            2
+          ],
+          [
+            24,
+            42,
+            25
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 282
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 31,
+      "type_code": 10,
+      "type_name": "environmental_entity_i",
+      "record_bytes": 29,
+      "base_header": {
+        "parent_index": 30,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 43515904,
+          "ty_fixed": -91881472
+        },
+        "packed_flags": 22,
+        "layer_or_type_bits": 6
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 16,
+      "payload_hex": "001effff010298fa8600000016ff56fdc200f7ffc109000900ff000010"
+    },
+    {
+      "index": 32,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 30,
+        "child_index": 31,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 47841280,
+          "ty_fixed": -104202240
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "001e001f0102daf9ca00000017"
+    },
+    {
+      "index": 33,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 59,
+      "base_header": {
+        "parent_index": 30,
+        "child_index": 32,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 36372480,
+          "ty_fixed": -96731136
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 46,
+      "payload_hex": "001e002001022bfa3c000000180a08000c00037e63472b0ff3d7bb9f83010101010101000000004e004e004e004e004e004e004e004e004e004e00"
+    },
+    {
+      "index": 34,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 30,
+        "child_index": 33,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 24641536,
+          "ty_fixed": -79560704
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "001e0021010178fb4200000017"
+    },
+    {
+      "index": 35,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 30,
+        "child_index": 34,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 20447232,
+          "ty_fixed": -78905344
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "001e0022010138fb4c00000017"
+    },
+    {
+      "index": 36,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 80,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 30,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 111280128,
+          "ty_fixed": -104529920
+        },
+        "packed_flags": 26,
+        "layer_or_type_bits": 10
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 67,
+      "payload_hex": "0000001e0106a2f9c50000001a000e0024ff003700080038b9d201314546422c10fcf1e6ccbaffcb1c2830332e2619f8d8ccced5ee0b056829c1166881852602432a0974c631e28c428629038905ffff",
+      "polygon_geometry": {
+        "vertex_count": 15,
+        "triangle_index_count": 36,
+        "triangle_count": 12,
+        "color_rgba_bytes": [
+          255,
+          0,
+          55,
+          0
+        ],
+        "color_argb_hex": "#FF003700",
+        "coordinate_bit_width": 8,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": -983040,
+            "y_fixed": -1638400,
+            "x": -15.0,
+            "y": -25.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 655360,
+            "y_fixed": -851968,
+            "x": 10.0,
+            "y": -13.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 3735552,
+            "y_fixed": -327680,
+            "x": 57.0,
+            "y": -5.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 6881280,
+            "y_fixed": -131072,
+            "x": 105.0,
+            "y": -2.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 8192000,
+            "y_fixed": -458752,
+            "x": 125.0,
+            "y": -7.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 8257536,
+            "y_fixed": -983040,
+            "x": 126.0,
+            "y": -15.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 7995392,
+            "y_fixed": -1835008,
+            "x": 122.0,
+            "y": -28.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 6553600,
+            "y_fixed": -3997696,
+            "x": 100.0,
+            "y": -61.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 4718592,
+            "y_fixed": -6094848,
+            "x": 72.0,
+            "y": -93.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 3407872,
+            "y_fixed": -6881280,
+            "x": 52.0,
+            "y": -105.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 2686976,
+            "y_fixed": -6750208,
+            "x": 41.0,
+            "y": -103.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 1966080,
+            "y_fixed": -6291456,
+            "x": 30.0,
+            "y": -96.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 262144,
+            "y_fixed": -4653056,
+            "x": 4.0,
+            "y": -71.0
+          },
+          {
+            "index": 13,
+            "x_fixed": -917504,
+            "y_fixed": -2752512,
+            "x": -14.0,
+            "y": -42.0
+          },
+          {
+            "index": 14,
+            "x_fixed": -983040,
+            "y_fixed": -1638400,
+            "x": -15.0,
+            "y": -25.0
+          }
+        ],
+        "triangle_indices": [
+          8,
+          11,
+          10,
+          2,
+          12,
+          11,
+          0,
+          13,
+          1,
+          12,
+          1,
+          13,
+          2,
+          1,
+          12,
+          8,
+          10,
+          9,
+          2,
+          8,
+          7,
+          3,
+          7,
+          6,
+          2,
+          7,
+          3,
+          5,
+          4,
+          3,
+          6,
+          5,
+          3,
+          8,
+          2,
+          11
+        ],
+        "triangles": [
+          [
+            8,
+            11,
+            10
+          ],
+          [
+            2,
+            12,
+            11
+          ],
+          [
+            0,
+            13,
+            1
+          ],
+          [
+            12,
+            1,
+            13
+          ],
+          [
+            2,
+            1,
+            12
+          ],
+          [
+            8,
+            10,
+            9
+          ],
+          [
+            2,
+            8,
+            7
+          ],
+          [
+            3,
+            7,
+            6
+          ],
+          [
+            2,
+            7,
+            3
+          ],
+          [
+            5,
+            4,
+            3
+          ],
+          [
+            6,
+            5,
+            3
+          ],
+          [
+            8,
+            2,
+            11
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 80
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 37,
+      "type_code": 10,
+      "type_name": "environmental_entity_i",
+      "record_bytes": 29,
+      "base_header": {
+        "parent_index": 36,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -23396352,
+          "ty_fixed": 38862848
+        },
+        "packed_flags": 22,
+        "layer_or_type_bits": 6
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 16,
+      "payload_hex": "0024ffff01fe9b02510000001600d1fb2c0157006009000900ff003700"
+    },
+    {
+      "index": 38,
+      "type_code": 10,
+      "type_name": "environmental_entity_i",
+      "record_bytes": 29,
+      "base_header": {
+        "parent_index": 36,
+        "child_index": 37,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 7012352,
+          "ty_fixed": 35258368
+        },
+        "packed_flags": 22,
+        "layer_or_type_bits": 6
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 16,
+      "payload_hex": "0024002501006b021a00000016ff88fa71017effcb09000900ff000010"
+    },
+    {
+      "index": 39,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 47,
+      "base_header": {
+        "parent_index": 36,
+        "child_index": 38,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -11665408,
+          "ty_fixed": -3932160
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 34,
+      "payload_hex": "0024002601ff4effc400000010060a0150ff3cb01a5b2e540a0d02c4bcfffad73c9b0d0c010c010c010c010c010c01"
+    },
+    {
+      "index": 40,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 41,
+      "base_header": {
+        "parent_index": 36,
+        "child_index": 39,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -10485760,
+          "ty_fixed": 9961472
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 28,
+      "payload_hex": "0024002701ff60009800000010050900c5ff7f3b7bb2ac060c813cfbbd5e180b010b010b010b010b01"
+    },
+    {
+      "index": 41,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 36,
+        "child_index": 40,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 3670016,
+          "ty_fixed": 3473408
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "00240028010038003500000019010000000000f400"
+    },
+    {
+      "index": 42,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 36,
+        "child_index": 41,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 28311552,
+          "ty_fixed": -24838144
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "002400290101b0fe8500000017"
+    },
+    {
+      "index": 43,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 36,
+        "child_index": 42,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 3735552,
+          "ty_fixed": -262144
+        },
+        "packed_flags": 26,
+        "layer_or_type_bits": 10
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "0024002a010039fffc0000001a010000000000f300"
+    },
+    {
+      "index": 44,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 36,
+        "child_index": 43,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 1310720,
+          "ty_fixed": 2555904
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0024002b010014002700000017"
+    },
+    {
+      "index": 45,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 55,
+      "base_header": {
+        "parent_index": 36,
+        "child_index": 44,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -1048576,
+          "ty_fixed": -1572864
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 42,
+      "payload_hex": "0024002c01fff0ffe80000001909080047000dbbbbc6d0eb06213345f4f4fb0105090d0903090103010301010101010101050105010a01"
+    },
+    {
+      "index": 46,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 88,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 36,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 80805888,
+          "ty_fixed": -49086464
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 75,
+      "payload_hex": "000000240104d1fd1300000015000e0024ff0c431d0affc58dd594d3508635e6d864aac5065ba64e3606fbc2939cc0c104f083bf7beda87bbe748a3e5d0705868ca504318585c656084b0835d2512721d0c2314a9901ffff",
+      "polygon_geometry": {
+        "vertex_count": 15,
+        "triangle_index_count": 36,
+        "triangle_count": 12,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 10,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 22151168,
+            "y_fixed": -61538304,
+            "x": 338.0,
+            "y": -939.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 16384000,
+            "y_fixed": -68616192,
+            "x": 250.0,
+            "y": -1047.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 16646144,
+            "y_fixed": -69337088,
+            "x": 254.0,
+            "y": -1058.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 17301504,
+            "y_fixed": -69926912,
+            "x": 264.0,
+            "y": -1067.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 21692416,
+            "y_fixed": -72220672,
+            "x": 331.0,
+            "y": -1102.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 22151168,
+            "y_fixed": -73269248,
+            "x": 338.0,
+            "y": -1118.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 22216704,
+            "y_fixed": -75694080,
+            "x": 339.0,
+            "y": -1155.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 22544384,
+            "y_fixed": -76087296,
+            "x": 344.0,
+            "y": -1161.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 24051712,
+            "y_fixed": -76939264,
+            "x": 367.0,
+            "y": -1174.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 24510464,
+            "y_fixed": -77594624,
+            "x": 374.0,
+            "y": -1184.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 24444928,
+            "y_fixed": -83034112,
+            "x": 373.0,
+            "y": -1267.0
+          },
+          {
+            "index": 11,
+            "x_fixed": -27394048,
+            "y_fixed": -102039552,
+            "x": -418.0,
+            "y": -1557.0
+          },
+          {
+            "index": 12,
+            "x_fixed": -32309248,
+            "y_fixed": -50331648,
+            "x": -493.0,
+            "y": -768.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 22151168,
+            "y_fixed": -40304640,
+            "x": 338.0,
+            "y": -615.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 22151168,
+            "y_fixed": -61538304,
+            "x": 338.0,
+            "y": -939.0
+          }
+        ],
+        "triangle_indices": [
+          6,
+          4,
+          3,
+          11,
+          10,
+          2,
+          4,
+          6,
+          5,
+          12,
+          1,
+          13,
+          12,
+          11,
+          1,
+          1,
+          11,
+          2,
+          2,
+          10,
+          3,
+          9,
+          7,
+          10,
+          7,
+          9,
+          8,
+          0,
+          13,
+          1,
+          7,
+          6,
+          10,
+          10,
+          6,
+          3
+        ],
+        "triangles": [
+          [
+            6,
+            4,
+            3
+          ],
+          [
+            11,
+            10,
+            2
+          ],
+          [
+            4,
+            6,
+            5
+          ],
+          [
+            12,
+            1,
+            13
+          ],
+          [
+            12,
+            11,
+            1
+          ],
+          [
+            1,
+            11,
+            2
+          ],
+          [
+            2,
+            10,
+            3
+          ],
+          [
+            9,
+            7,
+            10
+          ],
+          [
+            7,
+            9,
+            8
+          ],
+          [
+            0,
+            13,
+            1
+          ],
+          [
+            7,
+            6,
+            10
+          ],
+          [
+            10,
+            6,
+            3
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 88
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 47,
+      "type_code": 10,
+      "type_name": "environmental_entity_i",
+      "record_bytes": 29,
+      "base_header": {
+        "parent_index": 46,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 10616832,
+          "ty_fixed": -63176704
+        },
+        "packed_flags": 22,
+        "layer_or_type_bits": 6
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 16,
+      "payload_hex": "002effff0100a2fc3c000000160052ff74009affff09000900ff000010"
+    },
+    {
+      "index": 48,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 39,
+      "base_header": {
+        "parent_index": 46,
+        "child_index": 47,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 43843584,
+          "ty_fixed": -65404928
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 26,
+      "payload_hex": "002e002f01029dfc1a000000180507000000380000e0ff07483280830353005300530053005300"
+    },
+    {
+      "index": 49,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 46,
+        "child_index": 48,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 26148864,
+          "ty_fixed": -81264640
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "002e003001018ffb2800000017"
+    },
+    {
+      "index": 50,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 46,
+        "child_index": 49,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 22085632,
+          "ty_fixed": -73203712
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "002e0031010151fba3000000180100000000005000"
+    },
+    {
+      "index": 51,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 46,
+        "child_index": 50,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 19136512,
+          "ty_fixed": -67895296
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "002e0032010124fbf400000017"
+    },
+    {
+      "index": 52,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 39,
+      "base_header": {
+        "parent_index": 46,
+        "child_index": 51,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 22085632,
+          "ty_fixed": -45809664
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 26,
+      "payload_hex": "002e0033010151fd450000001805070000ffc88040201000380e808c0450005000500050005000"
+    },
+    {
+      "index": 53,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 54,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 46,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 105709568,
+          "ty_fixed": -77856768
+        },
+        "packed_flags": 26,
+        "layer_or_type_bits": 10
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 41,
+      "payload_hex": "0000002e01064dfb5c0000001a00080012ff00370008005ac307484bc6b9b4b8ffe711130deceff6010b04560757454013124301ffff",
+      "polygon_geometry": {
+        "vertex_count": 9,
+        "triangle_index_count": 18,
+        "triangle_count": 6,
+        "color_rgba_bytes": [
+          255,
+          0,
+          55,
+          0
+        ],
+        "color_argb_hex": "#FF003700",
+        "coordinate_bit_width": 8,
+        "index_bit_width": 4,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 1900544,
+            "y_fixed": -524288,
+            "x": 29.0,
+            "y": -8.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 6356992,
+            "y_fixed": -393216,
+            "x": 97.0,
+            "y": -6.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 10616832,
+            "y_fixed": -786432,
+            "x": 162.0,
+            "y": -12.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 10813440,
+            "y_fixed": -2949120,
+            "x": 165.0,
+            "y": -45.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 2097152,
+            "y_fixed": -2752512,
+            "x": 32.0,
+            "y": -42.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 1245184,
+            "y_fixed": -2293760,
+            "x": 19.0,
+            "y": -35.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 917504,
+            "y_fixed": -1572864,
+            "x": 14.0,
+            "y": -24.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 1179648,
+            "y_fixed": -917504,
+            "x": 18.0,
+            "y": -14.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 1900544,
+            "y_fixed": -524288,
+            "x": 29.0,
+            "y": -8.0
+          }
+        ],
+        "triangle_indices": [
+          6,
+          5,
+          7,
+          0,
+          7,
+          5,
+          5,
+          4,
+          0,
+          4,
+          3,
+          1,
+          2,
+          1,
+          3,
+          4,
+          1,
+          0
+        ],
+        "triangles": [
+          [
+            6,
+            5,
+            7
+          ],
+          [
+            0,
+            7,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            4,
+            3,
+            1
+          ],
+          [
+            2,
+            1,
+            3
+          ],
+          [
+            4,
+            1,
+            0
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 54
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 54,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 33,
+      "base_header": {
+        "parent_index": 53,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -1310720,
+          "ty_fixed": 6881280
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 20,
+      "payload_hex": "0035ffff01ffec0069000000100309007eff6f82a9b60291de36060d010d010d01"
+    },
+    {
+      "index": 55,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 53,
+        "child_index": 54,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -589824,
+          "ty_fixed": -5373952
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0035003601fff7ffae00000017"
+    },
+    {
+      "index": 56,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 35,
+      "base_header": {
+        "parent_index": 53,
+        "child_index": 55,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 9895936,
+          "ty_fixed": -2883584
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 22,
+      "payload_hex": "00350037010097ffd4000000180407ffd700002987dc0a804020004e004e004e004e00"
+    },
+    {
+      "index": 57,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 47,
+      "base_header": {
+        "parent_index": 53,
+        "child_index": 56,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 1114112,
+          "ty_fixed": -786432
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 34,
+      "payload_hex": "00350038010011fff400000019070800460003babac60b264147fcfc040504030209010301ff00fd00fd0000010a01"
+    },
+    {
+      "index": 58,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 53,
+        "child_index": 57,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 4259840,
+          "ty_fixed": 2162688
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "00350039010041002100000017"
+    },
+    {
+      "index": 59,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 42,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 53,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 123207680,
+          "ty_fixed": -48496640
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 29,
+      "payload_hex": "00000035010758fd1c0000001800040006ff0c431d0a009c7993f109d8015587198627a403589401ffff",
+      "polygon_geometry": {
+        "vertex_count": 5,
+        "triangle_index_count": 6,
+        "triangle_count": 2,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 10,
+        "index_bit_width": 3,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 1376256,
+            "y_fixed": 47972352,
+            "x": 21.0,
+            "y": 732.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 16777216,
+            "y_fixed": 47906816,
+            "x": 256.0,
+            "y": 731.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 20643840,
+            "y_fixed": -3342336,
+            "x": 315.0,
+            "y": -51.0
+          },
+          {
+            "index": 3,
+            "x_fixed": -262144,
+            "y_fixed": -1769472,
+            "x": -4.0,
+            "y": -27.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 1376256,
+            "y_fixed": 47972352,
+            "x": 21.0,
+            "y": 732.0
+          }
+        ],
+        "triangle_indices": [
+          0,
+          3,
+          1,
+          2,
+          1,
+          3
+        ],
+        "triangles": [
+          [
+            0,
+            3,
+            1
+          ],
+          [
+            2,
+            1,
+            3
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 42
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 60,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 262,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 59,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 111017984,
+          "ty_fixed": -49152000
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 249,
+      "payload_hex": "0000003b01069efd1200000015002c007eff0c431d0b01825c91d0d39ddef5b873dffd18b0811080b08314a8feef58177acd5fdef297af5ce415c737b43d8de0f8b6d7bdf83df297e13c67373319c94fd6729bfd0cfe0dc78138838d1d6d6b5f9bdbf79eb8ca699e739fefbce746afbada077f7a0bf4800b6df0c3211811094d880215b6988742462213a794a638d8218f7be603071d0ea8f3f17c3a20102774b10056188026430a7136985566b4d1a84ea6530aa54a9d46a20d69a431ad54a6d2aa44ca6456a5d04684b9000682c2a04028080c82834180382004014420a14804168a4080b198482094c9a3427144209287835271341a000ba0c198401e8c00a061a900ffff",
+      "polygon_geometry": {
+        "vertex_count": 45,
+        "triangle_index_count": 126,
+        "triangle_count": 42,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 11,
+        "index_bit_width": 7,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 48103424,
+            "y_fixed": -2883584,
+            "x": 734.0,
+            "y": -44.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 60030976,
+            "y_fixed": -48431104,
+            "x": 916.0,
+            "y": -739.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 13697024,
+            "y_fixed": -65470464,
+            "x": 209.0,
+            "y": -999.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 13631488,
+            "y_fixed": -53280768,
+            "x": 208.0,
+            "y": -813.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 14614528,
+            "y_fixed": -52559872,
+            "x": 223.0,
+            "y": -802.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 15925248,
+            "y_fixed": -52232192,
+            "x": 243.0,
+            "y": -797.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 22937600,
+            "y_fixed": -52166656,
+            "x": 350.0,
+            "y": -796.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 24117248,
+            "y_fixed": -51838976,
+            "x": 368.0,
+            "y": -791.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 26869760,
+            "y_fixed": -50069504,
+            "x": 410.0,
+            "y": -764.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 28835840,
+            "y_fixed": -48234496,
+            "x": 440.0,
+            "y": -736.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 29622272,
+            "y_fixed": -46727168,
+            "x": 452.0,
+            "y": -713.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 29491200,
+            "y_fixed": -46071808,
+            "x": 450.0,
+            "y": -703.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 29163520,
+            "y_fixed": -45744128,
+            "x": 445.0,
+            "y": -698.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 27983872,
+            "y_fixed": -45416448,
+            "x": 427.0,
+            "y": -693.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 19660800,
+            "y_fixed": -45613056,
+            "x": 300.0,
+            "y": -696.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 16842752,
+            "y_fixed": -45481984,
+            "x": 257.0,
+            "y": -694.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 14286848,
+            "y_fixed": -44892160,
+            "x": 218.0,
+            "y": -685.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 12845056,
+            "y_fixed": -43909120,
+            "x": 196.0,
+            "y": -670.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 11993088,
+            "y_fixed": -42532864,
+            "x": 183.0,
+            "y": -649.0
+          },
+          {
+            "index": 19,
+            "x_fixed": 11599872,
+            "y_fixed": -40894464,
+            "x": 177.0,
+            "y": -624.0
+          },
+          {
+            "index": 20,
+            "x_fixed": 11468800,
+            "y_fixed": -38535168,
+            "x": 175.0,
+            "y": -588.0
+          },
+          {
+            "index": 21,
+            "x_fixed": 11599872,
+            "y_fixed": -31260672,
+            "x": 177.0,
+            "y": -477.0
+          },
+          {
+            "index": 22,
+            "x_fixed": 11337728,
+            "y_fixed": -28704768,
+            "x": 173.0,
+            "y": -438.0
+          },
+          {
+            "index": 23,
+            "x_fixed": 10747904,
+            "y_fixed": -26673152,
+            "x": 164.0,
+            "y": -407.0
+          },
+          {
+            "index": 24,
+            "x_fixed": 9895936,
+            "y_fixed": -25559040,
+            "x": 151.0,
+            "y": -390.0
+          },
+          {
+            "index": 25,
+            "x_fixed": 7995392,
+            "y_fixed": -24444928,
+            "x": 122.0,
+            "y": -373.0
+          },
+          {
+            "index": 26,
+            "x_fixed": 5373952,
+            "y_fixed": -23855104,
+            "x": 82.0,
+            "y": -364.0
+          },
+          {
+            "index": 27,
+            "x_fixed": 2097152,
+            "y_fixed": -23527424,
+            "x": 32.0,
+            "y": -359.0
+          },
+          {
+            "index": 28,
+            "x_fixed": -7733248,
+            "y_fixed": -23199744,
+            "x": -118.0,
+            "y": -354.0
+          },
+          {
+            "index": 29,
+            "x_fixed": -9240576,
+            "y_fixed": -22609920,
+            "x": -141.0,
+            "y": -345.0
+          },
+          {
+            "index": 30,
+            "x_fixed": -9502720,
+            "y_fixed": -22085632,
+            "x": -145.0,
+            "y": -337.0
+          },
+          {
+            "index": 31,
+            "x_fixed": -9437184,
+            "y_fixed": -21692416,
+            "x": -144.0,
+            "y": -331.0
+          },
+          {
+            "index": 32,
+            "x_fixed": -8781824,
+            "y_fixed": -20774912,
+            "x": -134.0,
+            "y": -317.0
+          },
+          {
+            "index": 33,
+            "x_fixed": -3604480,
+            "y_fixed": -16777216,
+            "x": -55.0,
+            "y": -256.0
+          },
+          {
+            "index": 34,
+            "x_fixed": -2031616,
+            "y_fixed": -15269888,
+            "x": -31.0,
+            "y": -233.0
+          },
+          {
+            "index": 35,
+            "x_fixed": -917504,
+            "y_fixed": -13631488,
+            "x": -14.0,
+            "y": -208.0
+          },
+          {
+            "index": 36,
+            "x_fixed": -720896,
+            "y_fixed": -12648448,
+            "x": -11.0,
+            "y": -193.0
+          },
+          {
+            "index": 37,
+            "x_fixed": -1048576,
+            "y_fixed": -10813440,
+            "x": -16.0,
+            "y": -165.0
+          },
+          {
+            "index": 38,
+            "x_fixed": -3276800,
+            "y_fixed": -5111808,
+            "x": -50.0,
+            "y": -78.0
+          },
+          {
+            "index": 39,
+            "x_fixed": -3538944,
+            "y_fixed": -3014656,
+            "x": -54.0,
+            "y": -46.0
+          },
+          {
+            "index": 40,
+            "x_fixed": -3080192,
+            "y_fixed": -1769472,
+            "x": -47.0,
+            "y": -27.0
+          },
+          {
+            "index": 41,
+            "x_fixed": -2359296,
+            "y_fixed": -983040,
+            "x": -36.0,
+            "y": -15.0
+          },
+          {
+            "index": 42,
+            "x_fixed": -1114112,
+            "y_fixed": -327680,
+            "x": -17.0,
+            "y": -5.0
+          },
+          {
+            "index": 43,
+            "x_fixed": 0,
+            "y_fixed": 0,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "index": 44,
+            "x_fixed": 48103424,
+            "y_fixed": -2883584,
+            "x": 734.0,
+            "y": -44.0
+          }
+        ],
+        "triangle_indices": [
+          29,
+          28,
+          32,
+          29,
+          31,
+          30,
+          31,
+          29,
+          32,
+          32,
+          28,
+          33,
+          23,
+          22,
+          0,
+          43,
+          24,
+          0,
+          26,
+          25,
+          36,
+          33,
+          28,
+          27,
+          24,
+          43,
+          25,
+          35,
+          27,
+          26,
+          42,
+          39,
+          38,
+          39,
+          41,
+          40,
+          42,
+          41,
+          39,
+          35,
+          34,
+          27,
+          36,
+          35,
+          26,
+          38,
+          43,
+          42,
+          38,
+          37,
+          43,
+          37,
+          36,
+          25,
+          25,
+          43,
+          37,
+          33,
+          27,
+          34,
+          24,
+          23,
+          0,
+          3,
+          2,
+          5,
+          3,
+          5,
+          4,
+          5,
+          2,
+          6,
+          2,
+          7,
+          6,
+          2,
+          8,
+          7,
+          8,
+          2,
+          1,
+          8,
+          1,
+          9,
+          10,
+          9,
+          1,
+          11,
+          10,
+          1,
+          1,
+          12,
+          11,
+          19,
+          18,
+          16,
+          20,
+          19,
+          15,
+          21,
+          20,
+          14,
+          17,
+          16,
+          18,
+          15,
+          14,
+          20,
+          21,
+          14,
+          13,
+          13,
+          0,
+          22,
+          0,
+          13,
+          12,
+          19,
+          16,
+          15,
+          12,
+          1,
+          0,
+          13,
+          22,
+          21
+        ],
+        "triangles": [
+          [
+            29,
+            28,
+            32
+          ],
+          [
+            29,
+            31,
+            30
+          ],
+          [
+            31,
+            29,
+            32
+          ],
+          [
+            32,
+            28,
+            33
+          ],
+          [
+            23,
+            22,
+            0
+          ],
+          [
+            43,
+            24,
+            0
+          ],
+          [
+            26,
+            25,
+            36
+          ],
+          [
+            33,
+            28,
+            27
+          ],
+          [
+            24,
+            43,
+            25
+          ],
+          [
+            35,
+            27,
+            26
+          ],
+          [
+            42,
+            39,
+            38
+          ],
+          [
+            39,
+            41,
+            40
+          ],
+          [
+            42,
+            41,
+            39
+          ],
+          [
+            35,
+            34,
+            27
+          ],
+          [
+            36,
+            35,
+            26
+          ],
+          [
+            38,
+            43,
+            42
+          ],
+          [
+            38,
+            37,
+            43
+          ],
+          [
+            37,
+            36,
+            25
+          ],
+          [
+            25,
+            43,
+            37
+          ],
+          [
+            33,
+            27,
+            34
+          ],
+          [
+            24,
+            23,
+            0
+          ],
+          [
+            3,
+            2,
+            5
+          ],
+          [
+            3,
+            5,
+            4
+          ],
+          [
+            5,
+            2,
+            6
+          ],
+          [
+            2,
+            7,
+            6
+          ],
+          [
+            2,
+            8,
+            7
+          ],
+          [
+            8,
+            2,
+            1
+          ],
+          [
+            8,
+            1,
+            9
+          ],
+          [
+            10,
+            9,
+            1
+          ],
+          [
+            11,
+            10,
+            1
+          ],
+          [
+            1,
+            12,
+            11
+          ],
+          [
+            19,
+            18,
+            16
+          ],
+          [
+            20,
+            19,
+            15
+          ],
+          [
+            21,
+            20,
+            14
+          ],
+          [
+            17,
+            16,
+            18
+          ],
+          [
+            15,
+            14,
+            20
+          ],
+          [
+            21,
+            14,
+            13
+          ],
+          [
+            13,
+            0,
+            22
+          ],
+          [
+            0,
+            13,
+            12
+          ],
+          [
+            19,
+            16,
+            15
+          ],
+          [
+            12,
+            1,
+            0
+          ],
+          [
+            13,
+            22,
+            21
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 262
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 61,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 60,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 458752,
+          "ty_fixed": -196608
+        },
+        "packed_flags": 27,
+        "layer_or_type_bits": 11
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "003cffff010007fffd0000001b010000000000f300"
+    },
+    {
+      "index": 62,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 51,
+      "base_header": {
+        "parent_index": 60,
+        "child_index": 61,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 20,
+        "layer_or_type_bits": 4
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 38,
+      "payload_hex": "003c003d0100000000000000140808005bfffda5a5ea2f4a50565c030301fefdfdfdfc0901ff00ff00fd000001000100010a01"
+    },
+    {
+      "index": 63,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 60,
+        "child_index": 62,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 5701632,
+          "ty_fixed": 4587520
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "003c003e010057004600000017"
+    },
+    {
+      "index": 64,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 31,
+      "base_header": {
+        "parent_index": 60,
+        "child_index": 63,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -1114112,
+          "ty_fixed": -262144
+        },
+        "packed_flags": 20,
+        "layer_or_type_bits": 4
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 18,
+      "payload_hex": "003c003f01ffeffffc00000014040400060000aa6000000901000100010a01"
+    },
+    {
+      "index": 65,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 60,
+        "child_index": 64,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 26869760,
+          "ty_fixed": -46923776
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "003c004001019afd3400000017"
+    },
+    {
+      "index": 66,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 60,
+        "child_index": 65,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 23527424,
+          "ty_fixed": -48758784
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "003c0041010167fd1800000017"
+    },
+    {
+      "index": 67,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 60,
+        "child_index": 66,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -2752512,
+          "ty_fixed": -12451840
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "003c004201ffd6ff4200000017"
+    },
+    {
+      "index": 68,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 60,
+        "child_index": 67,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 5177344,
+          "ty_fixed": -458752
+        },
+        "packed_flags": 26,
+        "layer_or_type_bits": 10
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "003c004301004ffff90000001a0100000000003901"
+    },
+    {
+      "index": 69,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 60,
+        "child_index": 68,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 393216,
+          "ty_fixed": 3670016
+        },
+        "packed_flags": 26,
+        "layer_or_type_bits": 10
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "003c004401000600380000001a010000000000f400"
+    },
+    {
+      "index": 70,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 111,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 60,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 80805888,
+          "ty_fixed": -49086464
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 98,
+      "payload_hex": "0000003c0104d1fd130000001500120030ff0c431d0affb3d8770419669d7506d95e5cd5f40a22688401c667608209fe8887c5a597584845048e2e9e18f2c30907e4ef7ec47846020611e438d013394dd43011032801102889022ccc021c01121c86510443400c425010011224ffff",
+      "polygon_geometry": {
+        "vertex_count": 19,
+        "triangle_index_count": 48,
+        "triangle_count": 16,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 10,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": -7667712,
+            "y_fixed": 983040,
+            "x": -117.0,
+            "y": 15.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 13631488,
+            "y_fixed": -458752,
+            "x": 208.0,
+            "y": -7.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 21168128,
+            "y_fixed": 131072,
+            "x": 323.0,
+            "y": 2.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 21692416,
+            "y_fixed": -1441792,
+            "x": 331.0,
+            "y": -22.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 22020096,
+            "y_fixed": -3145728,
+            "x": 336.0,
+            "y": -48.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 22020096,
+            "y_fixed": -6750208,
+            "x": 336.0,
+            "y": -103.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 21168128,
+            "y_fixed": -9961472,
+            "x": 323.0,
+            "y": -152.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 19791872,
+            "y_fixed": -12451840,
+            "x": 302.0,
+            "y": -190.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 17760256,
+            "y_fixed": -14286848,
+            "x": 271.0,
+            "y": -218.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 15204352,
+            "y_fixed": -15859712,
+            "x": 232.0,
+            "y": -242.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 6422528,
+            "y_fixed": -20512768,
+            "x": 98.0,
+            "y": -313.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 3866624,
+            "y_fixed": -22085632,
+            "x": 59.0,
+            "y": -337.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 1769472,
+            "y_fixed": -24182784,
+            "x": 27.0,
+            "y": -369.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 1310720,
+            "y_fixed": -25100288,
+            "x": 20.0,
+            "y": -383.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 1245184,
+            "y_fixed": -25821184,
+            "x": 19.0,
+            "y": -394.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 22151168,
+            "y_fixed": -40304640,
+            "x": 338.0,
+            "y": -615.0
+          },
+          {
+            "index": 16,
+            "x_fixed": -32309248,
+            "y_fixed": -50331648,
+            "x": -493.0,
+            "y": -768.0
+          },
+          {
+            "index": 17,
+            "x_fixed": -32309248,
+            "y_fixed": -15138816,
+            "x": -493.0,
+            "y": -231.0
+          },
+          {
+            "index": 18,
+            "x_fixed": -7667712,
+            "y_fixed": 983040,
+            "x": -117.0,
+            "y": 15.0
+          }
+        ],
+        "triangle_indices": [
+          17,
+          16,
+          14,
+          14,
+          16,
+          15,
+          17,
+          14,
+          13,
+          17,
+          13,
+          12,
+          17,
+          12,
+          0,
+          10,
+          1,
+          0,
+          1,
+          10,
+          9,
+          10,
+          0,
+          11,
+          12,
+          11,
+          0,
+          7,
+          1,
+          8,
+          1,
+          7,
+          6,
+          6,
+          5,
+          1,
+          3,
+          1,
+          4,
+          3,
+          2,
+          1,
+          5,
+          4,
+          1,
+          8,
+          1,
+          9
+        ],
+        "triangles": [
+          [
+            17,
+            16,
+            14
+          ],
+          [
+            14,
+            16,
+            15
+          ],
+          [
+            17,
+            14,
+            13
+          ],
+          [
+            17,
+            13,
+            12
+          ],
+          [
+            17,
+            12,
+            0
+          ],
+          [
+            10,
+            1,
+            0
+          ],
+          [
+            1,
+            10,
+            9
+          ],
+          [
+            10,
+            0,
+            11
+          ],
+          [
+            12,
+            11,
+            0
+          ],
+          [
+            7,
+            1,
+            8
+          ],
+          [
+            1,
+            7,
+            6
+          ],
+          [
+            6,
+            5,
+            1
+          ],
+          [
+            3,
+            1,
+            4
+          ],
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            5,
+            4,
+            1
+          ],
+          [
+            8,
+            1,
+            9
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 111
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 71,
+      "type_code": 10,
+      "type_name": "environmental_entity_i",
+      "record_bytes": 29,
+      "base_header": {
+        "parent_index": 70,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -1638400,
+          "ty_fixed": -9371648
+        },
+        "packed_flags": 22,
+        "layer_or_type_bits": 6
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 16,
+      "payload_hex": "0046ffff01ffe7ff7100000016002afe330155fff309000900ff000010"
+    },
+    {
+      "index": 72,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 70,
+        "child_index": 71,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 23920640,
+          "ty_fixed": 6750208
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0046004701016d006700000013"
+    },
+    {
+      "index": 73,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 47,
+      "base_header": {
+        "parent_index": 70,
+        "child_index": 72,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 19660800,
+          "ty_fixed": -6094848
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 34,
+      "payload_hex": "0046004801012cffa300000010060a001cffcde4bf5eab2388300533b4aff2fe4254030c010c010c010c010c010c01"
+    },
+    {
+      "index": 74,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 35,
+      "base_header": {
+        "parent_index": 70,
+        "child_index": 73,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 13500416,
+          "ty_fixed": -34603008
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 22,
+      "payload_hex": "004600490100cefdf00000001804070021ffecdefa42049904fe0c5100510051005100"
+    },
+    {
+      "index": 75,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 70,
+        "child_index": 74,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 11206656,
+          "ty_fixed": -29163520
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0046004a0100abfe4300000017"
+    },
+    {
+      "index": 76,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 70,
+        "child_index": 75,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 5898240,
+          "ty_fixed": -25624576
+        },
+        "packed_flags": 23,
+        "layer_or_type_bits": 7
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0046004b01005afe7900000017"
+    },
+    {
+      "index": 77,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 70,
+        "child_index": 76,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 11599872,
+          "ty_fixed": -65536
+        },
+        "packed_flags": 26,
+        "layer_or_type_bits": 10
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "0046004c0100b1ffff0000001a0100000000003e00"
+    },
+    {
+      "index": 78,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 70,
+        "child_index": 77,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 1900544,
+          "ty_fixed": 3997696
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0046004d01001d003d00000013"
+    },
+    {
+      "index": 79,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 122,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 70,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 3080192,
+          "ty_fixed": -46137344
+        },
+        "packed_flags": 24,
+        "layer_or_type_bits": 8
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 109,
+      "payload_hex": "0000004601002ffd400000001800130033ff0c431d0b01b1a417411272f18d81bc8532bf51109b3ab5ac70c9ab5ffd1a284101ff747f904214b2800529d0e00537d0021f0a610841d4210c6b677b25000651000801241803640850104911301484510cc8012909042588023d870129cfc2380db33c0ef300ffff",
+      "polygon_geometry": {
+        "vertex_count": 20,
+        "triangle_index_count": 51,
+        "triangle_count": 17,
+        "color_rgba_bytes": [
+          255,
+          12,
+          67,
+          29
+        ],
+        "color_argb_hex": "#FF0C431D",
+        "coordinate_bit_width": 11,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 22347776,
+            "y_fixed": -851968,
+            "x": 341.0,
+            "y": -13.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 30605312,
+            "y_fixed": -3801088,
+            "x": 467.0,
+            "y": -58.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 33161216,
+            "y_fixed": -3866624,
+            "x": 506.0,
+            "y": -59.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 40501248,
+            "y_fixed": -3342336,
+            "x": 618.0,
+            "y": -51.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 42991616,
+            "y_fixed": -3407872,
+            "x": 656.0,
+            "y": -52.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 45350912,
+            "y_fixed": -3801088,
+            "x": 692.0,
+            "y": -58.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 52428800,
+            "y_fixed": -5767168,
+            "x": 800.0,
+            "y": -88.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 54853632,
+            "y_fixed": -6094848,
+            "x": 837.0,
+            "y": -93.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 57671680,
+            "y_fixed": -5570560,
+            "x": 880.0,
+            "y": -85.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 62586880,
+            "y_fixed": -3276800,
+            "x": 955.0,
+            "y": -50.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 69009408,
+            "y_fixed": -1048576,
+            "x": 1053.0,
+            "y": -16.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 72220672,
+            "y_fixed": -458752,
+            "x": 1102.0,
+            "y": -7.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 75235328,
+            "y_fixed": -393216,
+            "x": 1148.0,
+            "y": -6.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 76677120,
+            "y_fixed": -655360,
+            "x": 1170.0,
+            "y": -10.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 77791232,
+            "y_fixed": -1507328,
+            "x": 1187.0,
+            "y": -23.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 78512128,
+            "y_fixed": -2818048,
+            "x": 1198.0,
+            "y": -43.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 78512128,
+            "y_fixed": -18939904,
+            "x": 1198.0,
+            "y": -289.0
+          },
+          {
+            "index": 17,
+            "x_fixed": -21757952,
+            "y_fixed": -18874368,
+            "x": -332.0,
+            "y": -288.0
+          },
+          {
+            "index": 18,
+            "x_fixed": -21692416,
+            "y_fixed": 589824,
+            "x": -331.0,
+            "y": 9.0
+          },
+          {
+            "index": 19,
+            "x_fixed": 22347776,
+            "y_fixed": -851968,
+            "x": 341.0,
+            "y": -13.0
+          }
+        ],
+        "triangle_indices": [
+          17,
+          1,
+          0,
+          2,
+          1,
+          16,
+          2,
+          6,
+          3,
+          16,
+          6,
+          2,
+          16,
+          1,
+          17,
+          18,
+          17,
+          0,
+          3,
+          5,
+          4,
+          6,
+          5,
+          3,
+          8,
+          7,
+          16,
+          10,
+          9,
+          16,
+          16,
+          9,
+          8,
+          10,
+          16,
+          15,
+          7,
+          6,
+          16,
+          10,
+          15,
+          11,
+          12,
+          14,
+          13,
+          12,
+          11,
+          15,
+          14,
+          12,
+          15
+        ],
+        "triangles": [
+          [
+            17,
+            1,
+            0
+          ],
+          [
+            2,
+            1,
+            16
+          ],
+          [
+            2,
+            6,
+            3
+          ],
+          [
+            16,
+            6,
+            2
+          ],
+          [
+            16,
+            1,
+            17
+          ],
+          [
+            18,
+            17,
+            0
+          ],
+          [
+            3,
+            5,
+            4
+          ],
+          [
+            6,
+            5,
+            3
+          ],
+          [
+            8,
+            7,
+            16
+          ],
+          [
+            10,
+            9,
+            16
+          ],
+          [
+            16,
+            9,
+            8
+          ],
+          [
+            10,
+            16,
+            15
+          ],
+          [
+            7,
+            6,
+            16
+          ],
+          [
+            10,
+            15,
+            11
+          ],
+          [
+            12,
+            14,
+            13
+          ],
+          [
+            12,
+            11,
+            15
+          ],
+          [
+            14,
+            12,
+            15
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 122
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 80,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 35192832,
+          "ty_fixed": -3932160
+        },
+        "packed_flags": 26,
+        "layer_or_type_bits": 10
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "004fffff010219ffc40000001a0100000000003d00"
+    },
+    {
+      "index": 81,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": 80,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 52166656,
+          "ty_fixed": -4915200
+        },
+        "packed_flags": 27,
+        "layer_or_type_bits": 11
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "004f005001031cffb50000001b010000000000f300"
+    },
+    {
+      "index": 82,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 305,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": 81,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 8912896,
+          "ty_fixed": -327680
+        },
+        "packed_flags": 20,
+        "layer_or_type_bits": 4
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 292,
+      "payload_hex": "004f0051010088fffb000000143c0b02aeffd75295ea65b97b5f096338c53a5e3297dbec6748575be335df79d08fde74b40fbef3b8977efb0f208216e060084ec84219ee80884ca88217cdf0c63b0022919620652a5d418b5cfa229c0331494a58f292a15c052948410a508002149c20041ba88003102000fdf3bffffdef7ffffbdffffcd3fffdea2f3ff8b75ffded83bffcea7f7ffdf70f80022c000215d000084aa00215a880041ec080041690800314a0000520c00112000901ff00ff00fd00fd0000010501050105010501050105010501fe00fe00fd000001000100010001060106010601060106010601060106010301030103010301030103010201020102010201020102010201020102010201fd00fd0004010401040104010401ff00fe00ff00000100010001080108010a01"
+    },
+    {
+      "index": 83,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 33,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": 82,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 51642368,
+          "ty_fixed": -7143424
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 20,
+      "payload_hex": "004f0052010314ff9300000010030900ce001832a53c03e8312c000d010d010d01"
+    },
+    {
+      "index": 84,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": 83,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 11337728,
+          "ty_fixed": 2490368
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "004f00530100ad002600000013"
+    },
+    {
+      "index": 85,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": 84,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 52232192,
+          "ty_fixed": -1048576
+        },
+        "packed_flags": 26,
+        "layer_or_type_bits": 10
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "004f005401031dfff00000001a010000000000f600"
+    },
+    {
+      "index": 86,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": 85,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 58523648,
+          "ty_fixed": -262144
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "004f005501037dfffc00000013"
+    },
+    {
+      "index": 87,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": 86,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 28508160,
+          "ty_fixed": 1310720
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "004f00560101b3001400000013"
+    },
+    {
+      "index": 88,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": 87,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 12648448,
+          "ty_fixed": -851968
+        },
+        "packed_flags": 26,
+        "layer_or_type_bits": 10
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "004f00570100c1fff30000001a0100000000003901"
+    },
+    {
+      "index": 89,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 33,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": 88,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 15794176,
+          "ty_fixed": -3670016
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 20,
+      "payload_hex": "004f00580100f1ffc800000010030900d0fff030bd440310decb070c010c010c01"
+    },
+    {
+      "index": 90,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 37,
+      "base_header": {
+        "parent_index": 79,
+        "child_index": 89,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 7012352,
+          "ty_fixed": 3014656
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 24,
+      "payload_hex": "004f005901006b002e00000010040a017affae86da4c895e52a8efbceb0b010b010b010b01"
+    },
+    {
+      "index": 91,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 79,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 45613056,
+          "ty_fixed": -47972352
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "0000004f0102b8fd24000000130100000000003600"
+    },
+    {
+      "index": 92,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 29,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 91,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 145489920,
+          "ty_fixed": -156368896
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 16,
+      "payload_hex": "0000005b0108acf6ae00000000ff3800cf0031ffd1000000006b010119"
+    },
+    {
+      "index": 93,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 29,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 92,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 114950144,
+          "ty_fixed": -102498304
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 16,
+      "payload_hex": "0000005c0106daf9e400000000ff8d00140084ffe2000000006b010119"
+    },
+    {
+      "index": 94,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 29,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 93,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 111804416,
+          "ty_fixed": -75759616
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 16,
+      "payload_hex": "0000005d0106aafb7c00000000ffcc001c002effdd000000006b010119"
+    },
+    {
+      "index": 95,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 29,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 94,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 100007936,
+          "ty_fixed": -47120384
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 16,
+      "payload_hex": "0000005e0105f6fd3100000000ffe101240022ffeb000000006b010119"
+    },
+    {
+      "index": 96,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 112,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 95,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 39321600,
+          "ty_fixed": -49414144
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 99,
+      "payload_hex": "0000005f010258fd0e000000000000024700410000000000006b0808070204200000000008070201200000000305000046ffff05000047ffff050600c800c81310005b0000347afffff7cf000003e8000003e81310005b000666660000570a0000006400000064080702012000000000"
+    },
+    {
+      "index": 97,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 36,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 96,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 108199936,
+          "ty_fixed": -142016512
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 23,
+      "payload_hex": "00000060010673f789000000000000000700330000000001006b01080702002000000001"
+    },
+    {
+      "index": 98,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 36,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 97,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 102825984,
+          "ty_fixed": -123273216
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 23,
+      "payload_hex": "00000061010621f8a7000000000000000700330000000001006b01080702002000000001"
+    },
+    {
+      "index": 99,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 166,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 98,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 95223808,
+          "ty_fixed": -48955392
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 153,
+      "payload_hex": "000000620105adfd1500000000000001d100340000000000006b0a08070204200000000005000048ffff050600c800c81310005b00002222000022220000012c0000012c0b1d005b00000001000000181310005b0000133300000000000000c8000000c81310005b00001333ffffeccd000000c8000000c81310005b00000000ffff555600000258000002580d12005bffff0d790000f62700000b1d005b0000000100000010"
+    },
+    {
+      "index": 100,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 36,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 99,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 138674176,
+          "ty_fixed": -148635648
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 23,
+      "payload_hex": "00000063010844f724000000000005002d0103fffe000001006b01080702002000000001"
+    },
+    {
+      "index": 101,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 40,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 100,
+        "transform_flags": 3,
+        "transform": {
+          "tx_fixed": 95027200,
+          "ty_fixed": -83886080,
+          "rotation_or_scale_fixed": -40033
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 17,
+      "remaining_payload_bytes": 23,
+      "payload_hex": "000000640305aafb00ffff639f000000000000002b00590000000001006b01080702002000000001"
+    },
+    {
+      "index": 102,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 36,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 101,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 121634816,
+          "ty_fixed": -114753536
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 23,
+      "payload_hex": "00000065010740f92900000000ffff0081002f0011000001006b01080702002000000001"
+    },
+    {
+      "index": 103,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 36,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 102,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 108003328,
+          "ty_fixed": -84017152
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 23,
+      "payload_hex": "00000066010670fafe000000000012003300680000000001006b01080702002000000001"
+    },
+    {
+      "index": 104,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 155,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 103,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 223215616,
+          "ty_fixed": -165150720
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 142,
+      "payload_hex": "00000067010d4ef62800000000fff301050023ffe3000001006b0b08070204200000000005000049ffff0500004affff0500004b01360500004cffff050600c800c81310005b0000000000004000000000c8000000c81310005b00000000ffffc000000000c8000000c81310005b0000000000004000000000c8000000c81310005b00000000ffffc000000000c8000000c8080702002000000002"
+    },
+    {
+      "index": 105,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 36,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 104,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 103022592,
+          "ty_fixed": -103219200
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 23,
+      "payload_hex": "00000068010624f9d90000000000000075002e0000000001006b01080702002000000001"
+    },
+    {
+      "index": 106,
+      "type_code": 6,
+      "type_name": "animated_world_object_g",
+      "record_bytes": 40,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 105,
+        "transform_flags": 3,
+        "transform": {
+          "tx_fixed": 112328704,
+          "ty_fixed": -148635648,
+          "rotation_or_scale_fixed": -52615
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 17,
+      "remaining_payload_bytes": 23,
+      "payload_hex": "000000690306b2f724ffff3279000000000000002c00ac0000000001006b01080702002000000001"
+    },
+    {
+      "index": 107,
+      "type_code": 8,
+      "type_name": "bounce_actor_c",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 106,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 21233664,
+          "ty_fixed": -44826624
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000006a010144fd5400000010"
+    }
+  ],
+  "terminator_offset": 5231,
+  "trailing_bytes": 0
+}

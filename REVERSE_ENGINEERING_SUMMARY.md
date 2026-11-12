@@ -57,3 +57,14 @@ The shell now fits phone portrait, phone landscape and desktop; gameplay touch c
 Build 14 changes the header share affordance to a connected-node Share icon with visible text and gives the portrait game viewport more visual separation from the touch controls.
 
 The terrain resolver now sweeps against radius-offset contour edges and rounded vertices, then performs smallest-correction-first overlap recovery. This is a closer translation of the original collision method's edge/vertex contact construction. Synthetic grass and layered-mesh tests pass, and a 5-second initial-fall/landing simulation for each of the 15 RLEF stages finishes with the player outside solid polygons. The original LP32 contact buffer and complete fixed-point response remain to be ported.
+
+
+## V17 · Phase 2 decoded-reference integration
+
+V17 integrates the supplied Phase 2 atlas and decoded RLEF reference into the deployable browser build. The static 0–325 sprite table is now the runtime source of truth for those sprites, not just an external inspection artefact. All crop rectangles and draw offsets are validated against the legacy 540-entry image map.
+
+All 105 extracted original resources match the supplied reference archive byte-for-byte by SHA-256. Regression parity covers all 16 binary RLEF files (`bf`–`bu`): 2,240 object headers; 490 polygons with 5,776 vertices and 4,306 triangle records; and all 316 type-6 objects with 1,143 byte-exact command sequences. The existing event engine already handles those parsed sequence streams; the V17 fixtures make their identity auditable.
+
+The decoded atlas includes timing annotations for 350 commands using opcodes 6, 16 and 17. These are command durations in milliseconds, not a universal sprite frame rate. The browser runtime's existing event interpreter uses elapsed milliseconds and the 500 ms original update-delta cap.
+
+V17 adds browser playback for the eight rendered soundtrack tracks and maps the title/act/boss/bonus/lose/win resource IDs from the level manager. It does not claim native MIDI equivalence or complete game logic parity. The fixed-point multi-contact solver, every event/object state branch, exact water and particle systems, camera/parallax, MIDP menus and device comparison remain incomplete.

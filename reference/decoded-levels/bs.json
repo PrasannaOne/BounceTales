@@ -1,0 +1,3763 @@
+{
+  "format": "RLEF",
+  "version": 1,
+  "header_hex": "524c4546000100000038000e0000",
+  "declared_object_count": 56,
+  "parsed_object_count": 56,
+  "count_matches": true,
+  "objects": [
+    {
+      "index": 0,
+      "type_code": 0,
+      "type_name": "unknown_0",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": -1,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 0
+        },
+        "packed_flags": 0,
+        "layer_or_type_bits": -16
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "ffffffff010000000000000000"
+    },
+    {
+      "index": 1,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": -1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 7667712,
+          "ty_fixed": 32899072
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000ffff01007501f600000013"
+    },
+    {
+      "index": 2,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 1,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 2949120,
+          "ty_fixed": 23003136
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000000101002d015f00000013"
+    },
+    {
+      "index": 3,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 2,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 3538944,
+          "ty_fixed": 43909120
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "00000002010036029e00000013"
+    },
+    {
+      "index": 4,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 3,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 31850496,
+          "ty_fixed": 54591488
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "000000030101e6034100000013"
+    },
+    {
+      "index": 5,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 4,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 39387136,
+          "ty_fixed": 55115776
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "00000004010259034900000013"
+    },
+    {
+      "index": 6,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 5,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 43515904,
+          "ty_fixed": 45678592
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000000501029802b900000013"
+    },
+    {
+      "index": 7,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 6,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 9633792,
+          "ty_fixed": 51118080
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "00000006010093030c00000013"
+    },
+    {
+      "index": 8,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 7,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 19005440,
+          "ty_fixed": 38797312
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "00000007010122025000000013"
+    },
+    {
+      "index": 9,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 8,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 36110336,
+          "ty_fixed": 26017792
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "00000008010227018d00000013"
+    },
+    {
+      "index": 10,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 9,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 53411840,
+          "ty_fixed": 28639232
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000000901032f01b500000013"
+    },
+    {
+      "index": 11,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 10,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 58458112,
+          "ty_fixed": 26345472
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000000a01037c019200000013"
+    },
+    {
+      "index": 12,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 11,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 59441152,
+          "ty_fixed": 49938432
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000000b01038b02fa00000013"
+    },
+    {
+      "index": 13,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 12,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 42860544,
+          "ty_fixed": 58785792
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000000c01028e038100000013"
+    },
+    {
+      "index": 14,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 13,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 21233664,
+          "ty_fixed": 58654720
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000000d010144037f00000013"
+    },
+    {
+      "index": 15,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 14,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 35651584,
+          "ty_fixed": 58589184
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000000e010220037e00000013"
+    },
+    {
+      "index": 16,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 15,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 28311552,
+          "ty_fixed": 58654720
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000000f0101b0037f00000013"
+    },
+    {
+      "index": 17,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 70,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 16,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 65601536,
+          "ty_fixed": 65077248
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 57,
+      "payload_hex": "000000100103e903e100000015000c001eff00000007002827d4a8a12804f25aacc203fff4a6cde19ad5070a09c6080505850c534442271d65d431422911c2522b005106ffff",
+      "polygon_geometry": {
+        "vertex_count": 13,
+        "triangle_index_count": 30,
+        "triangle_count": 10,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 7,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 5177344,
+            "y_fixed": 1703936,
+            "x": 79.0,
+            "y": 26.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 5242880,
+            "y_fixed": 983040,
+            "x": 80.0,
+            "y": 15.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 4915200,
+            "y_fixed": -327680,
+            "x": 75.0,
+            "y": -5.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 3473408,
+            "y_fixed": -3473408,
+            "x": 53.0,
+            "y": -53.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 3276800,
+            "y_fixed": -3342336,
+            "x": 50.0,
+            "y": -51.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 2949120,
+            "y_fixed": -1179648,
+            "x": 45.0,
+            "y": -18.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 2686976,
+            "y_fixed": -720896,
+            "x": 41.0,
+            "y": -11.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 2162688,
+            "y_fixed": -458752,
+            "x": 33.0,
+            "y": -7.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 131072,
+            "y_fixed": -196608,
+            "x": 2.0,
+            "y": -3.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 0,
+            "y_fixed": 0,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 3276800,
+            "y_fixed": 1507328,
+            "x": 50.0,
+            "y": 23.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 4587520,
+            "y_fixed": 1835008,
+            "x": 70.0,
+            "y": 28.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 5177344,
+            "y_fixed": 1703936,
+            "x": 79.0,
+            "y": 26.0
+          }
+        ],
+        "triangle_indices": [
+          5,
+          4,
+          3,
+          6,
+          5,
+          2,
+          9,
+          8,
+          7,
+          9,
+          7,
+          10,
+          6,
+          10,
+          7,
+          6,
+          2,
+          10,
+          10,
+          2,
+          1,
+          1,
+          11,
+          10,
+          11,
+          1,
+          0,
+          2,
+          5,
+          3
+        ],
+        "triangles": [
+          [
+            5,
+            4,
+            3
+          ],
+          [
+            6,
+            5,
+            2
+          ],
+          [
+            9,
+            8,
+            7
+          ],
+          [
+            9,
+            7,
+            10
+          ],
+          [
+            6,
+            10,
+            7
+          ],
+          [
+            6,
+            2,
+            10
+          ],
+          [
+            10,
+            2,
+            1
+          ],
+          [
+            1,
+            11,
+            10
+          ],
+          [
+            11,
+            1,
+            0
+          ],
+          [
+            2,
+            5,
+            3
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 70
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 18,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 17,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -6619136,
+          "ty_fixed": 51380224
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000001101ff9b031000000013"
+    },
+    {
+      "index": 19,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 51,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 18,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -10485760,
+          "ty_fixed": 49020928
+        },
+        "packed_flags": 20,
+        "layer_or_type_bits": 4
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 38,
+      "payload_hex": "0000001201ff6002ec0000001408080056fffdafaff40f151b365103030505050501fbae00a300a200a500a500ab00ab00af00"
+    },
+    {
+      "index": 20,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 101,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 19,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -11337728,
+          "ty_fixed": 48824320
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 88,
+      "payload_hex": "0000001301ff5302e90000001500120030ff0000000800539ea9ba013b5f66645c50f7dbccb6b0a59c9affaf3f4a5052514a433a30281205f0b1aeccff28068fd334ccf33050042d51000491102dc20231ca2028094124c8a010c5611404721488222cffff",
+      "polygon_geometry": {
+        "vertex_count": 19,
+        "triangle_index_count": 48,
+        "triangle_count": 16,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 8,
+        "index_bit_width": 6,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": -983040,
+            "y_fixed": -1179648,
+            "x": -15.0,
+            "y": -18.0
+          },
+          {
+            "index": 1,
+            "x_fixed": -262144,
+            "y_fixed": -458752,
+            "x": -4.0,
+            "y": -7.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 851968,
+            "y_fixed": -65536,
+            "x": 13.0,
+            "y": -1.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 5505024,
+            "y_fixed": 65536,
+            "x": 84.0,
+            "y": 1.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 9306112,
+            "y_fixed": 0,
+            "x": 142.0,
+            "y": 0.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 11665408,
+            "y_fixed": -458752,
+            "x": 178.0,
+            "y": -7.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 12124160,
+            "y_fixed": -917504,
+            "x": 185.0,
+            "y": -14.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 11993088,
+            "y_fixed": -1507328,
+            "x": 183.0,
+            "y": -23.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 11468800,
+            "y_fixed": -2162688,
+            "x": 175.0,
+            "y": -33.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 10682368,
+            "y_fixed": -2686976,
+            "x": 163.0,
+            "y": -41.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 4849664,
+            "y_fixed": -4128768,
+            "x": 74.0,
+            "y": -63.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 3014656,
+            "y_fixed": -4980736,
+            "x": 46.0,
+            "y": -76.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 2031616,
+            "y_fixed": -6356992,
+            "x": 31.0,
+            "y": -97.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 589824,
+            "y_fixed": -10485760,
+            "x": 9.0,
+            "y": -160.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 196608,
+            "y_fixed": -10682368,
+            "x": 3.0,
+            "y": -163.0
+          },
+          {
+            "index": 15,
+            "x_fixed": -524288,
+            "y_fixed": -8716288,
+            "x": -8.0,
+            "y": -133.0
+          },
+          {
+            "index": 16,
+            "x_fixed": -1114112,
+            "y_fixed": -5373952,
+            "x": -17.0,
+            "y": -82.0
+          },
+          {
+            "index": 17,
+            "x_fixed": -1245184,
+            "y_fixed": -2686976,
+            "x": -19.0,
+            "y": -41.0
+          },
+          {
+            "index": 18,
+            "x_fixed": -983040,
+            "y_fixed": -1179648,
+            "x": -15.0,
+            "y": -18.0
+          }
+        ],
+        "triangle_indices": [
+          15,
+          14,
+          13,
+          13,
+          12,
+          15,
+          15,
+          12,
+          16,
+          17,
+          16,
+          11,
+          17,
+          1,
+          0,
+          1,
+          17,
+          2,
+          17,
+          11,
+          2,
+          11,
+          16,
+          12,
+          10,
+          3,
+          2,
+          10,
+          9,
+          4,
+          4,
+          9,
+          8,
+          3,
+          10,
+          4,
+          5,
+          7,
+          6,
+          5,
+          4,
+          8,
+          7,
+          5,
+          8,
+          10,
+          2,
+          11
+        ],
+        "triangles": [
+          [
+            15,
+            14,
+            13
+          ],
+          [
+            13,
+            12,
+            15
+          ],
+          [
+            15,
+            12,
+            16
+          ],
+          [
+            17,
+            16,
+            11
+          ],
+          [
+            17,
+            1,
+            0
+          ],
+          [
+            1,
+            17,
+            2
+          ],
+          [
+            17,
+            11,
+            2
+          ],
+          [
+            11,
+            16,
+            12
+          ],
+          [
+            10,
+            3,
+            2
+          ],
+          [
+            10,
+            9,
+            4
+          ],
+          [
+            4,
+            9,
+            8
+          ],
+          [
+            3,
+            10,
+            4
+          ],
+          [
+            5,
+            7,
+            6
+          ],
+          [
+            5,
+            4,
+            8
+          ],
+          [
+            7,
+            5,
+            8
+          ],
+          [
+            10,
+            2,
+            11
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 101
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 21,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 20,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 56950784,
+          "ty_fixed": 34799616
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "000000140103650213000000190100000000003400"
+    },
+    {
+      "index": 22,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 21,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 54132736,
+          "ty_fixed": 36896768
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000001501033a023300000013"
+    },
+    {
+      "index": 23,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 22,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 59572224,
+          "ty_fixed": 37093376
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000001601038d023600000013"
+    },
+    {
+      "index": 24,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 55,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 23,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 51707904,
+          "ty_fixed": 34078720
+        },
+        "packed_flags": 20,
+        "layer_or_type_bits": 4
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 42,
+      "payload_hex": "000000170103150208000000140908004b0005b5b5c7d91e393f454bfbfb01060606060606ae00a700a700a400a200a500a500a500af00"
+    },
+    {
+      "index": 25,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 84,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 24,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 62849024,
+          "ty_fixed": 34471936
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 71,
+      "payload_hex": "000000180103bf020e00000015000f0027ff00000008ffb34f4a452418ffbbafa5a1a4acc5055effb6b6b5baf4000a191e28333f464b4b4b050b1d768c4a6b2574d832850d01021003b8d2582b84b8e6c800ffff",
+      "polygon_geometry": {
+        "vertex_count": 16,
+        "triangle_index_count": 39,
+        "triangle_count": 13,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 8,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 131072,
+            "y_fixed": -9699328,
+            "x": 2.0,
+            "y": -148.0
+          },
+          {
+            "index": 1,
+            "x_fixed": -196608,
+            "y_fixed": -9764864,
+            "x": -3.0,
+            "y": -149.0
+          },
+          {
+            "index": 2,
+            "x_fixed": -524288,
+            "y_fixed": -9437184,
+            "x": -8.0,
+            "y": -144.0
+          },
+          {
+            "index": 3,
+            "x_fixed": -2686976,
+            "y_fixed": -5636096,
+            "x": -41.0,
+            "y": -86.0
+          },
+          {
+            "index": 4,
+            "x_fixed": -3473408,
+            "y_fixed": -4849664,
+            "x": -53.0,
+            "y": -74.0
+          },
+          {
+            "index": 5,
+            "x_fixed": -5111808,
+            "y_fixed": -4194304,
+            "x": -78.0,
+            "y": -64.0
+          },
+          {
+            "index": 6,
+            "x_fixed": -9568256,
+            "y_fixed": -3211264,
+            "x": -146.0,
+            "y": -49.0
+          },
+          {
+            "index": 7,
+            "x_fixed": -10354688,
+            "y_fixed": -2883584,
+            "x": -158.0,
+            "y": -44.0
+          },
+          {
+            "index": 8,
+            "x_fixed": -11010048,
+            "y_fixed": -2228224,
+            "x": -168.0,
+            "y": -34.0
+          },
+          {
+            "index": 9,
+            "x_fixed": -11272192,
+            "y_fixed": -1507328,
+            "x": -172.0,
+            "y": -23.0
+          },
+          {
+            "index": 10,
+            "x_fixed": -11075584,
+            "y_fixed": -720896,
+            "x": -169.0,
+            "y": -11.0
+          },
+          {
+            "index": 11,
+            "x_fixed": -10551296,
+            "y_fixed": -262144,
+            "x": -161.0,
+            "y": -4.0
+          },
+          {
+            "index": 12,
+            "x_fixed": -8912896,
+            "y_fixed": 65536,
+            "x": -136.0,
+            "y": 1.0
+          },
+          {
+            "index": 13,
+            "x_fixed": -4718592,
+            "y_fixed": 65536,
+            "x": -72.0,
+            "y": 1.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 1114112,
+            "y_fixed": 65536,
+            "x": 17.0,
+            "y": 1.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 131072,
+            "y_fixed": -9699328,
+            "x": 2.0,
+            "y": -148.0
+          }
+        ],
+        "triangle_indices": [
+          11,
+          8,
+          7,
+          12,
+          7,
+          6,
+          10,
+          9,
+          11,
+          11,
+          9,
+          8,
+          7,
+          12,
+          11,
+          6,
+          5,
+          12,
+          3,
+          2,
+          0,
+          1,
+          0,
+          2,
+          3,
+          0,
+          14,
+          5,
+          13,
+          12,
+          13,
+          5,
+          4,
+          4,
+          14,
+          13,
+          14,
+          4,
+          3
+        ],
+        "triangles": [
+          [
+            11,
+            8,
+            7
+          ],
+          [
+            12,
+            7,
+            6
+          ],
+          [
+            10,
+            9,
+            11
+          ],
+          [
+            11,
+            9,
+            8
+          ],
+          [
+            7,
+            12,
+            11
+          ],
+          [
+            6,
+            5,
+            12
+          ],
+          [
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            0,
+            2
+          ],
+          [
+            3,
+            0,
+            14
+          ],
+          [
+            5,
+            13,
+            12
+          ],
+          [
+            13,
+            5,
+            4
+          ],
+          [
+            4,
+            14,
+            13
+          ],
+          [
+            14,
+            4,
+            3
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 84
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 26,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 25,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 64094208,
+          "ty_fixed": 51838976
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "000000190103d20317000000190100000000009e00"
+    },
+    {
+      "index": 27,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 21,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 26,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 5701632,
+          "ty_fixed": 55705600
+        },
+        "packed_flags": 25,
+        "layer_or_type_bits": 9
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 8,
+      "payload_hex": "0000001a0100570352000000190100000000009d00"
+    },
+    {
+      "index": 28,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 209,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 27,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 4915200,
+          "ty_fixed": 53739520
+        },
+        "packed_flags": 63,
+        "layer_or_type_bits": 15
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 196,
+      "payload_hex": "0000001b01004b03340000003f00240066ff2e65620a0005178c504202052ca0820b2808d07f02432021040e18c8cffdf2bedf8e3bf1fb131000f8dc93cf40030318c08004fe619d8db5d22462f0207ef0a32b4db2be85ae19a696546eb9e6a3c0e24bb2d2a2ff1efe0d583cb212569fa5c6da69070a4b4571b1282a8b8984a1485c260b0a65518930249704a640e0103a9cc24613028d08838e2663d81438190c0293403022900ce2903918268c85c6507838180d8683017978068200e8e3e90c3e8280e0e3198942a00000041801ffff",
+      "polygon_geometry": {
+        "vertex_count": 37,
+        "triangle_index_count": 102,
+        "triangle_count": 34,
+        "color_rgba_bytes": [
+          255,
+          46,
+          101,
+          98
+        ],
+        "color_argb_hex": "#FF2E6562",
+        "coordinate_bit_width": 10,
+        "index_bit_width": 7,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 1835008,
+            "y_fixed": -131072,
+            "x": 28.0,
+            "y": -2.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 2621440,
+            "y_fixed": -3932160,
+            "x": 40.0,
+            "y": -60.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 2752512,
+            "y_fixed": -7602176,
+            "x": 42.0,
+            "y": -116.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 917504,
+            "y_fixed": -17563648,
+            "x": 14.0,
+            "y": -268.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 655360,
+            "y_fixed": -20774912,
+            "x": 10.0,
+            "y": -317.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 1048576,
+            "y_fixed": -23265280,
+            "x": 16.0,
+            "y": -355.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 3080192,
+            "y_fixed": -29163520,
+            "x": 47.0,
+            "y": -445.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 3342336,
+            "y_fixed": -31326208,
+            "x": 51.0,
+            "y": -478.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 2949120,
+            "y_fixed": -33292288,
+            "x": 45.0,
+            "y": -508.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 458752,
+            "y_fixed": -39124992,
+            "x": 7.0,
+            "y": -597.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 131072,
+            "y_fixed": -41615360,
+            "x": 2.0,
+            "y": -635.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 917504,
+            "y_fixed": -44367872,
+            "x": 14.0,
+            "y": -677.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 4718592,
+            "y_fixed": -52035584,
+            "x": 72.0,
+            "y": -794.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 5046272,
+            "y_fixed": -53739520,
+            "x": 77.0,
+            "y": -820.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 4653056,
+            "y_fixed": -54394880,
+            "x": 71.0,
+            "y": -830.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 3997696,
+            "y_fixed": -54853632,
+            "x": 61.0,
+            "y": -837.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 1900544,
+            "y_fixed": -55246848,
+            "x": 29.0,
+            "y": -843.0
+          },
+          {
+            "index": 17,
+            "x_fixed": -589824,
+            "y_fixed": -54788096,
+            "x": -9.0,
+            "y": -836.0
+          },
+          {
+            "index": 18,
+            "x_fixed": -2031616,
+            "y_fixed": -53739520,
+            "x": -31.0,
+            "y": -820.0
+          },
+          {
+            "index": 19,
+            "x_fixed": -3145728,
+            "y_fixed": -51380224,
+            "x": -48.0,
+            "y": -784.0
+          },
+          {
+            "index": 20,
+            "x_fixed": -3997696,
+            "y_fixed": -48168960,
+            "x": -61.0,
+            "y": -735.0
+          },
+          {
+            "index": 21,
+            "x_fixed": -4456448,
+            "y_fixed": -44498944,
+            "x": -68.0,
+            "y": -679.0
+          },
+          {
+            "index": 22,
+            "x_fixed": -4390912,
+            "y_fixed": -41615360,
+            "x": -67.0,
+            "y": -635.0
+          },
+          {
+            "index": 23,
+            "x_fixed": -3604480,
+            "y_fixed": -39124992,
+            "x": -55.0,
+            "y": -597.0
+          },
+          {
+            "index": 24,
+            "x_fixed": 0,
+            "y_fixed": -33357824,
+            "x": 0.0,
+            "y": -509.0
+          },
+          {
+            "index": 25,
+            "x_fixed": 589824,
+            "y_fixed": -31457280,
+            "x": 9.0,
+            "y": -480.0
+          },
+          {
+            "index": 26,
+            "x_fixed": 393216,
+            "y_fixed": -29229056,
+            "x": 6.0,
+            "y": -446.0
+          },
+          {
+            "index": 27,
+            "x_fixed": -1769472,
+            "y_fixed": -23592960,
+            "x": -27.0,
+            "y": -360.0
+          },
+          {
+            "index": 28,
+            "x_fixed": -2031616,
+            "y_fixed": -21430272,
+            "x": -31.0,
+            "y": -327.0
+          },
+          {
+            "index": 29,
+            "x_fixed": -1507328,
+            "y_fixed": -17825792,
+            "x": -23.0,
+            "y": -272.0
+          },
+          {
+            "index": 30,
+            "x_fixed": 1114112,
+            "y_fixed": -7602176,
+            "x": 17.0,
+            "y": -116.0
+          },
+          {
+            "index": 31,
+            "x_fixed": 1179648,
+            "y_fixed": -4653056,
+            "x": 18.0,
+            "y": -71.0
+          },
+          {
+            "index": 32,
+            "x_fixed": 524288,
+            "y_fixed": 0,
+            "x": 8.0,
+            "y": 0.0
+          },
+          {
+            "index": 33,
+            "x_fixed": 720896,
+            "y_fixed": 655360,
+            "x": 11.0,
+            "y": 10.0
+          },
+          {
+            "index": 34,
+            "x_fixed": 1114112,
+            "y_fixed": 851968,
+            "x": 17.0,
+            "y": 13.0
+          },
+          {
+            "index": 35,
+            "x_fixed": 1507328,
+            "y_fixed": 524288,
+            "x": 23.0,
+            "y": 8.0
+          },
+          {
+            "index": 36,
+            "x_fixed": 1835008,
+            "y_fixed": -131072,
+            "x": 28.0,
+            "y": -2.0
+          }
+        ],
+        "triangle_indices": [
+          10,
+          22,
+          21,
+          10,
+          23,
+          22,
+          10,
+          21,
+          11,
+          19,
+          18,
+          12,
+          10,
+          9,
+          23,
+          19,
+          11,
+          20,
+          20,
+          11,
+          21,
+          17,
+          12,
+          18,
+          23,
+          9,
+          24,
+          5,
+          4,
+          28,
+          4,
+          29,
+          28,
+          5,
+          27,
+          26,
+          33,
+          32,
+          35,
+          4,
+          3,
+          29,
+          26,
+          25,
+          6,
+          27,
+          5,
+          28,
+          25,
+          24,
+          8,
+          24,
+          9,
+          8,
+          12,
+          17,
+          16,
+          25,
+          8,
+          7,
+          25,
+          7,
+          6,
+          19,
+          12,
+          11,
+          26,
+          6,
+          5,
+          15,
+          14,
+          12,
+          13,
+          12,
+          14,
+          12,
+          16,
+          15,
+          30,
+          3,
+          2,
+          1,
+          32,
+          31,
+          30,
+          29,
+          3,
+          31,
+          2,
+          1,
+          2,
+          31,
+          30,
+          35,
+          34,
+          33,
+          32,
+          1,
+          0,
+          32,
+          0,
+          35
+        ],
+        "triangles": [
+          [
+            10,
+            22,
+            21
+          ],
+          [
+            10,
+            23,
+            22
+          ],
+          [
+            10,
+            21,
+            11
+          ],
+          [
+            19,
+            18,
+            12
+          ],
+          [
+            10,
+            9,
+            23
+          ],
+          [
+            19,
+            11,
+            20
+          ],
+          [
+            20,
+            11,
+            21
+          ],
+          [
+            17,
+            12,
+            18
+          ],
+          [
+            23,
+            9,
+            24
+          ],
+          [
+            5,
+            4,
+            28
+          ],
+          [
+            4,
+            29,
+            28
+          ],
+          [
+            5,
+            27,
+            26
+          ],
+          [
+            33,
+            32,
+            35
+          ],
+          [
+            4,
+            3,
+            29
+          ],
+          [
+            26,
+            25,
+            6
+          ],
+          [
+            27,
+            5,
+            28
+          ],
+          [
+            25,
+            24,
+            8
+          ],
+          [
+            24,
+            9,
+            8
+          ],
+          [
+            12,
+            17,
+            16
+          ],
+          [
+            25,
+            8,
+            7
+          ],
+          [
+            25,
+            7,
+            6
+          ],
+          [
+            19,
+            12,
+            11
+          ],
+          [
+            26,
+            6,
+            5
+          ],
+          [
+            15,
+            14,
+            12
+          ],
+          [
+            13,
+            12,
+            14
+          ],
+          [
+            12,
+            16,
+            15
+          ],
+          [
+            30,
+            3,
+            2
+          ],
+          [
+            1,
+            32,
+            31
+          ],
+          [
+            30,
+            29,
+            3
+          ],
+          [
+            31,
+            2,
+            1
+          ],
+          [
+            2,
+            31,
+            30
+          ],
+          [
+            35,
+            34,
+            33
+          ],
+          [
+            32,
+            1,
+            0
+          ],
+          [
+            32,
+            0,
+            35
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 209
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 29,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 282,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 28,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 30146560,
+          "ty_fixed": 69468160
+        },
+        "packed_flags": 63,
+        "layer_or_type_bits": 15
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 269,
+      "payload_hex": "0000001c0101cc04240000003f0030008aff2e65620b0057ce673ffdf75f800708a10c0d2040fff33f0113dc400957c0c20f7040831e0c01108618441dc4a082f86fdff9c0cffdea3b9f77bdff5df194077ef4678ffbea6b5ff6fdbf14024d630ee398cf4888416051c93a9a507e07444001fe57ffe7f90e726afbbac6194e307fe7bb5ef8e237c018be71b6013ef4a75b1deb55cf78f0b58088937485420729d208454a994a27d2a9843a9146a214e8e301793aa04e485449852c22556ac25a2d00afc062a51ab8102c45ab95700902ae81c0a5602d5c81d742c5e87042154a4a64a94c52149584a19a481892c865a3c1683296d0e5a2c15c381b842b4140140803c4a18048b4148f08e4e1601c0c054783117930429c0bffff",
+      "polygon_geometry": {
+        "vertex_count": 49,
+        "triangle_index_count": 138,
+        "triangle_count": 46,
+        "color_rgba_bytes": [
+          255,
+          46,
+          101,
+          98
+        ],
+        "color_argb_hex": "#FF2E6562",
+        "coordinate_bit_width": 11,
+        "index_bit_width": 7,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 2424832,
+            "y_fixed": -2949120,
+            "x": 37.0,
+            "y": -45.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 4390912,
+            "y_fixed": -10551296,
+            "x": 67.0,
+            "y": -161.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 4915200,
+            "y_fixed": -11796480,
+            "x": 75.0,
+            "y": -180.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 5373952,
+            "y_fixed": -12189696,
+            "x": 82.0,
+            "y": -186.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 6029312,
+            "y_fixed": -11730944,
+            "x": 92.0,
+            "y": -179.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 6684672,
+            "y_fixed": -10616832,
+            "x": 102.0,
+            "y": -162.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 10027008,
+            "y_fixed": -3080192,
+            "x": 153.0,
+            "y": -47.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 12320768,
+            "y_fixed": -3473408,
+            "x": 188.0,
+            "y": -53.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 6553600,
+            "y_fixed": -14745600,
+            "x": 100.0,
+            "y": -225.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 5963776,
+            "y_fixed": -18284544,
+            "x": 91.0,
+            "y": -279.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 5505024,
+            "y_fixed": -22413312,
+            "x": 84.0,
+            "y": -342.0
+          },
+          {
+            "index": 11,
+            "x_fixed": 5242880,
+            "y_fixed": -32768000,
+            "x": 80.0,
+            "y": -500.0
+          },
+          {
+            "index": 12,
+            "x_fixed": 6946816,
+            "y_fixed": -39583744,
+            "x": 106.0,
+            "y": -604.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 8192000,
+            "y_fixed": -36896768,
+            "x": 125.0,
+            "y": -563.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 9306112,
+            "y_fixed": -36700160,
+            "x": 142.0,
+            "y": -560.0
+          },
+          {
+            "index": 15,
+            "x_fixed": 10551296,
+            "y_fixed": -37158912,
+            "x": 161.0,
+            "y": -567.0
+          },
+          {
+            "index": 16,
+            "x_fixed": 11403264,
+            "y_fixed": -37945344,
+            "x": 174.0,
+            "y": -579.0
+          },
+          {
+            "index": 17,
+            "x_fixed": 11468800,
+            "y_fixed": -39256064,
+            "x": 175.0,
+            "y": -599.0
+          },
+          {
+            "index": 18,
+            "x_fixed": 9830400,
+            "y_fixed": -44171264,
+            "x": 150.0,
+            "y": -674.0
+          },
+          {
+            "index": 19,
+            "x_fixed": 9371648,
+            "y_fixed": -46465024,
+            "x": 143.0,
+            "y": -709.0
+          },
+          {
+            "index": 20,
+            "x_fixed": 9109504,
+            "y_fixed": -52494336,
+            "x": 139.0,
+            "y": -801.0
+          },
+          {
+            "index": 21,
+            "x_fixed": 9699328,
+            "y_fixed": -57475072,
+            "x": 148.0,
+            "y": -877.0
+          },
+          {
+            "index": 22,
+            "x_fixed": 10092544,
+            "y_fixed": -58916864,
+            "x": 154.0,
+            "y": -899.0
+          },
+          {
+            "index": 23,
+            "x_fixed": 14090240,
+            "y_fixed": -67895296,
+            "x": 215.0,
+            "y": -1036.0
+          },
+          {
+            "index": 24,
+            "x_fixed": 14483456,
+            "y_fixed": -69730304,
+            "x": 221.0,
+            "y": -1064.0
+          },
+          {
+            "index": 25,
+            "x_fixed": 14286848,
+            "y_fixed": -70778880,
+            "x": 218.0,
+            "y": -1080.0
+          },
+          {
+            "index": 26,
+            "x_fixed": 13369344,
+            "y_fixed": -71630848,
+            "x": 204.0,
+            "y": -1093.0
+          },
+          {
+            "index": 27,
+            "x_fixed": 12124160,
+            "y_fixed": -72220672,
+            "x": 185.0,
+            "y": -1102.0
+          },
+          {
+            "index": 28,
+            "x_fixed": 8454144,
+            "y_fixed": -72744960,
+            "x": 129.0,
+            "y": -1110.0
+          },
+          {
+            "index": 29,
+            "x_fixed": 4718592,
+            "y_fixed": -72417280,
+            "x": 72.0,
+            "y": -1105.0
+          },
+          {
+            "index": 30,
+            "x_fixed": 3276800,
+            "y_fixed": -71892992,
+            "x": 50.0,
+            "y": -1097.0
+          },
+          {
+            "index": 31,
+            "x_fixed": 2424832,
+            "y_fixed": -71303168,
+            "x": 37.0,
+            "y": -1088.0
+          },
+          {
+            "index": 32,
+            "x_fixed": 1507328,
+            "y_fixed": -69795840,
+            "x": 23.0,
+            "y": -1065.0
+          },
+          {
+            "index": 33,
+            "x_fixed": 1048576,
+            "y_fixed": -67764224,
+            "x": 16.0,
+            "y": -1034.0
+          },
+          {
+            "index": 34,
+            "x_fixed": 131072,
+            "y_fixed": -57147392,
+            "x": 2.0,
+            "y": -872.0
+          },
+          {
+            "index": 35,
+            "x_fixed": -786432,
+            "y_fixed": -54591488,
+            "x": -12.0,
+            "y": -833.0
+          },
+          {
+            "index": 36,
+            "x_fixed": -3145728,
+            "y_fixed": -50200576,
+            "x": -48.0,
+            "y": -766.0
+          },
+          {
+            "index": 37,
+            "x_fixed": -3080192,
+            "y_fixed": -49414144,
+            "x": -47.0,
+            "y": -754.0
+          },
+          {
+            "index": 38,
+            "x_fixed": -2752512,
+            "y_fixed": -48955392,
+            "x": -42.0,
+            "y": -747.0
+          },
+          {
+            "index": 39,
+            "x_fixed": -2031616,
+            "y_fixed": -48824320,
+            "x": -31.0,
+            "y": -745.0
+          },
+          {
+            "index": 40,
+            "x_fixed": -1376256,
+            "y_fixed": -49020928,
+            "x": -21.0,
+            "y": -748.0
+          },
+          {
+            "index": 41,
+            "x_fixed": 1507328,
+            "y_fixed": -52953088,
+            "x": 23.0,
+            "y": -808.0
+          },
+          {
+            "index": 42,
+            "x_fixed": 2621440,
+            "y_fixed": -41943040,
+            "x": 40.0,
+            "y": -640.0
+          },
+          {
+            "index": 43,
+            "x_fixed": 655360,
+            "y_fixed": -31916032,
+            "x": 10.0,
+            "y": -487.0
+          },
+          {
+            "index": 44,
+            "x_fixed": 983040,
+            "y_fixed": -28901376,
+            "x": 15.0,
+            "y": -441.0
+          },
+          {
+            "index": 45,
+            "x_fixed": 2883584,
+            "y_fixed": -18481152,
+            "x": 44.0,
+            "y": -282.0
+          },
+          {
+            "index": 46,
+            "x_fixed": 3211264,
+            "y_fixed": -14942208,
+            "x": 49.0,
+            "y": -228.0
+          },
+          {
+            "index": 47,
+            "x_fixed": 589824,
+            "y_fixed": -2949120,
+            "x": 9.0,
+            "y": -45.0
+          },
+          {
+            "index": 48,
+            "x_fixed": 2424832,
+            "y_fixed": -2949120,
+            "x": 37.0,
+            "y": -45.0
+          }
+        ],
+        "triangle_indices": [
+          41,
+          36,
+          35,
+          40,
+          36,
+          41,
+          38,
+          37,
+          39,
+          36,
+          39,
+          37,
+          40,
+          39,
+          36,
+          35,
+          34,
+          41,
+          32,
+          31,
+          30,
+          32,
+          30,
+          29,
+          32,
+          29,
+          33,
+          34,
+          21,
+          41,
+          33,
+          22,
+          34,
+          42,
+          41,
+          19,
+          44,
+          43,
+          11,
+          0,
+          47,
+          1,
+          11,
+          43,
+          42,
+          3,
+          46,
+          8,
+          44,
+          10,
+          45,
+          45,
+          9,
+          46,
+          2,
+          1,
+          46,
+          3,
+          2,
+          46,
+          10,
+          44,
+          11,
+          46,
+          1,
+          47,
+          11,
+          42,
+          12,
+          29,
+          28,
+          33,
+          21,
+          20,
+          41,
+          34,
+          22,
+          21,
+          19,
+          41,
+          20,
+          42,
+          18,
+          12,
+          42,
+          19,
+          18,
+          12,
+          18,
+          17,
+          23,
+          27,
+          26,
+          24,
+          26,
+          25,
+          22,
+          33,
+          23,
+          23,
+          26,
+          24,
+          23,
+          28,
+          27,
+          8,
+          46,
+          9,
+          4,
+          8,
+          5,
+          4,
+          3,
+          8,
+          7,
+          5,
+          8,
+          9,
+          45,
+          10,
+          15,
+          17,
+          16,
+          15,
+          14,
+          12,
+          7,
+          6,
+          5,
+          14,
+          13,
+          12,
+          17,
+          15,
+          12,
+          33,
+          28,
+          23
+        ],
+        "triangles": [
+          [
+            41,
+            36,
+            35
+          ],
+          [
+            40,
+            36,
+            41
+          ],
+          [
+            38,
+            37,
+            39
+          ],
+          [
+            36,
+            39,
+            37
+          ],
+          [
+            40,
+            39,
+            36
+          ],
+          [
+            35,
+            34,
+            41
+          ],
+          [
+            32,
+            31,
+            30
+          ],
+          [
+            32,
+            30,
+            29
+          ],
+          [
+            32,
+            29,
+            33
+          ],
+          [
+            34,
+            21,
+            41
+          ],
+          [
+            33,
+            22,
+            34
+          ],
+          [
+            42,
+            41,
+            19
+          ],
+          [
+            44,
+            43,
+            11
+          ],
+          [
+            0,
+            47,
+            1
+          ],
+          [
+            11,
+            43,
+            42
+          ],
+          [
+            3,
+            46,
+            8
+          ],
+          [
+            44,
+            10,
+            45
+          ],
+          [
+            45,
+            9,
+            46
+          ],
+          [
+            2,
+            1,
+            46
+          ],
+          [
+            3,
+            2,
+            46
+          ],
+          [
+            10,
+            44,
+            11
+          ],
+          [
+            46,
+            1,
+            47
+          ],
+          [
+            11,
+            42,
+            12
+          ],
+          [
+            29,
+            28,
+            33
+          ],
+          [
+            21,
+            20,
+            41
+          ],
+          [
+            34,
+            22,
+            21
+          ],
+          [
+            19,
+            41,
+            20
+          ],
+          [
+            42,
+            18,
+            12
+          ],
+          [
+            42,
+            19,
+            18
+          ],
+          [
+            12,
+            18,
+            17
+          ],
+          [
+            23,
+            27,
+            26
+          ],
+          [
+            24,
+            26,
+            25
+          ],
+          [
+            22,
+            33,
+            23
+          ],
+          [
+            23,
+            26,
+            24
+          ],
+          [
+            23,
+            28,
+            27
+          ],
+          [
+            8,
+            46,
+            9
+          ],
+          [
+            4,
+            8,
+            5
+          ],
+          [
+            4,
+            3,
+            8
+          ],
+          [
+            7,
+            5,
+            8
+          ],
+          [
+            9,
+            45,
+            10
+          ],
+          [
+            15,
+            17,
+            16
+          ],
+          [
+            15,
+            14,
+            12
+          ],
+          [
+            7,
+            6,
+            5
+          ],
+          [
+            14,
+            13,
+            12
+          ],
+          [
+            17,
+            15,
+            12
+          ],
+          [
+            33,
+            28,
+            23
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 282
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 30,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 29,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 3801088,
+          "ty_fixed": 51314688
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000001d01003a030f00000013"
+    },
+    {
+      "index": 31,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 30,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 9175040,
+          "ty_fixed": 58130432
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000001e01008c037700000013"
+    },
+    {
+      "index": 32,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 31,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 2752512,
+          "ty_fixed": 58064896
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000001f01002a037600000013"
+    },
+    {
+      "index": 33,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 43,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 32,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 0,
+          "ty_fixed": 55836672
+        },
+        "packed_flags": 20,
+        "layer_or_type_bits": 4
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 30,
+      "payload_hex": "000000200100000354000000140608005e0002a0a0e52a4560010101010100ae00a300a400a200a200af00"
+    },
+    {
+      "index": 34,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 80,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 33,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 65536,
+          "ty_fixed": 55836672
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 67,
+      "payload_hex": "00000021010001035400000015000e0024ff00000008005efb5c646560572dffd2a99f9a9ca2ffeb1515100900faefebf0fc030a1115054da596d0528ca98640430700138229810c12ca10c18003ffff",
+      "polygon_geometry": {
+        "vertex_count": 15,
+        "triangle_index_count": 36,
+        "triangle_count": 12,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 8,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 5832704,
+            "y_fixed": 0,
+            "x": 89.0,
+            "y": 0.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 12189696,
+            "y_fixed": 0,
+            "x": 186.0,
+            "y": 0.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 12713984,
+            "y_fixed": -327680,
+            "x": 194.0,
+            "y": -5.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 12779520,
+            "y_fixed": -786432,
+            "x": 195.0,
+            "y": -12.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 12451840,
+            "y_fixed": -1376256,
+            "x": 190.0,
+            "y": -21.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 11862016,
+            "y_fixed": -1769472,
+            "x": 181.0,
+            "y": -27.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 9109504,
+            "y_fixed": -2490368,
+            "x": 139.0,
+            "y": -38.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 6094848,
+            "y_fixed": -2752512,
+            "x": 93.0,
+            "y": -42.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 3145728,
+            "y_fixed": -2424832,
+            "x": 48.0,
+            "y": -37.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 458752,
+            "y_fixed": -1638400,
+            "x": 7.0,
+            "y": -25.0
+          },
+          {
+            "index": 10,
+            "x_fixed": -196608,
+            "y_fixed": -1179648,
+            "x": -3.0,
+            "y": -18.0
+          },
+          {
+            "index": 11,
+            "x_fixed": -524288,
+            "y_fixed": -720896,
+            "x": -8.0,
+            "y": -11.0
+          },
+          {
+            "index": 12,
+            "x_fixed": -393216,
+            "y_fixed": -262144,
+            "x": -6.0,
+            "y": -4.0
+          },
+          {
+            "index": 13,
+            "x_fixed": 0,
+            "y_fixed": 0,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "index": 14,
+            "x_fixed": 5832704,
+            "y_fixed": 0,
+            "x": 89.0,
+            "y": 0.0
+          }
+        ],
+        "triangle_indices": [
+          13,
+          10,
+          9,
+          13,
+          9,
+          8,
+          11,
+          10,
+          12,
+          12,
+          10,
+          13,
+          8,
+          0,
+          13,
+          8,
+          7,
+          0,
+          0,
+          6,
+          1,
+          1,
+          6,
+          5,
+          1,
+          4,
+          3,
+          4,
+          1,
+          5,
+          3,
+          2,
+          1,
+          6,
+          0,
+          7
+        ],
+        "triangles": [
+          [
+            13,
+            10,
+            9
+          ],
+          [
+            13,
+            9,
+            8
+          ],
+          [
+            11,
+            10,
+            12
+          ],
+          [
+            12,
+            10,
+            13
+          ],
+          [
+            8,
+            0,
+            13
+          ],
+          [
+            8,
+            7,
+            0
+          ],
+          [
+            0,
+            6,
+            1
+          ],
+          [
+            1,
+            6,
+            5
+          ],
+          [
+            1,
+            4,
+            3
+          ],
+          [
+            4,
+            1,
+            5
+          ],
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            6,
+            0,
+            7
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 80
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 35,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 34,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 65404928,
+          "ty_fixed": 54657024
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "000000220103e6034200000013"
+    },
+    {
+      "index": 36,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 35,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 35,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 62062592,
+          "ty_fixed": 51904512
+        },
+        "packed_flags": 20,
+        "layer_or_type_bits": 4
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 22,
+      "payload_hex": "000000230103b30318000000140407003100005068050600000000ae00a400a200af00"
+    },
+    {
+      "index": 37,
+      "type_code": 8,
+      "type_name": "bounce_actor_c",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 36,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -5505024,
+          "ty_fixed": 16121856
+        },
+        "packed_flags": 16,
+        "layer_or_type_bits": 0
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000002401ffac00f600000010"
+    },
+    {
+      "index": 38,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 64,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 37,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -63176704,
+          "ty_fixed": 57671680
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 51,
+      "payload_hex": "0000002501fc3c037000000015000a0018ff000000080343a6575a5412f9e7dbd7d4004f582824211402eaaba7aa05099d6480490798520818228c404800ffff",
+      "polygon_geometry": {
+        "vertex_count": 11,
+        "triangle_index_count": 24,
+        "triangle_count": 8,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 8,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 48824320,
+            "y_fixed": 10944512,
+            "x": 745.0,
+            "y": 167.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 60424192,
+            "y_fixed": 7798784,
+            "x": 922.0,
+            "y": 119.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 60620800,
+            "y_fixed": 7536640,
+            "x": 925.0,
+            "y": 115.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 60227584,
+            "y_fixed": 7340032,
+            "x": 919.0,
+            "y": 112.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 55902208,
+            "y_fixed": 6488064,
+            "x": 853.0,
+            "y": 99.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 54263808,
+            "y_fixed": 5308416,
+            "x": 828.0,
+            "y": 81.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 53084160,
+            "y_fixed": 3735552,
+            "x": 810.0,
+            "y": 57.0
+          },
+          {
+            "index": 7,
+            "x_fixed": 52297728,
+            "y_fixed": -393216,
+            "x": 798.0,
+            "y": -6.0
+          },
+          {
+            "index": 8,
+            "x_fixed": 52035584,
+            "y_fixed": -655360,
+            "x": 794.0,
+            "y": -10.0
+          },
+          {
+            "index": 9,
+            "x_fixed": 51838976,
+            "y_fixed": -458752,
+            "x": 791.0,
+            "y": -7.0
+          },
+          {
+            "index": 10,
+            "x_fixed": 48824320,
+            "y_fixed": 10944512,
+            "x": 745.0,
+            "y": 167.0
+          }
+        ],
+        "triangle_indices": [
+          9,
+          8,
+          7,
+          9,
+          6,
+          0,
+          6,
+          9,
+          7,
+          0,
+          6,
+          5,
+          5,
+          4,
+          0,
+          3,
+          2,
+          1,
+          3,
+          1,
+          4,
+          4,
+          1,
+          0
+        ],
+        "triangles": [
+          [
+            9,
+            8,
+            7
+          ],
+          [
+            9,
+            6,
+            0
+          ],
+          [
+            6,
+            9,
+            7
+          ],
+          [
+            0,
+            6,
+            5
+          ],
+          [
+            5,
+            4,
+            0
+          ],
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            3,
+            1,
+            4
+          ],
+          [
+            4,
+            1,
+            0
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 64
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 39,
+      "type_code": 9,
+      "type_name": "path_geometry_r",
+      "record_bytes": 119,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 38,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -62586880,
+          "ty_fixed": 327680
+        },
+        "packed_flags": 20,
+        "layer_or_type_bits": 4
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 106,
+      "payload_hex": "0000002601fc45000500000014150b05420000dad5ee87c99c6a77cf1cefbd17c01118110d8b6c0534e501d0864274220000000000000000000000000000000000000000000000000000000000ae00a400a300a300a400a400a300a300a300a400a300a400a400a300a400a300a200a200a500a500af00"
+    },
+    {
+      "index": 40,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 39,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 24707072,
+          "ty_fixed": 54984704
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "00000027010179034700000013"
+    },
+    {
+      "index": 41,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 40,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 59244544,
+          "ty_fixed": 21495808
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "00000028010388014800000013"
+    },
+    {
+      "index": 42,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 41,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 14745600,
+          "ty_fixed": 13107200
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "000000290100e100c800000013"
+    },
+    {
+      "index": 43,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 42,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 49086464,
+          "ty_fixed": 34275328
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000002a0102ed020b00000013"
+    },
+    {
+      "index": 44,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 43,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -5439488,
+          "ty_fixed": 7864320
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000002b01ffad007800000013"
+    },
+    {
+      "index": 45,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 44,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 26476544,
+          "ty_fixed": 22282240
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000002c010194015400000013"
+    },
+    {
+      "index": 46,
+      "type_code": 13,
+      "type_name": "camera_anchor_a",
+      "record_bytes": 13,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 45,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -5767168,
+          "ty_fixed": 41549824
+        },
+        "packed_flags": 19,
+        "layer_or_type_bits": 3
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 0,
+      "payload_hex": "0000002d01ffa8027a00000013"
+    },
+    {
+      "index": 47,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 44,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 46,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 31784960,
+          "ty_fixed": 104857600
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 31,
+      "payload_hex": "0000002e0101e506400000001500040006ff0000000cff89a0544b4a4bb5ff4cae21e552ee1a03130201ffff",
+      "polygon_geometry": {
+        "vertex_count": 5,
+        "triangle_index_count": 6,
+        "triangle_count": 2,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 12,
+        "index_bit_width": 3,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": 69795840,
+            "y_fixed": 16384000,
+            "x": 1065.0,
+            "y": 250.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 71172096,
+            "y_fixed": -39976960,
+            "x": 1086.0,
+            "y": -610.0
+          },
+          {
+            "index": 2,
+            "x_fixed": -86835200,
+            "y_fixed": -39976960,
+            "x": -1325.0,
+            "y": -610.0
+          },
+          {
+            "index": 3,
+            "x_fixed": -86179840,
+            "y_fixed": 16384000,
+            "x": -1315.0,
+            "y": 250.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 69795840,
+            "y_fixed": 16384000,
+            "x": 1065.0,
+            "y": 250.0
+          }
+        ],
+        "triangle_indices": [
+          3,
+          2,
+          0,
+          1,
+          0,
+          2
+        ],
+        "triangles": [
+          [
+            3,
+            2,
+            0
+          ],
+          [
+            1,
+            0,
+            2
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 44
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 48,
+      "type_code": 4,
+      "type_name": "polygon_geometry_p",
+      "record_bytes": 74,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 47,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 29163520,
+          "ty_fixed": -2949120
+        },
+        "packed_flags": 21,
+        "layer_or_type_bits": 5
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 61,
+      "payload_hex": "0000002f0101bdffd300000015000a0018ff0000000cffa2fe3d2553c22bbc424cc694b33efbdf00ea411ff456622524d336aa3cc962b3350507a0000c48081c138608a68c424628ffff",
+      "polygon_geometry": {
+        "vertex_count": 11,
+        "triangle_index_count": 24,
+        "triangle_count": 8,
+        "color_rgba_bytes": [
+          255,
+          0,
+          0,
+          0
+        ],
+        "color_argb_hex": "#FF000000",
+        "coordinate_bit_width": 12,
+        "index_bit_width": 5,
+        "vertices": [
+          {
+            "index": 0,
+            "x_fixed": -39845888,
+            "y_fixed": 2818048,
+            "x": -608.0,
+            "y": 43.0
+          },
+          {
+            "index": 1,
+            "x_fixed": 32833536,
+            "y_fixed": 2818048,
+            "x": 501.0,
+            "y": 43.0
+          },
+          {
+            "index": 2,
+            "x_fixed": 32833536,
+            "y_fixed": 54525952,
+            "x": 501.0,
+            "y": 832.0
+          },
+          {
+            "index": 3,
+            "x_fixed": 39714816,
+            "y_fixed": 54525952,
+            "x": 606.0,
+            "y": 832.0
+          },
+          {
+            "index": 4,
+            "x_fixed": 39714816,
+            "y_fixed": 68026368,
+            "x": 606.0,
+            "y": 1038.0
+          },
+          {
+            "index": 5,
+            "x_fixed": 73793536,
+            "y_fixed": 72810496,
+            "x": 1126.0,
+            "y": 1111.0
+          },
+          {
+            "index": 6,
+            "x_fixed": 73924608,
+            "y_fixed": -40632320,
+            "x": 1128.0,
+            "y": -620.0
+          },
+          {
+            "index": 7,
+            "x_fixed": -86310912,
+            "y_fixed": -42139648,
+            "x": -1317.0,
+            "y": -643.0
+          },
+          {
+            "index": 8,
+            "x_fixed": -85983232,
+            "y_fixed": 72089600,
+            "x": -1312.0,
+            "y": 1100.0
+          },
+          {
+            "index": 9,
+            "x_fixed": -39780352,
+            "y_fixed": 71630848,
+            "x": -607.0,
+            "y": 1093.0
+          },
+          {
+            "index": 10,
+            "x_fixed": -39845888,
+            "y_fixed": 2818048,
+            "x": -608.0,
+            "y": 43.0
+          }
+        ],
+        "triangle_indices": [
+          7,
+          0,
+          8,
+          1,
+          0,
+          6,
+          0,
+          9,
+          8,
+          0,
+          7,
+          6,
+          1,
+          3,
+          2,
+          1,
+          6,
+          5,
+          3,
+          5,
+          4,
+          3,
+          1,
+          5
+        ],
+        "triangles": [
+          [
+            7,
+            0,
+            8
+          ],
+          [
+            1,
+            0,
+            6
+          ],
+          [
+            0,
+            9,
+            8
+          ],
+          [
+            0,
+            7,
+            6
+          ],
+          [
+            1,
+            3,
+            2
+          ],
+          [
+            1,
+            6,
+            5
+          ],
+          [
+            3,
+            5,
+            4
+          ],
+          [
+            3,
+            1,
+            5
+          ]
+        ],
+        "final_short": -1,
+        "payload_consumed": 74
+      },
+      "polygon_decode_status": "verified_from_p_and_j_bytecode"
+    },
+    {
+      "index": 49,
+      "type_code": 12,
+      "type_name": "interactive_object_e",
+      "record_bytes": 16,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 48,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 56623104,
+          "ty_fixed": -196608
+        },
+        "packed_flags": 15,
+        "layer_or_type_bits": -1
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 3,
+      "payload_hex": "00000030010360fffd0000000f01fd64"
+    },
+    {
+      "index": 50,
+      "type_code": 12,
+      "type_name": "interactive_object_e",
+      "record_bytes": 16,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 49,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 46202880,
+          "ty_fixed": -131072
+        },
+        "packed_flags": 15,
+        "layer_or_type_bits": -1
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 3,
+      "payload_hex": "000000310102c1fffe0000000f01fd64"
+    },
+    {
+      "index": 51,
+      "type_code": 12,
+      "type_name": "interactive_object_e",
+      "record_bytes": 16,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 50,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 35913728,
+          "ty_fixed": -65536
+        },
+        "packed_flags": 15,
+        "layer_or_type_bits": -1
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 3,
+      "payload_hex": "00000032010224ffff0000000f01fd64"
+    },
+    {
+      "index": 52,
+      "type_code": 12,
+      "type_name": "interactive_object_e",
+      "record_bytes": 16,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 51,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 25493504,
+          "ty_fixed": -65536
+        },
+        "packed_flags": 15,
+        "layer_or_type_bits": -1
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 3,
+      "payload_hex": "00000033010185ffff0000000f01fd64"
+    },
+    {
+      "index": 53,
+      "type_code": 12,
+      "type_name": "interactive_object_e",
+      "record_bytes": 16,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 52,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 15204352,
+          "ty_fixed": -131072
+        },
+        "packed_flags": 15,
+        "layer_or_type_bits": -1
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 3,
+      "payload_hex": "000000340100e8fffe0000000f01fd64"
+    },
+    {
+      "index": 54,
+      "type_code": 12,
+      "type_name": "interactive_object_e",
+      "record_bytes": 16,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 53,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": 4980736,
+          "ty_fixed": -65536
+        },
+        "packed_flags": 15,
+        "layer_or_type_bits": -1
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 3,
+      "payload_hex": "0000003501004cffff0000000f01fd64"
+    },
+    {
+      "index": 55,
+      "type_code": 12,
+      "type_name": "interactive_object_e",
+      "record_bytes": 16,
+      "base_header": {
+        "parent_index": 0,
+        "child_index": 54,
+        "transform_flags": 1,
+        "transform": {
+          "tx_fixed": -5242880,
+          "ty_fixed": -65536
+        },
+        "packed_flags": 15,
+        "layer_or_type_bits": -1
+      },
+      "base_header_bytes": 13,
+      "remaining_payload_bytes": 3,
+      "payload_hex": "0000003601ffb0ffff0000000f01fd64"
+    }
+  ],
+  "terminator_offset": 2084,
+  "trailing_bytes": 0
+}
