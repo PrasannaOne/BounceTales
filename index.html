@@ -3,33 +3,53 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#101014">
-<title>Bounce Tales · Reverse Engineering Build 04</title>
+<meta name="theme-color" content="#121a1d">
+<title>Bounce Tales · HTML5 Remaster Research Build 05</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main id="app">
-<header class="topbar"><span>BOUNCE TALES</span><span class="build">RE ENGINE · BUILD 04</span></header>
-<section class="game-wrap">
-<canvas id="game" width="240" height="320" aria-label="Bounce Tales game viewport"></canvas>
-<div class="statusline" id="statusline">WORLD 1 · TRAINING GROVE</div>
-<div class="overlay" id="menu">
- <div class="panel"><h1>Bounce Tales</h1><p>Research build using the original JAR resources and recovered Java ME input mapping.<br>The current training stage is still provisional.</p><button id="start">START GAME</button></div>
-</div>
-<div class="overlay" id="complete" hidden>
- <div class="panel"><h1>Level clear!</h1><p id="result">You reached the finish.</p><button id="again">PLAY AGAIN</button></div>
-</div>
-</section>
-<section class="controls" aria-label="Original game touch controls">
- <button data-key="LEFT" aria-label="Move left">◀</button>
- <button data-key="RIGHT" aria-label="Move right">▶</button>
- <button data-key="ACTION" class="action" aria-label="Primary action">ACTION</button>
- <button data-key="MODE" aria-label="Cycle character mode">*</button>
- <button data-key="PAUSE" class="pause" aria-label="Pause game">Ⅱ</button>
-</section>
-<p class="hint">Original input map: ← / → move · ↑ primary action · * mode cycle · Esc pause</p>
-<footer><span id="save-state">Progress saved on this device</span><button id="reset-save">Reset progress</button></footer>
+  <header class="topbar"><span>BOUNCE TALES</span><span class="build">HTML5 REMASTER · BUILD 05</span></header>
+  <section class="game-wrap" aria-label="Bounce Tales game">
+    <canvas id="game" width="240" height="320" aria-label="Original Misty Morning level"></canvas>
+    <div class="statusline" id="statusline">LOADING ORIGINAL LEVEL…</div>
+    <div class="egg-hud" id="egg-hud">FORM BOUNCE</div>
+    <div class="overlay" id="menu">
+      <div class="panel">
+        <p class="eyebrow">THE ORIGINAL ADVENTURE</p>
+        <h1>Bounce Tales</h1>
+        <p>Chapter 1 · Misty Morning</p>
+        <p class="detail">The first level is loaded from the supplied Nokia JAR. This is an early engine port, not the complete remaster yet.</p>
+        <button id="start">START GAME</button>
+      </div>
+    </div>
+    <div class="overlay" id="pause-layer" hidden>
+      <div class="panel">
+        <p class="eyebrow">GAME PAUSED</p>
+        <h1>Paused</h1>
+        <button id="resume">RESUME</button>
+        <button id="restart" class="secondary">RESTART LEVEL</button>
+        <button id="back-title" class="tertiary">MAIN MENU</button>
+      </div>
+    </div>
+  </section>
+  <section class="controls" aria-label="Original game controls, with number keys omitted">
+    <button data-key-id="6" class="soft" aria-label="Left soft key">L</button>
+    <button data-key-id="1" aria-label="Up">▲</button>
+    <button data-key-id="20" class="special" aria-label="Star, cycle form">*</button>
+    <button data-key-id="3" aria-label="Left">◀</button>
+    <button data-key-id="7" class="action" aria-label="Middle soft key, jump or select">OK</button>
+    <button data-key-id="4" aria-label="Right">▶</button>
+    <button data-key-id="21" class="special" aria-label="Hash, original pound key">#</button>
+    <button data-key-id="2" aria-label="Down">▼</button>
+    <button data-key-id="5" class="soft pause" aria-label="Right soft key, pause">R</button>
+  </section>
+  <p class="hint">Arrows: move / jump · OK: jump / select · *: form · #: original key · L / R: soft keys</p>
+  <footer><span>Original JAR data · 240×320 viewport · number keys omitted</span><span>Build 05</span></footer>
 </main>
 <script src="src/original-input-map.js"></script>
+<script src="src/rlef-reader.js"></script>
+<script src="src/bounce-physics.js"></script>
 <script src="game.js"></script>
-</body></html>
+</body>
+</html>

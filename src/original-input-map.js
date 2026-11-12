@@ -1,29 +1,48 @@
-// Bounce Tales JAR input adapter, reconstructed from o.e(int), o.d(int,int), o.a(int), and m.b(int).
-(() => {
-'use strict';
-const KEY=Object.freeze({UP:1,DOWN:2,LEFT:3,RIGHT:4,PAUSE_MENU:5,SOFTKEY_1:6,SELECT_ALIAS:7,STAR_MODE_CYCLE:20,HASH:21});
-const GAME_ACTION={UP:1,DOWN:6,LEFT:2,RIGHT:5};
-const MODE_2_REMAP=new Map([[15,7],[12,1],[14,3],[18,2],[16,4]]);
-const GAME_ACTION_REMAP=new Map([[1,1],[2,3],[5,4],[6,2]]);
-function normalizeJavaMEKey(keyCode,gameAction=null,inputMode=1){
- if(!Number.isInteger(keyCode))return -1;let id;
- if(keyCode===-7)id=5;else if(keyCode===-6)id=6;else if(keyCode===-5)id=7;
- else if(keyCode>=48&&keyCode<=57)id=keyCode-38;else if(keyCode===42)id=20;else if(keyCode===35)id=21;
- else id=GAME_ACTION_REMAP.get(gameAction)??-1;
- if(inputMode===2)id=MODE_2_REMAP.get(id)??id;return id;
-}
-function normalizeBrowserKey(key,inputMode=1){const actions={ArrowUp:1,ArrowDown:6,ArrowLeft:2,ArrowRight:5};
- if(Object.prototype.hasOwnProperty.call(actions,key))return normalizeJavaMEKey(-999,actions[key],inputMode);
- if(typeof key!=='string'||key.length!==1)return -1;return normalizeJavaMEKey(key.charCodeAt(0),null,inputMode);
-}
-class OriginalInputState{
- constructor(inputMode=1){this.inputMode=inputMode;this.heldMask=0;this.pressedEdges=[];}
- press(id){if(!Number.isInteger(id)||id<0||id>=32)return;const bit=(1<<id)>>>0;if((this.heldMask&bit)===0)this.pressedEdges.push(id);this.heldMask=(this.heldMask|bit)>>>0;}
- release(id){if(!Number.isInteger(id)||id<0||id>=32)return;this.heldMask=(this.heldMask&(~(1<<id)))>>>0;}
- isHeld(id){return id>=0&&id<32&&((this.heldMask&(1<<id))>>>0)!==0;}
- drainPressedEdges(){const edges=this.pressedEdges;this.pressedEdges=[];return edges;}
- gameplayState(){return{left:this.isHeld(3),right:this.isHeld(4),primaryActorAction:[15,12,1,7].some(id=>this.isHeld(id))};}
- clear(){this.heldMask=0;this.pressedEdges=[];}
-}
-window.BounceOriginalInput=Object.freeze({KEY,normalizeJavaMEKey,normalizeBrowserKey,OriginalInputState});
-})();
+(function(root,factory){
+  const api=factory();
+  if(typeof module==='object'&&module.exports) module.exports=api;
+  root.BounceOriginalInput=api;
+})(typeof globalThis!=='undefined'?globalThis:this,function(){
+  'use strict';
+  const KEY=Object.freeze({
+    UP:1,DOWN:2,LEFT:3,RIGHT:4,
+    SOFTKEY_RIGHT:5,SOFTKEY_LEFT:6,SOFTKEY_MIDDLE:7,
+    NUM0:10,NUM1:11,NUM2:12,NUM3:13,NUM4:14,NUM5:15,NUM6:16,NUM7:17,NUM8:18,NUM9:19,
+    STAR:20,POUND:21
+  });
+  const ACTION=Object.freeze({UP:1,DOWN:6,LEFT:2,RIGHT:5});
+  const MODE2=new Map([[12,1],[14,3],[15,7],[16,4],[18,2]]);
+  function normalizeJavaMEKey(keyCode,gameAction=null,inputMode=1){
+    let id=-1;
+    if(keyCode===-7)id=5;else if(keyCode===-6)id=6;else if(keyCode===-5)id=7;
+    else if(Number.isInteger(keyCode)&&keyCode>=48&&keyCode<=57)id=keyCode-38;
+    else if(keyCode===42)id=20;else if(keyCode===35)id=21;
+    else if(ACTION[gameAction]!==undefined)id=ACTION[gameAction];
+    if(inputMode===2)id=MODE2.get(id)??id;
+    return id;
+  }
+  function browserKeyId(key){
+    const directional={ArrowUp:1,ArrowDown:2,ArrowLeft:3,ArrowRight:4};
+    if(directional[key]!==undefined)return directional[key];
+    if(key==='Enter'||key===' ')return 7;
+    if(key==='Escape')return 5;
+    if(key==='Backspace'||key==='q'||key==='Q')return 6;
+    if(key==='*')return 20;
+    if(key==='#')return 21;
+    return -1;
+  }
+  class OriginalInputState{
+    constructor(){this.held=new Set();this.edges=[];}
+    press(id){if(!Number.isInteger(id)||id<0)return;if(!this.held.has(id))this.edges.push(id);this.held.add(id);}
+    release(id){this.held.delete(id);}
+    isHeld(id){return this.held.has(id);}
+    drainEdges(){const a=this.edges;this.edges=[];return a;}
+    clear(){this.held.clear();this.edges=[];}
+    gameHeld(){return {
+      left:this.isHeld(3),right:this.isHeld(4),
+      jump:this.isHeld(1)||this.isHeld(7),
+      up:this.isHeld(1),down:this.isHeld(2)
+    };}
+  }
+  return {KEY,ACTION,normalizeJavaMEKey,browserKeyId,OriginalInputState};
+});

@@ -1,4 +1,4 @@
-# Build 04: original input path integrated into the browser shell
+<!-- Historical Build 04 note. Build 05 supersedes the live-site status and integrates real RLEF level data. See ../PORT_STATUS.md and BUILD_05_RLEF_AND_ENGINE.md. -->\n\n# Build 04: original input path integrated into the browser shell
 
 ## Exact Java ME input facts translated
 

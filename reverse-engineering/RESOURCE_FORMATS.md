@@ -19,28 +19,35 @@ The extracted `assets/original/` directory was compared against every non-direct
 
 ## RLEF binary payloads
 
-Sixteen resources (`bf` through `bu`) begin with the literal ASCII magic `RLEF`. All have version field `1` and reserved field `0` in the first eight bytes. At offsets 8 and 10, big-endian unsigned-short values form the following header pair; offset 12 is another 16-bit field:
+Sixteen resources (`bf` through `bu`) begin with the literal ASCII magic `RLEF`. The header is:
+- 32-bit magic `0x524C4546` (`RLEF`)
+- 32-bit version `0x00010000`
+- 16-bit object count at offset 8
+- 16-bit reserved field at offset 10
+- 16-bit event count at offset 12
 
-| Resource | Header pair | Offset-12 value | Size (bytes) |
+The record stream begins at offset 14. Each record has a signed 8-bit command, a signed big-endian 16-bit payload length and that many bytes of object payload. Signed command `127` terminates the file. The object count and event count are now verified against parsed records for all 16 resources.
+
+| Resource | Object count | Event count | Size (bytes) |
 |---|---:|---:|---:|
-| `bf` | 101 × 33 | 6 | 4,977 |
-| `bg` | 146 × 45 | 20 | 7,494 |
-| `bh` | 159 × 58 | 17 | 8,942 |
-| `bi` | 108 × 30 | 15 | 5,232 |
-| `bj` | 139 × 46 | 21 | 6,596 |
-| `bk` | 185 × 79 | 24 | 10,146 |
-| `bl` | 176 × 64 | 27 | 7,950 |
-| `bm` | 173 × 66 | 32 | 8,643 |
-| `bn` | 189 × 62 | 48 | 7,738 |
-| `bo` | 256 × 110 | 47 | 12,002 |
-| `bp` | 157 × 55 | 26 | 6,266 |
-| `bq` | 160 × 60 | 15 | 6,649 |
-| `br` | 109 × 52 | 12 | 6,176 |
-| `bs` | 56 × 14 | 0 | 2,085 |
-| `bt` | 113 × 37 | 6 | 3,792 |
-| `bu` | 13 × 12 | 0 | 1,091 |
+| `bf` | 101 | 6 | 4,977 |
+| `bg` | 146 | 20 | 7,494 |
+| `bh` | 159 | 17 | 8,942 |
+| `bi` | 108 | 15 | 5,232 |
+| `bj` | 139 | 21 | 6,596 |
+| `bk` | 185 | 24 | 10,146 |
+| `bl` | 176 | 27 | 7,950 |
+| `bm` | 173 | 32 | 8,643 |
+| `bn` | 189 | 48 | 7,738 |
+| `bo` | 256 | 47 | 12,002 |
+| `bp` | 157 | 26 | 6,266 |
+| `bq` | 160 | 15 | 6,649 |
+| `br` | 109 | 12 | 6,176 |
+| `bs` | 56 | 0 | 2,085 |
+| `bt` | 113 | 6 | 3,792 |
+| `bu` | 13 | 0 | 1,091 |
 
-The dimensions are consistent with grid/map extents, but the remaining payload structure and the exact meaning of the offset-12 field have not yet been fully decoded. These files should be treated as original structured game data, not as generic images or replaced by hand-built platform arrays.
+The resource names and chapter labels are mapped in `BUILD_05_RLEF_AND_ENGINE.md`. Object records carry parent/sibling references, transforms and object-specific payloads. Build 05 parses geometry contours/triangles, sprites, players, eggs, events, water, cannons, trampolines, friends and enemies. The parser validates all original records, while the current live game scene uses `bf` (Misty Morning).
 
 ## MIDI metadata
 
