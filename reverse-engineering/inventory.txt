@@ -1,5 +1,0 @@
-JAR entries: 107
-Class files: 19
-PNG files: 47
-MIDI files: 8
-Original extracted files are preserved under assets/original/.
