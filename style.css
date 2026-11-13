@@ -692,97 +692,85 @@ canvas#game,canvas#game-text{image-rendering:pixelated!important;}
 /* V27 header heart link sits at the edge of the icon group. */
 .header-btn.heart-link{color:#ff3b5c;text-decoration:none;line-height:1;flex:0 0 auto;}
 
-/* V27: custom layouts must escape the fixed V24 mobile button coordinates. */
-#game-controls.custom-layout{flex-basis:136px!important;height:136px!important;min-height:136px!important;}
-#game-controls.custom-layout [data-key-id="3"],
-#game-controls.custom-layout [data-key-id="4"],
-#game-controls.custom-layout [data-key-id="7"],
-#game-controls.custom-layout [data-key-id="20"]{right:auto!important;bottom:auto!important;}
-
-
-/* ========================= V28: thumb-friendly default controls ========================= */
-/* Keep the game canvas compact enough to give the three primary actions a full row. */
-.game-wrap {
-  width: min(100%, 360px, calc((100dvh - 58px - env(safe-area-inset-top) - 136px - env(safe-area-inset-bottom) - 20px) * .75)) !important;
+/* ======================== V33 canonical touch controls ======================== */
+#game-controls,
+#game-controls.custom-layout {
+  position:relative!important;
+  display:block!important;
+  flex:0 0 auto!important;
+  width:min(calc(100% - 28px),420px)!important;
+  height:auto;
+  min-height:0;
+  margin:0 auto!important;
+  padding:0!important;
+  overflow:visible!important;
+  gap:0!important;
 }
-#game-controls:not(.custom-layout) {
-  display: flex !important;
-  flex: 0 0 136px !important;
-  flex-direction: column !important;
-  width: min(calc(100% - 28px), 420px) !important;
-  height: 136px !important;
-  min-height: 136px !important;
-  gap: 8px !important;
-  margin: 0 auto !important;
-  overflow: visible !important;
+#game-controls .main-controls,
+#game-controls .special-control-row,
+#game-controls.custom-layout .main-controls,
+#game-controls.custom-layout .special-control-row {
+  display:contents!important;
+  position:static!important;
 }
-#game-controls:not(.custom-layout) .main-controls {
-  display: grid !important;
-  position: relative !important;
-  grid-template-columns: 1fr 1fr 1.2fr !important;
-  grid-template-areas: none !important;
-  gap: 10px !important;
-  width: 100% !important;
-  height: 82px !important;
-  align-items: stretch !important;
+#game-controls .control,
+#game-controls.custom-layout .control {
+  position:absolute!important;
+  display:flex!important;
+  inset:auto!important;
+  right:auto!important;
+  bottom:auto!important;
+  margin:0!important;
+  padding:0!important;
+  min-width:0!important;
+  max-width:none!important;
+  border-radius:20px!important;
+  touch-action:none!important;
+  transform:none;
 }
-#game-controls:not(.custom-layout) .main-controls .control {
-  position: relative !important;
-  inset: auto !important;
-  width: 100% !important;
-  height: clamp(68px, 11vw, 84px) !important;
-  min-height: 68px !important;
-  border-radius: 20px !important;
-  font-size: clamp(25px, 5vw, 34px) !important;
+#game-controls [data-key-id="3"],
+#game-controls [data-key-id="4"] {
+  background:#26342e!important;
+  color:var(--cream)!important;
+  font-size:clamp(25px,6vw,34px)!important;
 }
-#game-controls:not(.custom-layout) .main-controls .jump {
-  font-size: clamp(17px, 3.7vw, 23px) !important;
-  letter-spacing: .06em !important;
+#game-controls [data-key-id="7"] {
+  background:#71542d!important;
+  border-color:#bca06b!important;
+  color:#fff1d7!important;
+  font-size:clamp(17px,3.7vw,23px)!important;
+  letter-spacing:.06em!important;
 }
-#game-controls:not(.custom-layout) .special-control-row {
-  display: flex !important;
-  position: relative !important;
-  height: 46px !important;
-  min-height: 46px !important;
-  justify-content: flex-end !important;
-  align-items: center !important;
-  padding: 0 5px 0 0 !important;
+#game-controls [data-key-id="20"] {
+  background:#34302a!important;
+  color:var(--gold)!important;
+  border-radius:16px!important;
+  font-size:25px!important;
 }
-#game-controls:not(.custom-layout) .special-control-row .special {
-  position: relative !important;
-  inset: auto !important;
-  width: 54px !important;
-  height: 46px !important;
-  min-height: 46px !important;
-  border-radius: 16px !important;
-  font-size: 25px !important;
+#control-editor-stage {
+  height:auto!important;
+  min-height:0!important;
+  aspect-ratio:420/128!important;
+  overflow:visible!important;
 }
-@media (max-height: 560px) {
-  .game-wrap {
-    width: min(100%, 340px, calc((100dvh - 54px - env(safe-area-inset-top) - 120px - env(safe-area-inset-bottom) - 12px) * .75)) !important;
-  }
-  #game-controls:not(.custom-layout) {
-    flex-basis: 120px !important;
-    height: 120px !important;
-    min-height: 120px !important;
-    gap: 5px !important;
-  }
-  #game-controls:not(.custom-layout) .main-controls {
-    height: 72px !important;
-    gap: 7px !important;
-  }
-  #game-controls:not(.custom-layout) .main-controls .control {
-    height: 66px !important;
-    min-height: 66px !important;
-  }
-  #game-controls:not(.custom-layout) .special-control-row {
-    height: 40px !important;
-    min-height: 40px !important;
-  }
-  #game-controls:not(.custom-layout) .special-control-row .special {
-    width: 44px !important;
-    height: 40px !important;
-    min-height: 40px !important;
-  }
+#control-editor-stage .editor-control {
+  position:absolute!important;
+  inset:auto!important;
+  margin:0!important;
+  padding:0!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:none!important;
+  touch-action:none!important;
 }
-/* Custom saved layouts retain their own coordinates and sizing. */
+#control-editor-stage .editor-control[data-editor-id="left"],
+#control-editor-stage .editor-control[data-editor-id="right"] {
+  background:#26342e!important;
+}
+#control-editor-stage .editor-control[data-editor-id="jump"] {
+  background:#71542d!important;
+}
+#control-editor-stage .editor-control[data-editor-id="form"] {
+  background:#34302a!important;
+  color:var(--gold)!important;
+}

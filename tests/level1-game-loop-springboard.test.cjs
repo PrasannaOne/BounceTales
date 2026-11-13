@@ -84,27 +84,33 @@ const wait = () => new Promise(resolve => setImmediate(resolve));
   body.vx = 0; body.vy = -500; body.enabled = true; body.grounded = false; body.syncFixedPosition();
   game.input.clear();
   let contactTick = null, releaseTick = null, releaseVelocity = null, releaseY = null, releaseYBeforeIntegration = null;
-  for (let tick = 1; tick <= 60; tick++) {
+  const trace = [];
+  for (let tick = 1; tick <= 30; tick++) {
     game.update(1 / 60, 17);
     if (spring.active && contactTick === null) contactTick = tick;
     if (spring.jumpFinished && releaseTick === null) {
       releaseTick = tick; releaseVelocity = body.vy; releaseY = body.y;
     }
-    if (releaseTick !== null && !spring.active && body.enabled) break;
+    trace.push({tick,enabled:body.enabled,y:Number(body.y.toFixed(3)),y16:body.y16,vy:Number(body.vy.toFixed(3)),active:spring.active,frame:spring.animFrame});
   }
   assert.ok(contactTick !== null, 'real game.js update() detects the spring contact');
   assert.equal(body.enabled, true, 'real game.js update() re-enables Bounce');
   assert.ok(releaseTick !== null, 'real game.js update() completes compression and launches');
   assert.equal(releaseImpulse, 600, 'source impulse is applied before same-tick player integration');
   assert.ok(releaseVelocity > 0 && releaseVelocity < releaseImpulse, 'the same update tick then applies gravity to the launch velocity');
-  const springAnchorY = spring.y - 87; // frame 0 height 58 at the JAR's 43266/65536 scale.
+  const springAnchorY = spring.y + 87; // frame 0 height 58 at the JAR's 43266/65536 scale.
   assert.ok(releaseY > springAnchorY, 'same-tick integration moves Bounce upward from the compressed anchor');
-  assert.ok(body.vy > 0 && body.y > springAnchorY, 'Bounce continues rising after the spring animation');
+  assert.ok(trace.some(row => row.y > springAnchorY), 'Bounce rises above the compressed leaf anchor after release');
   const screenBefore = 160 - (releaseYBeforeIntegration - game.cameraY) * (43266 / 65536);
   const screenAfter = 160 - (body.y - game.cameraY) * (43266 / 65536);
   assert.ok(body.y > releaseYBeforeIntegration, 'world Y increases upward after release');
   assert.ok(screenAfter < screenBefore, 'screen Y decreases toward the top after release');
   assert.equal(spring.active, false, 'spring animation reaches its terminal state');
+  const compression = trace.filter(row => row.active && row.tick < releaseTick);
+  assert.ok(compression.length >= 10, 'trace captures the full compression window');
+  assert.ok(compression.every(row => row.y >= 552 && row.y <= 585), 'Bounce remains on top of the leaf throughout compression');
+  assert.ok(compression.every(row => row.y16 === Math.trunc(row.y * 65536)), 'fixed-point Y stays synchronized during compression');
+  assert.ok(trace.some(row => row.y > 700), 'released Bounce rises beyond world Y 700 in the 30-tick trace');
   console.log(JSON.stringify({
     proof: 'real game.js Level 1 update loop passed in Node.js',
     level: game.currentLevel.resource,
@@ -117,6 +123,8 @@ const wait = () => new Promise(resolve => setImmediate(resolve));
     releaseWorldYAfterSameTickIntegration: releaseY,
     screenYBeforeSameTickIntegration: screenBefore,
     screenYAfterSameTickIntegration: screenAfter,
+    compressionRange: { minY: Math.min(...compression.map(row=>row.y)), maxY: Math.max(...compression.map(row=>row.y)), ticks: compression.length },
+    trace,
     final: { x: body.x, y: body.y, vy: body.vy, enabled: body.enabled, springActive: spring.active }
   }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; });

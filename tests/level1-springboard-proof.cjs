@@ -109,7 +109,7 @@ assert.equal(contact.localPrevious.x, 57 * 65536);
 assert.ok(contact.localPrevious.y > 95 * 65536 && contact.localCurrent.y < 95 * 65536);
 assert.ok(contact.incomingVy < 0, 'Bounce is descending in world Y at contact');
 assert.ok(release, 'The spring animation must release Bounce');
-assert.ok(releaseAfterIntegration > springY - Trampoline.frameOffset(imageMaps, spring.imageId, 4), 'the newly released Bounce is integrated upward in that same JAR-ordered tick');
+assert.ok(releaseAfterIntegration > springY + Trampoline.frameOffset(imageMaps, spring.imageId, 4), 'the newly released Bounce is integrated upward in that same JAR-ordered tick');
 assert.equal(release.vy, 600, 'JAR spring impulse is capped at 400 * (basePush * 2 / 100)');
 assert.equal(release.frame, 5, 'All six spring frames are traversed before launch');
 assert.deepEqual([...seenFrames].sort((a, b) => a - b), [0, 1, 2, 3, 4, 5]);

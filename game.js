@@ -354,6 +354,7 @@ function updateCannon(dt,held){
     if(!cannonState.launched&&cannonState.animCountdown<=300){
       const a=cannonState.angle,p=getWorldPos(c.object),m=c.object.matrix;
       body.x=p.x+Math.cos(a)*120;body.y=p.y+Math.sin(a)*120;
+      body.snapRenderPosition?.();
       body.vx=Math.floor((c.power*m[0])/4096);body.vy=Math.floor((c.power*m[3])/4096);
       body.lastVx=0;body.lastVy=0;body.enabled=true;body.visible=true;body.grounded=false;body.airTime=0;body.skipAccelStretch=true;
       cannonState.launched=true;cannonState=null;if(gameHint)gameHint.textContent='';toast('FIRE!');return false;
@@ -1183,82 +1184,131 @@ async function shareSite(){
   const shareData={title:'Bounce Tales',text:'Play Bounce Tales, an HTML5 browser remaster.',url:'https://prasannaone.github.io/BounceTales/'};
   try{if(navigator.share){await navigator.share(shareData);}else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(shareData.url);toast('Site link copied');}else{prompt('Copy the Bounce Tales link',shareData.url);}}catch(e){if(e?.name!=='AbortError')console.warn('Share unavailable',e);}
 }
+// ======================== TOUCH CONTROL LAYOUT ========================
+// One coordinate system for the live controls and editor preview.
+// Reference surface: 420 x 128 units. Positions are top-left percentages.
 const CONTROL_LAYOUT_KEY='bounce-control-layout-v1';
+const CONTROL_REFERENCE={width:420,height:128};
 const CONTROL_LAYOUT_DEFAULTS={
-  left:{x:0,y:60.3,size:100},right:{x:20.6,y:60.3,size:100},jump:{x:73.7,y:0,size:100},form:{x:80.6,y:67.6,size:100}
+  left:{x:0,y:0,size:100},
+  right:{x:32.38095,y:0,size:100},
+  jump:{x:64.76190,y:0,size:100},
+  form:{x:87.14286,y:60.9375,size:100}
 };
-// Physical button dimensions in CSS pixels, matching the V24 default layout.
-const CONTROL_BASE={left:{w:64,h:54},right:{w:64,h:54},jump:{w:92,h:48},form:{w:44,h:44}};
+const CONTROL_BASE={
+  left:{w:126,h:70},right:{w:126,h:70},
+  jump:{w:148,h:70},form:{w:54,h:50}
+};
 let editorLayout=null,editorSelected='left',editorDrag=null,editorReturnFocus=null,editorResetToDefault=false;
 function cloneDefaultControlLayout(){return JSON.parse(JSON.stringify(CONTROL_LAYOUT_DEFAULTS));}
 function sanitiseControlLayout(value){
-  if(!value||typeof value!=='object')return null;const clean={};
+  if(!value||typeof value!=='object')return null;
+  const clean={};
   for(const id of Object.keys(CONTROL_LAYOUT_DEFAULTS)){
-    const item=value[id];if(!item||!Number.isFinite(Number(item.x))||!Number.isFinite(Number(item.y))||!Number.isFinite(Number(item.size)))return null;
+    const item=value[id];
+    if(!item||!Number.isFinite(Number(item.x))||!Number.isFinite(Number(item.y))||!Number.isFinite(Number(item.size)))return null;
     clean[id]={x:clamp(Number(item.x),0,100),y:clamp(Number(item.y),0,100),size:clamp(Number(item.size),75,130)};
-  }return clean;
+  }
+  return clean;
 }
-function loadControlLayout(){try{return sanitiseControlLayout(JSON.parse(localStorage.getItem(CONTROL_LAYOUT_KEY)||'null'));}catch{return null;}}
-function applyLiveControlLayout(override=null){
-  const host=document.getElementById('game-controls');if(!host||!host.querySelectorAll)return;const layout=sanitiseControlLayout(override)||loadControlLayout();
-  host.classList.toggle('custom-layout',!!layout);
-  if(!layout){host.style.removeProperty('--custom-control-height');host.querySelectorAll('.control').forEach(el=>{el.style.removeProperty('left');el.style.removeProperty('top');el.style.removeProperty('width');el.style.removeProperty('height');el.style.removeProperty('min-height');});return;}
-  const hostRect=host.getBoundingClientRect(),hostWidth=Math.max(1,hostRect.width),hostHeight=136;
-  host.style.setProperty('--custom-control-height',hostHeight+'px');
-  host.querySelectorAll('.control').forEach(el=>{
-    const id=el.dataset.keyId==='3'?'left':el.dataset.keyId==='4'?'right':el.dataset.keyId==='7'?'jump':'form';
-    const item=layout[id],base=CONTROL_BASE[id],size=item.size/100;
-    const width=base.w*size,height=base.h*size,widthPct=width/hostWidth*100;
-    const x=clamp(item.x,0,Math.max(0,100-widthPct));const maxTopPct=Math.max(0,100*(hostHeight-height)/hostHeight);const topPct=clamp(item.y,0,maxTopPct);const top=topPct*hostHeight/100;
-    el.style.left=x+'%';el.style.top=top+'px';el.style.width=width+'px';el.style.height=height+'px';el.style.minHeight=height+'px';
+function loadControlLayout(){
+  try{return sanitiseControlLayout(JSON.parse(localStorage.getItem(CONTROL_LAYOUT_KEY)||'null'));}
+  catch{return null;}
+}
+function controlSurfaceMetrics(surface){
+  const rect=surface.getBoundingClientRect();
+  const scale=Math.max(.45,Math.min(1.15,rect.width/CONTROL_REFERENCE.width));
+  return {width:Math.max(1,rect.width),height:CONTROL_REFERENCE.height*scale,scale};
+}
+function applyControlLayoutToSurface(surface,layout){
+  const metrics=controlSurfaceMetrics(surface);
+  const elements=surface.querySelectorAll?Array.from(surface.querySelectorAll('[data-key-id],[data-editor-id]')):Object.keys(CONTROL_LAYOUT_DEFAULTS).map(id=>surface.querySelector?.('[data-editor-id=\"'+id+'\"]')).filter(Boolean);
+  elements.forEach(el=>{
+    const id=el.dataset.keyId==='3'?'left':el.dataset.keyId==='4'?'right':el.dataset.keyId==='7'?'jump':el.dataset.keyId==='20'?'form':el.dataset.editorId;
+    const item=layout[id];if(!item)return;
+    const base=CONTROL_BASE[id],w=base.w*metrics.scale*(item.size/100),h=base.h*metrics.scale*(item.size/100);
+    const x=clamp(item.x,0,Math.max(0,100-w/metrics.width*100));
+    const y=clamp(item.y,0,Math.max(0,100-h/metrics.height*100));
+    el.style.left=x+'%';el.style.top=(y*metrics.height/100)+'px';
+    el.style.width=w+'px';el.style.height=h+'px';el.style.minHeight=h+'px';
   });
+  return metrics;
+}
+function applyLiveControlLayout(override=null){
+  const host=document.getElementById('game-controls');if(!host)return;
+  const layout=sanitiseControlLayout(override)||loadControlLayout()||cloneDefaultControlLayout();
+  const metrics=controlSurfaceMetrics(host);
+  host.classList.add('custom-layout');
+  host.style.height=metrics.height+'px';host.style.minHeight=metrics.height+'px';
+  applyControlLayoutToSurface(host,layout);
 }
 function renderEditorLayout(){
   const stage=document.getElementById('control-editor-stage');if(!stage||!editorLayout)return;
+  const metrics=applyControlLayoutToSurface(stage,editorLayout);
   for(const id of Object.keys(CONTROL_LAYOUT_DEFAULTS)){
-    const el=stage.querySelector('[data-editor-id="'+id+'"]'),item=editorLayout[id],base=CONTROL_BASE[id],scale=item.size/100;
-    const rect=stage.getBoundingClientRect(),wPct=(base.w*scale)/Math.max(1,rect.width)*100,hPx=base.h*scale;
-    const x=clamp(item.x,0,Math.max(0,100-wPct)),y=clamp(item.y,0,Math.max(0,100-(hPx/Math.max(1,rect.height))*100));
-    el.style.left=x+'%';el.style.top=y+'%';el.style.width=wPct+'%';el.style.height=hPx+'px';
-    el.classList.toggle('selected',id===editorSelected);el.setAttribute('aria-pressed',String(id===editorSelected));
-    item.x=x;item.y=y;
+    const el=stage.querySelector('[data-editor-id="'+id+'"]');
+    el.classList.toggle('selected',id===editorSelected);
+    el.setAttribute('aria-pressed',String(id===editorSelected));
   }
-  const slider=document.getElementById('control-size');slider.value=String(editorLayout[editorSelected].size);
+  const slider=document.getElementById('control-size');
+  slider.value=String(editorLayout[editorSelected].size);
   document.getElementById('control-size-value').textContent=editorLayout[editorSelected].size+'%';
+  // Mirror unsaved editor changes onto the live controls while the editor is open.
   applyLiveControlLayout(editorLayout);
+  stage.style.height=metrics.height+'px';
 }
 function openControlEditor(){
-  editorReturnFocus=document.activeElement;editorLayout=loadControlLayout()||cloneDefaultControlLayout();editorSelected='left';editorResetToDefault=false;
-  const layer=document.getElementById('control-editor-layer');layer.hidden=false;requestAnimationFrame(renderEditorLayout);
+  editorReturnFocus=document.activeElement;
+  editorLayout=loadControlLayout()||cloneDefaultControlLayout();
+  editorSelected='left';editorResetToDefault=false;
+  document.getElementById('control-editor-layer').hidden=false;
+  requestAnimationFrame(renderEditorLayout);
 }
-function closeControlEditor(restoreSaved=true){if(restoreSaved)applyLiveControlLayout();document.getElementById('control-editor-layer').hidden=true;editorDrag=null;if(editorReturnFocus?.focus)editorReturnFocus.focus();editorReturnFocus=null;}
+function closeControlEditor(restoreSaved=true){
+  document.getElementById('control-editor-layer').hidden=true;editorDrag=null;
+  if(restoreSaved)applyLiveControlLayout();
+  if(editorReturnFocus?.focus)editorReturnFocus.focus();editorReturnFocus=null;
+}
 function bindControlEditor(){
   const layer=document.getElementById('control-editor-layer'),stage=document.getElementById('control-editor-stage');
   document.getElementById('open-control-editor').addEventListener('click',openControlEditor);
-  document.getElementById('close-control-editor').addEventListener('click',closeControlEditor);
-  document.getElementById('cancel-control-editor').addEventListener('click',closeControlEditor);
-  layer.addEventListener('click',e=>{if(e.target===layer)closeControlEditor();});
+  document.getElementById('close-control-editor').addEventListener('click',()=>closeControlEditor(true));
+  document.getElementById('cancel-control-editor').addEventListener('click',()=>closeControlEditor(true));
+  layer.addEventListener('click',e=>{if(e.target===layer)closeControlEditor(true);});
   stage.addEventListener('pointerdown',e=>{
     const button=e.target.closest('[data-editor-id]');if(!button)return;e.preventDefault();
-    editorSelected=button.dataset.editorId;editorResetToDefault=false;const rect=stage.getBoundingClientRect();
+    editorSelected=button.dataset.editorId;editorResetToDefault=false;
+    const rect=stage.getBoundingClientRect();
     editorDrag={id:editorSelected,pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,startXValue:editorLayout[editorSelected].x,startYValue:editorLayout[editorSelected].y,rect};
     stage.setPointerCapture(e.pointerId);renderEditorLayout();
   });
   stage.addEventListener('pointermove',e=>{
     if(!editorDrag||editorDrag.pointerId!==e.pointerId)return;
-    const base=CONTROL_BASE[editorDrag.id],size=editorLayout[editorDrag.id].size/100;
-    const widthPct=(base.w*size)/Math.max(1,editorDrag.rect.width)*100,heightPx=base.h*size;
-    const dx=(e.clientX-editorDrag.startX)/Math.max(1,editorDrag.rect.width)*100;
-    const dy=(e.clientY-editorDrag.startY)/Math.max(1,editorDrag.rect.height)*100;
-    editorLayout[editorDrag.id].x=clamp(editorDrag.startXValue+dx,0,Math.max(0,100-widthPct));
-    editorLayout[editorDrag.id].y=clamp(editorDrag.startYValue+dy,0,Math.max(0,100-(heightPx/Math.max(1,editorDrag.rect.height))*100));renderEditorLayout();
+    const rect=editorDrag.rect,metrics=controlSurfaceMetrics(stage),base=CONTROL_BASE[editorDrag.id];
+    const scale=metrics.scale*(editorLayout[editorDrag.id].size/100),wPct=base.w*scale/Math.max(1,rect.width)*100,hPct=base.h*scale/metrics.height*100;
+    const dx=(e.clientX-editorDrag.startX)/Math.max(1,rect.width)*100,dy=(e.clientY-editorDrag.startY)/Math.max(1,metrics.height)*100;
+    editorLayout[editorDrag.id].x=clamp(editorDrag.startXValue+dx,0,Math.max(0,100-wPct));
+    editorLayout[editorDrag.id].y=clamp(editorDrag.startYValue+dy,0,Math.max(0,100-hPct));renderEditorLayout();
   });
-  const endDrag=()=>{editorDrag=null;};stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);
-  document.getElementById('control-size').addEventListener('input',e=>{if(!editorLayout)return;editorResetToDefault=false;editorLayout[editorSelected].size=clamp(Number(e.target.value)||100,75,130);renderEditorLayout();});
-  document.getElementById('reset-control-layout').addEventListener('click',()=>{editorLayout=cloneDefaultControlLayout();editorSelected='left';editorResetToDefault=true;renderEditorLayout();});
-  document.getElementById('save-control-layout').addEventListener('click',()=>{if(!editorLayout)return;if(editorResetToDefault){localStorage.removeItem(CONTROL_LAYOUT_KEY);applyLiveControlLayout();closeControlEditor(false);toast('Default controls restored');return;}localStorage.setItem(CONTROL_LAYOUT_KEY,JSON.stringify(sanitiseControlLayout(editorLayout)));applyLiveControlLayout(editorLayout);closeControlEditor(false);toast('Touch layout saved');});
-  window.addEventListener('resize',()=>{if(!layer.hidden)renderEditorLayout();},{passive:true});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!layer.hidden){closeControlEditor();e.preventDefault();e.stopImmediatePropagation?.();}},{capture:true});
+  const endDrag=()=>{editorDrag=null;};
+  stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);stage.addEventListener('lostpointercapture',endDrag);
+  document.getElementById('control-size').addEventListener('input',e=>{
+    if(!editorLayout)return;editorResetToDefault=false;
+    editorLayout[editorSelected].size=clamp(Number(e.target.value)||100,75,130);renderEditorLayout();
+  });
+  document.getElementById('reset-control-layout').addEventListener('click',()=>{
+    editorLayout=cloneDefaultControlLayout();editorSelected='left';editorResetToDefault=true;renderEditorLayout();
+  });
+  document.getElementById('save-control-layout').addEventListener('click',()=>{
+    if(!editorLayout)return;
+    if(editorResetToDefault){localStorage.removeItem(CONTROL_LAYOUT_KEY);applyLiveControlLayout();closeControlEditor(false);toast('Default controls restored');return;}
+    const clean=sanitiseControlLayout(editorLayout);if(!clean)return;
+    try{localStorage.setItem(CONTROL_LAYOUT_KEY,JSON.stringify(clean));}
+    catch{toast('Could not save layout on this device');return;}
+    applyLiveControlLayout(clean);closeControlEditor(false);toast('Touch layout saved');
+  });
+  window.addEventListener('resize',()=>{applyLiveControlLayout();if(!layer.hidden)renderEditorLayout();},{passive:true});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!layer.hidden){closeControlEditor(true);e.preventDefault();e.stopImmediatePropagation?.();}},{capture:true});
   applyLiveControlLayout();
 }
 

@@ -47,3 +47,9 @@ The original binary resources under `assets/original/` supply runtime level and 
 - Keep the logical 240 × 320 coordinate system independent of responsive CSS sizing.
 - Update `index.html` asset query versions and the service-worker cache name together when releasing.
 - Run the Node.js test suite after engine changes; syntax checks alone do not establish gameplay parity.
+
+## V33 touch-control layout
+
+The four touch controls use one canonical 420 × 128 reference surface. `CONTROL_LAYOUT_DEFAULTS` and `CONTROL_BASE` in `game.js` define the default coordinates and reference dimensions; both the gameplay controls and Settings editor preview are positioned from those same values. The editor uses Pointer Events for touch/mouse dragging and a size slider for resizing. Unsaved edits preview on the live controls only while the editor is open; Cancel/Escape restores the saved layout. Save writes the sanitized layout to the stable `bounce-control-layout-v1` localStorage key. The key is intentionally independent of release/cache versions so ordinary upgrades do not discard user layouts.
+
+The live control container scales from its measured width. The nested `.main-controls` and `.special-control-row` wrappers use `display: contents`, leaving each button absolutely positioned relative to `#game-controls`. The editor preview uses the same 420:128 aspect ratio and shared dimension calculation. Starting or restarting a level does not own or mutate control-layout preferences.

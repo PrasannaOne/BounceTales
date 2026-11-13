@@ -84,3 +84,7 @@ The tests exercise resource parsing, physics/collision, level scripting, input, 
 The reimplementation code and supporting project work are governed by the terms in [`LICENSE`](LICENSE), the **Sovereign Source License v1.0**. Read that file before copying, modifying, hosting, or redistributing this project. In particular, public network hosting has attribution and source-availability conditions, and commercial use requires separate permission.
 
 The original Bounce Tales sprites, illustrations, audio, fonts, level data, binary resources, trademarks, and other materials originating from the J2ME game are not relicensed by this project. They remain the property of their respective rights holders, including Nokia and/or Rovio as applicable.
+
+### Touch control customization
+
+Open Settings → Touch Controls to drag the Left, Right, Jump and Forme buttons or adjust the selected button's size. Save persists the layout on the current browser/device; Cancel or Escape restores the previously saved arrangement. The layout is retained across game releases through the stable `bounce-control-layout-v1` local-storage key.

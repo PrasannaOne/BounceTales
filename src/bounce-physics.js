@@ -61,6 +61,10 @@
       this.stretchResult.fill(0);this.stretchResultAbs.fill(0);
       this.stretchDirBalance.fill(0);this.stretchBuffer.fill(999);
     }
+    snapRenderPosition(){
+      this.prevX=this.x;
+      this.prevY=this.y;
+    }
     requestStretch(dir,magnitude){
       magnitude=clamp(Math.trunc(magnitude),-P.stretchLimit,P.stretchLimit);
       if(magnitude)this.reqStretch[dir]+=magnitude;
