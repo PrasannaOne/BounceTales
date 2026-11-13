@@ -1,5 +1,5 @@
 /* Bounce Tales V31: always prefer the live network; use the versioned shell offline. */
-const CACHE_NAME = 'bounce-tales-v34';
+const CACHE_NAME = 'bounce-tales-v36';
 const APP_SHELL = [
   "./",
   "index.html",
@@ -10,7 +10,7 @@ const APP_SHELL = [
   "icon-512.png",
   "apple-touch-icon.png",
   "favicon.png",
-  "og-preview.png",
+  "bounce-tales-web-preview.png",
   "LICENSE",
   "README.md",
   "ARCHITECTURE.md",

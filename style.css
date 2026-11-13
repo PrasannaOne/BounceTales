@@ -774,3 +774,46 @@ canvas#game,canvas#game-text{image-rendering:pixelated!important;}
   background:#34302a!important;
   color:var(--gold)!important;
 }
+
+
+/* ========================= V35: compact unified touch controls ========================= */
+#game-controls,#game-controls.custom-layout{
+  position:relative!important;display:block!important;flex:0 0 auto!important;
+  width:min(calc(100% - 40px),360px)!important;height:108px;min-height:108px;
+  margin:2px auto 0!important;padding:0!important;overflow:visible!important;
+}
+#game-controls .main-controls,#game-controls .special-control-row,
+#game-controls.custom-layout .main-controls,#game-controls.custom-layout .special-control-row{display:contents!important;}
+#game-controls .control,#game-controls.custom-layout .control{
+  position:absolute!important;inset:auto!important;right:auto!important;bottom:auto!important;
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  margin:0!important;padding:0!important;min-width:0!important;max-width:none!important;
+  border-radius:15px!important;touch-action:none!important;box-shadow:inset 0 1px #ffffff14,0 3px 9px #0004;
+}
+#game-controls [data-key-id="3"],#game-controls [data-key-id="4"]{
+  background:#26342e!important;color:var(--cream)!important;font-size:clamp(22px,5vw,28px)!important;
+}
+#game-controls [data-key-id="7"]{
+  background:#71542d!important;border-color:#bca06b!important;color:#fff1d7!important;
+  font-size:clamp(14px,3.5vw,18px)!important;letter-spacing:.05em!important;
+}
+#game-controls [data-key-id="20"]{
+  background:#34302a!important;color:var(--gold)!important;border-radius:13px!important;font-size:21px!important;
+}
+#control-editor-stage{
+  position:relative!important;width:100%!important;height:auto!important;min-height:0!important;
+  aspect-ratio:360/108!important;overflow:hidden!important;touch-action:none!important;
+}
+#control-editor-stage .editor-control{
+  position:absolute!important;inset:auto!important;display:flex!important;align-items:center!important;justify-content:center!important;
+  margin:0!important;padding:0!important;min-width:0!important;min-height:0!important;max-width:none!important;
+  touch-action:none!important;
+}
+#control-editor-stage .editor-control[data-editor-id="left"],
+#control-editor-stage .editor-control[data-editor-id="right"]{background:#26342e!important;}
+#control-editor-stage .editor-control[data-editor-id="jump"]{background:#71542d!important;}
+#control-editor-stage .editor-control[data-editor-id="form"]{background:#34302a!important;color:var(--gold)!important;}
+@media(max-height:620px){
+  #game-controls,#game-controls.custom-layout{width:min(calc(100% - 32px),340px)!important;margin-top:0!important;}
+  #app[data-mode="play"] .game-wrap{margin-bottom:4px!important;}
+}

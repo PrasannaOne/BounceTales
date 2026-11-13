@@ -1188,17 +1188,17 @@ async function shareSite(){
 // One coordinate system for the live controls and editor preview.
 // Reference surface: 420 x 128 units. Positions are top-left percentages.
 const CONTROL_LAYOUT_KEY='bounce-control-layout-v1';
-const CONTROL_REFERENCE={width:420,height:128};
 const CONTROL_LAYOUT_DEFAULTS={
   left:{x:0,y:0,size:100},
-  right:{x:32.38095,y:0,size:100},
-  jump:{x:64.76190,y:0,size:100},
-  form:{x:87.14286,y:60.9375,size:100}
+  right:{x:32,y:0,size:100},
+  jump:{x:68,y:0,size:100},
+  form:{x:86,y:54,size:100}
 };
 const CONTROL_BASE={
-  left:{w:126,h:70},right:{w:126,h:70},
-  jump:{w:148,h:70},form:{w:54,h:50}
+  left:{w:84,h:52},right:{w:84,h:52},
+  jump:{w:104,h:52},form:{w:42,h:42}
 };
+const CONTROL_SURFACE_BASE={width:360,height:108};
 let editorLayout=null,editorSelected='left',editorDrag=null,editorReturnFocus=null,editorResetToDefault=false;
 function cloneDefaultControlLayout(){return JSON.parse(JSON.stringify(CONTROL_LAYOUT_DEFAULTS));}
 function sanitiseControlLayout(value){
@@ -1207,7 +1207,7 @@ function sanitiseControlLayout(value){
   for(const id of Object.keys(CONTROL_LAYOUT_DEFAULTS)){
     const item=value[id];
     if(!item||!Number.isFinite(Number(item.x))||!Number.isFinite(Number(item.y))||!Number.isFinite(Number(item.size)))return null;
-    clean[id]={x:clamp(Number(item.x),0,100),y:clamp(Number(item.y),0,100),size:clamp(Number(item.size),75,130)};
+    clean[id]={x:clamp(Number(item.x),0,100),y:clamp(Number(item.y),0,100),size:clamp(Number(item.size),75,125)};
   }
   return clean;
 }
@@ -1217,19 +1217,23 @@ function loadControlLayout(){
 }
 function controlSurfaceMetrics(surface){
   const rect=surface.getBoundingClientRect();
-  const scale=Math.max(.45,Math.min(1.15,rect.width/CONTROL_REFERENCE.width));
-  return {width:Math.max(1,rect.width),height:CONTROL_REFERENCE.height*scale,scale};
+  const width=Math.max(1,rect.width);
+  const scale=width/CONTROL_SURFACE_BASE.width;
+  return {width,height:CONTROL_SURFACE_BASE.height*scale,scale,rect};
 }
 function applyControlLayoutToSurface(surface,layout){
   const metrics=controlSurfaceMetrics(surface);
-  const elements=surface.querySelectorAll?Array.from(surface.querySelectorAll('[data-key-id],[data-editor-id]')):Object.keys(CONTROL_LAYOUT_DEFAULTS).map(id=>surface.querySelector?.('[data-editor-id=\"'+id+'\"]')).filter(Boolean);
+  surface.style.height=metrics.height+'px';
+  surface.style.minHeight=metrics.height+'px';
+  const elements=surface.querySelectorAll('[data-key-id],[data-editor-id]');
   elements.forEach(el=>{
     const id=el.dataset.keyId==='3'?'left':el.dataset.keyId==='4'?'right':el.dataset.keyId==='7'?'jump':el.dataset.keyId==='20'?'form':el.dataset.editorId;
     const item=layout[id];if(!item)return;
     const base=CONTROL_BASE[id],w=base.w*metrics.scale*(item.size/100),h=base.h*metrics.scale*(item.size/100);
-    const x=clamp(item.x,0,Math.max(0,100-w/metrics.width*100));
-    const y=clamp(item.y,0,Math.max(0,100-h/metrics.height*100));
-    el.style.left=x+'%';el.style.top=(y*metrics.height/100)+'px';
+    const maxX=Math.max(0,metrics.width-w),maxY=Math.max(0,metrics.height-h);
+    el.style.left=(clamp(item.x,0,100)*maxX/100)+'px';
+    el.style.top=(clamp(item.y,0,100)*maxY/100)+'px';
+    el.style.right='auto';el.style.bottom='auto';
     el.style.width=w+'px';el.style.height=h+'px';el.style.minHeight=h+'px';
   });
   return metrics;
@@ -1237,9 +1241,7 @@ function applyControlLayoutToSurface(surface,layout){
 function applyLiveControlLayout(override=null){
   const host=document.getElementById('game-controls');if(!host)return;
   const layout=sanitiseControlLayout(override)||loadControlLayout()||cloneDefaultControlLayout();
-  const metrics=controlSurfaceMetrics(host);
   host.classList.add('custom-layout');
-  host.style.height=metrics.height+'px';host.style.minHeight=metrics.height+'px';
   applyControlLayoutToSurface(host,layout);
 }
 function renderEditorLayout(){
@@ -1253,7 +1255,6 @@ function renderEditorLayout(){
   const slider=document.getElementById('control-size');
   slider.value=String(editorLayout[editorSelected].size);
   document.getElementById('control-size-value').textContent=editorLayout[editorSelected].size+'%';
-  // Mirror unsaved editor changes onto the live controls while the editor is open.
   applyLiveControlLayout(editorLayout);
   stage.style.height=metrics.height+'px';
 }
@@ -1261,13 +1262,16 @@ function openControlEditor(){
   editorReturnFocus=document.activeElement;
   editorLayout=loadControlLayout()||cloneDefaultControlLayout();
   editorSelected='left';editorResetToDefault=false;
-  document.getElementById('control-editor-layer').hidden=false;
-  requestAnimationFrame(renderEditorLayout);
+  const layer=document.getElementById('control-editor-layer');
+  layer.hidden=false;
+  requestAnimationFrame(()=>{renderEditorLayout();});
 }
 function closeControlEditor(restoreSaved=true){
-  document.getElementById('control-editor-layer').hidden=true;editorDrag=null;
+  const layer=document.getElementById('control-editor-layer');
+  layer.hidden=true;editorDrag=null;editorLayout=null;
   if(restoreSaved)applyLiveControlLayout();
-  if(editorReturnFocus?.focus)editorReturnFocus.focus();editorReturnFocus=null;
+  if(editorReturnFocus?.focus)editorReturnFocus.focus();
+  editorReturnFocus=null;
 }
 function bindControlEditor(){
   const layer=document.getElementById('control-editor-layer'),stage=document.getElementById('control-editor-stage');
@@ -1276,39 +1280,50 @@ function bindControlEditor(){
   document.getElementById('cancel-control-editor').addEventListener('click',()=>closeControlEditor(true));
   layer.addEventListener('click',e=>{if(e.target===layer)closeControlEditor(true);});
   stage.addEventListener('pointerdown',e=>{
-    const button=e.target.closest('[data-editor-id]');if(!button)return;e.preventDefault();
-    editorSelected=button.dataset.editorId;editorResetToDefault=false;
+    const button=e.target.closest('[data-editor-id]');if(!button||!editorLayout)return;
+    e.preventDefault();editorSelected=button.dataset.editorId;editorResetToDefault=false;
     const rect=stage.getBoundingClientRect();
     editorDrag={id:editorSelected,pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,startXValue:editorLayout[editorSelected].x,startYValue:editorLayout[editorSelected].y,rect};
-    stage.setPointerCapture(e.pointerId);renderEditorLayout();
+    try{stage.setPointerCapture(e.pointerId);}catch{}
+    renderEditorLayout();
   });
   stage.addEventListener('pointermove',e=>{
-    if(!editorDrag||editorDrag.pointerId!==e.pointerId)return;
-    const rect=editorDrag.rect,metrics=controlSurfaceMetrics(stage),base=CONTROL_BASE[editorDrag.id];
-    const scale=metrics.scale*(editorLayout[editorDrag.id].size/100),wPct=base.w*scale/Math.max(1,rect.width)*100,hPct=base.h*scale/metrics.height*100;
-    const dx=(e.clientX-editorDrag.startX)/Math.max(1,rect.width)*100,dy=(e.clientY-editorDrag.startY)/Math.max(1,metrics.height)*100;
-    editorLayout[editorDrag.id].x=clamp(editorDrag.startXValue+dx,0,Math.max(0,100-wPct));
-    editorLayout[editorDrag.id].y=clamp(editorDrag.startYValue+dy,0,Math.max(0,100-hPct));renderEditorLayout();
+    if(!editorDrag||editorDrag.pointerId!==e.pointerId||!editorLayout)return;
+    const m=controlSurfaceMetrics(stage),base=CONTROL_BASE[editorDrag.id];
+    const size=editorLayout[editorDrag.id].size/100;
+    const w=base.w*m.scale*size,h=base.h*m.scale*size;
+    const maxX=Math.max(1,m.width-w),maxY=Math.max(1,m.height-h);
+    editorLayout[editorDrag.id].x=clamp(editorDrag.startXValue+(e.clientX-editorDrag.startX)/maxX*100,0,100);
+    editorLayout[editorDrag.id].y=clamp(editorDrag.startYValue+(e.clientY-editorDrag.startY)/maxY*100,0,100);
+    renderEditorLayout();
   });
   const endDrag=()=>{editorDrag=null;};
   stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);stage.addEventListener('lostpointercapture',endDrag);
   document.getElementById('control-size').addEventListener('input',e=>{
     if(!editorLayout)return;editorResetToDefault=false;
-    editorLayout[editorSelected].size=clamp(Number(e.target.value)||100,75,130);renderEditorLayout();
+    editorLayout[editorSelected].size=clamp(Number(e.target.value)||100,75,125);renderEditorLayout();
   });
   document.getElementById('reset-control-layout').addEventListener('click',()=>{
     editorLayout=cloneDefaultControlLayout();editorSelected='left';editorResetToDefault=true;renderEditorLayout();
   });
   document.getElementById('save-control-layout').addEventListener('click',()=>{
     if(!editorLayout)return;
-    if(editorResetToDefault){localStorage.removeItem(CONTROL_LAYOUT_KEY);applyLiveControlLayout();closeControlEditor(false);toast('Default controls restored');return;}
+    if(editorResetToDefault){
+      try{localStorage.removeItem(CONTROL_LAYOUT_KEY);}catch{}
+      applyLiveControlLayout();closeControlEditor(false);toast('Default controls restored');return;
+    }
     const clean=sanitiseControlLayout(editorLayout);if(!clean)return;
     try{localStorage.setItem(CONTROL_LAYOUT_KEY,JSON.stringify(clean));}
     catch{toast('Could not save layout on this device');return;}
     applyLiveControlLayout(clean);closeControlEditor(false);toast('Touch layout saved');
   });
-  window.addEventListener('resize',()=>{applyLiveControlLayout();if(!layer.hidden)renderEditorLayout();},{passive:true});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!layer.hidden){closeControlEditor(true);e.preventDefault();e.stopImmediatePropagation?.();}},{capture:true});
+  window.addEventListener('resize',()=>{
+    applyLiveControlLayout();
+    if(!layer.hidden&&editorLayout)renderEditorLayout();
+  },{passive:true});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&!layer.hidden){closeControlEditor(true);e.preventDefault();e.stopImmediatePropagation?.();}
+  },{capture:true});
   applyLiveControlLayout();
 }
 

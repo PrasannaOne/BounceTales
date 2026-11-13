@@ -56,7 +56,7 @@ Any static web server can be used. No build step or package installation is requ
 ├── docs/                    Reverse-engineering methodology
 ├── tests/                   Node.js regression and validation scripts
 ├── tools/                   Reference inspection/generation utilities
-├── LICENSE                  Project license and third-party-material scope
+This repository is distributed under the proprietary, source-available Sovereign Source License v1.1. It is not an open-source license. Original Bounce Tales game assets and other third-party materials are excluded and remain subject to their respective rights holders.
 └── .github/                 Repository automation/configuration
 ```
 
