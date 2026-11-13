@@ -140,7 +140,7 @@
     t.jumpFinished=false;
     body.enabled=false;body.vx=0;body.vy=0;
     const anchorY=Number(t.y);
-    body.y=Number.isFinite(anchorY)?anchorY-frameOffset(imageMaps,t.imageId,0):body.y;
+    body.y=Number.isFinite(anchorY)?anchorY+frameOffset(imageMaps,t.imageId,0):body.y;
     return true;
   }
   function update(t,body,imageMaps,dt,sourceDeltaMs=null){
@@ -171,7 +171,7 @@
         }
       }else{
         const anchorY=Number(t.y);
-        if(Number.isFinite(anchorY))body.y=anchorY-frameOffset(imageMaps,t.imageId,t.animFrame);
+        if(Number.isFinite(anchorY)){body.y=anchorY+frameOffset(imageMaps,t.imageId,t.animFrame);body.syncFixedPosition?.();}
       }
       if(t.progress>=t.period)clearState(t);
       return true;
