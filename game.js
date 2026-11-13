@@ -20,6 +20,7 @@ const LEVELS=[
 ];
 const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+ctx.imageSmoothingEnabled=false;
 const textCanvas=document.getElementById('game-text'),textCtx=textCanvas?.getContext('2d')||null;
 function syncMenuTextResolution(){
   if(!textCanvas||!textCtx)return;
@@ -27,7 +28,7 @@ function syncMenuTextResolution(){
   const width=Math.max(1,Math.round((rect.width||W)*dpr)),height=Math.max(1,Math.round((rect.height||H)*dpr));
   if(textCanvas.width!==width)textCanvas.width=width;
   if(textCanvas.height!==height)textCanvas.height=height;
-  textCtx.setTransform(width/W,0,0,height/H,0,0);textCtx.imageSmoothingEnabled=true;
+  textCtx.setTransform(width/W,0,0,height/H,0,0);textCtx.imageSmoothingEnabled=false;
 }
 syncMenuTextResolution();
 window.addEventListener('resize',syncMenuTextResolution,{passive:true});

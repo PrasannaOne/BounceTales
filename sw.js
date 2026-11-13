@@ -1,10 +1,10 @@
-/* Bounce Tales V21 offline application shell. */
-const CACHE_NAME = 'bounce-tales-v22';
+/* Bounce Tales V23: network-first while online, cached shell only as offline fallback. */
+const CACHE_NAME = 'bounce-tales-v23';
 const APP_SHELL = [
   "./",
   "index.html",
-  "style.css",
-  "game.js",
+  "style.css?v=23",
+  "game.js?v=23",
   "manifest.webmanifest",
   "icon-192.png",
   "icon-512.png",
@@ -14,28 +14,29 @@ const APP_SHELL = [
   "LICENSE",
   "README.md",
   "V21_AUDIT.md",
+  "V23_AUDIT.md",
   "PORT_STATUS.md",
-  "src/audio-controller.js",
-  "src/bounce-physics.js",
-  "src/event-engine.js",
-  "src/fixed-point.js",
-  "src/game-particles.js",
-  "src/game-timing.js",
+  "src/audio-controller.js?v=23",
+  "src/bounce-physics.js?v=23",
+  "src/event-engine.js?v=23",
+  "src/fixed-point.js?v=23",
+  "src/game-particles.js?v=23",
+  "src/game-timing.js?v=23",
   "src/image-map.json",
   "assets/logo-transparent.png",
-  "src/midp-graphics.js",
-  "src/original-camera.js",
-  "src/original-collision.js",
-  "src/original-enemies.js",
-  "src/original-input-map.js",
-  "src/original-progression.js",
-  "src/original-sprite-animation.js",
-  "src/original-trampoline.js",
-  "src/original-water.js",
-  "src/rlef-reader.js",
-  "src/sprite-atlas.js",
+  "src/midp-graphics.js?v=23",
+  "src/original-camera.js?v=23",
+  "src/original-collision.js?v=23",
+  "src/original-enemies.js?v=23",
+  "src/original-input-map.js?v=23",
+  "src/original-progression.js?v=23",
+  "src/original-sprite-animation.js?v=23",
+  "src/original-trampoline.js?v=23",
+  "src/original-water.js?v=23",
+  "src/rlef-reader.js?v=23",
+  "src/sprite-atlas.js?v=23",
   "src/sprite-atlas.json",
-  "src/terrain-collision.js",
+  "src/terrain-collision.js?v=23",
   "assets/audio/act1.ogg",
   "assets/audio/act2.ogg",
   "assets/audio/act3.ogg",
@@ -157,7 +158,8 @@ const APP_SHELL = [
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
-    await cache.addAll(APP_SHELL.map(path => new URL(path, self.registration.scope).toString()));
+    try { await cache.addAll(APP_SHELL.map(path => new URL(path, self.registration.scope).toString())); }
+    catch (_) { /* A partial shell is still useful offline; online fetches remain authoritative. */ }
     await self.skipWaiting();
   })());
 });
@@ -175,13 +177,15 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin) return;
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
-    const cached = await cache.match(request);
-    if (cached) return cached;
     try {
       const response = await fetch(request);
-      if (response && response.ok && response.type === 'basic') cache.put(request, response.clone());
+      if (response && response.ok && response.type === 'basic') {
+        await cache.put(request, response.clone());
+      }
       return response;
     } catch (error) {
+      const cached = await cache.match(request);
+      if (cached) return cached;
       if (request.mode === 'navigate') {
         const fallback = await cache.match(new URL('index.html', self.registration.scope).toString());
         if (fallback) return fallback;

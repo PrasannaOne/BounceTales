@@ -588,3 +588,60 @@ canvas#game {
     width: min(100%, 300px, calc((100dvh - 178px) * .75)) !important;
   }
 }
+
+
+/* ========================= V23: top-aligned game and thumb-zone layout ========================= */
+html, body { justify-content: flex-start !important; align-items: flex-start !important; }
+body { padding-top: 0 !important; }
+#app {
+  width: min(100%, 430px) !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  padding: calc(64px + env(safe-area-inset-top)) 0 max(8px, env(safe-area-inset-bottom)) !important;
+  overflow: hidden !important;
+}
+.game-wrap {
+  flex: 0 0 auto !important;
+  margin: 0 auto 8px !important;
+  aspect-ratio: 3 / 4 !important;
+  height: auto !important;
+  max-height: none !important;
+  width: min(100%, 360px, calc((100dvh - 235px) * .75)) !important;
+}
+canvas#game {
+  width: 100% !important; height: 100% !important;
+  image-rendering: pixelated !important;
+}
+canvas#game, canvas#game-text { image-rendering: pixelated; }
+.controls {
+  width: min(calc(100% - 20px), 350px) !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1.15fr !important;
+  grid-template-rows: auto auto !important;
+  grid-template-areas: "left jump" "right form" !important;
+  align-items: center !important;
+  gap: 8px 12px !important;
+  margin: 0 auto !important;
+}
+.main-controls { display: contents !important; }
+.main-controls [data-key-id="3"] { grid-area: left; }
+.main-controls [data-key-id="4"] { grid-area: right; }
+.main-controls [data-key-id="7"] { grid-area: jump; }
+.special-control-row { display: contents !important; }
+.special-control-row [data-key-id="20"] { grid-area: form; justify-self: end; margin-right: 8px; }
+#app[data-mode="play"] .main-controls .control { min-height: 54px; height: clamp(48px, 8vh, 64px); }
+#app[data-mode="play"] .special-control-row .special { width: 44px; height: 44px; min-height: 44px; }
+#game-hint, .hint { display: none !important; }
+@media (min-width: 600px) {
+  #app { padding-top: calc(64px + env(safe-area-inset-top)) !important; }
+}
+@media (max-height: 620px) {
+  .game-wrap { width: min(100%, 300px, calc((100dvh - 190px) * .75)) !important; }
+  #app[data-mode="play"] .main-controls .control { height: 46px; min-height: 44px; }
+}
