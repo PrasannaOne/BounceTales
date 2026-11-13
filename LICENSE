@@ -1,33 +1,24 @@
-MIT License
+Prasanna Noncommercial & Network Copyleft License v1.0
 
-Copyright (c) 2026 Prasanna / PrasannaOne
+Copyright (c) 2026 Prasanna
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of the original reimplementation engine and user-interface code covered by
-this notice (the "Software"), to deal in the Software without restriction,
-including without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to permit
-persons to whom the Software is furnished to do so, subject to the following
-conditions:
+1. Noncommercial Grant
+Subject strictly to the conditions below, Prasanna ("Licensor") grants you a personal, non-exclusive, non-transferable, revocable license to view, download, run, study, and modify the original reimplementation engine, web shell, user-interface, and supporting code authored by Prasanna ("the Software") solely for noncommercial purposes.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+2. Strict Commercial & Monetization Prohibition
+You may NOT, directly or indirectly, without prior written permission from Prasanna:
+(a) Sell, rent, lease, sublicense, or charge any fee for access to the Software or any derivative work;
+(b) Host, mirror, embed, wrap, or distribute the Software on any website, mobile app, social platform, or service that displays advertisements, affiliate links, paywalls, sponsorships, donations, or generates any direct or indirect commercial revenue;
+(c) Use the Software, its architecture, or its web shell to build, train, or operate a competing hosted game or commercial product.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+3. Network Interaction & Anti-Hosting Loophole (AGPL-Style)
+If you host, deploy, or make the Software or any modified version accessible to any third party over a computer network or public URL (even noncommercially):
+(a) You MUST prominently display visible attribution to Prasanna and a direct link to the original official repository on the main user interface;
+(b) You MUST make the complete, corresponding source code of your exact deployed version publicly available under this identical license at no charge via a prominent download link on the same interface;
+(c) Any violation of Sections 2 or 3 immediately and automatically terminates all rights granted under this License.
 
-SCOPE AND THIRD-PARTY MATERIAL
+4. Scope and Third-Party Material
+This License applies strictly to original reimplementation engine, application, interface, and supporting code authored for this project by Prasanna. It grants zero rights to original Bounce Tales game materials included in the package—including sprites, images, audio, fonts, level data, binary resources, trademarks, or other material originating from the original J2ME game. All such materials remain the exclusive property of their respective rights holders, including Nokia and/or Rovio as applicable. No affiliation with or endorsement by Nokia or Rovio is implied.
 
-This license applies only to original reimplementation engine, application,
-interface, and supporting code authored for this project by Prasanna /
-PrasannaOne. It does not grant any license to original Bounce Tales game
-materials included in the package, including sprites, images, audio, fonts,
-level data, binary resources, trademarks, or other material originating from
-the original J2ME game. Those materials remain the intellectual property of
-their respective rights holders, including Nokia and/or Rovio as applicable.
-No affiliation with or endorsement by Nokia or Rovio is implied.
+5. Disclaimer of Warranty & Liability
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL PRASANNA BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
