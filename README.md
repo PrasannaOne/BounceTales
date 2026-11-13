@@ -1,4 +1,4 @@
-# Bounce Tales · V20 browser port
+# Bounce Tales · V20.1 browser port
 
 An independent HTML5 browser recreation of Bounce Tales 2.0.3 Java ME, built from the supplied Phase 2 reference archive and decoded game resources.
 
@@ -12,6 +12,15 @@ python -m http.server 8000
 
 Then open `http://localhost:8000/`.
 
+## V20.1 changes
+
+- Keeps the original Nokia/J2ME menu styling and pixel-art sprites while rendering all canvas menu and message text on a separate high-density text layer. The logical 240×320 game coordinate system and original sprite scale are unchanged.
+- Keeps the original JAR launcher icon artwork byte-for-byte at `assets/original/icon.png`; root PWA and Apple touch icon sizes are neutral, nearest-neighbour enlargements of that exact legacy icon rather than newly invented artwork.
+- Replaces the previous busy social preview with a restrained 1200×630 banner using the game logo, dark forest palette and concise browser-play message.
+- Adds an optional `Support Bounce Tales` link to Settings → About → Ko-fi. It opens the creator's Ko-fi page externally; there are no donation prompts or update-frequency promises.
+- Adds a touch-control editor in Settings. Players can drag ◀, ▶, JUMP and * within a preview, adjust each control from 75% to 130%, save a device-local layout, or reset to the default.
+- Adds high-density text rendering without smoothing or redrawing the original pixel-art sprite resources.
+
 ## V20 changes
 
 - Preserves the verified 326-entry sprite catalogue, 1,143 decoded animation command sequences, 16 RLEF level resources, and original audio/resource files. The source resource set remains hash-verified.
@@ -23,8 +32,8 @@ Then open `http://localhost:8000/`.
 - Separates the title-screen `SOUND` control and `TAP OR PRESS ACTION` prompt so their hit areas and labels no longer overlap.
 - Adds a persistent Smooth Motion setting (OFF by default). OFF renders the latest discrete simulation tick; ON interpolates only the rendered position between fixed simulation ticks. The underlying simulation remains fixed at 60 Hz in either mode.
 - Adds Auto / 30 / 60 / 90 / 120 FPS display caps. Changing the display cap does not reset or change the fixed simulation clock.
-- Adds root-level `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, and a 1200×630 `og-preview.png`, plus Open Graph and Twitter preview metadata.
-- Updates the PWA manifest and offline service worker cache for the V20 shell, logo derivative, icon assets and social preview.
+- Adds root-level `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, and a 1200×630 `og-preview.png`, plus Open Graph and Twitter preview metadata. V20.1 restores the original icon artwork for the install icons.
+- Updates the PWA manifest and offline service worker cache for the V20.1 shell, original-icon install assets, logo derivative and social preview.
 - Preserves the no-scroll viewport, safe-area handling, separate touch controls, canvas-to-controls breathing room, and the enlarged `*` control.
 
 ## Controls
@@ -35,6 +44,7 @@ Then open `http://localhost:8000/`.
 - Tap the in-game pause control to pause.
 - Keyboard: A/D or arrow keys to move, Space/Enter to jump, Shift/Q to change form, Escape to pause.
 - Standard gamepads are supported where the browser exposes the Gamepad API.
+- To customise touch controls, open Settings → Customize touch controls. Drag a control to reposition it, select it to resize, then save. Layout changes are local to the current browser/device.
 
 ## Regression tests
 
@@ -46,11 +56,11 @@ for test in tests/*.cjs; do node "$test" || exit 1; done
 
 The suite checks original resource hashes and decoded level/animation structures; all 15 campaign levels boot, play and pause in the headless runtime smoke test; event opcode coverage; physics/collision, water, enemies, springboard animation and a Level 1 spring trajectory; menu/input/settings behavior; responsive no-scroll layout; and PWA/metadata asset references.
 
-These automated checks are not a complete exhaustive playthrough of every route, enemy encounter, stage-clear sequence, or real-device interaction. The springboard trajectory check exercises the decoded source object and physics model, not every possible approach angle in the browser.
+The V20.1 UI regression also checks the separate high-density text layer, untouched original icon, new social preview, Ko-fi link, and touch-layout editor. All 38 regression scripts pass, and the project JavaScript files pass syntax checks. These automated checks are not a complete exhaustive playthrough of every route, enemy encounter, stage-clear sequence, or real-device interaction. The springboard trajectory check exercises the decoded source object and physics model, not every possible approach angle in the browser.
 
 ## Accuracy and known limitations
 
-V20 is a source-informed browser port, not a certified or pixel-identical reproduction of every Nokia MIDP runtime. The source resource and animation data are preserved and tested, and the new springboard path is checked against the decoded Level 1 resource. However, full level-by-level completion routes, every specialized trigger and enemy state, and pixel-perfect menu/layout parity still need side-by-side validation against the original JAR. Browser audio and input also differ from native MIDP devices. Physical Android/iOS testing remains necessary.
+This is a source-informed browser port, not a certified or pixel-identical reproduction of every Nokia MIDP runtime. The source resource and animation data are preserved and tested, and the new springboard path is checked against the decoded Level 1 resource. However, full level-by-level completion routes, every specialized trigger and enemy state, and pixel-perfect menu/layout parity still need side-by-side validation against the original JAR. Browser audio and input also differ from native MIDP devices. Physical Android/iOS testing remains necessary.
 
 ## Intellectual property
 

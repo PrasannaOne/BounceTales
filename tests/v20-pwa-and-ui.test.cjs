@@ -28,6 +28,7 @@ assert.match(sw,/bounce-tales-v20/);for(const name of ['icon-192.png','icon-512.
 const logo=readPngRGBA(fs.readFileSync(path.join(root,'assets/logo-transparent.png')));
 const alpha=[];for(let i=3;i<logo.data.length;i+=4)alpha.push(logo.data[i]);
 assert.ok(Math.min(...alpha)===0&&Math.max(...alpha)===255,'title logo has true transparency and opaque letter artwork');
+assert.equal(logo.data[3],0,'top-left logo matte is transparent');assert.equal(logo.data[(logo.height-1)*logo.width*4+(logo.width-1)*4+3],0,'bottom-right logo matte is transparent');
 // The original source artwork remains untouched for resource-hash parity.
 const sourceLogo=readPngRGBA(fs.readFileSync(path.join(root,'assets/original/j.png')));
 assert.equal(sourceLogo.width,168);assert.equal(sourceLogo.height,121);assert.equal(sourceLogo.data[3],255,'original JAR atlas image is kept byte-faithful and separate');

@@ -7,19 +7,22 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="46x48" href="assets/original/icon.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="description" content="Bounce Tales: a source-informed browser recreation of the classic mobile platform adventure.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Bounce Tales">
-<meta property="og:description" content="A little world of Bounce. Play the classic platform adventure in your browser.">
+<meta property="og:description" content="A little world of Bounce. Play the classic mobile platform adventure in your browser.">
 <meta property="og:image" content="https://prasannaone.github.io/BounceTales/og-preview.png">
+<meta property="og:image:alt" content="Bounce Tales · A little world of Bounce">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://prasannaone.github.io/BounceTales/">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image:alt" content="Bounce Tales · A little world of Bounce">
 <meta name="twitter:title" content="Bounce Tales">
-<meta name="twitter:description" content="A little world of Bounce. Play the classic platform adventure in your browser.">
+<meta name="twitter:description" content="A little world of Bounce. Play the classic mobile platform adventure in your browser.">
 <meta name="twitter:image" content="https://prasannaone.github.io/BounceTales/og-preview.png">
 <title>Bounce Tales</title>
 <link rel="stylesheet" href="style.css">
@@ -36,6 +39,7 @@
 
   <section class="game-wrap" aria-label="Bounce Tales game" id="game-wrap">
     <canvas id="game" width="240" height="320" aria-label="Bounce Tales game screen">Bounce Tales. Hold left or right to move, hold jump to bounce, and use the star button to change an unlocked form.</canvas>
+    <canvas id="game-text" width="480" height="640" aria-hidden="true"></canvas>
     <div class="statusline" id="statusline">LOADING ORIGINAL GAME…</div>
     <button class="pause-mini" id="pause-mini" type="button" aria-label="Pause game" title="Pause">Ⅱ</button>
     <div class="egg-hud" id="egg-hud">FORM BOUNCE</div>
@@ -132,6 +136,7 @@
         <button id="fullscreen-btn" class="settings-action" type="button">⛶ Fullscreen</button>
         <button id="reset-game" class="settings-action danger" type="button">Reset progress</button>
       </div>
+      <button id="open-control-editor" class="settings-action control-editor-launch" type="button">☷ Customize touch controls</button>
       <p class="settings-note">Simulation remains fixed at 60 Hz. Frame pacing and optional render interpolation only affect how frames are presented.</p>
     </section>
     <section class="settings-pane about-pane" id="settings-about-pane" role="tabpanel" aria-labelledby="settings-about-tab" hidden>
@@ -142,8 +147,32 @@
         <a class="about-link" href="https://t.me/prasannaone" target="_blank" rel="noopener noreferrer"><span class="link-icon">↗</span><span><strong>Telegram</strong><small>@prasannaone</small></span></a>
         <a class="about-link" href="https://github.com/PrasannaOne/BounceTales" target="_blank" rel="noopener noreferrer"><span class="link-icon">⌘</span><span><strong>GitHub</strong><small>github.com/PrasannaOne/BounceTales</small></span></a>
       </div>
+      <a class="about-link support-link" href="https://ko-fi.com/prasannaone" target="_blank" rel="noopener noreferrer"><span class="link-icon">☕</span><span><strong>Support Bounce Tales</strong><small>Optional support · Ko-fi</small></span><span class="support-arrow">↗</span></a>
       <p class="about-disclaimer">Not affiliated with Nokia or Rovio. Original game assets remain the property of their respective owners.</p>
     </section>
+  </div>
+</section>
+
+<section class="control-editor-overlay" id="control-editor-layer" hidden aria-modal="true" role="dialog" aria-labelledby="control-editor-title">
+  <div class="control-editor-panel">
+    <div class="control-editor-heading">
+      <div><p class="eyebrow">PERSONALISE YOUR GAME</p><h2 id="control-editor-title">Touch controls</h2></div>
+      <button id="close-control-editor" class="close-settings" type="button" aria-label="Close control editor">×</button>
+    </div>
+    <p class="control-editor-copy">Drag a button to move it. Select one to adjust its size.</p>
+    <div class="control-editor-stage" id="control-editor-stage" aria-label="Draggable touch control preview">
+      <button type="button" class="editor-control" data-editor-id="left" aria-label="Move left">◀</button>
+      <button type="button" class="editor-control" data-editor-id="right" aria-label="Move right">▶</button>
+      <button type="button" class="editor-control editor-jump" data-editor-id="jump" aria-label="Jump">JUMP</button>
+      <button type="button" class="editor-control editor-form" data-editor-id="form" aria-label="Change form">*</button>
+    </div>
+    <label class="control-size-row" for="control-size"><span><strong>Selected button size</strong><small id="control-size-value">100%</small></span><input id="control-size" type="range" min="75" max="130" step="5" value="100"></label>
+    <p class="control-editor-note">Your layout is saved only on this device. Keep enough room between buttons for comfortable play.</p>
+    <div class="control-editor-actions">
+      <button id="reset-control-layout" class="settings-action" type="button">Reset</button>
+      <button id="cancel-control-editor" class="settings-action" type="button">Cancel</button>
+      <button id="save-control-layout" class="settings-action save-layout" type="button">Save layout</button>
+    </div>
   </div>
 </section>
 <script src="src/fixed-point.js"></script>

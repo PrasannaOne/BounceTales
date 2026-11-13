@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Bounce Tales",
   "short_name": "Bounce Tales",
-  "description": "An independent browser recreation of Bounce Tales.",
+  "description": "A little world of Bounce. An independent browser recreation of a classic mobile platform adventure.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -20,7 +20,7 @@
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }

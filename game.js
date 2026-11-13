@@ -20,6 +20,18 @@ const LEVELS=[
 ];
 const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const textCanvas=document.getElementById('game-text'),textCtx=textCanvas?.getContext('2d')||null;
+function syncMenuTextResolution(){
+  if(!textCanvas||!textCtx)return;
+  const rect=canvas.getBoundingClientRect?.()||{width:W,height:H},dpr=Math.min(3,Math.max(1,window.devicePixelRatio||1));
+  const width=Math.max(1,Math.round((rect.width||W)*dpr)),height=Math.max(1,Math.round((rect.height||H)*dpr));
+  if(textCanvas.width!==width)textCanvas.width=width;
+  if(textCanvas.height!==height)textCanvas.height=height;
+  textCtx.setTransform(width/W,0,0,height/H,0,0);textCtx.imageSmoothingEnabled=true;
+}
+syncMenuTextResolution();
+window.addEventListener('resize',syncMenuTextResolution,{passive:true});
+if(typeof ResizeObserver!=='undefined'){const textResizeObserver=new ResizeObserver(syncMenuTextResolution);textResizeObserver.observe(canvas.parentElement);}
 const menu=document.getElementById('menu'),pauseLayer=document.getElementById('pause-layer'),settingsLayer=document.getElementById('settings-layer');
 const status=document.getElementById('statusline'),eggHud=document.getElementById('egg-hud'),gameHint=document.getElementById('game-hint');
 const input=new BounceOriginalInput.OriginalInputState();
@@ -658,16 +670,16 @@ function drawOriginalParallax(){
 }
 function drawFieldMessage(){
   if(!fieldMessage||fieldMessageTimer<=0)return;
-  const maxWidth=202,lines=[];ctx.font='9px system-ui';
+  const textTarget=textCtx||ctx,maxWidth=202,lines=[];textTarget.font='600 9px system-ui, sans-serif';
   const words=fieldMessage.replace(/[’‘]/g,"'").split(/\s+/);let line='';
-  for(const word of words){const test=line?line+' '+word:word;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=word;}else line=test;}
+  for(const word of words){const test=line?line+' '+word:word;if(textTarget.measureText(test).width>maxWidth&&line){lines.push(line);line=word;}else line=test;}
   if(line)lines.push(line);
   const shown=lines.slice(0,4),height=shown.length*12+15,y=H-height-9;
   const alpha=Math.min(0.92,fieldMessageTimer<0.4?fieldMessageTimer/0.4:0.92);
   ctx.fillStyle='rgba(7,17,19,'+alpha+')';ctx.fillRect(9,y,W-18,height);
   ctx.strokeStyle='rgba(242,232,205,.45)';ctx.strokeRect(9.5,y+.5,W-19,height-1);
-  ctx.fillStyle='#f5eddb';ctx.textAlign='center';ctx.textBaseline='top';
-  shown.forEach((t,i)=>ctx.fillText(t,120,y+8+i*12,maxWidth));
+  textTarget.fillStyle='#f5eddb';textTarget.textAlign='center';textTarget.textBaseline='top';
+  shown.forEach((t,i)=>textTarget.fillText(t,120,y+8+i*12,maxWidth));
 }
 function drawOriginalChapterBook(){
   ctx.fillStyle='#3f1a01';ctx.fillRect(0,0,W>>1,H);
@@ -683,9 +695,9 @@ function menuRoundRect(x,y,w,h,r=5){
   else ctx.rect(x,y,w,h);
 }
 function menuText(text,x,y,size=8,color='#f7eed9',align='center'){
-  ctx.save();ctx.font=`bold ${size}px "Courier New", monospace`;
-  ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillStyle=color;
-  ctx.shadowColor='#07100d';ctx.shadowBlur=2;ctx.fillText(String(text),x,y,214);ctx.restore();
+  const target=textCtx||ctx;target.save();target.font=`700 ${size}px "Courier New", ui-monospace, monospace`;
+  target.textAlign=align;target.textBaseline='middle';target.fillStyle=color;
+  target.shadowColor='#07100d';target.shadowBlur=1.2;target.fillText(String(text),x,y,214);target.restore();
 }
 function canvasMenuButton(label,x,y,w,h,action,kind='gold',disabled=false){
   const fills={gold:'#72512b',green:'#2c4035',dark:'#202b27',cream:'#e7dfc7'};
@@ -827,10 +839,10 @@ function drawGameplayScene(){
   }
   for(const e of bonusEggs){if(!e.collected){const p=screenPoint(e);drawImageMap(208,p.x,p.y);}}
   particles.draw(ctx,screenPoint,SCALE);drawFieldMessage();
-  if(toastTimer>0){ctx.fillStyle='#06121dcc';ctx.fillRect(34,276,172,22);ctx.fillStyle='#fff';ctx.font='9px system-ui';ctx.textAlign='center';ctx.fillText(toastText,120,290);}
+  if(toastTimer>0){ctx.fillStyle='#06121dcc';ctx.fillRect(34,276,172,22);const target=textCtx||ctx;target.fillStyle='#fff';target.font='600 9px system-ui,sans-serif';target.textAlign='center';target.textBaseline='alphabetic';target.fillText(toastText,120,290);}
 }
 function draw(){
-  canvasMenuHits=[];ctx.clearRect(0,0,W,H);
+  canvasMenuHits=[];ctx.clearRect(0,0,W,H);if(textCtx)textCtx.clearRect(0,0,W,H);
   if(mode===S.play){drawGameplayScene();return;}
   if(mode===S.pause){drawGameplayScene();drawCanvasPause();return;}
   if(mode===S.complete){drawGameplayScene();drawCanvasComplete();return;}
@@ -1147,6 +1159,82 @@ async function shareSite(){
   const shareData={title:'Bounce Tales',text:'Play Bounce Tales, an HTML5 browser remaster.',url:'https://prasannaone.github.io/BounceTales/'};
   try{if(navigator.share){await navigator.share(shareData);}else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(shareData.url);toast('Site link copied');}else{prompt('Copy the Bounce Tales link',shareData.url);}}catch(e){if(e?.name!=='AbortError')console.warn('Share unavailable',e);}
 }
+const CONTROL_LAYOUT_KEY='bounce-control-layout-v1';
+const CONTROL_LAYOUT_DEFAULTS={
+  left:{x:0,y:0,size:100},right:{x:34,y:0,size:100},jump:{x:66,y:0,size:100},form:{x:87,y:58,size:100}
+};
+const CONTROL_BASE={left:{w:30,h:64},right:{w:30,h:64},jump:{w:34,h:64},form:{w:13,h:44}};
+let editorLayout=null,editorSelected='left',editorDrag=null,editorReturnFocus=null,editorResetToDefault=false;
+function cloneDefaultControlLayout(){return JSON.parse(JSON.stringify(CONTROL_LAYOUT_DEFAULTS));}
+function sanitiseControlLayout(value){
+  if(!value||typeof value!=='object')return null;const clean={};
+  for(const id of Object.keys(CONTROL_LAYOUT_DEFAULTS)){
+    const item=value[id];if(!item||!Number.isFinite(Number(item.x))||!Number.isFinite(Number(item.y))||!Number.isFinite(Number(item.size)))return null;
+    clean[id]={x:clamp(Number(item.x),0,100),y:clamp(Number(item.y),0,100),size:clamp(Number(item.size),75,130)};
+  }return clean;
+}
+function loadControlLayout(){try{return sanitiseControlLayout(JSON.parse(localStorage.getItem(CONTROL_LAYOUT_KEY)||'null'));}catch{return null;}}
+function applyLiveControlLayout(){
+  const host=document.getElementById('game-controls');if(!host||!host.querySelectorAll)return;const layout=loadControlLayout();
+  host.classList.toggle('custom-layout',!!layout);
+  if(!layout){host.style.removeProperty('--custom-control-height');host.querySelectorAll('.control').forEach(el=>{el.style.removeProperty('left');el.style.removeProperty('top');el.style.removeProperty('width');el.style.removeProperty('height');el.style.removeProperty('min-height');});return;}
+  host.style.setProperty('--custom-control-height','136px');
+  host.querySelectorAll('.control').forEach(el=>{
+    const id=el.dataset.keyId==='3'?'left':el.dataset.keyId==='4'?'right':el.dataset.keyId==='7'?'jump':'form';
+    const item=layout[id],base=CONTROL_BASE[id],size=item.size/100;
+    const width=base.w*size,height=base.h*size;
+    const x=clamp(item.x,0,Math.max(0,100-width));const maxTopPct=Math.max(0,100*(136-height)/136);const topPct=clamp(item.y,0,maxTopPct);const top=topPct*1.36;
+    el.style.left=x+'%';el.style.top=top+'px';el.style.width=width+'%';el.style.height=height+'px';el.style.minHeight=height+'px';
+  });
+}
+function renderEditorLayout(){
+  const stage=document.getElementById('control-editor-stage');if(!stage||!editorLayout)return;
+  for(const id of Object.keys(CONTROL_LAYOUT_DEFAULTS)){
+    const el=stage.querySelector('[data-editor-id="'+id+'"]'),item=editorLayout[id],base=CONTROL_BASE[id],scale=item.size/100;
+    const rect=stage.getBoundingClientRect(),wPct=base.w*scale,hPx=base.h*scale;
+    const x=clamp(item.x,0,Math.max(0,100-wPct)),y=clamp(item.y,0,Math.max(0,100-(hPx/Math.max(1,rect.height))*100));
+    el.style.left=x+'%';el.style.top=y+'%';el.style.width=wPct+'%';el.style.height=hPx+'px';
+    el.classList.toggle('selected',id===editorSelected);el.setAttribute('aria-pressed',String(id===editorSelected));
+    item.x=x;item.y=y;
+  }
+  const slider=document.getElementById('control-size');slider.value=String(editorLayout[editorSelected].size);
+  document.getElementById('control-size-value').textContent=editorLayout[editorSelected].size+'%';
+}
+function openControlEditor(){
+  editorReturnFocus=document.activeElement;editorLayout=loadControlLayout()||cloneDefaultControlLayout();editorSelected='left';editorResetToDefault=false;
+  const layer=document.getElementById('control-editor-layer');layer.hidden=false;requestAnimationFrame(renderEditorLayout);
+}
+function closeControlEditor(){document.getElementById('control-editor-layer').hidden=true;editorDrag=null;if(editorReturnFocus?.focus)editorReturnFocus.focus();editorReturnFocus=null;}
+function bindControlEditor(){
+  const layer=document.getElementById('control-editor-layer'),stage=document.getElementById('control-editor-stage');
+  document.getElementById('open-control-editor').addEventListener('click',openControlEditor);
+  document.getElementById('close-control-editor').addEventListener('click',closeControlEditor);
+  document.getElementById('cancel-control-editor').addEventListener('click',closeControlEditor);
+  layer.addEventListener('click',e=>{if(e.target===layer)closeControlEditor();});
+  stage.addEventListener('pointerdown',e=>{
+    const button=e.target.closest('[data-editor-id]');if(!button)return;e.preventDefault();
+    editorSelected=button.dataset.editorId;editorResetToDefault=false;const rect=stage.getBoundingClientRect();
+    editorDrag={id:editorSelected,pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,startXValue:editorLayout[editorSelected].x,startYValue:editorLayout[editorSelected].y,rect};
+    stage.setPointerCapture(e.pointerId);renderEditorLayout();
+  });
+  stage.addEventListener('pointermove',e=>{
+    if(!editorDrag||editorDrag.pointerId!==e.pointerId)return;
+    const base=CONTROL_BASE[editorDrag.id],size=editorLayout[editorDrag.id].size/100;
+    const widthPct=base.w*size,heightPx=base.h*size;
+    const dx=(e.clientX-editorDrag.startX)/Math.max(1,editorDrag.rect.width)*100;
+    const dy=(e.clientY-editorDrag.startY)/Math.max(1,editorDrag.rect.height)*100;
+    editorLayout[editorDrag.id].x=clamp(editorDrag.startXValue+dx,0,Math.max(0,100-widthPct));
+    editorLayout[editorDrag.id].y=clamp(editorDrag.startYValue+dy,0,Math.max(0,100-(heightPx/Math.max(1,editorDrag.rect.height))*100));renderEditorLayout();
+  });
+  const endDrag=()=>{editorDrag=null;};stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);
+  document.getElementById('control-size').addEventListener('input',e=>{if(!editorLayout)return;editorResetToDefault=false;editorLayout[editorSelected].size=clamp(Number(e.target.value)||100,75,130);renderEditorLayout();});
+  document.getElementById('reset-control-layout').addEventListener('click',()=>{editorLayout=cloneDefaultControlLayout();editorSelected='left';editorResetToDefault=true;renderEditorLayout();});
+  document.getElementById('save-control-layout').addEventListener('click',()=>{if(!editorLayout)return;if(editorResetToDefault){localStorage.removeItem(CONTROL_LAYOUT_KEY);applyLiveControlLayout();closeControlEditor();toast('Default controls restored');return;}localStorage.setItem(CONTROL_LAYOUT_KEY,JSON.stringify(sanitiseControlLayout(editorLayout)));applyLiveControlLayout();closeControlEditor();toast('Touch layout saved');});
+  window.addEventListener('resize',()=>{if(!layer.hidden)renderEditorLayout();},{passive:true});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!layer.hidden){closeControlEditor();e.preventDefault();e.stopImmediatePropagation?.();}},{capture:true});
+  applyLiveControlLayout();
+}
+
 function bindSettings(){
   const fps=document.getElementById('fps-mode'),smoothToggle=document.getElementById('smooth-motion'),fpsToggle=document.getElementById('show-fps'),counter=document.getElementById('fps-counter'),full=document.getElementById('fullscreen-btn');
   fps.value=['auto','30','60','90','120'].includes(fpsMode)?fpsMode:'auto';fps.addEventListener('change',()=>applyFpsMode(fps.value));
@@ -1159,7 +1247,7 @@ function bindSettings(){
   full.addEventListener('click',async()=>{try{if(!document.fullscreenElement){await document.documentElement.requestFullscreen();full.textContent='Exit fullscreen';}else{await document.exitFullscreen();full.textContent='Enter fullscreen';}}catch{toast('Fullscreen unavailable in this browser');}});
   document.addEventListener('fullscreenchange',()=>{full.textContent=document.fullscreenElement?'Exit fullscreen':'Enter fullscreen';});
   document.querySelectorAll('[data-settings-tab]').forEach(button=>button.addEventListener('click',()=>setSettingsTab(button.dataset.settingsTab)));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!settingsLayer.hidden){closeSettings();e.stopPropagation();}});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!settingsLayer.hidden){if(!document.getElementById('control-editor-layer').hidden)return;closeSettings();e.stopPropagation();}});
   document.getElementById('pause-mini').addEventListener('click',pauseGame);
   document.getElementById('continue-game').addEventListener('click',()=>{const idx=progress.selected||0;if(currentLevel.index===idx)startLevel();else loadLevel(idx,{start:true}).catch(error=>{console.error(error);toast('Could not load saved chapter');});});
   document.getElementById('open-chapters').addEventListener('click',showChapterBook);
@@ -1185,7 +1273,7 @@ async function boot(){
     if(decodedAtlas.png_images.some((entry,index)=>entry.png!==atlases[index]))throw new Error('Sprite atlas PNG slot order does not match the original image archive');
     languageStrings=BounceEventEngine.parseLanguage(new Uint8Array(await langResp.arrayBuffer()));
     selectedLevelIndex=progress.selected||0;if(!BounceOriginalProgression.isUnlocked(progress,selectedLevelIndex))selectedLevelIndex=0;unlockedForme=progress.unlockedForme;
-    await loadLevel(selectedLevelIndex);bindInputs();bindCanvasMenu();bindSettings();showTitleMenu();requestAnimationFrame(loop);
+    await loadLevel(selectedLevelIndex);bindInputs();bindCanvasMenu();bindSettings();bindControlEditor();showTitleMenu();requestAnimationFrame(loop);
   }catch(error){
     hideGameScenes();document.getElementById('menu').hidden=false;const summary=document.getElementById('save-summary');if(summary)summary.textContent='Could not load original game resources: '+error.message;
     status.textContent='RESOURCE LOAD ERROR';console.error(error);

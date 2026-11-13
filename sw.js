@@ -1,5 +1,5 @@
-/* Bounce Tales V19 offline application shell. */
-const CACHE_NAME = 'bounce-tales-v20';
+/* Bounce Tales V20.1 offline application shell. */
+const CACHE_NAME = 'bounce-tales-v20-1';
 const APP_SHELL = [
   "./",
   "index.html",
@@ -9,6 +9,7 @@ const APP_SHELL = [
   "icon-192.png",
   "icon-512.png",
   "apple-touch-icon.png",
+  "favicon.png",
   "og-preview.png",
   "LICENSE",
   "README.md",
