@@ -20,7 +20,7 @@ function element(id) {
     addEventListener(name, fn) { (handlers[name] ??= []).push(fn); },
     fire(name, event = {}) { for (const fn of handlers[name] || []) fn(event); },
     getContext: () => ctx2d,
-    getBoundingClientRect: () => ({ left: 0, top: 0, width: id === 'control-editor-stage' ? 320 : 240, height: id === 'control-editor-stage' ? 164 : 136 }),
+    getBoundingClientRect: () => ({ left: 0, top: 0, width: id === 'control-editor-stage' ? 320 : id === 'game-controls' ? (els.app.dataset.mode === 'play' ? 320 : 0) : 240, height: id === 'control-editor-stage' ? (320*108/360) : id === 'game-controls' ? (els.app.dataset.mode === 'play' ? 96 : 0) : 136 }),
     setPointerCapture: noop, handlers
   };
 }
@@ -32,6 +32,7 @@ const editorButtons = Object.fromEntries(['left','right','jump','form'].map(id =
   const button = element('editor-' + id); button.dataset.editorId = id; button.closest = () => button; return [id, button];
 }));
 els['control-editor-stage'].querySelector = selector => editorButtons[selector.match(/data-editor-id="([^"]+)/)?.[1]];
+els['control-editor-stage'].querySelectorAll = () => Object.values(editorButtons);
 els['control-size'].value = '100';
 const records = Array.from({ length: 15 }, () => ({ eggs: 0, clearTime: 9999, score: 0, globalScore: 0 }));
 let saveData = JSON.stringify({ version: 1, records, selected: 0, totalGameTime: 0 });
@@ -61,43 +62,55 @@ const sandbox = {
   fetch: async url => { const bytes = fs.readFileSync(path.join(root, url)); return { ok: true, json: async () => JSON.parse(bytes.toString('utf8')), arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) }; }
 };
 sandbox.Element = class Element {}; sandbox.window = sandbox; vm.createContext(sandbox);
-for (const file of ['src/fixed-point.js','src/original-input-map.js','src/original-camera.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/original-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','src/original-progression.js','src/game-particles.js','src/sprite-atlas.js','src/audio-controller.js','game.js']) {
+for (const file of ['src/control-layout.js','src/fixed-point.js','src/original-input-map.js','src/original-camera.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/original-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','src/original-progression.js','src/game-particles.js','src/sprite-atlas.js','src/audio-controller.js','game.js']) {
   let source = fs.readFileSync(path.join(root, file), 'utf8');
-  if (file === 'game.js') source = source.replace('boot();', 'window.__controlTest={applyLiveControlLayout};boot();');
+  if (file === 'game.js') source = source.replace('boot();', 'window.__controlTest={applyLiveControlLayout,startLevel};boot();');
   vm.runInContext(source, sandbox, { filename: file });
 }
 const wait = () => new Promise(resolve => setImmediate(resolve));
 (async () => {
   await wait(); await wait();
+  assert.equal(els.app.dataset.mode, 'title');
+  assert.equal(liveButtons[0].style.width || '', '', 'hidden title-screen controls are not assigned zero-sized inline dimensions');
+  raf.shift()(); // settle the initial hidden-layout measurement request
+
   els['open-settings'].fire('click');
   els['open-control-editor'].fire('click');
   assert.equal(els['control-editor-layer'].hidden, false);
-  raf.shift()();
-  const initialLeft = { left: liveButtons[0].style.left, top: liveButtons[0].style.top, width: liveButtons[0].style.width, height: liveButtons[0].style.height };
+  raf.pop()(); // render the visible editor preview
+  const initialEditorLeft = { left: editorButtons.left.style.left, top: editorButtons.left.style.top, width: editorButtons.left.style.width };
+  assert.ok(initialEditorLeft.width && initialEditorLeft.left !== undefined, 'editor preview receives measurable geometry');
+
   els['control-editor-stage'].fire('pointerdown', { target: editorButtons.left, pointerId: 3, clientX: 20, clientY: 20, preventDefault: noop });
   els['control-editor-stage'].fire('pointermove', { target: editorButtons.left, pointerId: 3, clientX: 60, clientY: 40, preventDefault: noop });
   els['control-editor-stage'].fire('pointerup', { pointerId: 3 });
-  assert.notEqual(liveButtons[0].style.left, initialLeft.left, 'drag immediately changes the active left button position');
-  assert.notEqual(liveButtons[0].style.top, initialLeft.top, 'drag immediately changes the active left button vertical position');
+  assert.notEqual(editorButtons.left.style.left, initialEditorLeft.left, 'drag moves the selected editor button');
+  assert.notEqual(editorButtons.left.style.top, initialEditorLeft.top, 'drag updates the selected editor button vertically');
+
   els['control-size'].fire('input', { target: { value: '120' } });
-  assert.equal(liveButtons[0].style.width, '86.39999999999999px', 'size slider immediately resizes the active button');
-  assert.equal(liveButtons[0].style.height, '48px');
+  assert.equal(editorButtons.left.style.width, '89.6px', 'size slider resizes the editor preview');
   els['save-control-layout'].fire('click');
   const saved = JSON.parse(prefs.get('bounce-control-layout-v1'));
   assert.equal(saved.left.size, 120);
+  assert.equal(liveButtons[0].style.width || '', '', 'saving while controls are hidden does not collapse the live controls');
+
+  // Transition into gameplay. The scene sync schedules a fresh measurement after display changes.
+  els['settings-layer'].hidden = true;
+  sandbox.__controlTest.startLevel();
+  assert.ok(liveButtons[0].style.width && Number.parseFloat(liveButtons[0].style.width) > 40, 'live controls receive real dimensions when gameplay reveals them');
   const savedLeft = { left: liveButtons[0].style.left, top: liveButtons[0].style.top, width: liveButtons[0].style.width, height: liveButtons[0].style.height };
-  // Simulate a fresh page boot's layout hydration from the persisted storage value.
-  for (const key of ['left','top','width','height','min-height']) liveButtons[0].style[key] = '';
-  sandbox.__controlTest.applyLiveControlLayout();
-  assert.deepEqual({ left: liveButtons[0].style.left, top: liveButtons[0].style.top, width: liveButtons[0].style.width, height: liveButtons[0].style.height }, savedLeft, 'saved layout is rehydrated from localStorage on boot/reload');
-  els['open-control-editor'].fire('click'); raf.shift()();
+
+  els['open-settings'].fire('click');
+  els['open-control-editor'].fire('click');
+  raf.pop()();
+  const liveBeforeCancel = { width: liveButtons[0].style.width, left: liveButtons[0].style.left };
   els['control-editor-stage'].fire('pointerdown', { target: editorButtons.left, pointerId: 4, clientX: 20, clientY: 20, preventDefault: noop });
   els['control-editor-stage'].fire('pointermove', { target: editorButtons.left, pointerId: 4, clientX: 36, clientY: 52, preventDefault: noop });
   els['control-editor-stage'].fire('pointerup', { pointerId: 4 });
   els['control-size'].fire('input', { target: { value: '80' } });
-  assert.notEqual(liveButtons[0].style.width, savedLeft.width, 'unsaved preview changes active size');
+  assert.notEqual(liveButtons[0].style.width, liveBeforeCancel.width, 'unsaved preview updates visible live controls');
   els['cancel-control-editor'].fire('click');
   assert.equal(els['control-editor-layer'].hidden, true);
   assert.deepEqual({ left: liveButtons[0].style.left, top: liveButtons[0].style.top, width: liveButtons[0].style.width, height: liveButtons[0].style.height }, savedLeft, 'Cancel restores saved positions and sizes on active controls');
-  console.log('Control runtime: drag/resize updates active buttons immediately and saved positions/sizes reload from localStorage');
+  console.log('Control runtime: hidden-state measurement, editor drag/resize, save, reveal/reflow and cancel restoration passed');
 })().catch(error => { console.error(error); process.exitCode = 1; });

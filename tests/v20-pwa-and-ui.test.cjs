@@ -19,15 +19,15 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const css=fs.readFileSync(path.join(root,'style.css'),'utf8');
 const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
 const manifest=JSON.parse(fs.readFileSync(path.join(root,'manifest.webmanifest'),'utf8'));
-for(const name of ['icon-192.png','icon-512.png','apple-touch-icon.png','og-preview.png'])assert.ok(fs.existsSync(path.join(root,name)),name+' exists at ZIP root');
+for(const name of ['icon-192.png','icon-512.png','apple-touch-icon.png','bounce-tales-web-preview.png'])assert.ok(fs.existsSync(path.join(root,name)),name+' exists at ZIP root');
 for(const tag of ['og:title','og:description','og:image','twitter:card','twitter:image'])assert.ok(html.includes(tag),'metadata '+tag);
-assert.match(html,/og-preview\.png/);assert.match(html,/apple-touch-icon\.png/);
+assert.match(html,/bounce-tales-web-preview\.png/);assert.match(html,/apple-touch-icon\.png/);
 assert.deepEqual(manifest.icons.map(i=>i.sizes),['192x192','512x512']);
 assert.equal(manifest.icons[0].src,'icon-192.png');assert.equal(manifest.icons[1].src,'icon-512.png');
-assert.match(sw,/bounce-tales-v34/);for(const name of ['icon-192.png','icon-512.png','apple-touch-icon.png','og-preview.png','assets\/logo-transparent.png'])assert.ok(sw.includes(name),'precache includes '+name);
+assert.match(sw,/bounce-tales-v37/);for(const name of ['icon-192.png','icon-512.png','apple-touch-icon.png'])assert.ok(sw.includes(name),'critical shell includes '+name);assert.doesNotMatch(sw,/bounce-tales-web-preview\.png|assets\/audio\/act1\.ogg/,'large preview/audio are lazy-cached, not first-install prerequisites');
 const logo=readPngRGBA(fs.readFileSync(path.join(root,'assets/logo-transparent.png')));
-const alpha=[];for(let i=3;i<logo.data.length;i+=4)alpha.push(logo.data[i]);
-assert.ok(Math.min(...alpha)===0&&Math.max(...alpha)===255,'title logo has true transparency and opaque letter artwork');
+let alphaMin=255,alphaMax=0;for(let i=3;i<logo.data.length;i+=4){alphaMin=Math.min(alphaMin,logo.data[i]);alphaMax=Math.max(alphaMax,logo.data[i]);}
+assert.ok(alphaMin===0&&alphaMax===255,'title logo has true transparency and opaque letter artwork');
 assert.equal(logo.data[3],0,'top-left logo matte is transparent');assert.equal(logo.data[(logo.height-1)*logo.width*4+(logo.width-1)*4+3],0,'bottom-right logo matte is transparent');
 // The original source artwork remains untouched for resource-hash parity.
 const sourceLogo=readPngRGBA(fs.readFileSync(path.join(root,'assets/original/j.png')));

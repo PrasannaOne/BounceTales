@@ -39,7 +39,7 @@ World Y follows the original game's upward-positive convention; canvas projectio
 
 ## Resources and offline behavior
 
-The original binary resources under `assets/original/` supply runtime level and sprite/audio data. `reference/` contains decoded fixtures used by tests and tooling. The service worker uses a versioned cache shell, prefers the network while online, and falls back to cached resources when offline.
+The original binary resources under `assets/original/` supply runtime level and sprite/audio data. `reference/` contains decoded fixtures used by tests and tooling. The service worker precaches a small critical startup shell. Original sprite images and audio are cached on demand after the game requests them; repeat requests are served cache-first. The social-sharing preview is not a runtime dependency.
 
 ## Maintenance boundaries
 
@@ -48,8 +48,10 @@ The original binary resources under `assets/original/` supply runtime level and 
 - Update `index.html` asset query versions and the service-worker cache name together when releasing.
 - Run the Node.js test suite after engine changes; syntax checks alone do not establish gameplay parity.
 
-## V33 touch-control layout
+## V37 responsive controls and startup cache
 
-The four touch controls use one canonical 420 × 128 reference surface. `CONTROL_LAYOUT_DEFAULTS` and `CONTROL_BASE` in `game.js` define the default coordinates and reference dimensions; both the gameplay controls and Settings editor preview are positioned from those same values. The editor uses Pointer Events for touch/mouse dragging and a size slider for resizing. Unsaved edits preview on the live controls only while the editor is open; Cancel/Escape restores the saved layout. Save writes the sanitized layout to the stable `bounce-control-layout-v1` localStorage key. The key is intentionally independent of release/cache versions so ordinary upgrades do not discard user layouts.
+The live touch controls and Settings editor use `src/control-layout.js` as their single geometry source. Positions and sizes are stored as normalized percentages and a percentage size multiplier on a fixed 360 × 108 reference surface. The stable `bounce-control-layout-v1` storage key preserves user layouts across releases. The live control surface is hidden outside gameplay; it must not be measured or assigned inline dimensions while hidden. `syncSceneChrome()` reapplies the geometry after gameplay reveals the row, and a `ResizeObserver` handles viewport/container changes. The editor waits until its overlay is visible before measuring, and Save, Cancel, Reset and Escape have distinct persistence semantics.
 
-The live control container scales from its measured width. The nested `.main-controls` and `.special-control-row` wrappers use `display: contents`, leaving each button absolutely positioned relative to `#game-controls`. The editor preview uses the same 420:128 aspect ratio and shared dimension calculation. Starting or restarting a level does not own or mutate control-layout preferences.
+The logical game canvas remains 240 × 320. CSS scales it within portrait, landscape, narrow-phone, tablet and desktop layouts without feeding CSS dimensions into physics or camera calculations. V37 keeps the simulation/update loop, original RLEF resources, physics constants and trampoline calculations unchanged.
+
+The V36 install cache eagerly included the original audio, sprite resources and the large social preview. V37 limits install caching to the boot-critical shell and lazily caches additional same-origin resources on first use, reducing competing first-install network traffic.

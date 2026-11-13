@@ -26,12 +26,12 @@ for(const [file,size] of [['icon-192.png',192],['icon-512.png',512],['apple-touc
   const png=fs.readFileSync(path.join(root,file));assert.equal(png.toString('ascii',1,4),'PNG');
   assert.equal(png.readUInt32BE(16),size);assert.equal(png.readUInt32BE(20),size);
 }
-assert.match(html,/href="favicon\.png"/);
+assert.match(html,/href="favicon\.png\?v=37"/);
 // Minimal and correctly sized web preview metadata.
-const preview=fs.readFileSync(path.join(root,'og-preview.png'));
-assert.equal(preview.toString('ascii',1,4),'PNG');assert.equal(preview.readUInt32BE(16),1200);assert.equal(preview.readUInt32BE(20),630);
+const preview=fs.readFileSync(path.join(root,'bounce-tales-web-preview.png'));
+assert.equal(preview.toString('ascii',1,4),'PNG');assert.equal(preview.readUInt32BE(16),1536);assert.equal(preview.readUInt32BE(20),857);
 assert.match(html,/og:image:alt/);assert.match(html,/twitter:image:alt/);
-assert.match(sw,/bounce-tales-v34/);assert.match(sw,/favicon\.png/);
+assert.match(sw,/bounce-tales-v37/);assert.match(sw,/favicon\.png/);
 // Discreet Ko-fi link is only in About and explicitly opens outside the app.
 assert.match(html,/<a class="about-link support-link" href="https:\/\/ko-fi\.com\/prasannaone" target="_blank" rel="noopener noreferrer">[\s\S]*?Support Bounce Tales[\s\S]*?Enjoying Bounce Tales\? If you'd like to support this independent project, you can buy me a coffee\./);
 assert.match(css,/\.support-link \.support-text\s*\{[\s\S]*?flex-direction:column/);
@@ -43,5 +43,5 @@ assert.match(game,/function applyLiveControlLayout\(override=null\)/);
 assert.match(game,/function bindControlEditor\(\)/);
 assert.match(game,/localStorage\.setItem\(CONTROL_LAYOUT_KEY,JSON\.stringify\(clean\)\)/);
 assert.match(game,/editorResetToDefault=true/);assert.match(game,/localStorage\.removeItem\(CONTROL_LAYOUT_KEY\)/,'Reset restores default controls and clears the saved custom layout');
-assert.match(css,/#game-controls\.custom-layout[\s\S]*?position:absolute/);
+assert.match(css,/#game-controls\.custom-layout[\s\S]*?position:absolute/);assert.match(game,/if\(!metrics\)return null/,'hidden controls are not collapsed by zero-width measurement');
 console.log('V20.1 polish: crisp canvas text, original icon preservation, minimal OG banner, Ko-fi About link and editable touch layout verified');

@@ -35,28 +35,19 @@ Any static web server can be used. No build step or package installation is requ
 
 ```text
 .
-├── index.html              Application shell and UI
+├── index.html              Application shell and PWA metadata
 ├── style.css               Responsive layout and visual styling
-├── game.js                 Main game loop, state, rendering and integration
-├── sw.js                   Network-first service worker and offline shell
+├── game.js                 Game loop, state, rendering and integration
+├── sw.js                   Critical shell cache and on-demand asset cache
 ├── manifest.webmanifest    PWA metadata
-├── src/                    Engine modules
-│   ├── fixed-point.js       Fixed-point numeric helpers
-│   ├── bounce-physics.js   Player physics and form behavior
-│   ├── rlef-reader.js       Original level-resource parser
-│   ├── event-engine.js      Scripted level events and triggers
-│   ├── original-*.js        Source-informed gameplay systems
-│   ├── midp-graphics.js     MIDP-style drawing compatibility
-│   └── audio-controller.js Web Audio playback
-├── assets/
-│   ├── original/            Original game resource files used at runtime
-│   └── audio/               Music and sound resources
-├── reference/               Decoded sprite/animation and level fixtures
-├── reverse-engineering/     Engine and resource research notes
-├── docs/                    Reverse-engineering methodology
-├── tests/                   Node.js regression and validation scripts
-├── tools/                   Reference inspection/generation utilities
-This repository is distributed under the proprietary, source-available Sovereign Source License v1.1. It is not an open-source license. Original Bounce Tales game assets and other third-party materials are excluded and remain subject to their respective rights holders.
+├── src/                    Engine modules and shared control-layout geometry
+├── assets/                 Original runtime resources and Web Audio files
+├── reference/              Decoded sprite, animation and level fixtures
+├── reverse-engineering/    Engine and resource research notes
+├── docs/                   Reverse-engineering and release notes
+├── tests/                  Node.js regression and validation scripts
+├── tools/                  Reference inspection/generation utilities
+├── LICENSE                 Sovereign Source License v1.1
 └── .github/                 Repository automation/configuration
 ```
 
@@ -81,10 +72,13 @@ The tests exercise resource parsing, physics/collision, level scripting, input, 
 
 ## License and original game materials
 
-The reimplementation code and supporting project work are governed by the terms in [`LICENSE`](LICENSE), the **Sovereign Source License v1.0**. Read that file before copying, modifying, hosting, or redistributing this project. In particular, public network hosting has attribution and source-availability conditions, and commercial use requires separate permission.
-
-The original Bounce Tales sprites, illustrations, audio, fonts, level data, binary resources, trademarks, and other materials originating from the J2ME game are not relicensed by this project. They remain the property of their respective rights holders, including Nokia and/or Rovio as applicable.
+The reimplementation code and supporting project work are governed by [`LICENSE`](LICENSE), the **Sovereign Source License v1.1**. It is proprietary and source-available, not an open-source license. Original Bounce Tales sprites, illustrations, audio, fonts, level data, binary resources, trademarks, and other materials originating from the J2ME game are excluded and remain subject to their respective rights holders.
 
 ### Touch control customization
 
 Open Settings → Touch Controls to drag the Left, Right, Jump and Forme buttons or adjust the selected button's size. Save persists the layout on the current browser/device; Cancel or Escape restores the previously saved arrangement. The layout is retained across game releases through the stable `bounce-control-layout-v1` local-storage key.
+
+
+## V37 responsive shell
+
+The touch-control editor and live controls share a tested responsive geometry model. Hidden controls are not measured or assigned zero-sized styles; the live row is recalculated when gameplay reveals it and when the viewport changes. The service worker precaches only the critical startup shell and caches original sprites/audio as they are requested, avoiding a full asset download during first installation. The original 240×320 simulation canvas and gameplay update loop are unchanged.
