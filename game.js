@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-const W=240,H=320,SCALE=0.660187;
+const W=240,H=320,SCALE=43266/65536;
 const LEVELS=[
   {resource:'bf',name:'Misty Morning'},
   {resource:'bg',name:'Unfriendly Friends'},
@@ -191,15 +191,16 @@ function buildRuntime(parsed){
   refreshHud();
 }
 function screenPoint(p){return {x:W/2+(p.x-cameraX)*SCALE,y:H/2-(p.y-cameraY)*SCALE};}
-function resolveTerrain(dt,previous){
+function resolveTerrain(dt,previous,allowRecovery=true){
   body.radius=BouncePhysics.parameters.radius[body.forme];
   const result=BounceOriginalCollision.resolve(body,worldGeometry,dt,previous,8);
-  // Penetration recovery is only a safety net for spawns or event teleports that
-  // begin inside terrain; ordinary swept contacts use the c.class LP32 path.
-  if(!result.contacts){
+  // Penetration recovery is a remaster-only safety net for spawns/event teleports.
+  // It must not run before the JAR's subsequent spring-object traversal.
+  if(!result.contacts&&allowRecovery){
     BounceTerrainCollision.resolveCirclePolygons(body,worldGeometry,dt,8,previous);
     body.syncFixedPosition();
   }
+  return result;
 }
 function collectEggs(){
   for(const e of eggs.concat(bonusEggs)){
@@ -252,25 +253,34 @@ function updatePlayerEyes(dt){
 function updateEnemies(dt){
   for(const e of enemies){e.prevX=e.x;e.prevY=e.y;BounceOriginalEnemies.update(e,body,dt);}
 }
-function updateTrampolines(dt,previousPosition){
+function updateTrampolineAnimations(dt,sourceDeltaMs){
+  if(!body)return;
+  for(const t of trampolines){
+    const m=world.get(t.object.id)||t.object.matrix;
+    const p=BounceOriginalWater.worldPoint(m,0,0);t.x=p.x;t.y=p.y;
+    // JAR m.i() calls every scene object's d(), even when collision flags
+    // suppress interaction. An active e.d() spring advances before c.d().
+    if(t.active)BounceOriginalTrampoline.update(t,body,imageMaps,dt,sourceDeltaMs);
+  }
+}
+function checkTrampolineContacts(previousPosition){
   if(!body)return;
   for(const t of trampolines){
     const m=world.get(t.object.id)||t.object.matrix;
     const p=BounceOriginalWater.worldPoint(m,0,0);t.x=p.x;t.y=p.y;
     if((t.object.runtimeFlags??t.object.flags??0)&0x20)continue;
-    if(t.active){BounceOriginalTrampoline.update(t,body,imageMaps,dt);continue;}
-    if(!body.enabled||body.vy>=0)continue;
+    if(t.active||!body.enabled||body.vy>=0)continue;
 
-    // c.a(j), case 8: test the previous-to-current actor CENTRE path against
-    // the exact local launch segment x=-70..70 at y=95. No radius expansion.
-    // World Y is up (vy>0); canvas Y is down. Run before terrain response.
-    const prev=BounceOriginalWater.inversePoint(m,previousPosition.x,previousPosition.y);
-    const now=BounceOriginalWater.inversePoint(m,body.x,body.y);
-    if(BounceOriginalTrampoline.crossesLaunchLine(prev,now)&&
+    // c.a(root), case 8: after polygon objects in the Level 1 tree, Java
+    // transforms the previous/current 16.16 actor centres through the exact
+    // inverse object matrix and intersects (-70,95)..(70,95). The source
+    // direction guard is world vy<0; it is not a local-Y/radius test.
+    const prev=BounceOriginalTrampoline.worldToLocalFixed(m,previousPosition.x16,previousPosition.y16);
+    const now=BounceOriginalTrampoline.worldToLocalFixed(m,body.x16,body.y16);
+    if(BounceOriginalTrampoline.crossesLaunchLineFixed(prev,now)&&
        BounceOriginalTrampoline.begin(t,body,imageMaps))break;
   }
-  // The original trampoline animation disables Bounce temporarily. Never let
-  // a malformed resource or interrupted state keep the actor disabled forever.
+  // A malformed resource must never leave the actor disabled indefinitely.
   if(!body.enabled&&!cannonState&&playerDeathTimer<=0&&victoryTimer<=0&&!trampolines.some(t=>t.active)){
     body.enabled=true;
     if(!Number.isFinite(body.vy)||body.vy===0)body.vy=180;
@@ -383,16 +393,24 @@ function update(dt,sourceDeltaMs=Math.round(dt*1000)){
   if(held.left)body.moveLeft(false);
   if(held.right)body.moveRight(false);
   if(held.jump)body.jump(false);
-  const previousPosition={x:body.x,y:body.y};
+  // JAR m.i(): update scene objects first (including an already-active e.d()
+  // spring), then integrate Bounce, then run the object-tree collision pass.
+  updateTrampolineAnimations(dt,sourceDeltaMs);
+  const previousPosition={x:body.x,y:body.y,x16:BounceFixed16.toFixed16(body.x),y16:BounceFixed16.toFixed16(body.y)};
   const wasGrounded=body.grounded;
   const waterRippleHeads=new Map(waters.map(zone=>[zone,zone.ripples[zone.ripples.length-1]||null]));
   body.update(dt,SCALE,sourceDeltaMs);
   if(body.enabled)updatePlayerEyes(dt);
-  // Preserve J2ME object traversal ordering: trampoline (level object type 12)
-  // is tested before the polygon solver can reflect the incoming velocity.
-  updateTrampolines(dt,previousPosition);
-  if(body.enabled)resolveTerrain(dt,previousPosition);
-  else body.syncFixedPosition();
+  // Level 1's polygon parent is visited before its trampoline child in
+  // c.a(root), so resolve terrain before the spring's type-8 interaction.
+  const terrainResult=body.enabled?resolveTerrain(dt,previousPosition,false):{contacts:0};
+  checkTrampolineContacts(previousPosition);
+  if(body.enabled&&!terrainResult.contacts){
+    // Recovery only after the source-faithful polygon/spring collision pass.
+    BounceTerrainCollision.resolveCirclePolygons(body,worldGeometry,dt,8,previousPosition);
+    body.syncFixedPosition();
+  }
+  if(!body.enabled)body.syncFixedPosition();
   if(body.enabled&&!wasGrounded&&body.grounded){
     const impact=Math.max(.25,Math.min(2.2,Math.abs(body.lastVy||body.vy)/180));
     particles.emitLanding(body.x,body.y-body.radius,impact);
@@ -1158,9 +1176,10 @@ async function shareSite(){
 }
 const CONTROL_LAYOUT_KEY='bounce-control-layout-v1';
 const CONTROL_LAYOUT_DEFAULTS={
-  left:{x:0,y:40,size:100},right:{x:32,y:40,size:100},jump:{x:66,y:0,size:100},form:{x:76,y:60,size:100}
+  left:{x:0,y:60.3,size:100},right:{x:20.6,y:60.3,size:100},jump:{x:73.7,y:0,size:100},form:{x:80.6,y:67.6,size:100}
 };
-const CONTROL_BASE={left:{w:30,h:64},right:{w:30,h:64},jump:{w:34,h:64},form:{w:13,h:44}};
+// Physical button dimensions in CSS pixels, matching the V24 default layout.
+const CONTROL_BASE={left:{w:64,h:54},right:{w:64,h:54},jump:{w:92,h:48},form:{w:44,h:44}};
 let editorLayout=null,editorSelected='left',editorDrag=null,editorReturnFocus=null,editorResetToDefault=false;
 function cloneDefaultControlLayout(){return JSON.parse(JSON.stringify(CONTROL_LAYOUT_DEFAULTS));}
 function sanitiseControlLayout(value){
@@ -1171,24 +1190,25 @@ function sanitiseControlLayout(value){
   }return clean;
 }
 function loadControlLayout(){try{return sanitiseControlLayout(JSON.parse(localStorage.getItem(CONTROL_LAYOUT_KEY)||'null'));}catch{return null;}}
-function applyLiveControlLayout(){
-  const host=document.getElementById('game-controls');if(!host||!host.querySelectorAll)return;const layout=loadControlLayout();
+function applyLiveControlLayout(override=null){
+  const host=document.getElementById('game-controls');if(!host||!host.querySelectorAll)return;const layout=sanitiseControlLayout(override)||loadControlLayout();
   host.classList.toggle('custom-layout',!!layout);
   if(!layout){host.style.removeProperty('--custom-control-height');host.querySelectorAll('.control').forEach(el=>{el.style.removeProperty('left');el.style.removeProperty('top');el.style.removeProperty('width');el.style.removeProperty('height');el.style.removeProperty('min-height');});return;}
-  host.style.setProperty('--custom-control-height','136px');
+  const hostRect=host.getBoundingClientRect(),hostWidth=Math.max(1,hostRect.width),hostHeight=136;
+  host.style.setProperty('--custom-control-height',hostHeight+'px');
   host.querySelectorAll('.control').forEach(el=>{
     const id=el.dataset.keyId==='3'?'left':el.dataset.keyId==='4'?'right':el.dataset.keyId==='7'?'jump':'form';
     const item=layout[id],base=CONTROL_BASE[id],size=item.size/100;
-    const width=base.w*size,height=base.h*size;
-    const x=clamp(item.x,0,Math.max(0,100-width));const maxTopPct=Math.max(0,100*(136-height)/136);const topPct=clamp(item.y,0,maxTopPct);const top=topPct*1.36;
-    el.style.left=x+'%';el.style.top=top+'px';el.style.width=width+'%';el.style.height=height+'px';el.style.minHeight=height+'px';
+    const width=base.w*size,height=base.h*size,widthPct=width/hostWidth*100;
+    const x=clamp(item.x,0,Math.max(0,100-widthPct));const maxTopPct=Math.max(0,100*(hostHeight-height)/hostHeight);const topPct=clamp(item.y,0,maxTopPct);const top=topPct*hostHeight/100;
+    el.style.left=x+'%';el.style.top=top+'px';el.style.width=width+'px';el.style.height=height+'px';el.style.minHeight=height+'px';
   });
 }
 function renderEditorLayout(){
   const stage=document.getElementById('control-editor-stage');if(!stage||!editorLayout)return;
   for(const id of Object.keys(CONTROL_LAYOUT_DEFAULTS)){
     const el=stage.querySelector('[data-editor-id="'+id+'"]'),item=editorLayout[id],base=CONTROL_BASE[id],scale=item.size/100;
-    const rect=stage.getBoundingClientRect(),wPct=base.w*scale,hPx=base.h*scale;
+    const rect=stage.getBoundingClientRect(),wPct=(base.w*scale)/Math.max(1,rect.width)*100,hPx=base.h*scale;
     const x=clamp(item.x,0,Math.max(0,100-wPct)),y=clamp(item.y,0,Math.max(0,100-(hPx/Math.max(1,rect.height))*100));
     el.style.left=x+'%';el.style.top=y+'%';el.style.width=wPct+'%';el.style.height=hPx+'px';
     el.classList.toggle('selected',id===editorSelected);el.setAttribute('aria-pressed',String(id===editorSelected));
@@ -1196,12 +1216,13 @@ function renderEditorLayout(){
   }
   const slider=document.getElementById('control-size');slider.value=String(editorLayout[editorSelected].size);
   document.getElementById('control-size-value').textContent=editorLayout[editorSelected].size+'%';
+  applyLiveControlLayout(editorLayout);
 }
 function openControlEditor(){
   editorReturnFocus=document.activeElement;editorLayout=loadControlLayout()||cloneDefaultControlLayout();editorSelected='left';editorResetToDefault=false;
   const layer=document.getElementById('control-editor-layer');layer.hidden=false;requestAnimationFrame(renderEditorLayout);
 }
-function closeControlEditor(){document.getElementById('control-editor-layer').hidden=true;editorDrag=null;if(editorReturnFocus?.focus)editorReturnFocus.focus();editorReturnFocus=null;}
+function closeControlEditor(restoreSaved=true){if(restoreSaved)applyLiveControlLayout();document.getElementById('control-editor-layer').hidden=true;editorDrag=null;if(editorReturnFocus?.focus)editorReturnFocus.focus();editorReturnFocus=null;}
 function bindControlEditor(){
   const layer=document.getElementById('control-editor-layer'),stage=document.getElementById('control-editor-stage');
   document.getElementById('open-control-editor').addEventListener('click',openControlEditor);
@@ -1217,7 +1238,7 @@ function bindControlEditor(){
   stage.addEventListener('pointermove',e=>{
     if(!editorDrag||editorDrag.pointerId!==e.pointerId)return;
     const base=CONTROL_BASE[editorDrag.id],size=editorLayout[editorDrag.id].size/100;
-    const widthPct=base.w*size,heightPx=base.h*size;
+    const widthPct=(base.w*size)/Math.max(1,editorDrag.rect.width)*100,heightPx=base.h*size;
     const dx=(e.clientX-editorDrag.startX)/Math.max(1,editorDrag.rect.width)*100;
     const dy=(e.clientY-editorDrag.startY)/Math.max(1,editorDrag.rect.height)*100;
     editorLayout[editorDrag.id].x=clamp(editorDrag.startXValue+dx,0,Math.max(0,100-widthPct));
@@ -1226,7 +1247,7 @@ function bindControlEditor(){
   const endDrag=()=>{editorDrag=null;};stage.addEventListener('pointerup',endDrag);stage.addEventListener('pointercancel',endDrag);
   document.getElementById('control-size').addEventListener('input',e=>{if(!editorLayout)return;editorResetToDefault=false;editorLayout[editorSelected].size=clamp(Number(e.target.value)||100,75,130);renderEditorLayout();});
   document.getElementById('reset-control-layout').addEventListener('click',()=>{editorLayout=cloneDefaultControlLayout();editorSelected='left';editorResetToDefault=true;renderEditorLayout();});
-  document.getElementById('save-control-layout').addEventListener('click',()=>{if(!editorLayout)return;if(editorResetToDefault){localStorage.removeItem(CONTROL_LAYOUT_KEY);applyLiveControlLayout();closeControlEditor();toast('Default controls restored');return;}localStorage.setItem(CONTROL_LAYOUT_KEY,JSON.stringify(sanitiseControlLayout(editorLayout)));applyLiveControlLayout();closeControlEditor();toast('Touch layout saved');});
+  document.getElementById('save-control-layout').addEventListener('click',()=>{if(!editorLayout)return;if(editorResetToDefault){localStorage.removeItem(CONTROL_LAYOUT_KEY);applyLiveControlLayout();closeControlEditor(false);toast('Default controls restored');return;}localStorage.setItem(CONTROL_LAYOUT_KEY,JSON.stringify(sanitiseControlLayout(editorLayout)));applyLiveControlLayout(editorLayout);closeControlEditor(false);toast('Touch layout saved');});
   window.addEventListener('resize',()=>{if(!layer.hidden)renderEditorLayout();},{passive:true});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!layer.hidden){closeControlEditor();e.preventDefault();e.stopImmediatePropagation?.();}},{capture:true});
   applyLiveControlLayout();

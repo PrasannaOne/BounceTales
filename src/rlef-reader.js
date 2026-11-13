@@ -108,13 +108,16 @@
     return {version,objectCount,eventCount,objects};
   }
   function compose(a,b){
+    // Exact port of d.b(d): Java long products, arithmetic >>16, then
+    // narrowing to signed 32-bit matrix components after each result.
+    const mulAdd=(x,y,u,v)=>Number((BigInt(x|0)*BigInt(y|0)+BigInt(u|0)*BigInt(v|0))>>16n)|0;
     return [
-      (a[0]*b[0]+a[1]*b[3])/65536,
-      (a[0]*b[1]+a[1]*b[4])/65536,
-      (a[0]*b[2]+a[1]*b[5])/65536+a[2],
-      (a[3]*b[0]+a[4]*b[3])/65536,
-      (a[3]*b[1]+a[4]*b[4])/65536,
-      (a[3]*b[2]+a[4]*b[5])/65536+a[5]
+      mulAdd(a[0],b[0],a[1],b[3]),
+      mulAdd(a[0],b[1],a[1],b[4]),
+      (mulAdd(a[0],b[2],a[1],b[5])+ (a[2]|0))|0,
+      mulAdd(a[3],b[0],a[4],b[3]),
+      mulAdd(a[3],b[1],a[4],b[4]),
+      (mulAdd(a[3],b[2],a[4],b[5])+ (a[5]|0))|0
     ];
   }
   function buildWorld(objects){
