@@ -260,16 +260,12 @@ function updateTrampolines(dt,previousPosition){
     if(t.active){BounceOriginalTrampoline.update(t,body,imageMaps,dt);continue;}
     if(!body.enabled||body.vy>=0)continue;
 
-    // c.a(j), case 8 in the supplied 2.0.3 c.class bytecode, tests the
-    // previous-to-current actor bounds against the trampoline's local launch
-    // segment (x=-70..70, y=95). Include the actor's collision radius, as the
-    // original solver does. World Y is up (vy>0); canvas Y is down. Run this
-    // BEFORE terrain response: V18 ran it
-    // after resolveTerrain(), which could bounce the actor off nearby grass
-    // first and reverse vy, suppressing the spring activation entirely.
+    // c.a(j), case 8: test the previous-to-current actor CENTRE path against
+    // the exact local launch segment x=-70..70 at y=95. No radius expansion.
+    // World Y is up (vy>0); canvas Y is down. Run before terrain response.
     const prev=BounceOriginalWater.inversePoint(m,previousPosition.x,previousPosition.y);
     const now=BounceOriginalWater.inversePoint(m,body.x,body.y);
-    if(BounceOriginalTrampoline.crossesLaunchLine(prev,now,body.radius)&&
+    if(BounceOriginalTrampoline.crossesLaunchLine(prev,now)&&
        BounceOriginalTrampoline.begin(t,body,imageMaps))break;
   }
   // The original trampoline animation disables Bounce temporarily. Never let

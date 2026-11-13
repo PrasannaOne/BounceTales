@@ -1,5 +1,5 @@
 /* Bounce Tales V21 offline application shell. */
-const CACHE_NAME = 'bounce-tales-v21';
+const CACHE_NAME = 'bounce-tales-v22';
 const APP_SHELL = [
   "./",
   "index.html",

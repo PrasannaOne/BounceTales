@@ -21,27 +21,24 @@
     const frames=Array.isArray(map.frames)?map.frames:[];
     const frameIndex=clamp(Math.trunc(frame)||0,0,Math.max(0,frames.length-1));
     const selected=map.type==='animated'&&frames.length?imageMaps.maps[String(frames[frameIndex])]:map;
-    const origin=Number(selected?.originY||0);
-    return Number.isFinite(origin)?origin:0;
+    // JAR o.b(frameId, 0): first composite part's local Y offset.
+    // This is not the sprite draw-origin (originY), which shifts the actor
+    // incorrectly during the trampoline compression animation.
+    const offset=Number(selected?.parts?.[0]?.[1] ?? 0);
+    return Number.isFinite(offset)?offset:0;
   }
-  function crossesLaunchLine(previous,current,radius=0){
+  function crossesLaunchLine(previous,current){
     if(!previous||!current)return false;
-    const values=[previous.x,previous.y,current.x,current.y,radius];
+    const values=[previous.x,previous.y,current.x,current.y];
     if(!values.every(Number.isFinite))return false;
     const dy=current.y-previous.y;
-    // c.class case 8 only accepts a descending actor (world Y decreases).
-    // J2ME actor coordinates are Y-up while canvas coordinates are Y-down.
+    // Exact JAR centre-path trigger: descending world-Y path crosses the
+    // local segment x=-70..70 at y=95. Do not expand it by player radius.
     if(dy>=-1e-9)return false;
-    const r=clamp(Number(radius)||0,0,100);
-    // The original collision routine tests the actor's full bounds, not its
-    // centre. The spring's top is local y=95; the actor's lower edge is
-    // centreY-radius, so contact begins as centreY crosses 95+radius.
-    const contactY=95+r;
-    const fraction=(contactY-previous.y)/dy;
+    const fraction=(95-previous.y)/dy;
     if(fraction<0||fraction>1)return false;
     const x=previous.x+(current.x-previous.x)*fraction;
-    // c.class uses the actor radius in the horizontal bounds as well.
-    return x>=-70-r&&x<=70+r;
+    return x>=-70&&x<=70;
   }
   function clearState(t){
     t.active=false;t.progress=0;t.period=0;t.frameStep=0;t.animFrame=0;

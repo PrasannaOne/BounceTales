@@ -564,3 +564,27 @@ canvas#game-text{
   .support-link .support-text strong{font-size:12px;}
   .support-link .support-text small{font-size:9px;}
 }
+
+
+/* ========================= V22: invariant Nokia canvas geometry ========================= */
+/* The logical game surface is always 240×320 (3:4). Let its width shrink to fit
+   the available viewport; never clamp its height independently, which would
+   distort the canvas in browsers with changing/taller URL toolbars. */
+.game-wrap {
+  aspect-ratio: 3 / 4 !important;
+  height: auto !important;
+  max-height: none !important;
+  flex: 0 0 auto !important;
+  width: min(100%, 360px, calc((100dvh - 250px) * .75)) !important;
+}
+canvas#game {
+  width: 100% !important;
+  height: 100% !important;
+  aspect-ratio: 3 / 4;
+  display: block;
+}
+@media (max-height: 620px) {
+  .game-wrap {
+    width: min(100%, 300px, calc((100dvh - 178px) * .75)) !important;
+  }
+}
