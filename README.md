@@ -1,12 +1,10 @@
-# Bounce Tales · V19 browser port
+# Bounce Tales · V20 browser port
 
-An independent HTML5 browser reimplementation of the original Bounce Tales 2.0.3 Java ME game, built from the supplied private Phase 2 reference archive and decoded game resources.
+An independent HTML5 browser recreation of Bounce Tales 2.0.3 Java ME, built from the supplied Phase 2 reference archive and decoded game resources.
 
 ## Run locally
 
 Serve this folder from a local HTTP server or deploy it to a static HTTPS host. The service worker and offline installation require a secure context (`https://` or `localhost`); opening `index.html` directly with `file://` is not supported.
-
-For example, with Python installed:
 
 ```bash
 python -m http.server 8000
@@ -14,16 +12,20 @@ python -m http.server 8000
 
 Then open `http://localhost:8000/`.
 
-## V19 changes
+## V20 changes
 
-- Keeps the decoded 326-entry sprite atlas, the 1,143 decoded animation command sequences, all 16 parsed level resources, and the original soundtrack resources.
-- Fixes the Level 1 grass springboard trigger ordering: the trampoline segment is checked before the terrain solver can change the incoming vertical velocity. The spring trigger uses the source segment-intersection model, integer Java period/frame division, and source launch-velocity caps.
-- Gives the spring animation a finite watchdog and recovers a disabled player if a damaged or interrupted spring state is encountered.
-- Adds explicit iteration limits to fixed-point square-root fallback, actor/terrain collision passes, and the recursive compound-sprite renderer.
-- Paints the title, chapter book, high-score list, options, instructions, pause and chapter-complete scenes directly into the 240×320 game canvas. The game controls remain outside the canvas.
-- Adds saved chapter progression and per-chapter egg/score/time records through localStorage.
-- Improves mobile touch layout with additional space between the canvas and the control row, thumb-friendly separated controls, a slightly larger `*` button, safe-area handling, simultaneous pointer input, and a no-scroll document viewport. The canvas may shrink on compact displays to preserve the control area.
-- Adds a web app manifest and a service worker that precaches the app shell and game resources for repeat offline use after the first successful online load.
+- Preserves the verified 326-entry sprite catalogue, 1,143 decoded animation command sequences, 16 RLEF level resources, and original audio/resource files. The source resource set remains hash-verified.
+- Fixes the Level 1 springboard contact test to use the original actor collision bounds. The V19 centre-only test waited until the player centre crossed local `y=95`; the Java actor collision uses its radius, so the lower edge contacts the spring while the centre is still at `y=95+radius`.
+- Keeps the JAR's axis convention intact: world Y is positive upward, and the canvas projection negates world Y. The trampoline launch velocity is therefore positive in world coordinates and produces negative screen/canvas Y displacement.
+- Adds a deterministic Misty Morning spring trajectory regression using the actual decoded Level 1 trampoline strength and nearby cliff geometry. It verifies the launch is finite, upward, and has enough vertical rise to clear the tested ledge.
+- Retains bounded collision/animation loops, the springboard watchdog, and radius-aware downward-only spring contact.
+- Removes the title-logo white matte using a separate transparent derivative. The original JAR `j.png` resource is left unchanged; it is opaque white in the supplied archive, so the transparent edge matte is a derived presentation asset, not original PNG alpha data.
+- Separates the title-screen `SOUND` control and `TAP OR PRESS ACTION` prompt so their hit areas and labels no longer overlap.
+- Adds a persistent Smooth Motion setting (OFF by default). OFF renders the latest discrete simulation tick; ON interpolates only the rendered position between fixed simulation ticks. The underlying simulation remains fixed at 60 Hz in either mode.
+- Adds Auto / 30 / 60 / 90 / 120 FPS display caps. Changing the display cap does not reset or change the fixed simulation clock.
+- Adds root-level `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`, and a 1200×630 `og-preview.png`, plus Open Graph and Twitter preview metadata.
+- Updates the PWA manifest and offline service worker cache for the V20 shell, logo derivative, icon assets and social preview.
+- Preserves the no-scroll viewport, safe-area handling, separate touch controls, canvas-to-controls breathing room, and the enlarged `*` control.
 
 ## Controls
 
@@ -42,11 +44,13 @@ With Node.js installed, run:
 for test in tests/*.cjs; do node "$test" || exit 1; done
 ```
 
-The tests cover decoded resource structure, physics and collision modules, the springboard lifecycle and watchdog, all available stage resources, canvas menu wiring, simultaneous pointer-input cleanup and first-tap audio unlock, PWA file references and the responsive no-scroll layout. These are automated code/data regressions, not a full device-lab test or proof of byte-for-byte runtime equivalence to the original Nokia MIDP implementation.
+The suite checks original resource hashes and decoded level/animation structures; all 15 campaign levels boot, play and pause in the headless runtime smoke test; event opcode coverage; physics/collision, water, enemies, springboard animation and a Level 1 spring trajectory; menu/input/settings behavior; responsive no-scroll layout; and PWA/metadata asset references.
+
+These automated checks are not a complete exhaustive playthrough of every route, enemy encounter, stage-clear sequence, or real-device interaction. The springboard trajectory check exercises the decoded source object and physics model, not every possible approach angle in the browser.
 
 ## Accuracy and known limitations
 
-V19 is a source-driven browser port, not a certified or pixel-identical 1:1 recreation. The main game resources and decoded animation descriptors are retained, and several gameplay systems have been translated from the private decompiled reference. Canvas menus are reconstructed from the available UI resources and source flow; they have not been verified pixel-for-pixel against every original Nokia handset. Some specialized enemy, trigger, score-tally, rendering and timing edge cases still require side-by-side play testing against the original JAR. Browser audio playback also differs from native MIDP audio behavior. Physical Android/iOS testing remains necessary.
+V20 is a source-informed browser port, not a certified or pixel-identical reproduction of every Nokia MIDP runtime. The source resource and animation data are preserved and tested, and the new springboard path is checked against the decoded Level 1 resource. However, full level-by-level completion routes, every specialized trigger and enemy state, and pixel-perfect menu/layout parity still need side-by-side validation against the original JAR. Browser audio and input also differ from native MIDP devices. Physical Android/iOS testing remains necessary.
 
 ## Intellectual property
 

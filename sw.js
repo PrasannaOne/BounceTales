@@ -1,11 +1,15 @@
 /* Bounce Tales V19 offline application shell. */
-const CACHE_NAME = 'bounce-tales-v19';
+const CACHE_NAME = 'bounce-tales-v20';
 const APP_SHELL = [
   "./",
   "index.html",
   "style.css",
   "game.js",
   "manifest.webmanifest",
+  "icon-192.png",
+  "icon-512.png",
+  "apple-touch-icon.png",
+  "og-preview.png",
   "LICENSE",
   "README.md",
   "PORT_STATUS.md",
@@ -16,6 +20,7 @@ const APP_SHELL = [
   "src/game-particles.js",
   "src/game-timing.js",
   "src/image-map.json",
+  "assets/logo-transparent.png",
   "src/midp-graphics.js",
   "src/original-camera.js",
   "src/original-collision.js",

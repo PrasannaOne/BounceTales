@@ -9,6 +9,6 @@ const bodyUpdate=chunk.indexOf('body.update(dt,SCALE,sourceDeltaMs)');
 const trampoline=chunk.indexOf('updateTrampolines(dt,previousPosition)');
 const terrain=chunk.indexOf('resolveTerrain(dt,previousPosition)');
 assert.ok(bodyUpdate>=0&&trampoline>bodyUpdate&&terrain>trampoline,'spring object is queried after integration but before terrain collision response');
-assert.match(game,/crossesLaunchLine\(prev,now\)/,'trampoline test uses the original segment with no inflated actor radius');
+assert.match(game,/crossesLaunchLine\(prev,now,body\.radius\)/,'trampoline contact uses the source actor bounds radius');
 assert.match(game,/else body\.syncFixedPosition\(\)/,'trampoline-controlled position is synchronized when physics is temporarily disabled');
-console.log('Springboard order: J2ME interaction check precedes terrain response and preserves the source launch-line segment');
+console.log('Springboard order: J2ME interaction check precedes terrain response and uses radius-aware source bounds');

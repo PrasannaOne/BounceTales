@@ -26,14 +26,21 @@
   }
   function crossesLaunchLine(previous,current,radius=0){
     if(!previous||!current)return false;
-    const values=[previous.x,previous.y,current.x,current.y, radius];
+    const values=[previous.x,previous.y,current.x,current.y,radius];
     if(!values.every(Number.isFinite))return false;
     const dy=current.y-previous.y;
-    if(Math.abs(dy)<1e-9)return false;
-    const fraction=(95-previous.y)/dy;
+    // c.class case 8 only accepts a descending actor (world Y decreases).
+    // J2ME actor coordinates are Y-up while canvas coordinates are Y-down.
+    if(dy>=-1e-9)return false;
+    const r=clamp(Number(radius)||0,0,100);
+    // The original collision routine tests the actor's full bounds, not its
+    // centre. The spring's top is local y=95; the actor's lower edge is
+    // centreY-radius, so contact begins as centreY crosses 95+radius.
+    const contactY=95+r;
+    const fraction=(contactY-previous.y)/dy;
     if(fraction<0||fraction>1)return false;
     const x=previous.x+(current.x-previous.x)*fraction;
-    const r=clamp(Number(radius)||0,0,100);
+    // c.class uses the actor radius in the horizontal bounds as well.
     return x>=-70-r&&x<=70+r;
   }
   function clearState(t){
@@ -45,7 +52,7 @@
     // fail-safe path is only for corrupted/non-finite state or a stalled timer.
     if(!body)return;
     body.enabled=true;
-    if(!Number.isFinite(body.vy)||body.vy===0)body.vy=Math.max(1,Number(t.calcPush)||180);
+    if(!Number.isFinite(body.vy)||body.vy===0)body.vy=Math.max(1,Math.abs(Number(t.calcPush)||180));
     body.torqueX=0;body.torqueY=0;body.skipAccelStretch=true;
     body.grounded=false;body.airTime=0;
   }
@@ -94,7 +101,8 @@
       if(t.progress>=t.period-t.frameStep){
         if(!t.jumpFinished){
           t.jumpFinished=true;
-          body.vy=t.calcPush;body.enabled=true;
+          body.vy=Math.abs(t.calcPush); // positive world Y is upward; screenPoint negates it.
+          body.enabled=true;
           body.torqueX=0;body.torqueY=0;body.skipAccelStretch=true;
           body.grounded=false;body.airTime=0;
         }

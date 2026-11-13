@@ -7,9 +7,20 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" href="assets/original/icon.png">
-<link rel="apple-touch-icon" href="assets/pwa-192.png">
-<meta name="description" content="Bounce Tales, an HTML5 browser port using original game resources.">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="description" content="Bounce Tales: a source-informed browser recreation of the classic mobile platform adventure.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Bounce Tales">
+<meta property="og:description" content="A little world of Bounce. Play the classic platform adventure in your browser.">
+<meta property="og:image" content="https://prasannaone.github.io/BounceTales/og-preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://prasannaone.github.io/BounceTales/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bounce Tales">
+<meta name="twitter:description" content="A little world of Bounce. Play the classic platform adventure in your browser.">
+<meta name="twitter:image" content="https://prasannaone.github.io/BounceTales/og-preview.png">
 <title>Bounce Tales</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -112,15 +123,16 @@
     </div>
     <section class="settings-pane" id="settings-game-pane" role="tabpanel" aria-labelledby="settings-game-tab">
       <label class="setting-row compact" for="fps-mode"><span><strong>Frame pacing</strong><small>Auto follows the display. Original game timing is preserved.</small></span>
-        <select id="fps-mode"><option value="auto">Auto</option><option value="30">30 FPS</option><option value="60">60 FPS</option></select>
+        <select id="fps-mode"><option value="auto">Auto</option><option value="30">30 FPS</option><option value="60">60 FPS</option><option value="90">90 FPS</option><option value="120">120 FPS</option></select>
       </label>
+      <label class="setting-row compact" for="smooth-motion"><span><strong>Smooth motion</strong><small>OFF keeps discrete JAR-style ticks. ON interpolates rendering only, without changing the 60 Hz simulation.</small></span><input id="smooth-motion" type="checkbox"></label>
       <label class="setting-row compact" for="show-fps"><span><strong>FPS counter</strong><small>Show rendering rate.</small></span><input id="show-fps" type="checkbox"></label>
       <label class="setting-row compact" for="music-enabled"><span><strong>Original music</strong><small>Play the game’s soundtrack.</small></span><input id="music-enabled" type="checkbox" checked></label>
       <div class="settings-actions-row">
         <button id="fullscreen-btn" class="settings-action" type="button">⛶ Fullscreen</button>
         <button id="reset-game" class="settings-action danger" type="button">Reset progress</button>
       </div>
-      <p class="settings-note">Game simulation uses elapsed time from the original JAR, independently of the display refresh rate.</p>
+      <p class="settings-note">Simulation remains fixed at 60 Hz. Frame pacing and optional render interpolation only affect how frames are presented.</p>
     </section>
     <section class="settings-pane about-pane" id="settings-about-pane" role="tabpanel" aria-labelledby="settings-about-tab" hidden>
       <div class="about-brand-row"><div class="about-mark">B</div><div><p class="eyebrow">INDEPENDENT HTML5 PORT</p><h3>Bounce Tales</h3></div></div>

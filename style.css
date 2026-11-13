@@ -426,3 +426,44 @@ canvas#game { touch-action: none; }
   .special-control-row .special { width: 42px; height: 42px; min-height: 42px; flex-basis: 42px; }
   .hint, .keyboard-hint { display: none !important; }
 }
+
+
+/* ========================= V20: stable mobile viewport and thumb spacing ========================= */
+html, body {
+  width: 100%; height: 100%; min-height: 0;
+  overflow: hidden; overscroll-behavior: none;
+}
+body {
+  height: 100vh; height: 100dvh; min-height: 0;
+  padding: 0 10px calc(10px + env(safe-area-inset-bottom));
+}
+#app {
+  height: 100%; min-height: 0; max-height: 100%; overflow: hidden;
+  padding-top: calc(64px + env(safe-area-inset-top));
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  gap: clamp(8px, 1.8vh, 16px);
+}
+#app[data-mode="play"] .game-wrap {
+  margin-bottom: clamp(8px, 2.2vh, 20px) !important;
+}
+#app[data-mode="play"] .controls { margin-top: 0 !important; gap: 9px; }
+#app[data-mode="play"] .main-controls { gap: clamp(10px, 3vw, 16px); }
+#app[data-mode="play"] .special-control-row { height: 47px; }
+#app[data-mode="play"] .special-control-row .special {
+  width: 44px; height: 44px; min-height: 44px; flex-basis: 44px;
+}
+#app[data-mode="play"] .hint { margin: 0; }
+@media (max-height: 620px) {
+  #app { padding-top: calc(58px + env(safe-area-inset-top)); gap: 5px; }
+  #app[data-mode="play"] .game-wrap { margin-bottom: 8px !important; }
+  #app[data-mode="play"] .controls { gap: 6px; }
+  #app[data-mode="play"] .main-controls .control { height: clamp(44px, 12vh, 56px); min-height: 44px; }
+  #app[data-mode="play"] .special-control-row { height: 43px; }
+  #app[data-mode="play"] .special-control-row .special { width: 42px; height: 42px; min-height: 42px; flex-basis: 42px; }
+  #app[data-mode="play"] .hint, #app[data-mode="play"] .keyboard-hint { display: none !important; }
+}
+@media (max-width: 360px) {
+  #app[data-mode="play"] .game-wrap { margin-bottom: 10px !important; }
+  #app[data-mode="play"] .controls { width: 100%; }
+  #app[data-mode="play"] .main-controls { gap: 9px; }
+}

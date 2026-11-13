@@ -32,11 +32,11 @@ let eventEngine=null,playerObjectId=-1,fieldMessage='',fieldMessageTimer=0,langu
 let spriteAnimations=new Map(),cameraSnap=false,playerDeathTimer=0;
 let lastTime=0,cameraX=0,cameraY=0,cameraSpring=null,unlockedForme=0,toastTimer=0,toastText='';
 const simulationClock=new BounceGameTiming.FixedStepClock();
-let renderAlpha=0;
+let renderAlpha=1;
 let canvasMenuHits=[];
 let canvasMenuPointer=null,menuFocusIndex=0;
-let fpsMode=localStorage.getItem('bounce-fps-mode')||'auto',showFps=localStorage.getItem('bounce-show-fps')==='true',fpsFrames=0,fpsStamp=0,displayFps=0,lastRenderAt=0;
-if(!['auto','30','60'].includes(fpsMode))fpsMode='auto';
+let fpsMode=localStorage.getItem('bounce-fps-mode')||'auto',smoothMotion=localStorage.getItem('bounce-smooth-motion')==='true',showFps=localStorage.getItem('bounce-show-fps')==='true',fpsFrames=0,fpsStamp=0,displayFps=0,lastRenderAt=0;
+if(!['auto','30','60','90','120'].includes(fpsMode))fpsMode='auto';
 const S={play:'play',title:'title',select:'select',pause:'pause',complete:'complete',guide:'guide',scores:'scores',options:'options'};
 const COVER_IDS=[359,363,364,365,328,366,367,368,369,329,370,360,361,362,330];
 const LEVEL_TEXT_INDICES=[20,24,25,26,32,27,28,29,30,33,31,21,22,23,34];
@@ -51,7 +51,7 @@ function getWorldPos(o){const m=world.get(o.id);return fixedPoint(m,0,0);}
 function imgFor(index){
   if(!Number.isInteger(index)||index<0||index>=atlases.length)return null;
   if(loadedImages.has(index))return loadedImages.get(index);
-  const im=new Image();im.src='assets/original/'+atlases[index];loadedImages.set(index,im);return im;
+  const im=new Image();im.src=index===7?'assets/logo-transparent.png':'assets/original/'+atlases[index];loadedImages.set(index,im);return im;
 }
 function drawImageMap(id,x,y,seen=new Set(),frame=0,targetCtx=ctx){
   if(!Number.isInteger(id)||id<0||seen.has(id)||seen.size>=32||!imageMaps?.maps)return;
@@ -249,13 +249,15 @@ function updateTrampolines(dt,previousPosition){
     if(!body.enabled||body.vy>=0)continue;
 
     // c.a(j), case 8 in the supplied 2.0.3 c.class bytecode, tests the
-    // previous-to-current actor sweep against the trampoline's local launch
-    // segment (x=-70..70, y=95). Run this BEFORE terrain response: V18 ran it
+    // previous-to-current actor bounds against the trampoline's local launch
+    // segment (x=-70..70, y=95). Include the actor's collision radius, as the
+    // original solver does. World Y is up (vy>0); canvas Y is down. Run this
+    // BEFORE terrain response: V18 ran it
     // after resolveTerrain(), which could bounce the actor off nearby grass
     // first and reverse vy, suppressing the spring activation entirely.
     const prev=BounceOriginalWater.inversePoint(m,previousPosition.x,previousPosition.y);
     const now=BounceOriginalWater.inversePoint(m,body.x,body.y);
-    if(BounceOriginalTrampoline.crossesLaunchLine(prev,now)&&
+    if(BounceOriginalTrampoline.crossesLaunchLine(prev,now,body.radius)&&
        BounceOriginalTrampoline.begin(t,body,imageMaps))break;
   }
   // The original trampoline animation disables Bounce temporarily. Never let
@@ -709,8 +711,8 @@ function drawCanvasTitle(){
   canvasMenuButton('HIGH SCORES',29,192,182,24,'scores','dark');
   canvasMenuButton('OPTIONS',29,222,182,24,'options','green');
   canvasMenuButton('INSTRUCTIONS',29,252,182,24,'guide','dark');
-  canvasMenuButton((musicController?.enabled??true)?'SOUND  ON':'SOUND  OFF',75,282,90,17,'sound','dark');
-  menuText('TAP A SELECTION',120,293,6,'#9eac9e');
+  canvasMenuButton((musicController?.enabled??true)?'SOUND ON':'SOUND OFF',16,281,82,16,'sound','dark');
+  menuText('TAP OR PRESS ACTION',160,289,6,'#f1e7cf');
 }
 function drawCanvasChapterBook(){
   drawOriginalChapterBook();
@@ -788,11 +790,12 @@ function drawCanvasOptions(){
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#29424a');bg.addColorStop(1,'#17251f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#18251f';menuRoundRect(15,46,210,226,7);ctx.fill();ctx.strokeStyle='#c5a66c';ctx.stroke();
   menuText('OPTIONS',120,70,12,'#f2d693');
-  canvasMenuButton((musicController?.enabled??true)?'SOUND  ON':'SOUND  OFF',32,104,176,27,'sound','green');
-  canvasMenuButton('FRAME PACING  '+fpsMode.toUpperCase(),32,141,176,27,'fps','dark');
-  menuText('AUTO MATCHES THE DISPLAY',120,183,6,'#b9c4b6');
-  menuText('GAME SIMULATION STAYS FIXED',120,196,6,'#b9c4b6');
-  canvasMenuButton('BACK TO MENU',48,226,144,22,'title','gold');
+  canvasMenuButton((musicController?.enabled??true)?'SOUND  ON':'SOUND  OFF',32,99,176,25,'sound','green');
+  canvasMenuButton('FRAME PACING  '+fpsMode.toUpperCase(),32,132,176,25,'fps','dark');
+  canvasMenuButton('SMOOTH MOTION  '+(smoothMotion?'ON':'OFF'),32,165,176,25,'smooth','green');
+  menuText('SIMULATION ALWAYS STAYS AT 60 HZ',120,204,6,'#b9c4b6');
+  menuText(smoothMotion?'SUB-TICK RENDER INTERPOLATION ON':'DISCRETE ORIGINAL-STYLE TICKS',120,216,6,'#b9c4b6');
+  canvasMenuButton('BACK TO MENU',48,238,144,22,'title','gold');
 }
 function drawGameplayScene(){
   drawOriginalParallax();
@@ -847,7 +850,8 @@ function handleCanvasMenuAction(action){
   else if(action==='guide')openGuide();
   else if(action==='options'){menuFocusIndex=0;mode=S.options;hideGameScenes();input.clear();syncPauseButton();}
   else if(action==='sound')musicController?.setEnabled(!(musicController?.enabled??true));
-  else if(action==='fps'){const order=['auto','60','30'];const next=order[(order.indexOf(fpsMode)+1)%order.length];applyFpsMode(next);}
+  else if(action==='fps'){const order=['auto','30','60','90','120'];const next=order[(order.indexOf(fpsMode)+1)%order.length];applyFpsMode(next);}
+  else if(action==='smooth')applySmoothMotion(!smoothMotion);
   else if(action==='prev')changeBookPage(-1);
   else if(action==='next'){
     if(mode===S.select)changeBookPage(1);
@@ -929,7 +933,7 @@ function showChapterBook(){menuFocusIndex=2;mode=S.select;hideGameScenes();docum
 function changeBookPage(delta){selectedLevelIndex=clamp(selectedLevelIndex+delta,0,14);updateLevelBook();}
 function openGuide(){menuFocusIndex=0;mode=S.guide;hideGameScenes();document.getElementById('guide-layer').hidden=false;input.clear();syncPauseButton();}
 function startLevel(){
-  mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;simulationClock.reset();renderAlpha=0;musicController?.playLevel(currentLevel.index);
+  mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;simulationClock.reset();renderAlpha=1;musicController?.playLevel(currentLevel.index);
   if(eventEngine){eventEngine.reset();world=eventEngine.world;refreshGeometryWorld(world);}
   spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;cameraSnap=false;
   body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce';body.rotation=0;body.unlockedForme=progress.unlockedForme;body.forme=0;body.slopeCosAbs=1;body.eyeFrame=0;body.idleAnimStartTimer=3000;
@@ -947,7 +951,7 @@ async function loadLevel(index,options={}){
   const parsed=BounceRLEF.parse(new Uint8Array(await response.arrayBuffer()));if(token!==levelLoadToken)return false;
   const player=parsed.objects.find(o=>o.type==='player');if(!player)throw new Error(chosen.name+' has no player start record');
   currentLevel={...chosen,index,objectCount:parsed.objectCount,eventCount:parsed.eventCount,name:getLocalizedLevelName(index)};
-  buildRuntime(parsed);spawn={x:body.x,y:body.y};mode=S.title;hideGameScenes();input.clear();lastTime=0;simulationClock.reset();renderAlpha=0;
+  buildRuntime(parsed);spawn={x:body.x,y:body.y};mode=S.title;hideGameScenes();input.clear();lastTime=0;simulationClock.reset();renderAlpha=1;
   selectedLevelIndex=index;progress.selected=index;BounceOriginalProgression.save(localStorage,progress);
   refreshHud();status.textContent=chosen.name.toUpperCase()+' · ORIGINAL LEVEL DATA LOADED';
   if(options.start)startLevel();else if(options.book)showChapterBook();else showTitleMenu();
@@ -976,8 +980,8 @@ function startSelectedChapter(){
   loadLevel(chosen,{start:true}).catch(error=>{console.error(error);toast('Could not load this chapter');});
 }
 
-function pauseGame(){if(mode===S.play){menuFocusIndex=0;mode=S.pause;simulationClock.reset();renderAlpha=0;hideGameScenes();document.getElementById('pause-layer').hidden=false;input.clear();syncPauseButton();}}
-function resumeGame(){if(mode===S.pause){mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;simulationClock.reset();renderAlpha=0;}}
+function pauseGame(){if(mode===S.play){menuFocusIndex=0;mode=S.pause;simulationClock.reset();renderAlpha=1;hideGameScenes();document.getElementById('pause-layer').hidden=false;input.clear();syncPauseButton();}}
+function resumeGame(){if(mode===S.pause){mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;simulationClock.reset();renderAlpha=1;}}
 function cycleForme(){
   if(mode!==S.play)return;const before=body.forme;body.cycleForme();
   if(body.forme===before)toast('Other forms unlock later');else{particles.emitTransform(body.x,body.y,before,body.forme);toast('Form '+(body.forme+1));}
@@ -1085,7 +1089,7 @@ function bindInputs(){
 
   const clearAll=()=>{keys.clear();input.clear();gamepadHeld.clear();document.querySelectorAll('[data-key-id]').forEach(b=>b.classList.remove('pressed'));};
   addEventListener('blur',clearAll);
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAll();musicController?.pause();lastTime=0;simulationClock.reset();renderAlpha=0;lastRenderAt=0;fpsStamp=0;fpsFrames=0;}else musicController?.resume();});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAll();musicController?.pause();lastTime=0;simulationClock.reset();renderAlpha=1;lastRenderAt=0;fpsStamp=0;fpsFrames=0;}else musicController?.resume();});
   window.addEventListener('pointerdown',()=>musicController?.unlock(),{once:true});
 }
 
@@ -1104,9 +1108,9 @@ function loop(now){
   lastTime=now;lastRenderAt=now;
   if(mode===S.play){
     const timing=simulationClock.advance(elapsedMs,(dt,deltaMs)=>update(dt,deltaMs));
-    renderAlpha=timing.alpha;
+    renderAlpha=smoothMotion?timing.alpha:1;
   }else{
-    simulationClock.reset();renderAlpha=0;
+    simulationClock.reset();renderAlpha=1;
   }
   draw();
   if(showFps){fpsFrames++;if(!fpsStamp)fpsStamp=now;if(now-fpsStamp>=500){displayFps=Math.round(fpsFrames*1000/(now-fpsStamp));fpsFrames=0;fpsStamp=now;const counter=document.getElementById('fps-counter');if(counter)counter.textContent=displayFps+' FPS';}}
@@ -1131,7 +1135,8 @@ function closeSettings(){
   if(settingsReturnFocus?.focus)settingsReturnFocus.focus();settingsReturnFocus=null;
 }
 
-function applyFpsMode(value){fpsMode=['auto','30','60'].includes(value)?value:'auto';localStorage.setItem('bounce-fps-mode',fpsMode);lastTime=0;simulationClock.reset();renderAlpha=0;lastRenderAt=0;}
+function applyFpsMode(value){fpsMode=['auto','30','60','90','120'].includes(value)?value:'auto';localStorage.setItem('bounce-fps-mode',fpsMode);lastRenderAt=0;}
+function applySmoothMotion(value){smoothMotion=!!value;localStorage.setItem('bounce-smooth-motion',String(smoothMotion));renderAlpha=smoothMotion?simulationClock.alpha:1;}
 function resetProgress(){
   if(!confirm('Reset all Bounce Tales progress, unlocked chapters and best records?'))return;
   progress=BounceOriginalProgression.reset(localStorage);selectedLevelIndex=0;unlockedForme=0;closeSettings();
@@ -1143,8 +1148,9 @@ async function shareSite(){
   try{if(navigator.share){await navigator.share(shareData);}else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(shareData.url);toast('Site link copied');}else{prompt('Copy the Bounce Tales link',shareData.url);}}catch(e){if(e?.name!=='AbortError')console.warn('Share unavailable',e);}
 }
 function bindSettings(){
-  const fps=document.getElementById('fps-mode'),fpsToggle=document.getElementById('show-fps'),counter=document.getElementById('fps-counter'),full=document.getElementById('fullscreen-btn');
-  fps.value=['auto','30','60'].includes(fpsMode)?fpsMode:'auto';fps.addEventListener('change',()=>applyFpsMode(fps.value));
+  const fps=document.getElementById('fps-mode'),smoothToggle=document.getElementById('smooth-motion'),fpsToggle=document.getElementById('show-fps'),counter=document.getElementById('fps-counter'),full=document.getElementById('fullscreen-btn');
+  fps.value=['auto','30','60','90','120'].includes(fpsMode)?fpsMode:'auto';fps.addEventListener('change',()=>applyFpsMode(fps.value));
+  if(smoothToggle){smoothToggle.checked=smoothMotion;smoothToggle.addEventListener('change',()=>applySmoothMotion(smoothToggle.checked));}
   fpsToggle.checked=showFps;counter.hidden=!showFps;fpsToggle.addEventListener('change',()=>{showFps=fpsToggle.checked;localStorage.setItem('bounce-show-fps',String(showFps));counter.hidden=!showFps;});
   const musicToggle=document.getElementById('music-enabled');if(musicToggle){musicToggle.checked=musicController?.enabled??true;musicToggle.addEventListener('change',()=>musicController?.setEnabled(musicToggle.checked));}
   document.getElementById('open-settings').addEventListener('click',openSettings);document.getElementById('close-settings').addEventListener('click',closeSettings);
