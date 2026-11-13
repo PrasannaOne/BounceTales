@@ -1,4 +1,4 @@
-# Bounce Tales · V20.1 browser port
+# Bounce Tales · V21 browser port
 
 An independent HTML5 browser recreation of Bounce Tales 2.0.3 Java ME, built from the supplied Phase 2 reference archive and decoded game resources.
 
@@ -65,3 +65,14 @@ This is a source-informed browser port, not a certified or pixel-identical repro
 ## Intellectual property
 
 The original Bounce Tales sprites, illustrations, audio, fonts, levels, resource data and related game materials are not relicensed by this project. They remain the intellectual property of their respective owners, including Nokia and/or Rovio as applicable. This project is independent and is not affiliated with, sponsored by, or endorsed by Nokia or Rovio. See [`LICENSE`](LICENSE) for the scope of the MIT license on the original reimplementation code only.
+
+
+## V21 audit and polish
+
+- Fixed the About support card layout and added the full optional Ko-fi explanation in a readable stacked card.
+- Rebuilt the favicon and install icons by exact pixel-art enlargement of the original JAR launcher icon. No new character details or text were introduced; the original source icon remains unchanged.
+- Replaced the social preview with a minimal image-only 1200×630 composition without overlay copy.
+- Added campaign object-type coverage and a live-loop simulation test that runs the production `game.js` update function for 720 ticks on each of the 15 campaign resources (10,800 total) with synthetic movement/jump input.
+- 40 Node regression scripts pass, and all project JavaScript files pass syntax checks.
+
+The live-loop test is not a complete stage-clear playthrough and does not run in Chromium. The installed headless Chromium could not initialize in this environment because its GPU process failed to start. Physical mobile testing and natural exit-route playthroughs remain outstanding. See `V21_AUDIT.md` for the source audit, exact test scope and remaining parity gaps.

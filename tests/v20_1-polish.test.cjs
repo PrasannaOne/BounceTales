@@ -19,19 +19,23 @@ assert.match(css,/canvas#game-text[\s\S]*?image-rendering:auto;pointer-events:no
 const sourceIcon=fs.readFileSync(path.join(root,'assets/original/icon.png'));
 const hashes=JSON.parse(fs.readFileSync(path.join(root,'reference/original-resource-sha256.json'),'utf8'));
 assert.equal(crypto.createHash('sha256').update(sourceIcon).digest('hex'),hashes['icon.png'],'original JAR launcher icon remains byte-for-byte unchanged');
-assert.equal(fs.readFileSync(path.join(root,'favicon.png')).compare(sourceIcon),0,'root favicon is the original source icon');
+const favicon=fs.readFileSync(path.join(root,'favicon.png'));
+assert.equal(favicon.toString('ascii',1,4),'PNG');assert.equal(favicon.readUInt32BE(16),64);assert.equal(favicon.readUInt32BE(20),64);
+assert.notEqual(favicon.compare(sourceIcon),0,'root favicon is the high-resolution remaster, not the tiny source file');
 for(const [file,size] of [['icon-192.png',192],['icon-512.png',512],['apple-touch-icon.png',180]]){
   const png=fs.readFileSync(path.join(root,file));assert.equal(png.toString('ascii',1,4),'PNG');
   assert.equal(png.readUInt32BE(16),size);assert.equal(png.readUInt32BE(20),size);
 }
-assert.match(html,/href="assets\/original\/icon\.png"/);
+assert.match(html,/href="favicon\.png"/);
 // Minimal and correctly sized web preview metadata.
 const preview=fs.readFileSync(path.join(root,'og-preview.png'));
 assert.equal(preview.toString('ascii',1,4),'PNG');assert.equal(preview.readUInt32BE(16),1200);assert.equal(preview.readUInt32BE(20),630);
 assert.match(html,/og:image:alt/);assert.match(html,/twitter:image:alt/);
-assert.match(sw,/bounce-tales-v20-1/);assert.match(sw,/favicon\.png/);
+assert.match(sw,/bounce-tales-v21/);assert.match(sw,/favicon\.png/);
 // Discreet Ko-fi link is only in About and explicitly opens outside the app.
-assert.match(html,/<a class="about-link support-link" href="https:\/\/ko-fi\.com\/prasannaone" target="_blank" rel="noopener noreferrer">[\s\S]*?Support Bounce Tales/);
+assert.match(html,/<a class="about-link support-link" href="https:\/\/ko-fi\.com\/prasannaone" target="_blank" rel="noopener noreferrer">[\s\S]*?Support Bounce Tales[\s\S]*?Enjoying Bounce Tales\? If you'd like to support this independent project, you can buy me a coffee\./);
+assert.match(css,/\.support-link \.support-text\s*\{[\s\S]*?flex-direction:column/);
+assert.match(css,/\.support-link \.support-text small\s*\{[\s\S]*?overflow-wrap:anywhere/);
 // Control editor has move, size, local save and reset paths.
 for(const id of ['control-editor-layer','control-editor-stage','control-size','save-control-layout','reset-control-layout','cancel-control-editor'])assert.ok(html.includes('id="'+id+'"'),id);
 assert.match(game,/bounce-control-layout-v1/);

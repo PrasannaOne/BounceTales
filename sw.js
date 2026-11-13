@@ -1,5 +1,5 @@
-/* Bounce Tales V20.1 offline application shell. */
-const CACHE_NAME = 'bounce-tales-v20-1';
+/* Bounce Tales V21 offline application shell. */
+const CACHE_NAME = 'bounce-tales-v21';
 const APP_SHELL = [
   "./",
   "index.html",
@@ -13,6 +13,7 @@ const APP_SHELL = [
   "og-preview.png",
   "LICENSE",
   "README.md",
+  "V21_AUDIT.md",
   "PORT_STATUS.md",
   "src/audio-controller.js",
   "src/bounce-physics.js",
