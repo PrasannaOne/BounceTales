@@ -1,24 +1,34 @@
-Prasanna Noncommercial & Network Copyleft License v1.0
+Sovereign Source License v1.0
 
-Copyright (c) 2026 Prasanna
+Copyright (c) 2026 Prasanna. All Rights Reserved.
 
-1. Noncommercial Grant
-Subject strictly to the conditions below, Prasanna ("Licensor") grants you a personal, non-exclusive, non-transferable, revocable license to view, download, run, study, and modify the original reimplementation engine, web shell, user-interface, and supporting code authored by Prasanna ("the Software") solely for noncommercial purposes.
+PREAMBLE
+The Sovereign Source License ensures that software remains open for personal education and noncommercial exploration, while strictly protecting the original author's exclusive rights to commercialize, monetize, and govern the software's architecture.
 
-2. Strict Commercial & Monetization Prohibition
-You may NOT, directly or indirectly, without prior written permission from Prasanna:
+1. NONCOMMERCIAL PERSONAL GRANT
+Subject strictly to all conditions below, Prasanna ("Licensor") grants you a personal, non-exclusive, non-transferable, revocable license to view, download, run, study, and modify the original reimplementation engine, web shell, user-interface, and supporting code authored by Prasanna ("the Software") solely for personal, educational, and strictly noncommercial purposes.
+
+2. COMMERCIAL, SAAS & AI PROHIBITION (THE FORTRESS CLAUSE)
+You may NOT, directly or indirectly, without a separate explicit commercial license signed by the Licensor:
 (a) Sell, rent, lease, sublicense, or charge any fee for access to the Software or any derivative work;
-(b) Host, mirror, embed, wrap, or distribute the Software on any website, mobile app, social platform, or service that displays advertisements, affiliate links, paywalls, sponsorships, donations, or generates any direct or indirect commercial revenue;
-(c) Use the Software, its architecture, or its web shell to build, train, or operate a competing hosted game or commercial product.
+(b) Host, mirror, embed, wrap, or distribute the Software on any website, mobile app, cloud service, or platform that displays advertisements, affiliate links, paywalls, sponsorships, donations, or generates any direct or indirect commercial revenue;
+(c) Offer the Software or any modified version as a hosted service, Software-as-a-Service (SaaS), API, or managed backend to third parties;
+(d) Scrape, ingest, or use the Software, its architecture, or its source code to train, fine-tune, or operate any Artificial Intelligence (AI) or Machine Learning (ML) model.
 
-3. Network Interaction & Anti-Hosting Loophole (AGPL-Style)
-If you host, deploy, or make the Software or any modified version accessible to any third party over a computer network or public URL (even noncommercially):
-(a) You MUST prominently display visible attribution to Prasanna and a direct link to the original official repository on the main user interface;
-(b) You MUST make the complete, corresponding source code of your exact deployed version publicly available under this identical license at no charge via a prominent download link on the same interface;
-(c) Any violation of Sections 2 or 3 immediately and automatically terminates all rights granted under this License.
+3. NETWORK INTERACTION & COPYLEFT (THE MIRROR CLAUSE)
+If you host, deploy, or make the Software or any derivative accessible to any third party over a computer network or public URL (even if strictly noncommercial):
+(a) You MUST prominently display visible attribution to Prasanna and a direct, clickable link to the official original repository (https://github.com/PrasannaOne/BounceTales) on the primary user interface;
+(b) You MUST provide the complete, corresponding source code of your exact deployed version publicly at no charge under this identical License via a prominent download link on the same interface;
+(c) You may NOT apply technical restrictions, DRM, or legal terms that restrict users from exercising these rights.
 
-4. Scope and Third-Party Material
-This License applies strictly to original reimplementation engine, application, interface, and supporting code authored for this project by Prasanna. It grants zero rights to original Bounce Tales game materials included in the package—including sprites, images, audio, fonts, level data, binary resources, trademarks, or other material originating from the original J2ME game. All such materials remain the exclusive property of their respective rights holders, including Nokia and/or Rovio as applicable. No affiliation with or endorsement by Nokia or Rovio is implied.
+4. SOVEREIGN RESERVATION OF RIGHTS
+The Licensor retains 100% exclusive ownership, copyright, and unrestricted commercial rights over the Software. The Licensor reserves the sole right to monetize, run advertisements, sell paid versions, offer commercial SaaS, or grant separate paid commercial/enterprise licenses to third parties at any time, without obligation to any contributor or user.
 
-5. Disclaimer of Warranty & Liability
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL PRASANNA BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
+5. SCOPE AND THIRD-PARTY MATERIAL
+This License applies strictly to the original reimplementation engine, application, interface, and supporting code authored for this project by Prasanna. It grants zero rights to original Bounce Tales game materials included in the package—including sprites, images, audio, fonts, level data, binary resources, trademarks, or other material originating from the original J2ME game. All such materials remain the exclusive intellectual property of their respective rights holders, including Nokia and/or Rovio as applicable. No affiliation with or endorsement by Nokia or Rovio is implied.
+
+6. AUTOMATIC TERMINATION
+Any violation of Sections 2 or 3 immediately, automatically, and permanently terminates all rights granted to you under this License.
+
+7. DISCLAIMER OF WARRANTY & LIABILITY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE LICENSOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM THE USE OF THE SOFTWARE.
