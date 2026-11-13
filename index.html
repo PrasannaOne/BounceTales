@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=37">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=37">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=37">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=38">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=38">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=38">
 <meta name="description" content="Bounce Tales: a source-informed browser recreation of the classic mobile platform adventure.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Bounce Tales">
@@ -28,7 +28,7 @@
 <meta name="twitter:description" content="A little world of Bounce. Play the classic mobile platform adventure in your browser.">
 <meta name="twitter:image" content="https://prasannaone.github.io/BounceTales/bounce-tales-web-preview.png">
 <title>Bounce Tales</title>
-<link rel="stylesheet" href="style.css?v=37">
+<link rel="stylesheet" href="style.css?v=38">
 </head>
 <body>
 <main id="app">
@@ -159,48 +159,61 @@
 <section class="control-editor-overlay" id="control-editor-layer" hidden aria-modal="true" role="dialog" aria-labelledby="control-editor-title">
   <div class="control-editor-panel">
     <div class="control-editor-heading">
-      <div><p class="eyebrow">PERSONALISE YOUR GAME</p><h2 id="control-editor-title">Touch controls</h2></div>
+      <div>
+        <p class="eyebrow">MAKE IT YOURS</p>
+        <h2 id="control-editor-title">Touch controls</h2>
+      </div>
       <button id="close-control-editor" class="close-settings" type="button" aria-label="Close control editor">×</button>
     </div>
-    <p class="control-editor-copy">Drag a button to move it. Select one to adjust its size.</p>
+    <p class="control-editor-copy">Choose a button, drag it anywhere in the preview, then tune its size.</p>
+    <div class="control-editor-picker" role="group" aria-label="Choose a button to customise">
+      <button type="button" class="control-pick active" data-pick-control="left" aria-pressed="true">Left</button>
+      <button type="button" class="control-pick" data-pick-control="right" aria-pressed="false">Right</button>
+      <button type="button" class="control-pick" data-pick-control="jump" aria-pressed="false">Jump</button>
+      <button type="button" class="control-pick" data-pick-control="form" aria-pressed="false">Form</button>
+    </div>
     <div class="control-editor-stage" id="control-editor-stage" aria-label="Draggable touch control preview">
-      <button type="button" class="editor-control" data-editor-id="left" aria-label="Move left">◀</button>
-      <button type="button" class="editor-control" data-editor-id="right" aria-label="Move right">▶</button>
+      <button type="button" class="editor-control editor-left" data-editor-id="left" aria-label="Move left">◀</button>
+      <button type="button" class="editor-control editor-right" data-editor-id="right" aria-label="Move right">▶</button>
       <button type="button" class="editor-control editor-jump" data-editor-id="jump" aria-label="Jump">JUMP</button>
       <button type="button" class="editor-control editor-form" data-editor-id="form" aria-label="Change form">*</button>
+      <span class="editor-stage-caption" aria-hidden="true">YOUR PLAY LAYOUT</span>
     </div>
-    <label class="control-size-row" for="control-size"><span><strong>Selected button size</strong><small id="control-size-value">100%</small></span><input id="control-size" type="range" min="75" max="125" step="5" value="100"></label>
-    <p class="control-editor-note">Your layout is saved only on this device. Keep enough room between buttons for comfortable play.</p>
+    <label class="control-size-row" for="control-size">
+      <span><strong>Button size</strong><small id="control-size-value">100%</small></span>
+      <input id="control-size" type="range" min="75" max="125" step="5" value="100">
+    </label>
+    <p class="control-editor-note">Your layout stays on this device. Save to keep it, or cancel to undo your changes.</p>
     <div class="control-editor-actions">
-      <button id="reset-control-layout" class="settings-action" type="button">Reset</button>
+      <button id="reset-control-layout" class="settings-action reset-layout" type="button">Reset</button>
       <button id="cancel-control-editor" class="settings-action" type="button">Cancel</button>
       <button id="save-control-layout" class="settings-action save-layout" type="button">Save layout</button>
     </div>
   </div>
 </section>
-<script src="src/fixed-point.js?v=37"></script>
-<script src="src/original-input-map.js?v=37"></script>
-<script src="src/original-camera.js?v=37"></script>
-<script src="src/rlef-reader.js?v=37"></script>
-<script src="src/bounce-physics.js?v=37"></script>
-<script src="src/terrain-collision.js?v=37"></script>
-<script src="src/original-collision.js?v=37"></script>
-<script src="src/game-timing.js?v=37"></script>
-<script src="src/event-engine.js?v=37"></script>
-<script src="src/original-sprite-animation.js?v=37"></script>
-<script src="src/original-enemies.js?v=37"></script>
-<script src="src/original-water.js?v=37"></script>
-<script src="src/original-trampoline.js?v=37"></script>
-<script src="src/midp-graphics.js?v=37"></script>
-<script src="src/original-progression.js?v=37"></script>
-<script src="src/game-particles.js?v=37"></script>
-<script src="src/sprite-atlas.js?v=37"></script>
-<script src="src/audio-controller.js?v=37"></script>
-<script src="src/control-layout.js?v=37"></script>
-<script src="game.js?v=37"></script>
+<script src="src/fixed-point.js?v=38"></script>
+<script src="src/original-input-map.js?v=38"></script>
+<script src="src/original-camera.js?v=38"></script>
+<script src="src/rlef-reader.js?v=38"></script>
+<script src="src/bounce-physics.js?v=38"></script>
+<script src="src/terrain-collision.js?v=38"></script>
+<script src="src/original-collision.js?v=38"></script>
+<script src="src/game-timing.js?v=38"></script>
+<script src="src/event-engine.js?v=38"></script>
+<script src="src/original-sprite-animation.js?v=38"></script>
+<script src="src/original-enemies.js?v=38"></script>
+<script src="src/original-water.js?v=38"></script>
+<script src="src/original-trampoline.js?v=38"></script>
+<script src="src/midp-graphics.js?v=38"></script>
+<script src="src/original-progression.js?v=38"></script>
+<script src="src/game-particles.js?v=38"></script>
+<script src="src/sprite-atlas.js?v=38"></script>
+<script src="src/audio-controller.js?v=38"></script>
+<script src="src/control-layout.js?v=38"></script>
+<script src="game.js?v=38"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=37',{updateViaCache:'none'}).catch(() => {}));
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=38',{updateViaCache:'none'}).catch(() => {}));
 }
 </script>
 </body>
