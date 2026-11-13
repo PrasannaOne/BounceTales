@@ -15,17 +15,18 @@
     const n=Number(imageMaps?.maps?.[String(imageId)]?.frames?.length||1);
     return clamp(Number.isFinite(n)?Math.trunc(n):1,1,64);
   }
-  function frameOriginY(imageMaps,imageId,frame){
+  function frameHeight(imageMaps,imageId,frame){
     const map=imageMaps?.maps?.[String(imageId)];
     if(!map)return 0;
     const frames=Array.isArray(map.frames)?map.frames:[];
     const frameIndex=clamp(Math.trunc(frame)||0,0,Math.max(0,frames.length-1));
-    const selected=map.type==='animated'&&frames.length?imageMaps.maps[String(frames[frameIndex])]:map;
-    // JAR o.b(frameId, 0): first composite part's local Y offset.
-    // This is not the sprite draw-origin (originY), which shifts the actor
-    // incorrectly during the trampoline compression animation.
-    const offset=Number(selected?.parts?.[0]?.[1] ?? 0);
-    return Number.isFinite(offset)?offset:0;
+    const frameId=map.type==='animated'&&frames.length?frames[frameIndex]:imageId;
+    const selected=imageMaps.maps[String(frameId)]||map;
+    // Exact e.b(): o.c(animationId, frameIndex) selects the concrete frame,
+    // then (short)o.b(frameId, 0) supplies that frame's height. It is NOT
+    // the first compound-part Y offset and NOT originY.
+    const height=Number(selected?.height ?? 0);
+    return Number.isFinite(height)?height:0;
   }
   function crossesLaunchLine(previous,current){
     if(!previous||!current)return false;
@@ -76,7 +77,7 @@
     t.jumpFinished=false;
     body.enabled=false;body.vx=0;body.vy=0;body.grounded=true;
     const anchorY=Number(t.y);
-    body.y=Number.isFinite(anchorY)?anchorY-frameOriginY(imageMaps,t.imageId,0)/.660187:body.y;
+    body.y=Number.isFinite(anchorY)?anchorY-frameHeight(imageMaps,t.imageId,0)/.660187:body.y;
     return true;
   }
   function update(t,body,imageMaps,dt){
@@ -105,7 +106,7 @@
         }
       }else{
         const anchorY=Number(t.y);
-        if(Number.isFinite(anchorY))body.y=anchorY-frameOriginY(imageMaps,t.imageId,t.animFrame)/.660187;
+        if(Number.isFinite(anchorY))body.y=anchorY-frameHeight(imageMaps,t.imageId,t.animFrame)/.660187;
       }
       if(t.progress>=t.period)clearState(t);
       return true;
@@ -116,5 +117,5 @@
     return true;
   }
   function reset(t){if(t)clearState(t);}
-  return {imageForLevel,frameCount,frameOriginY,crossesLaunchLine,begin,update,reset,MAX_SPRING_DURATION_MS};
+  return {imageForLevel,frameCount,frameHeight,crossesLaunchLine,begin,update,reset,MAX_SPRING_DURATION_MS};
 });

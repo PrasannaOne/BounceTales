@@ -28,7 +28,7 @@
 <meta name="twitter:description" content="A little world of Bounce. Play the classic mobile platform adventure in your browser.">
 <meta name="twitter:image" content="https://prasannaone.github.io/BounceTales/og-preview.png">
 <title>Bounce Tales</title>
-<link rel="stylesheet" href="style.css?v=23">
+<link rel="stylesheet" href="style.css?v=26">
 </head>
 <body>
 <main id="app">
@@ -36,6 +36,7 @@
     <a class="brand" href="https://prasannaone.github.io/BounceTales/" aria-label="Bounce Tales home">Bounce Tales</a>
     <div class="header-actions">
       <button class="header-btn share-only" id="share-site" type="button" aria-label="Share Bounce Tales" title="Share"><svg class="share-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12 16.2 6.7M8 12l8.2 5.3"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="5.5" r="2.6"/><circle cx="18" cy="18.5" r="2.6"/></svg></button>
+      <a class="header-btn heart-link" href="https://prasannaone.github.io" target="_blank" rel="noopener" aria-label="Prasanna One" title="Prasanna One">♥</a>
       <button class="header-btn settings-trigger" id="open-settings" type="button" aria-label="Settings" title="Settings"><span aria-hidden="true">⚙</span></button>
     </div>
   </header>
@@ -177,28 +178,28 @@
     </div>
   </div>
 </section>
-<script src="src/fixed-point.js?v=23"></script>
-<script src="src/original-input-map.js?v=23"></script>
-<script src="src/original-camera.js?v=23"></script>
-<script src="src/rlef-reader.js?v=23"></script>
-<script src="src/bounce-physics.js?v=23"></script>
-<script src="src/terrain-collision.js?v=23"></script>
-<script src="src/original-collision.js?v=23"></script>
-<script src="src/game-timing.js?v=23"></script>
-<script src="src/event-engine.js?v=23"></script>
-<script src="src/original-sprite-animation.js?v=23"></script>
-<script src="src/original-enemies.js?v=23"></script>
-<script src="src/original-water.js?v=23"></script>
-<script src="src/original-trampoline.js?v=23"></script>
-<script src="src/midp-graphics.js?v=23"></script>
-<script src="src/original-progression.js?v=23"></script>
-<script src="src/game-particles.js?v=23"></script>
-<script src="src/sprite-atlas.js?v=23"></script>
-<script src="src/audio-controller.js?v=23"></script>
-<script src="game.js?v=23"></script>
+<script src="src/fixed-point.js?v=26"></script>
+<script src="src/original-input-map.js?v=26"></script>
+<script src="src/original-camera.js?v=26"></script>
+<script src="src/rlef-reader.js?v=26"></script>
+<script src="src/bounce-physics.js?v=26"></script>
+<script src="src/terrain-collision.js?v=26"></script>
+<script src="src/original-collision.js?v=26"></script>
+<script src="src/game-timing.js?v=26"></script>
+<script src="src/event-engine.js?v=26"></script>
+<script src="src/original-sprite-animation.js?v=26"></script>
+<script src="src/original-enemies.js?v=26"></script>
+<script src="src/original-water.js?v=26"></script>
+<script src="src/original-trampoline.js?v=26"></script>
+<script src="src/midp-graphics.js?v=26"></script>
+<script src="src/original-progression.js?v=26"></script>
+<script src="src/game-particles.js?v=26"></script>
+<script src="src/sprite-atlas.js?v=26"></script>
+<script src="src/audio-controller.js?v=26"></script>
+<script src="game.js?v=26"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=23').catch(() => {}));
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=26',{updateViaCache:'none'}).catch(() => {}));
 }
 </script>
 </body>

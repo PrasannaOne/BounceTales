@@ -19,8 +19,7 @@ const LEVELS=[
   {resource:'bt',name:'Fantastic Fair'}
 ];
 const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
-const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
-ctx.imageSmoothingEnabled=false;
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=false;
 const textCanvas=document.getElementById('game-text'),textCtx=textCanvas?.getContext('2d')||null;
 function syncMenuTextResolution(){
   if(!textCanvas||!textCtx)return;
@@ -67,6 +66,7 @@ function imgFor(index){
   const im=new Image();im.src=index===7?'assets/logo-transparent.png':'assets/original/'+atlases[index];loadedImages.set(index,im);return im;
 }
 function drawImageMap(id,x,y,seen=new Set(),frame=0,targetCtx=ctx){
+  x=Math.round(x);y=Math.round(y);
   if(!Number.isInteger(id)||id<0||seen.has(id)||seen.size>=32||!imageMaps?.maps)return;
   seen.add(id);
   // IDs 0–325 use the decoded o.java type-2 descriptor table directly.
@@ -337,7 +337,7 @@ function updateCannon(dt,held){
       body.x=p.x+Math.cos(a)*120;body.y=p.y+Math.sin(a)*120;
       body.vx=Math.floor((c.power*m[0])/4096);body.vy=Math.floor((c.power*m[3])/4096);
       body.lastVx=0;body.lastVy=0;body.enabled=true;body.visible=true;body.grounded=false;body.airTime=0;body.skipAccelStretch=true;
-      cannonState.launched=true;cannonState=null;if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce · * changes form when available';toast('FIRE!');return false;
+      cannonState.launched=true;cannonState=null;if(gameHint)gameHint.textContent='';toast('FIRE!');return false;
     }
   }
   return true;
@@ -1158,7 +1158,7 @@ async function shareSite(){
 }
 const CONTROL_LAYOUT_KEY='bounce-control-layout-v1';
 const CONTROL_LAYOUT_DEFAULTS={
-  left:{x:0,y:0,size:100},right:{x:34,y:0,size:100},jump:{x:66,y:0,size:100},form:{x:87,y:58,size:100}
+  left:{x:0,y:40,size:100},right:{x:32,y:40,size:100},jump:{x:66,y:0,size:100},form:{x:76,y:60,size:100}
 };
 const CONTROL_BASE={left:{w:30,h:64},right:{w:30,h:64},jump:{w:34,h:64},form:{w:13,h:44}};
 let editorLayout=null,editorSelected='left',editorDrag=null,editorReturnFocus=null,editorResetToDefault=false;

@@ -1,10 +1,10 @@
-/* Bounce Tales V23: network-first while online, cached shell only as offline fallback. */
-const CACHE_NAME = 'bounce-tales-v23';
+/* Bounce Tales V26: always prefer the live network; use the versioned shell offline. */
+const CACHE_NAME = 'bounce-tales-v26';
 const APP_SHELL = [
   "./",
   "index.html",
-  "style.css?v=23",
-  "game.js?v=23",
+  "style.css?v=26",
+  "game.js?v=26",
   "manifest.webmanifest",
   "icon-192.png",
   "icon-512.png",
@@ -13,30 +13,28 @@ const APP_SHELL = [
   "og-preview.png",
   "LICENSE",
   "README.md",
-  "V21_AUDIT.md",
-  "V23_AUDIT.md",
-  "PORT_STATUS.md",
-  "src/audio-controller.js?v=23",
-  "src/bounce-physics.js?v=23",
-  "src/event-engine.js?v=23",
-  "src/fixed-point.js?v=23",
-  "src/game-particles.js?v=23",
-  "src/game-timing.js?v=23",
+  "ARCHITECTURE.md",
+  "src/audio-controller.js?v=26",
+  "src/bounce-physics.js?v=26",
+  "src/event-engine.js?v=26",
+  "src/fixed-point.js?v=26",
+  "src/game-particles.js?v=26",
+  "src/game-timing.js?v=26",
   "src/image-map.json",
   "assets/logo-transparent.png",
-  "src/midp-graphics.js?v=23",
-  "src/original-camera.js?v=23",
-  "src/original-collision.js?v=23",
-  "src/original-enemies.js?v=23",
-  "src/original-input-map.js?v=23",
-  "src/original-progression.js?v=23",
-  "src/original-sprite-animation.js?v=23",
-  "src/original-trampoline.js?v=23",
-  "src/original-water.js?v=23",
-  "src/rlef-reader.js?v=23",
-  "src/sprite-atlas.js?v=23",
+  "src/midp-graphics.js?v=26",
+  "src/original-camera.js?v=26",
+  "src/original-collision.js?v=26",
+  "src/original-enemies.js?v=26",
+  "src/original-input-map.js?v=26",
+  "src/original-progression.js?v=26",
+  "src/original-sprite-animation.js?v=26",
+  "src/original-trampoline.js?v=26",
+  "src/original-water.js?v=26",
+  "src/rlef-reader.js?v=26",
+  "src/sprite-atlas.js?v=26",
   "src/sprite-atlas.json",
-  "src/terrain-collision.js?v=23",
+  "src/terrain-collision.js?v=26",
   "assets/audio/act1.ogg",
   "assets/audio/act2.ogg",
   "assets/audio/act3.ogg",
@@ -153,13 +151,12 @@ const APP_SHELL = [
   "assets/original/z.png",
   "assets/pwa-192.png",
   "assets/pwa-512.png",
-  "sw.js"
+  "sw.js",
 ];
 self.addEventListener('install', event => {
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
-    try { await cache.addAll(APP_SHELL.map(path => new URL(path, self.registration.scope).toString())); }
-    catch (_) { /* A partial shell is still useful offline; online fetches remain authoritative. */ }
+    await cache.addAll(APP_SHELL.map(path => new URL(path, self.registration.scope).toString()));
     await self.skipWaiting();
   })());
 });
@@ -178,17 +175,23 @@ self.addEventListener('fetch', event => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
     try {
-      const response = await fetch(request);
+      const response = await fetch(request, {cache:'no-store'});
       if (response && response.ok && response.type === 'basic') {
         await cache.put(request, response.clone());
       }
       return response;
     } catch (error) {
-      const cached = await cache.match(request);
-      if (cached) return cached;
+      const exact = await cache.match(request);
+      if (exact) return exact;
+      const samePath = await cache.keys();
+      const fallback = samePath.find(key => {
+        const candidate = new URL(key.url);
+        return candidate.origin === url.origin && candidate.pathname === url.pathname;
+      });
+      if (fallback) return cache.match(fallback);
       if (request.mode === 'navigate') {
-        const fallback = await cache.match(new URL('index.html', self.registration.scope).toString());
-        if (fallback) return fallback;
+        const shell = await cache.match(new URL('index.html', self.registration.scope).toString());
+        if (shell) return shell;
       }
       throw error;
     }
