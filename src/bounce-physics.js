@@ -25,6 +25,11 @@
 
   const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
   const trunc32=v=>v|0;
+  // Java `float` arithmetic is IEEE-754 binary32. Round after each source
+  // float operation instead of allowing JS binary64 intermediates to drift.
+  const f32=Math.fround;
+  const fadd=(a,b)=>f32(f32(a)+f32(b));
+  const fmul=(a,b)=>f32(f32(a)*f32(b));
 
   class BounceBody{
     constructor(x=0,y=0,unlockedForme=0){
@@ -99,7 +104,12 @@
       if(this.y!==this.y16/65536)this.y16=(Math.trunc(this.y*65536)|0);
       this.prevX=this.x;this.prevY=this.y;
       const updateDelta=Math.max(1,Math.trunc(sourceDeltaMs??(dt*1000)));
-      const mode=this.forme,g=P.gravity[mode],invGravity=1/g;
+      const mode=this.forme;
+      // c.d(): var11 = (float)o.a * 0.001F; var3 = 1.0F / a[forme].
+      // o.a is the integer elapsed-millisecond tick supplied by the MIDP loop.
+      const motionDelta=fmul(updateDelta,0.001);
+      const gravityScale=f32(P.gravity[mode]);
+      const invGravity=f32(1.0/gravityScale);
 
       // Exact acceleration-to-stretch request mapping from the JAR's update method.
       if(!this.skipAccelStretch){
@@ -111,17 +121,20 @@
       }
       this.skipAccelStretch=false;
 
-      // BounceObject.updatePhysics uses elapsed milliseconds converted to seconds.
-      const motionDelta=dt;
-      this.lastVx=this.vx;this.lastVy=this.vy;
-      this.gravityX+=0*P.gravity[mode];
-      this.gravityY+=P.baseGravityY*g;
-      this.vx+=this.gravityX*invGravity*motionDelta;
-      this.vy+=this.gravityY*invGravity*motionDelta;
-      this.vx+=this.pushX*invGravity;
-      this.vy+=this.pushY*invGravity;
-      this.x16=(this.x16+Math.trunc(this.vx*motionDelta*65536))|0;
-      this.y16=(this.y16+Math.trunc(this.vy*motionDelta*65536))|0;
+      // Direct c.d() port, preserving Java float evaluation order:
+      // d += 0*a[forme]; e += (-400)*a[forme];
+      // velocity += (acceleration * (1/a[forme])) * (o.a * 0.001F);
+      // velocity += impulse * (1/a[forme]);
+      this.lastVx=f32(this.vx);this.lastVy=f32(this.vy);
+      this.gravityX=fadd(this.gravityX,fmul(0,gravityScale));
+      this.gravityY=fadd(this.gravityY,fmul(P.baseGravityY,gravityScale));
+      this.vx=fadd(this.vx,fmul(fmul(this.gravityX,invGravity),motionDelta));
+      this.vy=fadd(this.vy,fmul(fmul(this.gravityY,invGravity),motionDelta));
+      this.vx=fadd(this.vx,fmul(this.pushX,invGravity));
+      this.vy=fadd(this.vy,fmul(this.pushY,invGravity));
+      // Java `(int)(velocity * var11 * 65536.0F)` truncates toward zero.
+      this.x16=(this.x16+Math.trunc(fmul(fmul(this.vx,motionDelta),65536.0)))|0;
+      this.y16=(this.y16+Math.trunc(fmul(fmul(this.vy,motionDelta),65536.0)))|0;
       this.x=this.x16/65536;this.y=this.y16/65536;
       this.gravityX=0;this.gravityY=0;this.pushX=0;this.pushY=0;
 

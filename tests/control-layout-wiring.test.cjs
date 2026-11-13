@@ -15,6 +15,6 @@ for (const key of ['3', '4', '7', '20']) {
   assert.ok(css.includes(`#game-controls:not(.custom-layout) [data-key-id="${key}"]`), `default button ${key} styles are scoped away from custom layouts`);
 }
 assert.match(css, /#game-controls\.custom-layout\{flex-basis:136px!important;height:136px!important;min-height:136px!important;\}/);
-assert.ok(html.indexOf('id="open-settings"') < html.indexOf('class="header-btn heart-link"'), 'heart follows Settings at the outer edge of the header group');
+assert.ok(html.indexOf('class="header-btn heart-link"') < html.indexOf('id="share-site"') && html.indexOf('id="share-site"') < html.indexOf('id="open-settings"'), 'red heart link remains first, followed by Share and Settings');
 assert.match(css, /\.header-btn\.heart-link\{color:#ff3b5c;/);
 console.log('Control layout wiring: live preview, save/reload storage, cancel/reset and CSS cascade checks passed');

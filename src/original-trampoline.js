@@ -113,17 +113,21 @@
   }
   function begin(t,body,imageMaps){
     if(!t||!body||!body.enabled||!Number.isFinite(body.vy)||body.vy>=0)return false;
+    // c.a(root), case 8: Java first casts the incoming float to int for
+    // animation timing, but uses the original float for the impulse formula.
     const incomingRaw=Math.fround(-Math.fround(body.vy));
-    const basePush=Number(t.basePush);
+    const basePush=Math.fround(Number(t.basePush));
     if(!Number.isFinite(incomingRaw)||!Number.isFinite(basePush)||basePush<=0)return false;
     const incomingLimit=clamp(Math.trunc(incomingRaw),100,1000);
     const count=frameCount(imageMaps,t.imageId);
     const basePushFloat=Math.fround(basePush);
     const period=((1100-incomingLimit)>>1)+20;
     const frameStep=Math.floor(period/count); // Java int / int division in e.d()
-    const impulse=Math.fround(Math.fround(Math.fround(incomingRaw*basePushFloat)*2)/100);
-    const impulseCap=Math.fround(Math.fround(Math.fround(400*basePushFloat)*2)/100);
-    const push=Math.min(impulse,impulseCap);
+    // Exact Java left-to-right float evaluation:
+    // -vy * (float)basePush * 2.0F / 100.0F; cap at 400*basePush*2/100.
+    const impulse=Math.fround(Math.fround(Math.fround(incomingRaw*basePushFloat)*2.0)/100.0);
+    const impulseCap=Math.fround(Math.fround(Math.fround(400.0*basePushFloat)*2.0)/100.0);
+    const push=impulse>impulseCap?impulseCap:impulse;
     if(!Number.isFinite(period)||period<1||!Number.isFinite(frameStep)||frameStep<=0||!Number.isFinite(push))return false;
 
     t.period=period;
@@ -158,8 +162,11 @@
       if(t.progress>=t.period-t.frameStep){
         if(!t.jumpFinished){
           t.jumpFinished=true;
-          body.vy=Math.abs(t.calcPush); // positive world Y is upward; screenPoint negates it.
+          // e.d(): restore the actor first, then assign the already-positive
+          // Java float impulse (`actor.b = spring.a`). Do not abs() it: the
+          // sign is guaranteed by the descending-contact guard and source formula.
           body.enabled=true;
+          body.vy=t.calcPush;
           body.torqueX=0;body.torqueY=0;body.skipAccelStretch=true;
         }
       }else{

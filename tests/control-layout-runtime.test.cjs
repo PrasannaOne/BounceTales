@@ -63,7 +63,7 @@ const sandbox = {
 sandbox.Element = class Element {}; sandbox.window = sandbox; vm.createContext(sandbox);
 for (const file of ['src/fixed-point.js','src/original-input-map.js','src/original-camera.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/original-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','src/original-progression.js','src/game-particles.js','src/sprite-atlas.js','src/audio-controller.js','game.js']) {
   let source = fs.readFileSync(path.join(root, file), 'utf8');
-  if (file === 'game.js') source = source.replace('boot();', 'window.__controlTest=true;boot();');
+  if (file === 'game.js') source = source.replace('boot();', 'window.__controlTest={applyLiveControlLayout};boot();');
   vm.runInContext(source, sandbox, { filename: file });
 }
 const wait = () => new Promise(resolve => setImmediate(resolve));
@@ -86,9 +86,18 @@ const wait = () => new Promise(resolve => setImmediate(resolve));
   const saved = JSON.parse(prefs.get('bounce-control-layout-v1'));
   assert.equal(saved.left.size, 120);
   const savedLeft = { left: liveButtons[0].style.left, top: liveButtons[0].style.top, width: liveButtons[0].style.width, height: liveButtons[0].style.height };
+  // Simulate a fresh page boot's layout hydration from the persisted storage value.
+  for (const key of ['left','top','width','height','min-height']) liveButtons[0].style[key] = '';
+  sandbox.__controlTest.applyLiveControlLayout();
+  assert.deepEqual({ left: liveButtons[0].style.left, top: liveButtons[0].style.top, width: liveButtons[0].style.width, height: liveButtons[0].style.height }, savedLeft, 'saved layout is rehydrated from localStorage on boot/reload');
   els['open-control-editor'].fire('click'); raf.shift()();
-  assert.deepEqual({ left: liveButtons[0].style.left, top: liveButtons[0].style.top, width: liveButtons[0].style.width, height: liveButtons[0].style.height }, savedLeft, 'saved layout is restored when Settings is reopened');
+  els['control-editor-stage'].fire('pointerdown', { target: editorButtons.left, pointerId: 4, clientX: 20, clientY: 20, preventDefault: noop });
+  els['control-editor-stage'].fire('pointermove', { target: editorButtons.left, pointerId: 4, clientX: 36, clientY: 52, preventDefault: noop });
+  els['control-editor-stage'].fire('pointerup', { pointerId: 4 });
+  els['control-size'].fire('input', { target: { value: '80' } });
+  assert.notEqual(liveButtons[0].style.width, savedLeft.width, 'unsaved preview changes active size');
   els['cancel-control-editor'].fire('click');
   assert.equal(els['control-editor-layer'].hidden, true);
+  assert.deepEqual({ left: liveButtons[0].style.left, top: liveButtons[0].style.top, width: liveButtons[0].style.width, height: liveButtons[0].style.height }, savedLeft, 'Cancel restores saved positions and sizes on active controls');
   console.log('Control runtime: drag/resize updates active buttons immediately and saved positions/sizes reload from localStorage');
 })().catch(error => { console.error(error); process.exitCode = 1; });

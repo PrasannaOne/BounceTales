@@ -1,0 +1,16 @@
+'use strict';
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const root = path.resolve(__dirname, '..');
+const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const sw = fs.readFileSync(path.join(root, 'sw.js'), 'utf8');
+assert.match(html, /style\.css\?v=29/);
+assert.match(html, /src\/[^"']+\?v=29/);
+assert.match(html, /game\.js\?v=29/);
+assert.match(html, /sw\.js\?v=29/);
+assert.doesNotMatch(html, /\?v=28\b/, 'index.html must not retain old versioned assets');
+assert.match(sw, /CACHE_NAME\s*=\s*'bounce-tales-v29'/);
+assert.doesNotMatch(sw, /\?v=28\b/, 'service worker shell must not retain old versioned assets');
+assert.match(html, /class="header-btn heart-link"/, 'red heart header link is preserved');
+console.log('V29 cache-bust: index.html and service-worker shell use v29; red heart header link preserved');

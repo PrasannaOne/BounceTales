@@ -59,7 +59,7 @@ sandbox.Element = class Element {}; sandbox.window = sandbox; vm.createContext(s
 const sourceFiles = ['src/fixed-point.js','src/original-input-map.js','src/original-camera.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/original-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','src/original-progression.js','src/game-particles.js','src/sprite-atlas.js','src/audio-controller.js','game.js'];
 for (const file of sourceFiles) {
   let source = fs.readFileSync(path.join(root, file), 'utf8');
-  if (file === 'game.js') source = source.replace('boot();', 'window.__gameLoopTest={get body(){return body;},get trampolines(){return trampolines;},get currentLevel(){return currentLevel;},loadLevel,update,input};boot();');
+  if (file === 'game.js') source = source.replace('boot();', 'window.__gameLoopTest={get body(){return body;},get trampolines(){return trampolines;},get currentLevel(){return currentLevel;},get cameraY(){return cameraY;},screenPoint,loadLevel,update,input};boot();');
   vm.runInContext(source, sandbox, { filename: file });
 }
 const wait = () => new Promise(resolve => setImmediate(resolve));
@@ -76,14 +76,14 @@ const wait = () => new Promise(resolve => setImmediate(resolve));
   sandbox.BounceOriginalTrampoline.update = function(state, actor, ...args) {
     const wasReleased = state.jumpFinished;
     const result = originalTrampolineUpdate(state, actor, ...args);
-    if (!wasReleased && state.jumpFinished) releaseImpulse = actor.vy;
+    if (!wasReleased && state.jumpFinished) { releaseImpulse = actor.vy; releaseYBeforeIntegration = actor.y; }
     return result;
   };
   // Place Bounce on a controlled descending path above the actual leaf launch line.
   body.reset(spring.x + 57, spring.y + 114);
   body.vx = 0; body.vy = -500; body.enabled = true; body.grounded = false; body.syncFixedPosition();
   game.input.clear();
-  let contactTick = null, releaseTick = null, releaseVelocity = null, releaseY = null;
+  let contactTick = null, releaseTick = null, releaseVelocity = null, releaseY = null, releaseYBeforeIntegration = null;
   for (let tick = 1; tick <= 60; tick++) {
     game.update(1 / 60, 17);
     if (spring.active && contactTick === null) contactTick = tick;
@@ -100,6 +100,10 @@ const wait = () => new Promise(resolve => setImmediate(resolve));
   const springAnchorY = spring.y - 87; // frame 0 height 58 at the JAR's 43266/65536 scale.
   assert.ok(releaseY > springAnchorY, 'same-tick integration moves Bounce upward from the compressed anchor');
   assert.ok(body.vy > 0 && body.y > springAnchorY, 'Bounce continues rising after the spring animation');
+  const screenBefore = 160 - (releaseYBeforeIntegration - game.cameraY) * (43266 / 65536);
+  const screenAfter = 160 - (body.y - game.cameraY) * (43266 / 65536);
+  assert.ok(body.y > releaseYBeforeIntegration, 'world Y increases upward after release');
+  assert.ok(screenAfter < screenBefore, 'screen Y decreases toward the top after release');
   assert.equal(spring.active, false, 'spring animation reaches its terminal state');
   console.log(JSON.stringify({
     proof: 'real game.js Level 1 update loop passed in Node.js',
@@ -109,7 +113,10 @@ const wait = () => new Promise(resolve => setImmediate(resolve));
     releaseTick,
     releaseImpulseBeforeSameTickIntegration: releaseImpulse,
     velocityAfterSameTickGravity: releaseVelocity,
+    releaseWorldYBeforeSameTickIntegration: releaseYBeforeIntegration,
     releaseWorldYAfterSameTickIntegration: releaseY,
+    screenYBeforeSameTickIntegration: screenBefore,
+    screenYAfterSameTickIntegration: screenAfter,
     final: { x: body.x, y: body.y, vy: body.vy, enabled: body.enabled, springActive: spring.active }
   }, null, 2));
 })().catch(error => { console.error(error); process.exitCode = 1; });

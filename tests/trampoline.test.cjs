@@ -38,4 +38,4 @@ assert.ok(-(simBody.vy/60)*.660187<0,'positive world Y maps to negative (upward)
 const damagedBody={x:0,y:0,vy:0,vx:0,enabled:false,grounded:true,torqueX:4,torqueY:3,skipAccelStretch:false,airTime:0};
 const damaged={active:true,period:NaN,progress:NaN,frameStep:NaN,calcPush:NaN};
 T.update(damaged,damagedBody,maps,1/60);assert.equal(damaged.active,false);assert.equal(damagedBody.enabled,true);assert.ok(damagedBody.vy>0);
-console.log('V27 trampoline: exact source segment, world-Y guard, launch sign, Java frame cadence and watchdog passed');
+console.log('Source-parity trampoline: exact source segment, world-Y guard, launch sign, Java frame cadence and watchdog passed');
