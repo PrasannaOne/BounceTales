@@ -254,14 +254,23 @@ function updateEnemies(dt){
   for(const e of enemies){e.prevX=e.x;e.prevY=e.y;BounceOriginalEnemies.update(e,body,dt);}
 }
 function updateTrampolineAnimations(dt,sourceDeltaMs){
-  if(!body)return;
+  if(!body)return false;
+  let releasedThisFrame=false;
   for(const t of trampolines){
     const m=world.get(t.object.id)||t.object.matrix;
     const p=BounceOriginalWater.worldPoint(m,0,0);t.x=p.x;t.y=p.y;
     // JAR m.i() calls every scene object's d(), even when collision flags
     // suppress interaction. An active e.d() spring advances before c.d().
-    if(t.active)BounceOriginalTrampoline.update(t,body,imageMaps,dt,sourceDeltaMs);
+    if(t.active){
+      const wasEnabled=body.enabled;
+      BounceOriginalTrampoline.update(t,body,imageMaps,dt,sourceDeltaMs);
+      // e.d() releases Bounce while it is still at the compressed-frame
+      // offset. Remember this exact tick so the parent polygon cannot
+      // immediately resolve that temporary overlap and reverse the impulse.
+      if(!wasEnabled&&body.enabled)releasedThisFrame=true;
+    }
   }
+  return releasedThisFrame;
 }
 function checkTrampolineContacts(previousPosition){
   if(!body)return;
@@ -395,7 +404,7 @@ function update(dt,sourceDeltaMs=Math.round(dt*1000)){
   if(held.jump)body.jump(false);
   // JAR m.i(): update scene objects first (including an already-active e.d()
   // spring), then integrate Bounce, then run the object-tree collision pass.
-  updateTrampolineAnimations(dt,sourceDeltaMs);
+  const trampolineReleased=updateTrampolineAnimations(dt,sourceDeltaMs);
   const previousPosition={x:body.x,y:body.y,x16:BounceFixed16.toFixed16(body.x),y16:BounceFixed16.toFixed16(body.y)};
   const wasGrounded=body.grounded;
   const waterRippleHeads=new Map(waters.map(zone=>[zone,zone.ripples[zone.ripples.length-1]||null]));
@@ -405,7 +414,7 @@ function update(dt,sourceDeltaMs=Math.round(dt*1000)){
   // c.a(root), so resolve terrain before the spring's type-8 interaction.
   const terrainResult=body.enabled?resolveTerrain(dt,previousPosition,false):{contacts:0};
   checkTrampolineContacts(previousPosition);
-  if(body.enabled&&!terrainResult.contacts){
+  if(body.enabled&&!terrainResult.contacts&&!trampolineReleased){
     // Recovery only after the source-faithful polygon/spring collision pass.
     BounceTerrainCollision.resolveCirclePolygons(body,worldGeometry,dt,8,previousPosition);
     body.syncFixedPosition();

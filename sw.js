@@ -1,5 +1,5 @@
 /* Bounce Tales V29: always prefer the live network; use the versioned shell offline. */
-const CACHE_NAME = 'bounce-tales-v29';
+const CACHE_NAME = 'bounce-tales-v30';
 const APP_SHELL = [
   "./",
   "index.html",
