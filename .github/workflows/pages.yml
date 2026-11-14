@@ -1,4 +1,6 @@
-name: Extract Bounce Tales ZIP
+
+name: Deploy Bounce Tales from ZIP
+
 on:
   push:
     branches:
@@ -11,88 +13,220 @@ permissions:
   contents: write
 
 concurrency:
-  group: bounce-tales-zip-extraction
+  group: bounce-tales-zip-deployment
   cancel-in-progress: false
 
 jobs:
-  extract:
+  deploy:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Validate and extract uploaded ZIP
+      - name: Validate and extract ZIP
         shell: bash
         run: |
           set -euo pipefail
-          ZIP_FILE="Bounce.zip"
-          if [[ ! -f "$ZIP_FILE" ]]; then
-            echo "No $ZIP_FILE found. Nothing to extract."
-            exit 0
-          fi
 
+          ZIP_FILE="Bounce.zip"
           TEMP_DIR="$(mktemp -d)"
           trap 'rm -rf "$TEMP_DIR"' EXIT
 
-          # Reject unsafe paths and symbolic links before extracting.
-          python3 - "$ZIP_FILE" <<'PY'
+          test -s "$ZIP_FILE" || {
+            echo "::error::Bounce.zip is missing or empty."
+            exit 1
+          }
+
+          python3 - "$ZIP_FILE" "$TEMP_DIR" <<'PY'
+          import os
           import stat
           import sys
           import zipfile
-          archive = sys.argv[1]
+          from pathlib import PurePosixPath
+
+          archive, destination = sys.argv[1:]
+          max_files = 20000
+          max_size = 500 * 1024 * 1024
+
           with zipfile.ZipFile(archive) as z:
-              for item in z.infolist():
+              entries = z.infolist()
+
+              if len(entries) > max_files:
+                  raise SystemExit("ZIP contains too many entries.")
+
+              total_size = 0
+              seen = set()
+
+              for item in entries:
                   name = item.filename.replace("\\", "/")
-                  parts = name.split("/")
-                  if name.startswith("/") or any(p == ".." for p in parts):
-                      raise SystemExit(f"Unsafe ZIP path: {item.filename}")
+                  path = PurePosixPath(name)
+
+                  if (
+                      not name
+                      or name.startswith("/")
+                      or path.is_absolute()
+                      or any(part in ("..", "") for part in name.split("/"))
+                      or ":" in name.split("/")[0]
+                  ):
+                      raise SystemExit(f"Unsafe ZIP path: {name}")
+
+                  normalized = path.as_posix().rstrip("/")
+
+                  if normalized in seen:
+                      raise SystemExit(f"Duplicate ZIP path: {name}")
+                  seen.add(normalized)
+
                   mode = item.external_attr >> 16
+
                   if stat.S_ISLNK(mode):
-                      raise SystemExit(f"ZIP symlinks are not allowed: {item.filename}")
+                      raise SystemExit(f"Symbolic links are forbidden: {name}")
+
+                  if item.flag_bits & 1:
+                      raise SystemExit(f"Encrypted files are not allowed: {name}")
+
+                  total_size += item.file_size
+
+                  if total_size > max_size:
+                      raise SystemExit("ZIP exceeds the 500 MB extraction limit.")
+
+              z.extractall(destination)
+
+          print(f"Validated and extracted {len(entries)} ZIP entries.")
           PY
 
-          unzip -q "$ZIP_FILE" -d "$TEMP_DIR"
-
-          # Unwrap if ChatGPT placed everything inside a single top-level folder
+          # Handle archives containing one enclosing project folder.
           SOURCE_DIR="$TEMP_DIR"
-          shopt -s nullglob
-          top_items=("$TEMP_DIR"/*)
-          if [[ ${#top_items[@]} -eq 1 && -d "${top_items[0]}" ]]; then
-            SOURCE_DIR="${top_items[0]}"
+          shopt -s nullglob dotglob
+          ITEMS=("$TEMP_DIR"/*)
+
+          if [[ ${#ITEMS[@]} -eq 1 && -d "${ITEMS[0]}" ]]; then
+            SOURCE_DIR="${ITEMS[0]}"
           fi
 
-          if [[ ! -s "$SOURCE_DIR/index.html" ]]; then
-            echo "ERROR: Bounce.zip is missing index.html."
+          test -s "$SOURCE_DIR/index.html" || {
+            echo "::error::ZIP must contain index.html at its project root."
             exit 1
-          fi
+          }
 
-          # Mirror extracted site into main's root while keeping .git, .github, and any other ZIPs untouched
-          rsync -a --delete \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            --exclude='*.zip' \
-            "$SOURCE_DIR/" ./
+          test -d "$SOURCE_DIR/assets" || {
+            echo "::error::ZIP is missing the assets directory."
+            exit 1
+          }
 
-          # Delete Bounce.zip after successful extraction
-          rm -f "$ZIP_FILE"
+          test -d "$SOURCE_DIR/src" || {
+            echo "::error::ZIP is missing the src directory."
+            exit 1
+          }
 
-      - name: Commit extracted website and remove ZIP
+          echo "SOURCE_DIR=$SOURCE_DIR" >> "$GITHUB_ENV"
+          echo "ZIP extraction validated successfully."
+
+      - name: Synchronize website files safely
         shell: bash
         run: |
           set -euo pipefail
+
+          SOURCE="$SOURCE_DIR"
+
+          # Only these root files are eligible for replacement.
+          ROOT_FILES=(
+            index.html
+            style.css
+            game.js
+            sw.js
+            manifest.webmanifest
+            favicon.ico
+          )
+
+          for file in "${ROOT_FILES[@]}"; do
+            if [[ -f "$SOURCE/$file" ]]; then
+              install -D -m 0644 "$SOURCE/$file" "$file"
+            fi
+          done
+
+          # Only these directories are synchronized.
+          # Deletion is confined to these explicitly approved paths.
+          RUNTIME_DIRS=(
+            assets
+            src
+            icons
+          )
+
+          for dir in "${RUNTIME_DIRS[@]}"; do
+            if [[ -d "$SOURCE/$dir" ]]; then
+              mkdir -p "$dir"
+              rsync -a --delete \
+                --safe-links \
+                "$SOURCE/$dir/" "$dir/"
+            fi
+          done
+
+          echo "Website runtime files synchronized."
+
+      - name: Validate updated website
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -s index.html
+          test -s style.css
+          test -s game.js
+          test -s sw.js
+          test -s manifest.webmanifest
+
+          node --check game.js
+
+          python3 - <<'PY'
+          import json
+          with open("manifest.webmanifest", encoding="utf-8") as f:
+              json.load(f)
+          print("PWA manifest is valid JSON.")
+          PY
+
+          echo "Basic deployment validation passed."
+
+      - name: Commit website changes
+        shell: bash
+        run: |
+          set -euo pipefail
+
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Stage only approved website paths and the uploaded ZIP.
+          git add -A -- \
+            index.html \
+            style.css \
+            game.js \
+            sw.js \
+            manifest.webmanifest \
+            favicon.ico \
+            assets \
+            src \
+            icons \
+            Bounce.zip
+
           if git diff --cached --quiet; then
-            echo "No changes to commit."
+            echo "No website changes detected."
             exit 0
           fi
-          git commit -m "Extract Bounce Tales website from Bounce.zip"
+
+          git commit -m "Deploy Bounce Tales website from ZIP"
           git push origin HEAD:main
+
+      - name: Deployment summary
+        if: success()
+        run: |
+          echo "## Bounce Tales deployment completed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- ZIP validation: passed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Website synchronization: passed" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Repository documentation: protected" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
           
