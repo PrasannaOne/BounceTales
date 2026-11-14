@@ -77,7 +77,7 @@ function gameText(index,fallback=''){
   return typeof value==='string'&&value.length?value:fallback;
 }
 function wrapMenuText(text,x,y,maxWidth,lineHeight,size=6,color='#ece4cd',maxLines=24){
-  const target=textCtx||ctx;target.save();target.font=size+'px "Courier New",monospace';
+  const target=textCtx||ctx;target.save();target.font='700 '+size+'px Arial, Helvetica, sans-serif';
   target.textAlign='left';target.textBaseline='top';target.fillStyle=color;
   let line='',count=0,yy=y;
   for(const word of String(text||'').replace(/\r/g,'').split(/\s+/)){
@@ -96,7 +96,7 @@ function getWorldPos(o){const m=world.get(o.id);return fixedPoint(m,0,0);}
 function imgFor(index){
   if(!Number.isInteger(index)||index<0||index>=atlases.length)return null;
   if(loadedImages.has(index))return loadedImages.get(index);
-  const im=new Image();im.src=index===7?'assets/logo-transparent.png':'assets/original/'+atlases[index];loadedImages.set(index,im);return im;
+  const im=new Image();im.src='assets/original/'+atlases[index];loadedImages.set(index,im);return im;
 }
 function drawImageMap(id,x,y,seen=new Set(),frame=0,targetCtx=ctx){
   x=Math.round(x);y=Math.round(y);
@@ -411,6 +411,9 @@ function update(dt,sourceDeltaMs=Math.round(dt*1000)){
     if(victoryTimer===0)completeCurrentChapter();
     return;
   }
+  // The original level timer advances on the same fixed-step clock as physics.
+  // It therefore pauses with gameplay and cannot drift with browser frame rate.
+  elapsed+=dt;
   if(playerDeathTimer>0){
     deathAnimationElapsed+=dt;playerDeathTimer=Math.max(0,playerDeathTimer-dt);
     const t=deathAnimationElapsed;
@@ -732,13 +735,13 @@ function drawOriginalConfirmation(){
     type==='restart'?gameText(85,'RESTART CHAPTER?'):
     type==='chapters'?gameText(87,'RETURN TO CHAPTER SELECTION?'):gameText(80,'QUIT GAME?');
   const detail=type==='newgame'?gameText(2,'Previous game will be lost.'):
-    type==='restart'||type==='chapters'?gameText(3,'Progress in this chapter will be lost.'):'';
-  ctx.fillStyle='rgba(2,8,8,.76)';ctx.fillRect(0,0,W,H);
-  drawJ2MEPanel(15,91,210,139,'#4a260e');
-  wrapMenuText(title,28,108,184,10,7,'#f2d693',4);
-  if(detail)wrapMenuText(detail,30,140,180,10,6,'#ece4cd',4);
-  canvasMenuButton(gameText(49,'YES').toUpperCase(),29,187,84,22,'confirm-yes','gold');
-  canvasMenuButton(gameText(45,'NO').toUpperCase(),127,187,84,22,'confirm-no','dark');
+    type==='restart'||type==='chapters'?gameText(3,'Progress in this chapter will be lost.'):'Are you sure you want to return to the main menu?';
+  ctx.fillStyle='rgba(2,8,8,.78)';ctx.fillRect(0,0,W,H);
+  drawJ2MEPanel(18,101,204,118,'#4a260e',false);
+  menuText(title,120,122,9,'#f4d58e');
+  wrapMenuText(detail,34,143,172,9,6.2,'#f1e8d3',3);
+  canvasMenuButton('YES',31,177,82,24,'confirm-yes','gold');
+  canvasMenuButton('NO',127,177,82,24,'confirm-no','dark');
 }
 function drawOriginalStoryMessage(){
   if(!activeStoryMessage)return;
@@ -774,70 +777,111 @@ function drawFieldMessage(){
   textTarget.fillStyle='#f5eddb';textTarget.textAlign='center';textTarget.textBaseline='top';
   shown.forEach((t,i)=>textTarget.fillText(t,120,y+8+i*12,maxWidth));
 }
-function drawOriginalChapterBook(){
+function drawOriginalMenuBackground(){
+  // Exact two-tone MIDP menu field and edge decoration from the original m.java.
   ctx.fillStyle='#3f1a01';ctx.fillRect(0,0,W>>1,H);
   ctx.fillStyle='#5e2601';ctx.fillRect(W>>1,0,W>>1,H);
   drawImageMap(4,0,0);drawImageMap(74,0,0);drawImageMap(75,0,0);drawImageMap(3,0,H);
+}
+function drawOriginalChapterBook(){
+  drawOriginalMenuBackground();
   drawImageMap(331,120,160);
-  ctx.fillStyle='#fbf7e3';ctx.fillRect(5,20,230,279);
-  ctx.fillStyle='#000';ctx.fillRect(118,20,4,279);
+  ctx.fillStyle='#fbf7e7';ctx.fillRect(5,8,230,304);
+  const seam=ctx.createLinearGradient(116,0,124,0);
+  seam.addColorStop(0,'rgba(77,49,25,0)');seam.addColorStop(.5,'rgba(77,49,25,.16)');seam.addColorStop(1,'rgba(77,49,25,0)');
+  ctx.fillStyle=seam;ctx.fillRect(116,8,8,304);
 }
-function menuRoundRect(x,y,w,h,r=0){
-  // The J2ME menu system uses hard-edged MIDP rectangles, not modern rounded cards.
-  ctx.beginPath();
-  ctx.rect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+function drawImageMapRotatedAtTopLeft(id,left,top,rotation,targetCtx=ctx){
+  const exact=spriteCatalogue?.get(id),map=imageMaps?.maps?.[String(id)];
+  if(!map||map.type!=='simple')return;
+  const crop=exact?.crop||{x:map.atlasX,y:map.atlasY,width:map.width,height:map.height};
+  const slot=exact?.image_slot??map.image,im=imgFor(slot);
+  if(!im||!im.complete||!im.naturalWidth)return;
+  targetCtx.save();targetCtx.translate(left+crop.width/2,top+crop.height/2);targetCtx.rotate(rotation);
+  targetCtx.drawImage(im,crop.x,crop.y,crop.width,crop.height,-crop.width/2,-crop.height/2,crop.width,crop.height);
+  targetCtx.restore();
 }
-function drawJ2MEPanel(x,y,w,h,fill='#4b260d'){
-  // Square, wood-toned panel with the original ornamental atlas divider.
-  ctx.save();
-  ctx.fillStyle=fill;ctx.fillRect(x,y,w,h);
+function drawOriginalTitleBook(){
+  drawOriginalMenuBackground();
+  // Dynamic sprite 332 is the original closed Bounce Tales book, including
+  // its embossed sepia logo. Fill its transparent leather field first.
+  ctx.fillStyle='#644330';ctx.fillRect(4,4,208,298);
+  drawImageMap(332,120,160);
+  // Double MIDP borders use the exact source colours and 240x320 geometry.
+  ctx.strokeStyle='#55270f';ctx.lineWidth=1;ctx.strokeRect(3.5,3.5,209,300);ctx.strokeRect(4.5,4.5,207,298);
+  ctx.strokeStyle='#371909';ctx.strokeRect(5.5,5.5,205,296);ctx.strokeRect(6.5,6.5,203,294);
+  // m.java draws the upper corner with transform 6 and the lower corner
+  // untransformed, both right/bottom anchored to the book bounds.
+  drawImageMapRotatedAtTopLeft(12,147,1,-Math.PI/2);
+  drawImageMap(12,180,271);
+  // The original left hinges use LEFT | VCENTER anchors (metadata origin 35,23).
+  drawImageMap(15,33,85);
+  drawImageMap(15,33,235);
+}
+function menuRoundRect(x,y,w,h,r=0){ctx.beginPath();ctx.rect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
+function drawJ2MEPanel(x,y,w,h,fill='#4b260d',ornaments=true){
+  ctx.save();ctx.fillStyle=fill;ctx.fillRect(x,y,w,h);
   ctx.strokeStyle='#d2b477';ctx.lineWidth=1;ctx.strokeRect(x+.5,y+.5,w-1,h-1);
-  if(imageMaps){
-    drawImageMap(89,x+w/2,y+13);
-    drawImageMap(89,x+w/2,y+h-13);
-  }
+  if(imageMaps&&ornaments){drawImageMap(89,x+w/2,y+13);drawImageMap(89,x+w/2,y+h-13);}
   ctx.restore();
 }
 function menuText(text,x,y,size=8,color='#f7eed9',align='center'){
-  const target=textCtx||ctx;target.save();target.font=`700 ${size}px "Courier New", ui-monospace, monospace`;
+  const target=textCtx||ctx;target.save();target.font=`700 ${size}px Arial, Helvetica, sans-serif`;
   target.textAlign=align;target.textBaseline='middle';target.fillStyle=color;
-  target.lineJoin='round';target.lineWidth=1.15;target.strokeStyle='#07100d';
-  target.shadowColor='#07100d';target.shadowBlur=1.2;
+  target.lineJoin='round';target.lineWidth=1.05;target.strokeStyle='#07100d';
+  target.shadowColor='#07100d';target.shadowBlur=1;
   target.strokeText(String(text),x,y,214);target.fillText(String(text),x,y,214);target.restore();
 }
 function canvasMenuButton(label,x,y,w,h,action,kind='gold',disabled=false){
-  // The original MIDP list highlights the selected row with a filled
-  // rectangle and border. Sprite 10 is a long decorative stripe, not a focus
-  // asset, so it must never be stretched/clipped into a menu button.
   const fills={gold:'#60370f',green:'#3f321b',dark:'#302316',cream:'#e7dfc7'};
   const borders={gold:'#b98b43',green:'#8d794b',dark:'#776346',cream:'#a18b5c'};
   const focused=!disabled&&canvasMenuHits.length===menuFocusIndex;
-  ctx.save();
-  ctx.fillStyle=disabled?'#382b1c':(focused?'#875b27':fills[kind]);
-  ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
-  ctx.strokeStyle=disabled?'#66543a':(focused?'#e5c47f':borders[kind]);
-  ctx.lineWidth=focused?1.5:1;
+  ctx.save();ctx.fillStyle=disabled?'#382b1c':(focused?'#875b27':fills[kind]);ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+  ctx.strokeStyle=disabled?'#66543a':(focused?'#e5c47f':borders[kind]);ctx.lineWidth=focused?1.5:1;
   ctx.strokeRect(Math.round(x)+.5,Math.round(y)+.5,Math.round(w)-1,Math.round(h)-1);
-  menuText(label,x+w/2,y+h/2,8,disabled?'#9c8c70':'#fff0cc');
-  ctx.restore();
+  menuText(label,x+w/2,y+h/2,8,disabled?'#9c8c70':'#fff0cc');ctx.restore();
+  if(!disabled)canvasMenuHits.push({x,y,w,h,action});
+}
+function canvasMenuListItem(label,y,action,index,options={}){
+  const x=16,w=208,h=22,selected=index===menuFocusIndex,disabled=!!options.disabled;
+  const size=options.size||10;
+  const color=disabled?'#b7a58d':selected?'#f08a22':'#fff0d3';
+  if(selected&&!disabled&&imageMaps){
+    const target=textCtx||ctx;target.save();target.font=`700 ${size}px Arial, Helvetica, sans-serif`;
+    const labelWidth=target.measureText(label).width;target.restore();
+    const pulse=Math.round((Math.sin(Date.now()/180)+1)*2.5);
+    const labelLeft=x+w/2-labelWidth/2,labelRight=x+w/2+labelWidth/2,centerY=y+h/2-2;
+    // Original m.java places sprite 2 9 px before the label and sprite 326
+    // 9 px after it, with a small opposing 0-5 px selection pulse.
+    drawImageMap(2,labelLeft-19+pulse,centerY);
+    drawImageMap(326,labelRight+19-pulse,centerY);
+  }
+  menuText(label,x+w/2,y+h/2,size,color);
   if(!disabled)canvasMenuHits.push({x,y,w,h,action});
 }
 function drawCanvasTitle(){
-  // Gentle source-scene parallax drift keeps the title scene alive without
-  // changing gameplay state; startLevel resets the gameplay camera.
-  cameraX=Math.sin(Date.now()/5200)*220;
-  if(imageMaps)drawOriginalParallax();
-  else{const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#4f94c9');bg.addColorStop(1,'#173a35');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);}
-  ctx.fillStyle='rgba(4,14,13,.54)';ctx.fillRect(0,0,W,H);
-  drawJ2MEPanel(15,18,210,284,'#4a260e');
-  if(imageMaps)drawImageMap(1,120,70);else menuText('BOUNCE TALES',120,77,17,'#f4d995');
-  canvasMenuButton(gameText(17,'CONTINUE').toUpperCase(),29,132,182,24,'continue','gold');
-  canvasMenuButton(gameText(39,'CHAPTER SELECTION').toUpperCase(),29,162,182,24,'chapters','green');
-  canvasMenuButton(gameText(19,'HIGH SCORES').toUpperCase(),29,192,182,24,'scores','dark');
-  canvasMenuButton('OPTIONS',29,222,182,24,'options','green');
-  canvasMenuButton(gameText(18,'INSTRUCTIONS').toUpperCase(),29,252,182,24,'guide','dark');
-  canvasMenuButton((musicController?.enabled??true)?'SOUND ON':'SOUND OFF',16,281,82,16,'sound','dark');
-  menuText('TAP OR PRESS ACTION',160,289,6,'#f1e7cf');
+  drawOriginalTitleBook();
+  const hasSaved=progress.records.some(r=>(r.eggs||0)>0||(r.score||0)>0||(r.clearTime||9999)<9999);
+  const rows=hasSaved?[
+    [gameText(17,'CONTINUE'),'continue'],
+    [gameText(36,'NEW GAME'),'newgame'],
+    ['CHAPTER SELECTION','chapters'],
+    [gameText(19,'HIGH SCORES'),'scores'],
+    ['OPTIONS','options'],
+    [gameText(18,'INSTRUCTIONS'),'guide']
+  ]:[
+    [gameText(36,'NEW GAME'),'play'],
+    ['CHAPTER SELECTION','chapters'],
+    [gameText(19,'HIGH SCORES'),'scores'],
+    ['OPTIONS','options'],
+    [gameText(18,'INSTRUCTIONS'),'guide']
+  ];
+  const rowTop=rows.length>5?146:158,rowStep=rows.length>5?21:23;
+  rows.forEach((r,i)=>canvasMenuListItem(String(r[0]).toUpperCase(),rowTop+i*rowStep,r[1],i,{size:r[0].length>15?9.2:(i===0?11.5:10.5)}));
+  // Browser adaptation of the original softkeys. Settings replaces handset Exit.
+  menuText('SELECT',48,286,7,'#f08a22');
+  menuText('SETTINGS',190,286,7,'#f08a22');
+  // Softkey labels are visual hints only; keyboard focus stays on the five real menu rows.
 }
 function drawCanvasChapterBook(){
   drawOriginalChapterBook();
@@ -894,75 +938,83 @@ function drawCanvasComplete(){
   canvasMenuButton(gameText(43,'BACK').toUpperCase(),52,278,136,15,'chapters','dark');
 }
 function drawCanvasGuide(){
-  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#193d4a');bg.addColorStop(1,'#14241f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  drawJ2MEPanel(12,25,216,270,'#4a260e');
-  menuText(gameText(18,'INSTRUCTIONS').toUpperCase(),120,45,10,'#f2d693');
-  let y=64;
-  y=wrapMenuText(gameText(12),24,y,192,8,5.7,'#ece4cd',19)+8;
-  y=wrapMenuText(gameText(13),24,y,192,8,5.7,'#f0d69b',3)+5;
-  y=wrapMenuText(gameText(14),24,y,192,8,5.7,'#f0d69b',3)+5;
-  y=wrapMenuText(gameText(15),24,y,192,8,5.7,'#f0d69b',3);
-  canvasMenuButton(gameText(43,'BACK').toUpperCase(),48,270,144,18,'title','gold');
+  drawOriginalChapterBook();
+  menuText('HOW TO PLAY',120,27,11,'#65411c');
+  ctx.strokeStyle='#b49b70';ctx.beginPath();ctx.moveTo(22,39);ctx.lineTo(218,39);ctx.stroke();
+  const sections=[
+    ['MOVE','Hold LEFT or RIGHT. On a keyboard, use A/D or the arrow keys.'],
+    ['JUMP','Hold JUMP or press Space / Enter to bounce. Time your landings.'],
+    ['CHANGE FORM','Tap * or press Shift / Q after another ball form is unlocked.'],
+    ['EXPLORE','Collect eggs, follow signs, find checkpoints and reach the chapter goal.'],
+    ['CANNONS','Hold LEFT / RIGHT to aim, then tap JUMP to fire.'],
+    ['TOUCH LAYOUT','Open Settings → Touch Controls to move or resize the on-screen buttons.']
+  ];
+  let y=49;
+  for(const [heading,body] of sections){
+    menuText(heading,26,y+3,6.8,'#a35b1e','left');
+    y=wrapMenuText(body,26,y+9,188,7.3,5.6,'#493a28',2)+3;
+  }
+  canvasMenuButton('BACK TO MENU',48,282,144,19,'title','gold');
 }
 function drawCanvasScores(){
-  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#24434b');bg.addColorStop(1,'#17251f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  drawJ2MEPanel(14,24,212,270,'#4a260e');
-  menuText(gameText(19,'HIGH SCORES').toUpperCase(),120,47,11,'#f2d693');
+  drawOriginalChapterBook();
+  menuText(gameText(19,'HIGH SCORES').toUpperCase(),120,47,11,'#65411c');
   const rows=progress.records.map((r,i)=>({...r,index:i,name:getLocalizedLevelName(i)}))
     .filter(r=>(r.score||0)>0||(r.eggs||0)>0||(r.clearTime||9999)<9999)
     .sort((a,b)=>(b.score||0)-(a.score||0)||(b.eggs||0)-(a.eggs||0)||(a.clearTime||9999)-(b.clearTime||9999))
     .slice(0,8);
-  if(!rows.length)menuText('NO RECORDS YET',120,132,9,'#d7d0bb');
+  if(!rows.length)menuText('NO RECORDS YET',120,132,9,'#806342');
   rows.forEach((r,i)=>{
     const y=77+i*23;
-    menuText(String(i+1).padStart(2,'0'),27,y,7,'#d3b77e','left');
-    menuText(r.name.toUpperCase().slice(0,18),45,y,6,'#f1e8d1','left');
-    menuText(String(r.score||0),210,y,7,'#e6c77f','right');
-    ctx.strokeStyle='#6a735e';ctx.beginPath();ctx.moveTo(25,y+10);ctx.lineTo(215,y+10);ctx.stroke();
+    menuText(String(i+1).padStart(2,'0'),27,y,7,'#9b642e','left');
+    menuText(r.name.toUpperCase().slice(0,18),45,y,6,'#4b3928','left');
+    menuText(String(r.score||0),210,y,7,'#8c541f','right');
+    ctx.strokeStyle='#c4ad83';ctx.beginPath();ctx.moveTo(25,y+10);ctx.lineTo(215,y+10);ctx.stroke();
   });
-  menuText('BEST SCORE BY CHAPTER',120,265,6,'#aebbaa');
+  menuText('BEST SCORE BY CHAPTER',120,265,6,'#806342');
   canvasMenuButton(gameText(43,'BACK').toUpperCase(),48,276,144,18,'title','gold');
 }
 function drawCanvasOptions(){
-  const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#29424a');bg.addColorStop(1,'#17251f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  drawJ2MEPanel(15,46,210,226,'#4a260e');
-  menuText('OPTIONS',120,70,12,'#f2d693');
+  drawOriginalChapterBook();
+  menuText('OPTIONS',120,70,12,'#65411c');
   canvasMenuButton((musicController?.enabled??true)?'SOUND  ON':'SOUND  OFF',32,99,176,25,'sound','green');
   canvasMenuButton('FRAME PACING  '+fpsMode.toUpperCase(),32,132,176,25,'fps','dark');
   canvasMenuButton('SMOOTH MOTION  '+(smoothMotion?'ON':'OFF'),32,165,176,25,'smooth','green');
-  menuText('SIMULATION ALWAYS STAYS AT 60 HZ',120,204,6,'#b9c4b6');
-  menuText(smoothMotion?'SUB-TICK RENDER INTERPOLATION ON':'DISCRETE ORIGINAL-STYLE TICKS',120,216,6,'#b9c4b6');
+  menuText('SIMULATION ALWAYS STAYS AT 60 HZ',120,204,6,'#6c5638');
+  menuText(smoothMotion?'SUB-TICK RENDER INTERPOLATION ON':'DISCRETE ORIGINAL-STYLE TICKS',120,216,6,'#6c5638');
   canvasMenuButton('BACK TO MENU',48,238,144,22,'title','gold');
 }
 
+function hudDigitWidth(digit){
+  const map=imageMaps?.maps?.[String(90+Number(digit))];
+  return map?.width||13;
+}
+function drawHudNumber(value,x,y,pad=0){
+  const digits=String(Math.max(0,Math.floor(Number(value)||0))).padStart(pad,'0');
+  let cursor=x;
+  for(const ch of digits){drawImageMap(90+Number(ch),cursor,y);cursor+=hudDigitWidth(ch);}
+  return cursor-x;
+}
 function drawOriginalGameplayHud(){
-  // Source reference: decompiled m.java HUD draw path. The egg sprite is
-  // anchored at (0,0); its separator follows the live egg-counter width; the
-  // clock is anchored to the right edge and its time is right-aligned beside it.
-  // Text remains on the DPR-scaled overlay while sprites stay on the pixel-art
-  // game canvas. This keeps the original 240x320 HUD geometry crisp on phones.
-  const score=Math.min(32767,Math.floor((collected*10000*(BounceOriginalProgression.EGG_SCORE_MULTIPLIERS[currentLevel.index]||1))/Math.max(1,Math.floor(elapsed))));
-  const seconds=Math.max(0,Math.floor(elapsed));
-  const mm=Math.floor(seconds/60),ss=seconds%60;
-  const eggLabel=String(collected).padStart(2,'0');
-  const scoreLabel=String(score).padStart(4,'0');
-  const timeLabel=mm+':'+String(ss).padStart(2,'0');
-  const textTarget=textCtx||ctx;
-  textTarget.save();
-  textTarget.font='700 7px "Courier New", ui-monospace, monospace';
-  const eggTextWidth=textTarget.measureText(eggLabel).width;
-  textTarget.restore();
-  const hudLayout=BounceOriginalHud.layout(W,eggTextWidth);
-
-  ctx.save();
-  ctx.globalAlpha=.96;
-  drawImageMap(102,hudLayout.eggIcon.x,hudLayout.eggIcon.y);
-  drawImageMap(101,hudLayout.eggDivider.x,hudLayout.eggDivider.y);
-  drawImageMap(103,hudLayout.clock.x,hudLayout.clock.y);
+  // Direct port of the m.java HUD order: egg icon, collected/total digits,
+  // slash, then a right-anchored clock with bitmap minute:second digits.
+  ctx.save();ctx.globalAlpha=1;
+  drawImageMap(102,0,0);
+  let x=32+drawHudNumber(collected,32,7);
+  drawImageMap(101,x,7);x+=9;
+  drawHudNumber(eggs.length+enemies.length,x,7);
+  drawImageMap(103,W,0);
+  const totalSeconds=Math.max(0,Math.floor(elapsed));
+  const minutes=Math.floor(totalSeconds/60),seconds=totalSeconds%60;
+  const rightEdge=W-25-6-1;
+  const secondsWidth=hudDigitWidth(Math.floor(seconds/10))+hudDigitWidth(seconds%10);
+  const secondsX=rightEdge-secondsWidth;
+  drawHudNumber(seconds,secondsX,7,2);
+  // J2ME draws the colon right-anchored at secondsX. Its native y-origin is -3.
+  drawImageMap(100,secondsX-5,4);
+  const minuteWidth=String(minutes).split('').reduce((sum,d)=>sum+hudDigitWidth(d),0);
+  drawHudNumber(minutes,secondsX-5-minuteWidth,7);
   ctx.restore();
-  menuText(eggLabel,hudLayout.eggCounter.x,hudLayout.eggCounter.y,7,'#fff4d7','left');
-  menuText(scoreLabel,hudLayout.score.x,hudLayout.score.y,7,'#fff4d7','left');
-  menuText(timeLabel,hudLayout.timer.right,hudLayout.timer.y,7,'#fff4d7','right');
 }
 
 function drawGameplayScene(){
@@ -1007,7 +1059,7 @@ function draw(){
   if(mode===S.guide){drawCanvasGuide();return;}
   if(mode===S.scores){drawCanvasScores();return;}
   if(mode===S.options){drawCanvasOptions();return;}
-  if(mode===S.confirm){if(confirmationState?.returnMode===S.pause){drawGameplayScene();drawCanvasPause();}else if(confirmationState?.returnMode===S.select)drawCanvasChapterBook();else drawCanvasTitle();canvasMenuHits=[];drawOriginalConfirmation();return;}
+  if(mode===S.confirm){if(confirmationState?.returnMode===S.pause){drawGameplayScene();}else if(confirmationState?.returnMode===S.select)drawCanvasChapterBook();else drawCanvasTitle();if(textCtx)textCtx.clearRect(0,0,W,H);canvasMenuHits=[];drawOriginalConfirmation();return;}
   drawCanvasTitle();
 }
 function showConfirmation(type,returnMode=mode){
@@ -1023,7 +1075,10 @@ function acceptConfirmation(){
   if(type==='restart')startLevel();
   else if(type==='chapters')showChapterBook();
   else if(type==='quit')showTitleMenu();
-  else if(type==='newgame'){resetProgress();showTitleMenu();}
+  else if(type==='newgame'){
+    progress=BounceOriginalProgression.reset(localStorage);selectedLevelIndex=0;unlockedForme=0;
+    loadLevel(0,{start:true}).catch(error=>{console.error(error);toast('Could not start a new game');showTitleMenu();});
+  }
   else{mode=previous||S.title;syncPauseButton();}
 }
 function handleCanvasMenuAction(action){
@@ -1031,7 +1086,8 @@ function handleCanvasMenuAction(action){
     const idx=progress.selected||0;
     if(currentLevel.index===idx)startLevel();
     else loadLevel(idx,{start:true}).catch(error=>{console.error(error);toast('Could not load saved chapter');});
-  }else if(action==='chapters')showChapterBook();
+  }else if(action==='newgame')showConfirmation('newgame',S.title);
+  else if(action==='chapters')showChapterBook();
   else if(action==='scores'){menuFocusIndex=0;mode=S.scores;hideGameScenes();input.clear();syncPauseButton();}
   else if(action==='guide')openGuide();
   else if(action==='options'){menuFocusIndex=0;mode=S.options;hideGameScenes();input.clear();syncPauseButton();}
@@ -1079,12 +1135,12 @@ function bindCanvasMenu(){
 function refreshHud(){
   const total=eggs.length+enemies.length;
   status.textContent=(currentLevel.name.toUpperCase())+'  ·  '+collected+'/'+total+' EGGS';
-  eggHud.textContent='FORM '+['BOUNCE','BUMPY','WOLLY'][body?.forme||0];
+  if(eggHud){eggHud.textContent='';eggHud.hidden=true;}
 }
 function syncSceneChrome(){
   const app=document.getElementById('app');if(app)app.dataset.mode=mode;
   const playing=mode===S.play;
-  status.hidden=!playing;eggHud.hidden=!playing;
+  status.hidden=!playing;if(eggHud){eggHud.hidden=true;eggHud.textContent='';}
   // Controls are available on the title, chapter, pause and gameplay screens.
   applyLiveControlLayout();
   const fps=document.getElementById('fps-counter');if(fps)fps.hidden=!(playing&&showFps);

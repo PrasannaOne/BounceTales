@@ -24,7 +24,7 @@ for(const tag of ['og:title','og:description','og:image','twitter:card','twitter
 assert.match(html,/bounce-tales-web-preview\.png/);assert.match(html,/apple-touch-icon\.png/);
 assert.deepEqual(manifest.icons.map(i=>i.sizes),['192x192','512x512']);
 assert.equal(manifest.icons[0].src,'icon-192.png');assert.equal(manifest.icons[1].src,'icon-512.png');
-assert.match(sw,/bounce-tales-v46/);for(const name of ['icon-192.png','icon-512.png','apple-touch-icon.png'])assert.ok(sw.includes(name),'critical shell includes '+name);assert.doesNotMatch(sw,/bounce-tales-web-preview\.png|assets\/audio\/act1\.ogg/,'large preview/audio are lazy-cached, not first-install prerequisites');
+assert.match(sw,/bounce-tales-v47/);for(const name of ['icon-192.png','icon-512.png','apple-touch-icon.png'])assert.ok(sw.includes(name),'critical shell includes '+name);assert.doesNotMatch(sw,/bounce-tales-web-preview\.png|assets\/audio\/act1\.ogg/,'large preview/audio are lazy-cached, not first-install prerequisites');
 const logo=readPngRGBA(fs.readFileSync(path.join(root,'assets/logo-transparent.png')));
 let alphaMin=255,alphaMax=0;for(let i=3;i<logo.data.length;i+=4){alphaMin=Math.min(alphaMin,logo.data[i]);alphaMax=Math.max(alphaMax,logo.data[i]);}
 assert.ok(alphaMin===0&&alphaMax===255,'title logo has true transparency and opaque letter artwork');
@@ -35,9 +35,10 @@ assert.equal(sourceLogo.width,168);assert.equal(sourceLogo.height,121);assert.eq
 const titleStart=html.indexOf('function drawCanvasTitle');
 const game=fs.readFileSync(path.join(root,'game.js'),'utf8');
 const title=game.slice(game.indexOf('function drawCanvasTitle'),game.indexOf('function drawCanvasChapterBook'));
-assert.match(title,/canvasMenuButton\([^\n]+SOUND[^\n]+16,281,82,16/);
-assert.match(title,/TAP OR PRESS ACTION',160,289/);
-assert.match(game,/index===7\?'assets\/logo-transparent\.png'/);
+assert.match(title,/drawOriginalTitleBook\(\)/,'title uses the original book asset composition');
+assert.match(title,/CHAPTER SELECTION/,'chapter selection remains available');
+assert.match(game.slice(game.indexOf('function drawCanvasOptions'),game.indexOf('function hudDigitWidth')),/SOUND  ON|SOUND  OFF/,'sound control remains available in Options');
+assert.doesNotMatch(game,/index===7\?'assets\/logo-transparent\.png'/,'in-game atlas no longer substitutes the PWA logo');
 assert.match(css,/overflow:\s*hidden;\s*overscroll-behavior:\s*none/);
 assert.match(css,/margin-bottom:\s*clamp\(8px,\s*2\.2vh,\s*20px\) !important/);
 assert.match(css,/width:\s*44px; height:\s*44px; min-height:\s*44px/);

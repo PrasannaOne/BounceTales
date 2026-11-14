@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=46">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=46">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=46">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=47">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=47">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=47">
 <meta name="description" content="Bounce Tales: a source-informed browser recreation of the classic mobile platform adventure.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Bounce Tales">
@@ -28,7 +28,7 @@
 <meta name="twitter:description" content="A little world of Bounce. Play the classic mobile platform adventure in your browser.">
 <meta name="twitter:image" content="https://prasannaone.github.io/BounceTales/bounce-tales-web-preview.png">
 <title>Bounce Tales</title>
-<link rel="stylesheet" href="style.css?v=46">
+<link rel="stylesheet" href="style.css?v=47">
 </head>
 <body>
 <main id="app">
@@ -46,7 +46,7 @@
     <canvas id="game-text" width="480" height="640" aria-hidden="true"></canvas>
     <div class="statusline" id="statusline">LOADING ORIGINAL GAME…</div>
     <button class="pause-mini" id="pause-mini" type="button" aria-label="Pause game" title="Pause">Ⅱ</button>
-    <div class="egg-hud" id="egg-hud">FORM BOUNCE</div>
+    <div class="egg-hud" id="egg-hud" hidden aria-hidden="true"></div>
     <div class="fps-counter" id="fps-counter" hidden>-- FPS</div>
 
     <!-- Original-style game title scene. All menu scenes remain inside the 240×320 game viewport. -->
@@ -188,30 +188,30 @@
     </div>
   </div>
 </section>
-<script src="src/fixed-point.js?v=46"></script>
-<script src="src/original-input-map.js?v=46"></script>
-<script src="src/original-camera.js?v=46"></script>
-<script src="src/rlef-reader.js?v=46"></script>
-<script src="src/bounce-physics.js?v=46"></script>
-<script src="src/terrain-collision.js?v=46"></script>
-<script src="src/original-collision.js?v=46"></script>
-<script src="src/game-timing.js?v=46"></script>
-<script src="src/event-engine.js?v=46"></script>
-<script src="src/original-sprite-animation.js?v=46"></script>
-<script src="src/original-enemies.js?v=46"></script>
-<script src="src/original-water.js?v=46"></script>
-<script src="src/original-trampoline.js?v=46"></script>
-<script src="src/midp-graphics.js?v=46"></script>
-<script src="src/original-progression.js?v=46"></script>
-<script src="src/game-particles.js?v=46"></script>
-<script src="src/sprite-atlas.js?v=46"></script>
-<script src="src/audio-controller.js?v=46"></script>
-<script src="src/control-layout.js?v=46"></script>
-<script src="src/original-hud.js?v=46"></script>
-<script src="game.js?v=46"></script>
+<script src="src/fixed-point.js?v=47"></script>
+<script src="src/original-input-map.js?v=47"></script>
+<script src="src/original-camera.js?v=47"></script>
+<script src="src/rlef-reader.js?v=47"></script>
+<script src="src/bounce-physics.js?v=47"></script>
+<script src="src/terrain-collision.js?v=47"></script>
+<script src="src/original-collision.js?v=47"></script>
+<script src="src/game-timing.js?v=47"></script>
+<script src="src/event-engine.js?v=47"></script>
+<script src="src/original-sprite-animation.js?v=47"></script>
+<script src="src/original-enemies.js?v=47"></script>
+<script src="src/original-water.js?v=47"></script>
+<script src="src/original-trampoline.js?v=47"></script>
+<script src="src/midp-graphics.js?v=47"></script>
+<script src="src/original-progression.js?v=47"></script>
+<script src="src/game-particles.js?v=47"></script>
+<script src="src/sprite-atlas.js?v=47"></script>
+<script src="src/audio-controller.js?v=47"></script>
+<script src="src/control-layout.js?v=47"></script>
+<script src="src/original-hud.js?v=47"></script>
+<script src="game.js?v=47"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=46',{updateViaCache:'none'}).catch(() => {}));
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=47',{updateViaCache:'none'}).catch(() => {}));
 }
 </script>
 </body>

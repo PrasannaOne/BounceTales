@@ -1,25 +1,71 @@
-# Bounce Tales
+<div align="center">
 
-A browser-based HTML5 recreation of the classic Bounce Tales mobile platform game. The project uses the original game's resource formats and a source-informed JavaScript engine to reproduce its 240 × 320 gameplay world, pixel-art presentation, levels, objects, and audio.
+# 🟠 BOUNCE TALES
+### The classic bounce, rebuilt for the browser.
 
-This is an independent fan project. It is not affiliated with, sponsored by, or endorsed by Nokia or Rovio.
+<p><a href="https://prasannaone.github.io/BounceTales/"><img src="https://img.shields.io/badge/▶_PLAY_BOUNCE_TALES-LAUNCH_THE_GAME-ff8b24?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Play Bounce Tales" /></a></p>
 
-## Play and controls
+**🌐 Official playable site**  
+### [prasannaone.github.io/BounceTales](https://prasannaone.github.io/BounceTales/)
 
-The game runs in a modern browser on desktop and mobile.
+<p>
+  <img src="https://img.shields.io/badge/Release-V47-f97316?style=flat-square" alt="Release V47" />
+  <img src="https://img.shields.io/badge/Platform-Web%20%2F%20PWA-0ea5e9?style=flat-square" alt="Web and PWA" />
+  <img src="https://img.shields.io/badge/Runtime-HTML5%20%2B%20JavaScript-facc15?style=flat-square" alt="HTML5 and JavaScript" />
+  <img src="https://img.shields.io/badge/Simulation-240%C3%97320-22c55e?style=flat-square" alt="240 by 320 simulation" />
+  <img src="https://img.shields.io/badge/License-Sovereign%20Source%20v1.1-bc8cf2?style=flat-square" alt="Sovereign Source License v1.1" />
+</p>
+
+<img src="bounce-tales-web-preview.png" alt="Bounce Tales browser game preview" width="720" />
+
+*An independent, source-informed browser reimplementation inspired by the classic J2ME game.*
+
+</div>
+
+---
+
+## ✨ What is Bounce Tales?
+
+Bounce Tales brings the familiar red bouncing hero and its platforming world to modern browsers. The project rebuilds the experience around a **240 × 320 logical game world**, original resource formats, a JavaScript gameplay engine, responsive browser controls, and installable PWA support.
+
+The goal is not to turn the game into a generic platformer. It is to preserve the character of the original while making it practical to play on today's phones and computers.
+
+> 📱 **Play instantly:** no app-store installation or account is required. Open the official site above in a supported browser.
+
+## 🎮 Controls
 
 | Action | Touch | Keyboard |
 |---|---|---|
-| Move left / right | Hold ◀ / ▶ | A / D or ← / → |
-| Jump / bounce | Hold **JUMP** | Space / Enter |
-| Change unlocked form | Tap **\*** | Shift / Q |
-| Pause | In-game pause button | Escape |
+| Move left / right | Hold **◀** / **▶** | `A` / `D` or `←` / `→` |
+| Jump / bounce | Hold **JUMP** | `Space` / `Enter` |
+| Change unlocked form | Tap **`*` (form) button** | `Shift` / `Q` |
+| Pause | Tap the in-game pause button | `Escape` |
 
-Standard gamepads are supported when the browser exposes the Gamepad API. Touch controls can be customized in **Settings → Customize touch controls**; saved layouts are local to that browser/device.
+Standard gamepads are supported when the browser exposes the Gamepad API. Touch controls can be moved and resized in **Settings → Customize touch controls**. Your layout is saved locally in that browser on that device.
 
-## Run locally
+## 🌟 Highlights
 
-The game must be served over HTTP. Opening `index.html` directly with `file://` is not supported. Service-worker installation and offline support require HTTPS or `localhost`.
+- 🕹️ **Original-scale simulation:** a logical 240 × 320 playfield, scaled to modern screens.
+- 🧩 **Resource-aware engine:** reads the original RLEF level format and uses source-informed sprite and animation mappings.
+- 🧭 **Campaign systems:** stage progression, checkpoints, collectibles, scripted events and level objects.
+- 🪀 **Platforming systems:** fixed-step updates, collision handling, bounce physics, forms, enemies, water and springboards.
+- 🎨 **Pixel-art presentation:** canvas rendering designed around crisp sprite presentation.
+- 📳 **Phone-friendly controls:** touch, keyboard and supported gamepad input.
+- 🛠️ **Live control editor:** reposition and resize the on-screen controls.
+- 📦 **Installable PWA:** browser installation and a lightweight offline startup shell.
+- 🔊 **Audio:** browser-based music and sound playback.
+
+## 🚀 Play and install
+
+1. Visit **[the official Bounce Tales site](https://prasannaone.github.io/BounceTales/)**.
+2. Start the game and use the on-screen controls, keyboard, or a supported gamepad.
+3. On a compatible browser, use its **Install app** or **Add to Home Screen** option to install the PWA.
+
+The service worker requires HTTPS or `localhost`. The official GitHub Pages site is served over HTTPS.
+
+## 🧑‍💻 Run locally
+
+The game is a static web project. There is no build step or package installation required for normal play. Serve the repository over HTTP; opening `index.html` directly through `file://` is not supported.
 
 With Python 3:
 
@@ -29,71 +75,116 @@ python -m http.server 8000
 
 Then open <http://localhost:8000/>.
 
-Any static web server can be used. No build step or package installation is required for normal play.
+Any static HTTP server can be used.
 
-## Project structure
+## 🏗️ Project map
 
 ```text
-.
-├── index.html              Application shell and PWA metadata
-├── style.css               Responsive layout and visual styling
-├── game.js                 Game loop, state, rendering and integration
-├── sw.js                   Critical shell cache and on-demand asset cache
-├── manifest.webmanifest    PWA metadata
-├── src/                    Engine modules and shared control-layout geometry
-├── assets/                 Original runtime resources and Web Audio files
-├── reference/              Decoded sprite, animation and level fixtures
-├── reverse-engineering/    Engine and resource research notes
-├── docs/                   Reverse-engineering and release notes
-├── tests/                  Node.js regression and validation scripts
-├── tools/                  Reference inspection/generation utilities
-├── LICENSE                 Sovereign Source License v1.1
-└── .github/                 Repository automation/configuration
+BounceTales/
+├── index.html                 Browser shell, metadata and interface
+├── style.css                  Responsive layout and presentation
+├── game.js                    Main state, game loop and rendering integration
+├── sw.js                      Service-worker startup and runtime caching
+├── manifest.webmanifest       PWA installation metadata
+├── src/                       Gameplay and rendering modules
+│   ├── bounce-physics.js      Player movement and bounce behavior
+│   ├── fixed-point.js         Fixed-point arithmetic helpers
+│   ├── game-timing.js         Fixed-step timing utilities
+│   ├── rlef-reader.js         Original level-resource reader
+│   ├── event-engine.js        Scripted event processing
+│   ├── original-collision.js  Collision translation
+│   ├── original-camera.js     Camera and world projection
+│   ├── original-trampoline.js Springboard/trampoline behavior
+│   ├── original-hud.js        HUD-related source mapping
+│   ├── sprite-atlas.js        Sprite and animation lookup
+│   └── audio-controller.js    Web Audio playback controller
+├── assets/                    Runtime art, audio and game resources
+├── reference/                 Decoded fixtures and reference metadata
+├── reverse-engineering/       Research notes and recovered behavior
+├── docs/                      Audits, implementation notes and guides
+├── tests/                     Node.js regression and validation suite
+├── tools/                     Resource inspection utilities
+├── ARCHITECTURE.md             Engine architecture and boundaries
+├── LICENSE                    Sovereign Source License v1.1
+└── README.md                   This project guide
 ```
 
-The original RLEF level resources in `assets/original/` are the runtime source for level geometry and event data. The reference fixtures are retained for validation and research.
+For a guided explanation of how the pieces fit together, read **[ARCHITECTURE.md](ARCHITECTURE.md)** and **[docs/PROJECT_GUIDE.md](docs/PROJECT_GUIDE.md)**.
 
-## Tests and maintenance
+## 🧠 How the browser port is structured
 
-Node.js is used for the repository's headless regression checks. To run the full suite:
+The browser shell loads the styles and JavaScript modules, then `game.js` coordinates the application lifecycle. Input is normalized, the simulation advances in fixed steps, gameplay systems update, the camera projects the world, and the renderer draws into the logical canvas.
+
+| Layer | Main responsibility |
+|---|---|
+| Browser shell | Page, PWA metadata, responsive layout and input surfaces |
+| Game coordinator | Application state, update/render orchestration and integration |
+| Simulation | Fixed-step timing, fixed-point helpers, physics and collision |
+| World systems | RLEF loading, scripted events, enemies, water and springboards |
+| Presentation | Sprite atlas, animation, MIDP-style drawing, HUD and camera |
+| Platform services | Audio, local settings, service worker and install metadata |
+
+The port combines recovered source/resource facts with browser-specific implementation choices. It is **source-informed**, not a claim that every original handset behavior has a perfect one-to-one browser equivalent. See the architecture and reverse-engineering notes for the boundaries and evidence.
+
+## 🧪 Tests and verification
+
+The repository includes Node.js tests for resource parsing, physics, collision, level scripting, input, control layout, audio, menus, timing, PWA references and regression-sensitive behavior.
+
+Run the CommonJS test files:
 
 ```bash
-for test in tests/*.cjs; do node "$test" || exit 1; done
+for test in tests/*.cjs; do
+  node "$test" || exit 1
+done
 ```
 
-To check JavaScript syntax without running gameplay tests:
+Run JavaScript syntax checks:
 
 ```bash
 find . -name '*.js' -not -path './assets/*' -print0 |
   xargs -0 -n1 node --check
 ```
 
-The tests exercise resource parsing, physics/collision, level scripting, input, UI logic, audio-controller behavior, and PWA references. Passing automated checks does not establish exhaustive completion of every stage or guarantee identical behavior on every physical device.
+Run the Level 1 springboard proof and runtime smoke checks:
 
-## License and original game materials
+```bash
+node tests/level1-springboard-proof.cjs
+node tests/runtime-smoke.cjs
+```
 
-The reimplementation code and supporting project work are governed by [`LICENSE`](LICENSE), the **Sovereign Source License v1.1**. It is proprietary and source-available, not an open-source license. Original Bounce Tales sprites, illustrations, audio, fonts, level data, binary resources, trademarks, and other materials originating from the J2ME game are excluded and remain subject to their respective rights holders.
+Automated checks are valuable regression guards, but passing them does not prove exhaustive visual or gameplay parity on every physical device. Real-device testing remains important, especially for touch behavior, browser viewport differences, audio policies and PWA installation.
 
-### Touch control customization
+## 📚 Documentation
 
-Open Settings → Touch Controls to drag the Left, Right, Jump and Forme buttons or adjust the selected button's size. Save persists the layout on the current browser/device; Cancel or Escape restores the previously saved arrangement. The layout is retained across game releases through the stable `bounce-control-layout-v1` local-storage key.
+| Document | What it covers |
+|---|---|
+| [Project guide](docs/PROJECT_GUIDE.md) | Features, runtime flow, controls, maintenance and release checklist |
+| [Architecture](ARCHITECTURE.md) | Modules, simulation pipeline, resource flow and non-regression boundaries |
+| [V47 visual-parity audit](docs/V47_FULL_VISUAL_PARITY_AUDIT.md) | Original-game UI/HUD findings and V47 changes |
+| [Reverse-engineering method](docs/REVERSE_ENGINEERING_METHOD.md) | How the reference material is inspected and recorded |
+| [Reference inventory](reference/README.md) | Decoded fixtures and reference-resource notes |
+| [Reverse-engineering notes](reverse-engineering/BUILD_NOTES.md) | Implementation history, evidence and open caveats |
+| [License and attribution](LICENSE) | Proprietary source terms and third-party exclusions |
 
+The `docs/` and `reverse-engineering/` folders contain detailed, versioned notes. They are retained as a project record; an older document describes the state of its named development pass and should not be read as a claim that every later release has identical internals.
 
-## V37 responsive shell
+## ⚖️ License and original-game rights
 
-The touch-control editor and live controls share a tested responsive geometry model. Hidden controls are not measured or assigned zero-sized styles; the live row is recalculated when gameplay reveals it and when the viewport changes. The service worker precaches only the critical startup shell and caches original sprites/audio as they are requested, avoiding a full asset download during first installation. The original 240×320 simulation canvas and gameplay update loop are unchanged.
+The portions of this project authored by Prasanna are distributed under the **[Sovereign Source License v1.1](LICENSE)**. This is a **proprietary, source-available license**, not an open-source license. It allows limited personal, educational and noncommercial use under its terms; it does not grant general permission to republish, host, redistribute or monetise copies.
 
+Original Bounce Tales artwork, sprites, animation, audio, music, fonts, level data, binary resources, names and marks are **not relicensed by this project license**. They remain subject to the rights of their respective owners. This is an independent project and is not affiliated with, sponsored by, or endorsed by Nokia or Rovio.
 
-## V40 original UI restoration
+## 🔗 Project links
 
-See [`docs/V40_ORIGINAL_UI_RESTORATION.md`](docs/V40_ORIGINAL_UI_RESTORATION.md) for the original JAR menu text, blocking story dialogue, language resources, challenge medals, and Node.js verification scope.
+- 🌐 **Play:** [prasannaone.github.io/BounceTales](https://prasannaone.github.io/BounceTales/)
+- 💻 **Source repository:** [github.com/PrasannaOne/BounceTales](https://github.com/PrasannaOne/BounceTales)
+- 👤 **Creator:** [Prasanna One](https://github.com/PrasannaOne)
 
+---
 
+<div align="center">
 
-## V46 HUD and pause-menu visual correction
+**Made with care by Prasanna.** ❤️  
+*Keep bouncing.*
 
-See [`docs/V46_HUD_MENU_VISUAL_AUDIT.md`](docs/V46_HUD_MENU_VISUAL_AUDIT.md). The gameplay HUD now follows the original J2ME sprite anchors and measured counter spacing, and the pause-menu focus row uses a clean MIDP-style rectangle instead of the unrelated striped sprite.
-
-## V45 J2ME menu restoration
-
-See [`docs/V45_J2ME_MENU_RESTORATION.md`](docs/V45_J2ME_MENU_RESTORATION.md). The menu presentation now uses square MIDP-style rows and original atlas decoration/highlight elements, with the existing localized text and menu actions retained.
+</div>

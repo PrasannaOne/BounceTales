@@ -22,7 +22,11 @@ const tabs=[els['settings-game-tab'],els['settings-about-tab']];
 const document={hidden:false,fullscreenElement:null,activeElement:null,documentElement:{requestFullscreen:async()=>{document.fullscreenElement=document.documentElement;}},getElementById:id=>els[id]||element(id),querySelector:selector=>selector.includes('about')?els['settings-about-tab']:els['settings-game-tab'],querySelectorAll:selector=>selector==='[data-settings-tab]'?tabs:selector==='[data-pick-control]'?Object.values(pickerButtons):selector==='[data-key-id]'?controls:[],addEventListener(n,f){(listeners.get('document:'+n)||listeners.set('document:'+n,[]).get('document:'+n)).push(f);}};
 const sandbox={document,window:null,console:{error:e=>{throw e;},warn:noop,log:noop},addEventListener(n,f){(listeners.get(n)||listeners.set(n,[]).get(n)).push(f);},requestAnimationFrame:f=>raf.push(f),CustomEvent:function(type,init){this.type=type;this.detail=init?.detail;},localStorage:storage,navigator:{},confirm:()=>true,prompt:noop,dispatchEvent:noop,TextDecoder,TextEncoder,Image:class{constructor(){this.complete=true;this.naturalWidth=1;this.naturalHeight=1;}set src(v){this._src=v;}},fetch:async url=>{const bytes=fs.readFileSync(path.join(root,url));return {ok:true,json:async()=>JSON.parse(bytes.toString('utf8')),arrayBuffer:async()=>bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength)};}};
 sandbox.Element=class Element{};sandbox.window=sandbox;vm.createContext(sandbox);
-for(const file of ['src/control-layout.js','src/fixed-point.js','src/original-input-map.js','src/original-camera.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/original-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','src/original-progression.js','src/game-particles.js','src/sprite-atlas.js','src/audio-controller.js','src/original-hud.js','game.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),sandbox,{filename:file});
+for(const file of ['src/control-layout.js','src/fixed-point.js','src/original-input-map.js','src/original-camera.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/original-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','src/original-progression.js','src/game-particles.js','src/sprite-atlas.js','src/audio-controller.js','src/original-hud.js','game.js']){
+  let source=fs.readFileSync(path.join(root,file),'utf8');
+  if(file==='game.js')source=source.replace('let atlases=[]',"window.__testGetElapsed=()=>elapsed;window.__testGetMode=()=>mode;window.__testDrawTitle=()=>drawCanvasTitle();window.__testMenuActions=()=>canvasMenuHits.map(hit=>hit.action);window.__testOpenNewGame=()=>handleCanvasMenuAction('newgame');window.__testMarkSaved=()=>{progress.records[0].score=1;};window.__testCloseConfirmation=()=>closeConfirmation();let atlases=[]");
+  vm.runInContext(source,sandbox,{filename:file});
+}
 const wait=()=>new Promise(resolve=>setImmediate(resolve));
 (async()=>{
   await wait();await wait();
@@ -66,17 +70,30 @@ const wait=()=>new Promise(resolve=>setImmediate(resolve));
   assert.equal(prefStore.has('bounce-control-layout-v1'),false,'Reset restores the original default control layout');
   els['close-settings'].fire('click');
   const key=(name,kind)=>{for(const fn of listeners.get(kind)||[])fn({key:name,target:null,preventDefault:noop,stopPropagation:noop});};
+  let now=1000;
+  const tick=frames=>{for(let i=0;i<frames;i++){const next=raf.shift();assert.equal(typeof next,'function');next(now);now+=1000/60;}};
+  // The HUD timer is driven by the same fixed-step update as physics. It must
+  // advance while playing, freeze while paused, then resume without wall drift.
   key('Enter','keydown');assert.equal(els.app.dataset.mode,'play','PC Enter starts the adventure');key('Enter','keyup');
+  tick(7);const runningTime=sandbox.__testGetElapsed();
+  assert.ok(runningTime>=0.09&&runningTime<=0.11,'level timer advances by fixed simulation time');
   key('Escape','keydown');assert.equal(els.app.dataset.mode,'pause','PC Escape opens pause');key('Escape','keyup');
+  const pausedTime=sandbox.__testGetElapsed();tick(6);
+  assert.equal(sandbox.__testGetElapsed(),pausedTime,'level timer freezes while paused');
   key('Escape','keydown');assert.equal(els.app.dataset.mode,'play','PC Escape resumes from pause');key('Escape','keyup');
+  // A saved game exposes both Continue and New Game without removing other menu routes.
+  sandbox.__testMarkSaved();sandbox.__testDrawTitle();
+  const titleActions=sandbox.__testMenuActions();
+  assert.ok(titleActions.includes('continue')&&titleActions.includes('newgame'),'saved title menu exposes Continue and New Game');
+  sandbox.__testOpenNewGame();
+  assert.equal(sandbox.__testGetMode(),'confirm','New Game opens the in-game confirmation panel');
+  sandbox.__testCloseConfirmation();assert.equal(sandbox.__testGetMode(),'title','cancelling New Game returns to the title screen');
   els['open-chapters'].fire('click');
   assert.equal(els['level-screen'].hidden,false,'chapter book opens inside the game viewport');
   els['level-next'].fire('click');
   assert.equal(JSON.parse(storageValue).selected,0,'browsing the book must not overwrite Continue progress');
   els['level-prev'].fire('click');
-  let now=1000;
   const stageNames=['Misty Morning','Unfriendly Friends','Seeking Answers','Bumpy Cracks','Secret Stalkway','Into the Mines','A Gloomy Path','Rumbling Sounds','Trapped in Machine','Tunnel of Treasures','Wicked Circus','Hunting Colours','Almost There','Final Ride','Fantastic Fair'];
-  const tick=frames=>{for(let i=0;i<frames;i++){const next=raf.shift();assert.equal(typeof next,'function');next(now);now+=1000/60;}};
   for(let i=0;i<stageNames.length;i++){
     if(i>0)els['level-next'].fire('click');
     assert.equal(els['level-position'].textContent,String(i+1).padStart(2,'0')+' / 15');
