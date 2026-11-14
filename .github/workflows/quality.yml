@@ -1,0 +1,33 @@
+name: Project quality checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Compile-check Python tools
+        run: python -m py_compile tools/import_runtime_zip.py
+      - name: Run complete verification suite
+        run: npm run verify
+      - name: Validate PWA manifest
+        run: node -e "JSON.parse(require('node:fs').readFileSync('manifest.webmanifest','utf8'))"

@@ -1,0 +1,70 @@
+name: Import Bounce Tales runtime ZIP
+
+on:
+  push:
+    branches: [main]
+    paths: ["Bounce.zip"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bounce-tales-zip-import
+  cancel-in-progress: false
+
+jobs:
+  import-runtime:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate and import runtime files
+        shell: bash
+        run: |
+          if [[ -f Bounce.zip ]]; then
+            python tools/import_runtime_zip.py Bounce.zip .
+          else
+            echo "No Bounce.zip supplied; running verification only."
+          fi
+
+      - name: Validate imported runtime
+        run: |
+          python -m py_compile tools/import_runtime_zip.py
+          python -m json.tool manifest.webmanifest > /dev/null
+          node tools/check-syntax.cjs
+          node tools/run-tests.cjs
+          node tests/runtime-smoke.cjs
+          node tests/level1-springboard-proof.cjs
+
+      - name: Commit runtime-only changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- index.html style.css game.js sw.js manifest.webmanifest \
+            favicon.png icon-192.png icon-512.png apple-touch-icon.png \
+            bounce-tales-web-preview.png assets src
+          if git ls-files --error-unmatch Bounce.zip >/dev/null 2>&1; then
+            git add -A -- Bounce.zip
+          fi
+          if git diff --cached --quiet; then
+            echo "No runtime changes to commit."
+            exit 0
+          fi
+          git commit -m "Import validated Bounce Tales runtime"
+          git push origin HEAD:main
