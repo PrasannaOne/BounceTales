@@ -1,11 +1,11 @@
-/* V43: small critical shell, progressive asset caching, versioned offline store. */
-const CACHE_NAME = 'bounce-tales-v43';
+/* V45: small critical shell, progressive asset caching, versioned offline store. */
+const CACHE_NAME = 'bounce-tales-v45';
 const APP_SHELL = [
   "./",
   "index.html",
-  "style.css?v=43",
+  "style.css?v=45",
   "manifest.webmanifest",
-  "sw.js?v=43",
+  "sw.js?v=45",
   "src/image-map.json",
   "src/sprite-atlas.json",
   "assets/original/lang.xx",
@@ -24,26 +24,26 @@ const APP_SHELL = [
   "icon-192.png",
   "icon-512.png",
   "apple-touch-icon.png",
-  "src/fixed-point.js?v=43",
-  "src/original-input-map.js?v=43",
-  "src/original-camera.js?v=43",
-  "src/rlef-reader.js?v=43",
-  "src/bounce-physics.js?v=43",
-  "src/terrain-collision.js?v=43",
-  "src/original-collision.js?v=43",
-  "src/game-timing.js?v=43",
-  "src/event-engine.js?v=43",
-  "src/original-sprite-animation.js?v=43",
-  "src/original-enemies.js?v=43",
-  "src/original-water.js?v=43",
-  "src/original-trampoline.js?v=43",
-  "src/midp-graphics.js?v=43",
-  "src/original-progression.js?v=43",
-  "src/game-particles.js?v=43",
-  "src/sprite-atlas.js?v=43",
-  "src/audio-controller.js?v=43",
-  "src/control-layout.js?v=43",
-  "game.js?v=43"
+  "src/fixed-point.js?v=45",
+  "src/original-input-map.js?v=45",
+  "src/original-camera.js?v=45",
+  "src/rlef-reader.js?v=45",
+  "src/bounce-physics.js?v=45",
+  "src/terrain-collision.js?v=45",
+  "src/original-collision.js?v=45",
+  "src/game-timing.js?v=45",
+  "src/event-engine.js?v=45",
+  "src/original-sprite-animation.js?v=45",
+  "src/original-enemies.js?v=45",
+  "src/original-water.js?v=45",
+  "src/original-trampoline.js?v=45",
+  "src/midp-graphics.js?v=45",
+  "src/original-progression.js?v=45",
+  "src/game-particles.js?v=45",
+  "src/sprite-atlas.js?v=45",
+  "src/audio-controller.js?v=45",
+  "src/control-layout.js?v=45",
+  "game.js?v=45"
 ];
 self.addEventListener('install', event => {
   event.waitUntil((async () => {

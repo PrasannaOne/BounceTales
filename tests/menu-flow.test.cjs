@@ -21,8 +21,10 @@ assert.match(game,/function drawCanvasChapterBook\(\)[\s\S]*?drawImageMap\(COVER
 for(const name of ['drawCanvasTitle','drawCanvasPause','drawCanvasComplete','drawCanvasGuide','drawCanvasScores','drawCanvasOptions'])assert.match(game,new RegExp('function '+name+'\\('),name+' is a canvas scene');
 assert.match(game,/function bindCanvasMenu\(\)[\s\S]*?pointerdown[\s\S]*?pointerup/,'canvas menu uses pointer input');
 assert.match(game,/else if\(action==='scores'\)/);assert.match(game,/else if\(action==='options'\)/);
-assert.match(game,/canvasMenuButton\(gameText\(39,'CHAPTER SELECTION'\)[^\n]*'chapters'/,'pause screen returns to original chapter selection');
-assert.match(game,/canvasMenuButton\(gameText\(37,'RESTART CHAPTER'\)[^\n]*'restart'/,'pause screen has the original restart-chapter action');
+assert.match(game,/canvasMenuButton\('CONTINUE',[^\n]*'resume'/,'pause screen resumes play');
+assert.match(game,/canvasMenuButton\('RESTART',[^\n]*'restart'/,'pause screen restarts the current chapter');
+assert.match(game,/canvasMenuButton\('OPTIONS',[^\n]*'options'/,'pause screen opens options');
+assert.match(game,/canvasMenuButton\('MAIN MENU',[^\n]*'quit-confirm'/,'pause screen returns to the main menu through confirmation');
 
 assert.match(game,/gameText\(17,'CONTINUE'\)/,'main menu uses the original localized Continue label');
 assert.match(game,/gameText\(18,'INSTRUCTIONS'\)/,'main menu uses the original localized Instructions label');

@@ -87,3 +87,8 @@ The touch-control editor and live controls share a tested responsive geometry mo
 ## V40 original UI restoration
 
 See [`docs/V40_ORIGINAL_UI_RESTORATION.md`](docs/V40_ORIGINAL_UI_RESTORATION.md) for the original JAR menu text, blocking story dialogue, language resources, challenge medals, and Node.js verification scope.
+
+
+## V45 J2ME menu restoration
+
+See [`docs/V45_J2ME_MENU_RESTORATION.md`](docs/V45_J2ME_MENU_RESTORATION.md). The menu presentation now uses square MIDP-style rows and original atlas decoration/highlight elements, with the existing localized text and menu actions retained.

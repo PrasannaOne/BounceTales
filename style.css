@@ -904,3 +904,6 @@ body{min-height:100svh!important;min-height:100dvh!important;align-items:flex-st
   .share-icon{width:19px;height:19px;}
   .heart-icon{width:22px;height:22px;}
 }
+
+/* V44: the source-style icon/counter HUD is rendered on the high-DPI text layer. */
+#app[data-mode="play"] .statusline{display:none!important;}
