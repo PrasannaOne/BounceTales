@@ -806,21 +806,18 @@ function menuText(text,x,y,size=8,color='#f7eed9',align='center'){
   target.strokeText(String(text),x,y,214);target.fillText(String(text),x,y,214);target.restore();
 }
 function canvasMenuButton(label,x,y,w,h,action,kind='gold',disabled=false){
-  // Original MIDP list-row treatment: hard-edged rows and atlas highlight.
+  // The original MIDP list highlights the selected row with a filled
+  // rectangle and border. Sprite 10 is a long decorative stripe, not a focus
+  // asset, so it must never be stretched/clipped into a menu button.
   const fills={gold:'#60370f',green:'#3f321b',dark:'#302316',cream:'#e7dfc7'};
   const borders={gold:'#b98b43',green:'#8d794b',dark:'#776346',cream:'#a18b5c'};
   const focused=!disabled&&canvasMenuHits.length===menuFocusIndex;
   ctx.save();
-  if(focused&&imageMaps){
-    ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
-    drawImageMap(10,Math.round(x+w/2),Math.round(y+h/2));ctx.restore();
-  }else{
-    ctx.fillStyle=disabled?'#382b1c':fills[kind];
-    ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
-    ctx.strokeStyle=disabled?'#66543a':borders[kind];
-    ctx.lineWidth=1;ctx.strokeRect(Math.round(x)+.5,Math.round(y)+.5,Math.round(w)-1,Math.round(h)-1);
-  }
-  if(focused&&!imageMaps){ctx.strokeStyle='#f8dda0';ctx.lineWidth=1;ctx.strokeRect(x+1.5,y+1.5,w-3,h-3);}
+  ctx.fillStyle=disabled?'#382b1c':(focused?'#875b27':fills[kind]);
+  ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));
+  ctx.strokeStyle=disabled?'#66543a':(focused?'#e5c47f':borders[kind]);
+  ctx.lineWidth=focused?1.5:1;
+  ctx.strokeRect(Math.round(x)+.5,Math.round(y)+.5,Math.round(w)-1,Math.round(h)-1);
   menuText(label,x+w/2,y+h/2,8,disabled?'#9c8c70':'#fff0cc');
   ctx.restore();
   if(!disabled)canvasMenuHits.push({x,y,w,h,action});
@@ -939,21 +936,33 @@ function drawCanvasOptions(){
 }
 
 function drawOriginalGameplayHud(){
-  // The original J2ME HUD places collectible, score and elapsed-time readouts
-  // along the top edge. Keep its 240x320 logical coordinates and draw text on
-  // the dedicated DPR-scaled text canvas for clean modern-screen rendering.
+  // Source reference: decompiled m.java HUD draw path. The egg sprite is
+  // anchored at (0,0); its separator follows the live egg-counter width; the
+  // clock is anchored to the right edge and its time is right-aligned beside it.
+  // Text remains on the DPR-scaled overlay while sprites stay on the pixel-art
+  // game canvas. This keeps the original 240x320 HUD geometry crisp on phones.
   const score=Math.min(32767,Math.floor((collected*10000*(BounceOriginalProgression.EGG_SCORE_MULTIPLIERS[currentLevel.index]||1))/Math.max(1,Math.floor(elapsed))));
   const seconds=Math.max(0,Math.floor(elapsed));
   const mm=Math.floor(seconds/60),ss=seconds%60;
+  const eggLabel=String(collected).padStart(2,'0');
+  const scoreLabel=String(score).padStart(4,'0');
+  const timeLabel=mm+':'+String(ss).padStart(2,'0');
+  const textTarget=textCtx||ctx;
+  textTarget.save();
+  textTarget.font='700 7px "Courier New", ui-monospace, monospace';
+  const eggTextWidth=textTarget.measureText(eggLabel).width;
+  textTarget.restore();
+  const hudLayout=BounceOriginalHud.layout(W,eggTextWidth);
+
   ctx.save();
   ctx.globalAlpha=.96;
-  drawImageMap(102,10,8);
-  drawImageMap(101,39,8);
-  drawImageMap(103,142,8);
+  drawImageMap(102,hudLayout.eggIcon.x,hudLayout.eggIcon.y);
+  drawImageMap(101,hudLayout.eggDivider.x,hudLayout.eggDivider.y);
+  drawImageMap(103,hudLayout.clock.x,hudLayout.clock.y);
   ctx.restore();
-  menuText(String(collected).padStart(2,'0'),31,8,7,'#fff4d7','left');
-  menuText(String(score).padStart(4,'0'),94,8,7,'#fff4d7','center');
-  menuText(mm+':'+String(ss).padStart(2,'0'),176,8,7,'#fff4d7','right');
+  menuText(eggLabel,hudLayout.eggCounter.x,hudLayout.eggCounter.y,7,'#fff4d7','left');
+  menuText(scoreLabel,hudLayout.score.x,hudLayout.score.y,7,'#fff4d7','left');
+  menuText(timeLabel,hudLayout.timer.right,hudLayout.timer.y,7,'#fff4d7','right');
 }
 
 function drawGameplayScene(){

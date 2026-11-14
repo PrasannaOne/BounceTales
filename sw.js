@@ -1,11 +1,11 @@
-/* V45: small critical shell, progressive asset caching, versioned offline store. */
-const CACHE_NAME = 'bounce-tales-v45';
+/* V46: small critical shell, progressive asset caching, versioned offline store. */
+const CACHE_NAME = 'bounce-tales-v46';
 const APP_SHELL = [
   "./",
   "index.html",
-  "style.css?v=45",
+  "style.css?v=46",
   "manifest.webmanifest",
-  "sw.js?v=45",
+  "sw.js?v=46",
   "src/image-map.json",
   "src/sprite-atlas.json",
   "assets/original/lang.xx",
@@ -24,26 +24,27 @@ const APP_SHELL = [
   "icon-192.png",
   "icon-512.png",
   "apple-touch-icon.png",
-  "src/fixed-point.js?v=45",
-  "src/original-input-map.js?v=45",
-  "src/original-camera.js?v=45",
-  "src/rlef-reader.js?v=45",
-  "src/bounce-physics.js?v=45",
-  "src/terrain-collision.js?v=45",
-  "src/original-collision.js?v=45",
-  "src/game-timing.js?v=45",
-  "src/event-engine.js?v=45",
-  "src/original-sprite-animation.js?v=45",
-  "src/original-enemies.js?v=45",
-  "src/original-water.js?v=45",
-  "src/original-trampoline.js?v=45",
-  "src/midp-graphics.js?v=45",
-  "src/original-progression.js?v=45",
-  "src/game-particles.js?v=45",
-  "src/sprite-atlas.js?v=45",
-  "src/audio-controller.js?v=45",
-  "src/control-layout.js?v=45",
-  "game.js?v=45"
+  "src/fixed-point.js?v=46",
+  "src/original-input-map.js?v=46",
+  "src/original-camera.js?v=46",
+  "src/rlef-reader.js?v=46",
+  "src/bounce-physics.js?v=46",
+  "src/terrain-collision.js?v=46",
+  "src/original-collision.js?v=46",
+  "src/game-timing.js?v=46",
+  "src/event-engine.js?v=46",
+  "src/original-sprite-animation.js?v=46",
+  "src/original-enemies.js?v=46",
+  "src/original-water.js?v=46",
+  "src/original-trampoline.js?v=46",
+  "src/midp-graphics.js?v=46",
+  "src/original-progression.js?v=46",
+  "src/game-particles.js?v=46",
+  "src/sprite-atlas.js?v=46",
+  "src/audio-controller.js?v=46",
+  "src/control-layout.js?v=46",
+  "src/original-hud.js?v=46",
+  "game.js?v=46"
 ];
 self.addEventListener('install', event => {
   event.waitUntil((async () => {

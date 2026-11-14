@@ -89,6 +89,11 @@ The touch-control editor and live controls share a tested responsive geometry mo
 See [`docs/V40_ORIGINAL_UI_RESTORATION.md`](docs/V40_ORIGINAL_UI_RESTORATION.md) for the original JAR menu text, blocking story dialogue, language resources, challenge medals, and Node.js verification scope.
 
 
+
+## V46 HUD and pause-menu visual correction
+
+See [`docs/V46_HUD_MENU_VISUAL_AUDIT.md`](docs/V46_HUD_MENU_VISUAL_AUDIT.md). The gameplay HUD now follows the original J2ME sprite anchors and measured counter spacing, and the pause-menu focus row uses a clean MIDP-style rectangle instead of the unrelated striped sprite.
+
 ## V45 J2ME menu restoration
 
 See [`docs/V45_J2ME_MENU_RESTORATION.md`](docs/V45_J2ME_MENU_RESTORATION.md). The menu presentation now uses square MIDP-style rows and original atlas decoration/highlight elements, with the existing localized text and menu actions retained.

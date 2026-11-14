@@ -61,7 +61,7 @@ const sandbox = {
   fetch: async url => { const bytes = fs.readFileSync(path.join(root, url)); return { ok: true, json: async () => JSON.parse(bytes.toString('utf8')), arrayBuffer: async () => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) }; }
 };
 sandbox.Element = class Element {}; sandbox.window = sandbox; vm.createContext(sandbox);
-for (const file of ['src/control-layout.js','src/fixed-point.js','src/original-input-map.js','src/original-camera.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/original-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','src/original-progression.js','src/game-particles.js','src/sprite-atlas.js','src/audio-controller.js','game.js']) {
+for (const file of ['src/control-layout.js','src/fixed-point.js','src/original-input-map.js','src/original-camera.js','src/rlef-reader.js','src/bounce-physics.js','src/terrain-collision.js','src/original-collision.js','src/game-timing.js','src/event-engine.js','src/original-sprite-animation.js','src/original-enemies.js','src/original-water.js','src/original-trampoline.js','src/midp-graphics.js','src/original-progression.js','src/game-particles.js','src/sprite-atlas.js','src/audio-controller.js','src/original-hud.js','game.js']) {
   let source = fs.readFileSync(path.join(root, file), 'utf8');
   if (file === 'game.js') source = source.replace('boot();', 'window.__controlTest={applyLiveControlLayout,startLevel,input};boot();');
   vm.runInContext(source, sandbox, { filename: file });

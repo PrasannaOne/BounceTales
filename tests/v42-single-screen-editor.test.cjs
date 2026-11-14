@@ -11,6 +11,6 @@ assert.match(v42,/overflow:hidden!important/,'editor cannot scroll');
 assert.match(v42,/control-editor-live-hint\{display:none!important/,'redundant hint is removed to save height');
 assert.match(v42,/control-editor-actions \.settings-action\{min-height:34px/,'all action buttons remain compact and tappable');
 for(const id of ['reset-control-layout','cancel-control-editor','save-control-layout']) assert.ok(html.includes(`id="${id}"`),`${id} remains available`);
-assert.match(html,/style\.css\?v=45/);
-assert.match(html,/control-layout\.js\?v=45/);
+assert.match(html,/style\.css\?v=46/);
+assert.match(html,/control-layout\.js\?v=46/);
 console.log('V42 editor: one-screen non-scrollable layout, all four selectors, slider, and all three actions verified');
