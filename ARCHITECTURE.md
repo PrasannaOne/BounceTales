@@ -2,7 +2,7 @@
 
 > **Official playable site:** https://prasannaone.github.io/BounceTales/  
 > **Source repository:** https://github.com/PrasannaOne/BounceTales  
-> **Current documented baseline:** V47
+> **Current documented baseline:** V49
 
 This document describes the browser runtime, the relationship between the original J2ME resource model and the JavaScript implementation, and the boundaries that should remain stable during maintenance. For the operational walkthrough and release checklist, see [`docs/PROJECT_GUIDE.md`](docs/PROJECT_GUIDE.md).
 
@@ -87,3 +87,10 @@ Node.js tests cover selected resource parsing, physics/collision, level scriptin
 ## 10. License and rights boundary
 
 The root `LICENSE` governs only the portions of the project authored by the Licensor. It is the proprietary Sovereign Source License v1.1, not an open-source license. Original Bounce Tales content and third-party components are excluded and remain subject to their respective rights and terms.
+
+
+## Port-engine boundary (V49)
+
+`src/module-registry.js` is a dependency-free, game-agnostic helper that can be reused independently. It accepts named system definitions, optional groups/descriptions and unavailable (`null`) systems, then exposes immutable registry operations and diagnostics. `src/port-engine.js` uses it to publish the Bounce Tales catalog as `BouncePortEngine` API v1. The generic registry is deliberately separated from Bounce-specific globals and module loading.
+
+`src/port-engine.js` exposes the existing systems through `BouncePortEngine` API v1. The registry is a discovery surface, not a replacement for the Bounce Tales application coordinator. Its `createRegistry(definitions)` factory also allows a future port to build a separate read-only registry from its own systems without importing Bounce-specific globals. Keep generic primitives and host adapters separate from game-specific behavior; see [the engine porting guide](docs/ENGINE_PORTING_GUIDE.md).

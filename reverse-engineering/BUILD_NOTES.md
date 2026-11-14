@@ -1,5 +1,6 @@
 # Reverse-engineering notes
 
+> **Historical milestone record:** This document describes the state, scope and known limitations of its named build at the time. It is retained as research history and is not a description of the current release unless it explicitly says so.
 ## Source of truth
 
 The only primary binary used for this pass was the supplied `bounce_tales_240x320-269519.jar`. Its full archive content is preserved under `assets/original/`. Every one of the 106 archive files was verified byte-for-byte against that folder using SHA-256.
@@ -33,4 +34,4 @@ The analysis scripts require only Python's standard library; bytecode regenerati
 - Recover all level object, enemy, collision, checkpoint and progression logic.
 - Reproduce the Java ME RecordStore save schema and verify state transitions against an original runtime.
 
-Do not describe the current HTML prototype as a one-to-one port. This build adds verified reverse-engineering results and reusable input code; it does not yet execute the original game engine.
+At the time of this early research pass, the browser prototype did not yet execute the original game engine. The current repository has since evolved into a playable browser implementation; consult the root README and ARCHITECTURE.md for the present runtime. The findings above remain a historical record of this build.

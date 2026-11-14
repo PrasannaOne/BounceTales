@@ -1,5 +1,6 @@
 # Build 09 · original RLEF event scripting
 
+> **Historical milestone record:** This document describes the state, scope and known limitations of its named build at the time. It is retained as research history and is not a description of the current release unless it explicitly says so.
 ## Exact source evidence
 
 The supplied Bounce Tales 2.0.3 JAR contains `g.class`. Its `javap -c -p` output is preserved at `reverse-engineering/bytecode/g.txt`. The class extends the shared scene object class `j`, parses a trigger rectangle and nested byte arrays, and its event execution method contains a `tableswitch` covering opcodes **0 through 32**. `g.class` is the event object/interpreter, not a generic scenery record.
@@ -74,4 +75,4 @@ The original sprite animation frame interval is 150 ms. This mapping and timer l
 
 ## Remaining caveats
 
-The interpreter command set is implemented, but not every opcode has a live stage path in Misty Morning. Commands involving the full original scene graph, native message UI, some object-specific animation hooks and camera spring model still need side-by-side checks against the 2.0.3 runtime. Trigger-area intersection and event-24 actor-gone checks are simplified browser equivalents. All 16 level resources still parse, but only Misty Morning is wired into playable gameplay. This work is not a claim of complete one-to-one parity.
+The interpreter command set is implemented, but not every opcode has a live stage path in Misty Morning. Commands involving the full original scene graph, native message UI, some object-specific animation hooks and camera spring model still need side-by-side checks against the 2.0.3 runtime. Trigger-area intersection and event-24 actor-gone checks are simplified browser equivalents. All 16 level resources still parse, but only Misty Morning is wired into playable gameplay. This work is not a claim of complete one-to-one parity. That sentence records the Build 09 milestone only: the current browser campaign later expanded to 15 playable chapter resources, as listed in `game.js` and `reverse-engineering/RESOURCE_FORMATS.md`.

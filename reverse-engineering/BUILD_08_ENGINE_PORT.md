@@ -1,5 +1,6 @@
 # Build 08 · original-engine translation notes
 
+> **Historical milestone record:** This document describes the state, scope and known limitations of its named build at the time. It is retained as research history and is not a description of the current release unless it explicitly says so.
 ## Timing from the supplied `o.class`
 
 The original `o.k()` routine reads `System.currentTimeMillis()`, subtracts the previous timestamp, divides by the configured internal update-pass count, and clamps the resulting integer update delta to the configured maximum. The class initializer sets the pass count to `1` and maximum delta to `500` ms. A public helper changes the pass count to `2`; another configures the maximum. `c.d()` reads this update delta and converts milliseconds to seconds with `0.001f` for movement integration.

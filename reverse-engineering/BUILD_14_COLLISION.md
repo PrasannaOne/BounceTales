@@ -1,5 +1,6 @@
 # Build 14 · collision and terrain contact
 
+> **Historical milestone record:** This document describes the state, scope and known limitations of its named build at the time. It is retained as research history and is not a description of the current release unless it explicitly says so.
 ## Original source basis
 
 The uploaded 2.0.3 `c.class` collision routine walks scene geometry contours, intersects the swept player-centre path with edges offset by the active ball radius, then checks the contour vertices with a circle-contact routine. Contact candidates store the surface direction and are used by the actor response path. The public readable `BounceObject.checkCollisions` source makes this logic easier to follow, but is a 2.0.25 reference; the uploaded 2.0.3 bytecode remains authoritative.

@@ -2,7 +2,7 @@
 
 > **Official game:** https://prasannaone.github.io/BounceTales/  
 > **Repository:** https://github.com/PrasannaOne/BounceTales  
-> **Document scope:** V47 project structure and maintenance guide
+> **Document scope:** V49 project structure and maintenance guide
 
 This guide explains how the browser project is organised, how a play session moves through the code, where important behavior lives, how to validate changes, and which boundaries should be protected during maintenance.
 
@@ -42,6 +42,8 @@ Pause and blocking dialogue must suspend the appropriate simulation work. Avoid 
 
 | Module | Responsibility | Maintenance note |
 |---|---|---|
+| `src/module-registry.js` | Standalone game-agnostic module registry factory | Reusable in a separate port without loading Bounce modules |
+| `src/port-engine.js` | Bounce Tales module catalog over the generic registry | Keep Bounce-specific adapters and recovered behavior clearly labeled |
 | `src/fixed-point.js` | Fixed-point arithmetic helpers | Keep simulation units consistent; avoid accidental floating/CSS-pixel mixing |
 | `src/game-timing.js` | Fixed-step timing support | Preserve deterministic update cadence and pause behavior |
 | `src/bounce-physics.js` | Player movement and bounce logic | Treat physics constants and established movement behavior as regression-sensitive |
@@ -110,27 +112,13 @@ Open <http://localhost:8000/>. Use browser developer tools to inspect runtime er
 
 ## 9. Validation commands
 
-Run the CommonJS tests:
+Run the complete release verification workflow from the repository root:
 
 ```bash
-for test in tests/*.cjs; do
-  node "$test" || exit 1
-done
+npm run verify
 ```
 
-Run syntax checks:
-
-```bash
-find . -name '*.js' -not -path './assets/*' -print0 |
-  xargs -0 -n1 node --check
-```
-
-Run the dedicated Level 1 springboard proof and runtime smoke:
-
-```bash
-node tests/level1-springboard-proof.cjs
-node tests/runtime-smoke.cjs
-```
+This runs the syntax checker, every `tests/*.cjs` file, the runtime smoke harness and the dedicated Level 1 springboard lifecycle proof. Individual commands are also available as `npm run check`, `npm test`, `npm run smoke` and `npm run proof:springboard`. No third-party npm packages are required.
 
 Validate the RLEF resources with the repository's validation scripts when level files or their reader are touched. A passing test suite is evidence for the assertions those tests actually make; it is not proof of every stage, every device or every visual detail.
 
@@ -166,3 +154,10 @@ For a focused UI change, compare the exact source asset and draw routine first. 
 ## 12. Project license
 
 The Licensor-authored portions of the project are governed by the root **Sovereign Source License v1.1**. It is proprietary and source-available, not an open-source license. Original Bounce Tales materials and third-party components are excluded and remain under their respective rights and terms. Read the complete `LICENSE` before copying or using project materials.
+
+
+## V49 repository and porting notes
+
+The current release includes a dependency-free Node.js verification workflow (`npm run verify`) and the `BouncePortEngine` API v1 registry. The registry exposes existing standalone modules and provides `createRegistry(definitions)` for a separate future port to compose its own read-only module registry. It does not turn Bounce Tales' application coordinator into a universal engine. Consult [ENGINE_PORTING_GUIDE.md](ENGINE_PORTING_GUIDE.md) for module boundaries and adapter contracts.
+
+The GitHub Actions workflow at `.github/workflows/import-bounce-zip.yml` imports and validates a supplied `Bounce.zip` archive. It is not the GitHub Pages publishing workflow. The deployed static site is published separately through the repository's Pages configuration.

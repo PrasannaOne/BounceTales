@@ -1,5 +1,6 @@
 # Build 13 · UI, input and camera
 
+> **Historical milestone record:** This document describes the state, scope and known limitations of its named build at the time. It is retained as research history and is not a description of the current release unless it explicitly says so.
 ## Adaptive shell
 
 The 240×320 logical viewport remains constant. CSS changes only the presentation scale and placement: portrait layouts stack canvas and controls, landscape phones place controls beside the canvas, and wider desktop screens place controls in a side column. The canvas keeps a 3:4 ratio.

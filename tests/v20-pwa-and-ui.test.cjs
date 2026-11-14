@@ -24,7 +24,7 @@ for(const tag of ['og:title','og:description','og:image','twitter:card','twitter
 assert.match(html,/bounce-tales-web-preview\.png/);assert.match(html,/apple-touch-icon\.png/);
 assert.deepEqual(manifest.icons.map(i=>i.sizes),['192x192','512x512']);
 assert.equal(manifest.icons[0].src,'icon-192.png');assert.equal(manifest.icons[1].src,'icon-512.png');
-assert.match(sw,/bounce-tales-v47/);for(const name of ['icon-192.png','icon-512.png','apple-touch-icon.png'])assert.ok(sw.includes(name),'critical shell includes '+name);assert.doesNotMatch(sw,/bounce-tales-web-preview\.png|assets\/audio\/act1\.ogg/,'large preview/audio are lazy-cached, not first-install prerequisites');
+assert.match(sw,/bounce-tales-v49/);for(const name of ['icon-192.png','icon-512.png','apple-touch-icon.png'])assert.ok(sw.includes(name),'critical shell includes '+name);assert.doesNotMatch(sw,/bounce-tales-web-preview\.png|assets\/audio\/act1\.ogg/,'large preview/audio are lazy-cached, not first-install prerequisites');
 const logo=readPngRGBA(fs.readFileSync(path.join(root,'assets/logo-transparent.png')));
 let alphaMin=255,alphaMax=0;for(let i=3;i<logo.data.length;i+=4){alphaMin=Math.min(alphaMin,logo.data[i]);alphaMax=Math.max(alphaMax,logo.data[i]);}
 assert.ok(alphaMin===0&&alphaMax===255,'title logo has true transparency and opaque letter artwork');

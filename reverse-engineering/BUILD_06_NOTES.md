@@ -1,5 +1,6 @@
 # Build 06 implementation notes
 
+> **Historical milestone record:** This document describes the state, scope and known limitations of its named build at the time. It is retained as research history and is not a description of the current release unless it explicitly says so.
 ## Original actor eye/glow rendering
 The actor renderer in the public `HelloOO7/BounceTales` decompilation identifies:
 - Bounce glow layers: image-map IDs `17` and `28`.

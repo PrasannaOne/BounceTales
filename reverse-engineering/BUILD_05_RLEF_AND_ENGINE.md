@@ -1,5 +1,6 @@
 # Build 05 · RLEF level decoding and initial engine translation
 
+> **Historical milestone record:** This document describes the state, scope and known limitations of its named build at the time. It is retained as research history and is not a description of the current release unless it explicitly says so.
 ## Supplied JAR facts
 
 The original JAR identifies itself as Bounce Tales 2.0.3. Its resource map (`assets/original/a`) contains 110 resource records and 55 resource batches. Sixteen batches point to the resources `bf` through `bu`; these are not image dimensions or raw screen layouts. They are **RLEF level/object streams**.

@@ -1,5 +1,6 @@
 # Build 03 verification record
 
+> **Historical milestone record:** This document describes the state, scope and known limitations of its named build at the time. It is retained as research history and is not a description of the current release unless it explicitly says so.
 Verified in the build workspace against the uploaded original JAR:
 
 - 106 non-directory JAR entries found.

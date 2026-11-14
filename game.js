@@ -746,16 +746,16 @@ function drawOriginalConfirmation(){
 function drawOriginalStoryMessage(){
   if(!activeStoryMessage)return;
   ctx.fillStyle='rgba(0,0,0,.58)';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#17251e';menuRoundRect(10,220,220,88,5);ctx.fill();
+  ctx.fillStyle='#17251e';menuRoundRect(10,210,220,99,5);ctx.fill();
   ctx.strokeStyle='#c6ad78';ctx.lineWidth=1;ctx.stroke();
   const target=textCtx||ctx;
-  target.save();target.font='7px "Courier New",monospace';target.textAlign='left';target.textBaseline='top';target.fillStyle='#f1ead7';target.strokeStyle='#07100d';target.lineWidth=.8;target.lineJoin='round';
-  const words=String(activeStoryMessage.text).replace(/\r/g,'').split(/\s+/);let line='',lines=[],y=234;
+  target.save();target.font='8.2px "Courier New",monospace';target.textAlign='left';target.textBaseline='top';target.fillStyle='#f1ead7';target.strokeStyle='#07100d';target.lineWidth=.8;target.lineJoin='round';
+  const words=String(activeStoryMessage.text).replace(/\r/g,'').split(/\s+/);let line='',lines=[],y=224;
   for(const word of words){const test=line?line+' '+word:word;if(target.measureText(test).width>194&&line){lines.push(line);line=word;}else line=test;}
   if(line)lines.push(line);
-  lines.slice(0,5).forEach((text,i)=>{target.strokeText(text,22,y+i*10,194);target.fillText(text,22,y+i*10,194);});
+  lines.slice(0,6).forEach((text,i)=>{target.strokeText(text,22,y+i*12.5,194);target.fillText(text,22,y+i*12.5,194);});
   target.restore();
-  menuText('TAP OR PRESS ACTION  ›',120,296,5.5,'#e4c98f');
+  menuText('TAP OR PRESS ACTION  ›',120,297,6.2,'#e4c98f');
 }
 function dismissOriginalStoryMessage(){
   if(!activeStoryMessage)return false;
@@ -766,16 +766,16 @@ function dismissOriginalStoryMessage(){
 }
 function drawFieldMessage(){
   if(!fieldMessage||fieldMessageTimer<=0)return;
-  const textTarget=textCtx||ctx,maxWidth=202,lines=[];textTarget.font='600 9px system-ui, sans-serif';
+  const textTarget=textCtx||ctx,maxWidth=202,lines=[];textTarget.font='600 10px system-ui, sans-serif';
   const words=fieldMessage.replace(/[’‘]/g,"'").split(/\s+/);let line='';
   for(const word of words){const test=line?line+' '+word:word;if(textTarget.measureText(test).width>maxWidth&&line){lines.push(line);line=word;}else line=test;}
   if(line)lines.push(line);
-  const shown=lines.slice(0,4),height=shown.length*12+15,y=H-height-9;
+  const shown=lines.slice(0,4),height=shown.length*13.5+17,y=H-height-9;
   const alpha=Math.min(0.92,fieldMessageTimer<0.4?fieldMessageTimer/0.4:0.92);
   ctx.fillStyle='rgba(7,17,19,'+alpha+')';ctx.fillRect(9,y,W-18,height);
   ctx.strokeStyle='rgba(242,232,205,.45)';ctx.strokeRect(9.5,y+.5,W-19,height-1);
   textTarget.fillStyle='#f5eddb';textTarget.textAlign='center';textTarget.textBaseline='top';
-  shown.forEach((t,i)=>textTarget.fillText(t,120,y+8+i*12,maxWidth));
+  shown.forEach((t,i)=>textTarget.fillText(t,120,y+9+i*13.5,maxWidth));
 }
 function drawOriginalMenuBackground(){
   // Exact two-tone MIDP menu field and edge decoration from the original m.java.
@@ -952,7 +952,7 @@ function drawCanvasGuide(){
   let y=49;
   for(const [heading,body] of sections){
     menuText(heading,26,y+3,6.8,'#a35b1e','left');
-    y=wrapMenuText(body,26,y+9,188,7.3,5.6,'#493a28',2)+3;
+    y=wrapMenuText(body,26,y+9,188,8,6.2,'#493a28',2)+3;
   }
   canvasMenuButton('BACK TO MENU',48,282,144,19,'title','gold');
 }
@@ -1180,9 +1180,7 @@ function rankTimeMedal(level,seconds){
 function medalLabel(rank){return rank===2?'GOLD':rank===1?'SILVER':rank===0?'BRONZE':gameText(41,'NO MEDAL').toUpperCase();}
 function getLocalizedLevelName(index){return languageStrings?.[LEVEL_TEXT_INDICES[index]]||LEVELS[index]?.name||'Unknown chapter';}
 function updateMenuSummary(){
-  const selected=progress.selected||0,record=progress.records[selected]||progress.records[0];
   const cont=document.getElementById('continue-game');if(cont)cont.textContent=BounceOriginalProgression.unlockedCount(progress)>1?'CONTINUE ADVENTURE':'START ADVENTURE';
-  const summary=document.getElementById('save-summary');if(summary){const total=BounceOriginalProgression.totalEggs(progress);summary.textContent=getLocalizedLevelName(selected)+' · '+total+' eggs collected';}
 }
 function updateLevelBook(){
   selectedLevelIndex=clamp(selectedLevelIndex,0,14)|0;const r=progress.records[selectedLevelIndex],unlocked=BounceOriginalProgression.isUnlocked(progress,selectedLevelIndex),required=BONUS_REQUIREMENTS[selectedLevelIndex];
@@ -1701,7 +1699,7 @@ async function boot(){
     selectedLevelIndex=progress.selected||0;if(!BounceOriginalProgression.isUnlocked(progress,selectedLevelIndex))selectedLevelIndex=0;unlockedForme=progress.unlockedForme;
     await loadLevel(selectedLevelIndex);bindInputs();bindCanvasMenu();bindSettings();bindControlEditor();showTitleMenu();requestAnimationFrame(loop);
   }catch(error){
-    hideGameScenes();document.getElementById('menu').hidden=false;const summary=document.getElementById('save-summary');if(summary)summary.textContent='Could not load original game resources: '+error.message;
+    hideGameScenes();document.getElementById('menu').hidden=false;
     status.textContent='RESOURCE LOAD ERROR';console.error(error);
   }
 }

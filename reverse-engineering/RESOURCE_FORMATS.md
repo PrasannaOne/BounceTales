@@ -47,7 +47,7 @@ The record stream begins at offset 14. Each record has a signed 8-bit command, a
 | `bt` | 113 | 6 | 3,792 |
 | `bu` | 13 | 0 | 1,091 |
 
-The resource names and chapter labels are mapped in `BUILD_05_RLEF_AND_ENGINE.md`. Object records carry parent/sibling references, transforms and object-specific payloads. Build 05 parses geometry contours/triangles, sprites, players, eggs, events, water, cannons, trampolines, friends and enemies. The parser validates all original records, while the current live game scene uses `bf` (Misty Morning).
+The resource names and chapter labels are mapped in `BUILD_05_RLEF_AND_ENGINE.md`. Object records carry parent/sibling references, transforms and object-specific payloads. Build 05 parses geometry contours/triangles, sprites, players, eggs, events, water, cannons, trampolines, friends and enemies. The parser validates the decoded original records. The browser campaign currently exposes the 15 playable chapter resources listed in `game.js` (starting with `bf`, Misty Morning); `bu` remains retained and catalogued as an additional original RLEF resource.
 
 ## MIDI metadata
 

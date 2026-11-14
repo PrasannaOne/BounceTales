@@ -45,14 +45,14 @@ assert.match(game,/elapsed\+=dt/,'level clock advances on fixed-step simulation'
 assert.match(game,/Open Settings → Touch Controls/,'instructions describe the website touch editor');
 assert.doesNotMatch(game.slice(game.indexOf('function drawCanvasGuide'),game.indexOf('function drawCanvasScores')),/gameText\(12\)|number keys|Press '4'/,'guide no longer shows original handset keypad instructions');
 assert.doesNotMatch(game,/drawImageMap\(10,/,'striped ornament is never stretched as a selection highlight');
-assert.match(html,/src\/original-hud\.js\?v=47/);
-assert.match(html,/game\.js\?v=47/);
-assert.match(sw,/CACHE_NAME\s*=\s*'bounce-tales-v47'/);
-assert.match(sw,/src\/original-hud\.js\?v=47/);
+assert.match(html,/src\/original-hud\.js\?v=49/);
+assert.match(html,/game\.js\?v=49/);
+assert.match(sw,/CACHE_NAME\s*=\s*'bounce-tales-v49'/);
+assert.match(sw,/src\/original-hud\.js\?v=49/);
 for(let i=0;i<15;i++){
   const resource='b'+String.fromCharCode('f'.charCodeAt(0)+i);
   const parsed=RLEF.parse(fs.readFileSync(path.join(root,'assets','original',resource)));
   const total=parsed.objects.filter(o=>o.type==='egg'||o.type==='enemy').length;
   assert.equal(total,30,`${resource} original HUD total remains 30`);
 }
-console.log('V47 visual parity tests: original closed-book title, green focus arrows, sprite HUD, browser instructions, and clean confirmation overlay passed');
+console.log('V46 visual parity regression checks: original closed-book title, green focus arrows, sprite HUD, browser instructions, and clean confirmation overlay passed');

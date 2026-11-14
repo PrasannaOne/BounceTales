@@ -1,0 +1,12 @@
+const fs=require('fs');const assert=require('assert');
+const css=fs.readFileSync('style.css','utf8');const game=fs.readFileSync('game.js','utf8');const html=fs.readFileSync('index.html','utf8');const sw=fs.readFileSync('sw.js','utf8');
+assert.match(css,/\.pause-mini\{[^}]*top:62px[^}]*width:32px;height:30px/,'pause control sits below the original clock footprint with a compact tap target');
+assert.match(html,/id="game-hint"[^>]*role="status"/,'cannon guidance has an accessible status region');
+assert.match(css,/#app #game-hint\.sr-only\{display:block!important/,'status region remains available to assistive technology without visible layout space');
+assert.match(game,/target\.font='8\.2px "Courier New",monospace'/,'original story text should be modestly larger');
+assert.match(game,/menuRoundRect\(10,210,220,99,5\)/,'story panel should provide additional readable space');
+assert.match(game,/lines\.slice\(0,6\)\.forEach\(\(text,i\)=>\{target\.strokeText\(text,22,y\+i\*12\.5,194\)/,'story lines need readable spacing');
+assert.match(game,/textTarget\.font='600 10px system-ui, sans-serif'/,'field messages should be easier to read');
+assert.match(html,/style\.css\?v=49/,'HTML cache version must be V49');
+assert.match(sw,/v=49/,'service worker must use V49 cache keys');
+console.log('V49 pause/HUD clearance and mobile text readability checks passed');
