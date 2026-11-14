@@ -12,9 +12,9 @@
 
   const SURFACE = Object.freeze({ width: 360, height: 126 });
   const BASE = Object.freeze({
-    left: Object.freeze({ width: 82, height: 54 }),
-    right: Object.freeze({ width: 82, height: 54 }),
-    jump: Object.freeze({ width: 104, height: 54 }),
+    left: Object.freeze({ width: 112, height: 80 }),
+    right: Object.freeze({ width: 112, height: 80 }),
+    jump: Object.freeze({ width: 112, height: 80 }),
     form: Object.freeze({ width: 44, height: 44 })
   });
   const DEFAULTS = Object.freeze({

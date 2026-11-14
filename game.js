@@ -40,23 +40,56 @@ let cannonState=null;
 let currentLevel=LEVELS[0],levelLoadToken=0;
 let atlases=[],imageMaps=null,spriteCatalogue=null,loadedImages=new Map(),collected=0,elapsed=0,mode='title';
 const musicController=typeof BounceAudioController!=='undefined'?new BounceAudioController.AudioController({storage:localStorage}):null;
-let eventEngine=null,playerObjectId=-1,fieldMessage='',fieldMessageTimer=0,languageStrings=[],checkpointPosition=null;
+let eventEngine=null,playerObjectId=-1,fieldMessage='',fieldMessageTimer=0,languageStrings=[],checkpointPosition=null,activeStoryMessage=null,storyMessageQueue=[];
 let spriteAnimations=new Map(),cameraSnap=false,playerDeathTimer=0;
 let lastTime=0,cameraX=0,cameraY=0,cameraSpring=null,unlockedForme=0,toastTimer=0,toastText='';
 const simulationClock=new BounceGameTiming.FixedStepClock();
 let renderAlpha=1;
 let canvasMenuHits=[];
-let canvasMenuPointer=null,menuFocusIndex=0;
+let canvasMenuPointer=null,menuFocusIndex=0,confirmationState=null;
 let fpsMode=localStorage.getItem('bounce-fps-mode')||'auto',smoothMotion=localStorage.getItem('bounce-smooth-motion')==='true',showFps=localStorage.getItem('bounce-show-fps')==='true',fpsFrames=0,fpsStamp=0,displayFps=0,lastRenderAt=0;
 if(!['auto','30','60','90','120'].includes(fpsMode))fpsMode='auto';
-const S={play:'play',title:'title',select:'select',pause:'pause',complete:'complete',guide:'guide',scores:'scores',options:'options'};
+const S={play:'play',title:'title',select:'select',pause:'pause',complete:'complete',guide:'guide',scores:'scores',options:'options',confirm:'confirm'};
 const COVER_IDS=[359,363,364,365,328,366,367,368,369,329,370,360,361,362,330];
 const LEVEL_TEXT_INDICES=[20,24,25,26,32,27,28,29,30,33,31,21,22,23,34];
 const BONUS_REQUIREMENTS={4:60,9:200,14:400};
+const ORIGINAL_LOCALES=Object.freeze(["xx","bs-BA","cs-CZ","de","hr-HR","hu-HU","mk-MK","sk-SK","sl-SI","sq","sr-YU"]);
+function resolveOriginalLocale(){
+  const saved=localStorage.getItem('bounce-language')||'auto';
+  if(saved!=='auto'&&ORIGINAL_LOCALES.includes(saved))return saved;
+  const tags=navigator.languages?.length?navigator.languages:[navigator.language||'en'];
+  for(const tag of tags){
+    const value=String(tag).replace('_','-').toLowerCase();
+    const exact=ORIGINAL_LOCALES.find(code=>code.toLowerCase()===value);
+    if(exact)return exact;
+    const base=value.split('-')[0];
+    const match=ORIGINAL_LOCALES.find(code=>code.toLowerCase()===base);
+    if(match)return match;
+  }
+  return 'xx';
+}
 let progress=BounceOriginalProgression.load(localStorage),selectedLevelIndex=progress.selected||0;
 let particles=new BounceGameParticles.ParticleSystem();
-let victoryTimer=0,deathAnimationElapsed=0,deathBaseY=0,completionResult=null,worldMinY=-Infinity,worldMaxY=Infinity;
+let victoryTimer=0,deathAnimationElapsed=0,deathBaseY=0,completionResult=null,completionNotices=[],completionNoticePage=0,worldMinY=-Infinity,worldMaxY=Infinity;
 function toast(t){toastText=t;toastTimer=1.3;}
+function gameText(index,fallback=''){
+  const value=languageStrings?.[index];
+  return typeof value==='string'&&value.length?value:fallback;
+}
+function wrapMenuText(text,x,y,maxWidth,lineHeight,size=6,color='#ece4cd',maxLines=24){
+  const target=textCtx||ctx;target.save();target.font=size+'px "Courier New",monospace';
+  target.textAlign='left';target.textBaseline='top';target.fillStyle=color;
+  let line='',count=0,yy=y;
+  for(const word of String(text||'').replace(/\r/g,'').split(/\s+/)){
+    const next=line?line+' '+word:word;
+    if(target.measureText(next).width>maxWidth&&line){
+      target.fillText(line,x,yy);yy+=lineHeight;count++;line=word;
+      if(count>=maxLines)break;
+    }else line=next;
+  }
+  if(line&&count<maxLines){target.fillText(line,x,yy);yy+=lineHeight;}
+  target.restore();return yy;
+}
 function fixedPoint(m,x,y){return {x:(m[0]*x+m[1]*y)/65536+m[2]/65536,y:(m[3]*x+m[4]*y)/65536+m[5]/65536};}
 function matrixPoint(m,x,y){return fixedPoint(m,x,y);}
 function getWorldPos(o){const m=world.get(o.id);return fixedPoint(m,0,0);}
@@ -172,12 +205,12 @@ function buildRuntime(parsed){
     }
   }
   collected=0;elapsed=0;victoryTimer=0;deathAnimationElapsed=0;completionResult=null;particles.clear();
-  spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;
+  spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;activeStoryMessage=null;storyMessageQueue=[];
   cameraSpring=new BounceOriginalCamera.CameraSpring(body.x,body.y+96,{width:W,height:H,scale:SCALE});
   eventEngine=new BounceEventEngine.EventEngine(parsed.objects,{
     strings:languageStrings,playerObjectId,
     onWorldChanged:next=>refreshGeometryWorld(next),
-    onMessage:(id,text)=>{fieldMessage=text;fieldMessageTimer=6.5;},
+    onMessage:(id,text,eventId)=>{storyMessageQueue.push({id,text,eventId});if(!activeStoryMessage)activeStoryMessage=storyMessageQueue.shift();fieldMessage='';fieldMessageTimer=0;},
     onAnimate:id=>startSpriteAnimation(id),
     onFlagsChanged:(obj,flags)=>{const poly=worldGeometry.find(p=>p.id===obj.id);if(poly)poly.nocollide=(flags&0x20)!==0;},
     onCameraTarget:id=>{cameraSnap=true;},
@@ -371,7 +404,7 @@ function beginDeath(){
   playerDeathTimer=3;deathAnimationElapsed=0;deathBaseY=body.y;particles.emitBurst(body.x,body.y,16);body.enabled=false;body.eyeFrame=1;body.resetPhysics();musicController?.playCue(33);toast('TRY AGAIN');
 }
 function update(dt,sourceDeltaMs=Math.round(dt*1000)){
-  if(mode!==S.play||!body)return;
+  if(mode!==S.play||!body||activeStoryMessage)return;
   if(victoryTimer>0){
     victoryTimer=Math.max(0,victoryTimer-dt);
     updateSpriteAnimations(dt);particles.update(dt);
@@ -693,6 +726,42 @@ function drawOriginalParallax(){
     }
   }
 }
+function drawOriginalConfirmation(){
+  const type=confirmationState?.type||'quit';
+  const title=type==='newgame'?gameText(84,'NEW GAME?'):
+    type==='restart'?gameText(85,'RESTART CHAPTER?'):
+    type==='chapters'?gameText(87,'RETURN TO CHAPTER SELECTION?'):gameText(80,'QUIT GAME?');
+  const detail=type==='newgame'?gameText(2,'Previous game will be lost.'):
+    type==='restart'||type==='chapters'?gameText(3,'Progress in this chapter will be lost.'):'';
+  ctx.fillStyle='rgba(2,8,8,.76)';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#18251f';menuRoundRect(15,91,210,139,7);ctx.fill();
+  ctx.strokeStyle='#d1b477';ctx.stroke();
+  wrapMenuText(title,28,108,184,10,7,'#f2d693',4);
+  if(detail)wrapMenuText(detail,30,140,180,10,6,'#ece4cd',4);
+  canvasMenuButton(gameText(49,'YES').toUpperCase(),29,187,84,22,'confirm-yes','gold');
+  canvasMenuButton(gameText(45,'NO').toUpperCase(),127,187,84,22,'confirm-no','dark');
+}
+function drawOriginalStoryMessage(){
+  if(!activeStoryMessage)return;
+  ctx.fillStyle='rgba(0,0,0,.58)';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#17251e';menuRoundRect(10,220,220,88,5);ctx.fill();
+  ctx.strokeStyle='#c6ad78';ctx.lineWidth=1;ctx.stroke();
+  const target=textCtx||ctx;
+  target.save();target.font='7px "Courier New",monospace';target.textAlign='left';target.textBaseline='top';target.fillStyle='#f1ead7';
+  const words=String(activeStoryMessage.text).replace(/\r/g,'').split(/\s+/);let line='',lines=[],y=234;
+  for(const word of words){const test=line?line+' '+word:word;if(target.measureText(test).width>194&&line){lines.push(line);line=word;}else line=test;}
+  if(line)lines.push(line);
+  lines.slice(0,5).forEach((text,i)=>target.fillText(text,22,y+i*10,194));
+  target.restore();
+  menuText('TAP OR PRESS ACTION  ›',120,296,5.5,'#e4c98f');
+}
+function dismissOriginalStoryMessage(){
+  if(!activeStoryMessage)return false;
+  const finished=activeStoryMessage;activeStoryMessage=null;
+  eventEngine?.resumeMessages(finished.eventId);
+  if(storyMessageQueue.length)activeStoryMessage=storyMessageQueue.shift();
+  input.clear();return true;
+}
 function drawFieldMessage(){
   if(!fieldMessage||fieldMessageTimer<=0)return;
   const textTarget=textCtx||ctx,maxWidth=202,lines=[];textTarget.font='600 9px system-ui, sans-serif';
@@ -743,11 +812,11 @@ function drawCanvasTitle(){
   ctx.fillStyle='#17241e';menuRoundRect(15,18,210,284,7);ctx.fill();
   ctx.strokeStyle='#c5a66c';ctx.lineWidth=1;ctx.stroke();
   if(imageMaps)drawImageMap(1,120,70);else menuText('BOUNCE TALES',120,77,17,'#f4d995');
-  canvasMenuButton('CONTINUE',29,132,182,24,'continue','gold');
-  canvasMenuButton('CHAPTER BOOK',29,162,182,24,'chapters','green');
-  canvasMenuButton('HIGH SCORES',29,192,182,24,'scores','dark');
+  canvasMenuButton(gameText(17,'CONTINUE').toUpperCase(),29,132,182,24,'continue','gold');
+  canvasMenuButton(gameText(39,'CHAPTER SELECTION').toUpperCase(),29,162,182,24,'chapters','green');
+  canvasMenuButton(gameText(19,'HIGH SCORES').toUpperCase(),29,192,182,24,'scores','dark');
   canvasMenuButton('OPTIONS',29,222,182,24,'options','green');
-  canvasMenuButton('INSTRUCTIONS',29,252,182,24,'guide','dark');
+  canvasMenuButton(gameText(18,'INSTRUCTIONS').toUpperCase(),29,252,182,24,'guide','dark');
   canvasMenuButton((musicController?.enabled??true)?'SOUND ON':'SOUND OFF',16,281,82,16,'sound','dark');
   menuText('TAP OR PRESS ACTION',160,289,6,'#f1e7cf');
 }
@@ -756,7 +825,7 @@ function drawCanvasChapterBook(){
   const record=progress.records[selectedLevelIndex]||{eggs:0,score:0,clearTime:0};
   const isOpen=BounceOriginalProgression.isUnlocked(progress,selectedLevelIndex);
   const group=['GREEN HILL','SPOOKY ZONE','MACHINE WORLD'][BounceOriginalProgression.chapterGroup(selectedLevelIndex)];
-  menuText('CHAPTER BOOK',120,34,9,'#65411c');
+  menuText(gameText(39,'CHAPTER SELECTION').toUpperCase(),120,34,8,'#65411c');
   menuText('‹',20,56,18,'#69471f');canvasMenuHits.push({x:4,y:39,w:34,h:34,action:'prev'});
   menuText(String(selectedLevelIndex+1).padStart(2,'0')+' / 15',120,55,8,'#69471f');
   menuText('›',220,56,18,'#69471f');canvasMenuHits.push({x:202,y:39,w:34,h:34,action:'next'});
@@ -764,50 +833,64 @@ function drawCanvasChapterBook(){
   menuText(getLocalizedLevelName(selectedLevelIndex).toUpperCase(),120,211,9,'#3d301e');
   menuText((selectedLevelIndex===4||selectedLevelIndex===9||selectedLevelIndex===14?'BONUS · ':'')+group,120,225,6,'#775b32');
   const time=record.clearTime>0&&record.clearTime<9999?formatTime(record.clearTime):'--:--';
-  menuText((isOpen?'BEST ':'LOCKED · ')+record.eggs+'/30 EGGS',120,239,7,isOpen?'#4f492e':'#8d402e');
+  const needed=BONUS_REQUIREMENTS[selectedLevelIndex];
+  const lockText=!isOpen&&needed?gameText(0,'Items needed: %U').replace('%U',String(Math.max(0,needed-BounceOriginalProgression.totalEggs(progress)))):'LOCKED';
+  menuText(isOpen?'BEST '+record.eggs+'/30 EGGS':lockText,120,239,7,isOpen?'#4f492e':'#8d402e');
   menuText('SCORE '+(record.score||0)+'   TIME '+time,120,251,6,'#66583c');
-  canvasMenuButton(isOpen?'PLAY CHAPTER':'CHAPTER LOCKED',24,266,192,22,'play','gold',!isOpen);
-  canvasMenuButton('MAIN MENU',55,293,130,18,'title','dark');
+  canvasMenuButton(isOpen?gameText(48,'SELECT').toUpperCase():'LOCKED',24,266,192,22,'play','gold',!isOpen);
+  canvasMenuButton(gameText(43,'BACK').toUpperCase(),55,293,130,18,'title','dark');
 }
 function drawCanvasPause(){
   ctx.fillStyle='rgba(2,8,8,.67)';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#18251f';menuRoundRect(22,75,196,174,7);ctx.fill();
+  ctx.fillStyle='#18251f';menuRoundRect(19,58,202,218,7);ctx.fill();
   ctx.strokeStyle='#d1b477';ctx.stroke();
-  menuText('GAME PAUSED',120,98,12,'#f2d693');
-  menuText(getLocalizedLevelName(currentLevel.index).toUpperCase(),120,116,6,'#bbc5b6');
-  canvasMenuButton('RESUME',38,128,164,22,'resume','gold');
-  canvasMenuButton('RESTART LEVEL',38,155,164,22,'restart','green');
-  canvasMenuButton('MAIN MENU',38,182,164,22,'title','dark');
-  canvasMenuButton((musicController?.enabled??true)?'SOUND ON':'SOUND OFF',73,211,94,18,'sound','dark');
+  menuText(gameText(83,'PAUSE MENU').toUpperCase(),120,77,10,'#f2d693');
+  menuText(getLocalizedLevelName(currentLevel.index).toUpperCase(),120,93,5.8,'#bbc5b6');
+  canvasMenuButton(gameText(38,'RESUME').toUpperCase(),34,105,172,19,'resume','gold');
+  canvasMenuButton(gameText(37,'RESTART CHAPTER').toUpperCase(),34,128,172,19,'restart','green');
+  canvasMenuButton(gameText(39,'CHAPTER SELECTION').toUpperCase(),34,151,172,19,'chapters-confirm','dark');
+  canvasMenuButton(gameText(47,'QUIT').toUpperCase(),34,174,172,19,'quit-confirm','dark');
+  canvasMenuButton((musicController?.enabled??true)?'SOUND ON':'SOUND OFF',34,220,172,18,'sound','dark');
 }
 function drawCanvasComplete(){
   ctx.fillStyle='rgba(2,8,8,.64)';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#18251f';menuRoundRect(15,61,210,202,7);ctx.fill();
-  ctx.strokeStyle='#d1b477';ctx.stroke();
-  menuText('CHAPTER COMPLETE',120,83,10,'#f2d693');
-  menuText(getLocalizedLevelName(currentLevel.index).toUpperCase(),120,102,7,'#ece4cd');
-  ctx.strokeStyle='#6b775f';ctx.beginPath();ctx.moveTo(35,117);ctx.lineTo(205,117);ctx.stroke();
-  menuText('EGGS COLLECTED',120,136,7,'#b8c3b5');
-  menuText(`${completionResult?.eggs??collected} / 30`,120,157,20,'#f5d78d');
-  menuText(`SCORE  ${completionResult?.score??0}`,120,180,9,'#f0e8d7');
-  menuText(`TIME  ${formatTime(completionResult?.seconds??Math.floor(elapsed))}`,120,196,8,'#c1c9ba');
-  canvasMenuButton(completionResult?.nextLevel>=0&&BounceOriginalProgression.isUnlocked(progress,completionResult.nextLevel)?'NEXT CHAPTER':'CHAPTER BOOK',26,218,188,20,'next','gold');
-  canvasMenuButton('CHAPTER SELECTION',48,242,144,16,'chapters','dark');
+  ctx.fillStyle='#18251f';menuRoundRect(13,37,214,246,7);ctx.fill();ctx.strokeStyle='#d1b477';ctx.stroke();
+  menuText(gameText(86,'CHAPTER COMPLETED').toUpperCase(),120,56,9,'#f2d693');
+  menuText(getLocalizedLevelName(currentLevel.index).toUpperCase(),120,73,6,'#ece4cd');
+  ctx.strokeStyle='#6b775f';ctx.beginPath();ctx.moveTo(29,84);ctx.lineTo(211,84);ctx.stroke();
+  menuText('EGGS  '+(completionResult?.eggs??collected)+' / 30',120,100,9,'#f5d78d');
+  menuText(gameText(42,'SCORE: %U').replace('%U',String(completionResult?.score??0)),120,119,7,'#f0e8d7');
+  menuText('TIME  '+formatTime(completionResult?.seconds??Math.floor(elapsed)),120,134,7,'#c1c9ba');
+  menuText(gameText(7,'ITEM COLLECTION CHALLENGE:').toUpperCase(),120,157,6,'#b8c3b5');
+  menuText(medalLabel(completionResult?.eggMedal??-1),120,171,8,'#f2d693');
+  menuText(gameText(8,'TIME CHALLENGE:').toUpperCase(),120,193,6,'#b8c3b5');
+  menuText(medalLabel(completionResult?.timeMedal??-1),120,207,8,'#f2d693');
+  if(completionNotices?.length){
+    const page=clamp(completionNoticePage,0,completionNotices.length-1);
+    wrapMenuText(completionNotices[page],25,224,190,7,4.7,'#efdda8',4);
+    menuText((page+1)+' / '+completionNotices.length,120,250,4.5,'#b9c4b6');
+    if(page>0)canvasMenuButton('‹',17,240,20,13,'notice-prev','dark');
+    if(page<completionNotices.length-1)canvasMenuButton('›',203,240,20,13,'notice-next','dark');
+  }
+  const canNext=completionResult?.nextLevel>=0&&BounceOriginalProgression.isUnlocked(progress,completionResult.nextLevel);
+  canvasMenuButton(canNext?gameText(38,'CONTINUE').toUpperCase():gameText(39,'CHAPTER SELECTION').toUpperCase(),20,258,200,18,'next','gold');
+  canvasMenuButton(gameText(43,'BACK').toUpperCase(),52,278,136,15,'chapters','dark');
 }
 function drawCanvasGuide(){
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#193d4a');bg.addColorStop(1,'#14241f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#18251f';menuRoundRect(15,43,210,235,7);ctx.fill();ctx.strokeStyle='#c5a66c';ctx.stroke();
-  menuText("BOUNCE'S FIELD GUIDE",120,66,9,'#f2d693');
-  menuText('MOVE',35,100,8,'#f2d693','left');menuText('Hold ◀ / ▶',35,116,8,'#ece4cd','left');
-  menuText('JUMP',35,145,8,'#f2d693','left');menuText('Hold JUMP to bounce',35,161,8,'#ece4cd','left');
-  menuText('CHANGE FORM',35,190,8,'#f2d693','left');menuText('* when a form is unlocked',35,206,7,'#ece4cd','left');
-  menuText('Find eggs and checkpoints.',120,235,7,'#bbc7b9');
-  canvasMenuButton('BACK TO MENU',48,253,144,21,'title','gold');
+  ctx.fillStyle='#18251f';menuRoundRect(12,25,216,270,7);ctx.fill();ctx.strokeStyle='#c5a66c';ctx.stroke();
+  menuText(gameText(18,'INSTRUCTIONS').toUpperCase(),120,45,10,'#f2d693');
+  let y=64;
+  y=wrapMenuText(gameText(12),24,y,192,8,5.7,'#ece4cd',19)+8;
+  y=wrapMenuText(gameText(13),24,y,192,8,5.7,'#f0d69b',3)+5;
+  y=wrapMenuText(gameText(14),24,y,192,8,5.7,'#f0d69b',3)+5;
+  y=wrapMenuText(gameText(15),24,y,192,8,5.7,'#f0d69b',3);
+  canvasMenuButton(gameText(43,'BACK').toUpperCase(),48,270,144,18,'title','gold');
 }
 function drawCanvasScores(){
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#24434b');bg.addColorStop(1,'#17251f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#18251f';menuRoundRect(14,24,212,270,7);ctx.fill();ctx.strokeStyle='#c5a66c';ctx.stroke();
-  menuText('HIGH SCORES',120,47,12,'#f2d693');
+  menuText(gameText(19,'HIGH SCORES').toUpperCase(),120,47,11,'#f2d693');
   const rows=progress.records.map((r,i)=>({...r,index:i,name:getLocalizedLevelName(i)}))
     .filter(r=>(r.score||0)>0||(r.eggs||0)>0||(r.clearTime||9999)<9999)
     .sort((a,b)=>(b.score||0)-(a.score||0)||(b.eggs||0)-(a.eggs||0)||(a.clearTime||9999)-(b.clearTime||9999))
@@ -821,7 +904,7 @@ function drawCanvasScores(){
     ctx.strokeStyle='#6a735e';ctx.beginPath();ctx.moveTo(25,y+10);ctx.lineTo(215,y+10);ctx.stroke();
   });
   menuText('BEST SCORE BY CHAPTER',120,265,6,'#aebbaa');
-  canvasMenuButton('BACK TO MENU',48,276,144,18,'title','gold');
+  canvasMenuButton(gameText(43,'BACK').toUpperCase(),48,276,144,18,'title','gold');
 }
 function drawCanvasOptions(){
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#29424a');bg.addColorStop(1,'#17251f');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
@@ -863,7 +946,7 @@ function drawGameplayScene(){
     }
   }
   for(const e of bonusEggs){if(!e.collected){const p=screenPoint(e);drawImageMap(208,p.x,p.y);}}
-  particles.draw(ctx,screenPoint,SCALE);drawFieldMessage();
+  particles.draw(ctx,screenPoint,SCALE);if(activeStoryMessage)drawOriginalStoryMessage();else drawFieldMessage();
   if(toastTimer>0){ctx.fillStyle='#06121dcc';ctx.fillRect(34,276,172,22);const target=textCtx||ctx;target.fillStyle='#fff';target.font='600 9px system-ui,sans-serif';target.textAlign='center';target.textBaseline='alphabetic';target.fillText(toastText,120,290);}
 }
 function draw(){
@@ -875,7 +958,24 @@ function draw(){
   if(mode===S.guide){drawCanvasGuide();return;}
   if(mode===S.scores){drawCanvasScores();return;}
   if(mode===S.options){drawCanvasOptions();return;}
+  if(mode===S.confirm){if(confirmationState?.returnMode===S.pause){drawGameplayScene();drawCanvasPause();}else if(confirmationState?.returnMode===S.select)drawCanvasChapterBook();else drawCanvasTitle();canvasMenuHits=[];drawOriginalConfirmation();return;}
   drawCanvasTitle();
+}
+function showConfirmation(type,returnMode=mode){
+  confirmationState={type,returnMode};mode=S.confirm;menuFocusIndex=0;input.clear();syncPauseButton();
+}
+function closeConfirmation(){
+  const previous=confirmationState?.returnMode||S.title;
+  confirmationState=null;mode=previous;input.clear();syncPauseButton();
+}
+function acceptConfirmation(){
+  const type=confirmationState?.type,previous=confirmationState?.returnMode;
+  confirmationState=null;
+  if(type==='restart')startLevel();
+  else if(type==='chapters')showChapterBook();
+  else if(type==='quit')showTitleMenu();
+  else if(type==='newgame'){resetProgress();showTitleMenu();}
+  else{mode=previous||S.title;syncPauseButton();}
 }
 function handleCanvasMenuAction(action){
   if(action==='continue'){
@@ -896,13 +996,19 @@ function handleCanvasMenuAction(action){
   }else if(action==='play')startSelectedChapter();
   else if(action==='title')showTitleMenu();
   else if(action==='resume')resumeGame();
-  else if(action==='restart')startLevel();
+  else if(action==='notice-prev')completionNoticePage=clamp(completionNoticePage-1,0,Math.max(0,completionNotices.length-1));
+  else if(action==='notice-next')completionNoticePage=clamp(completionNoticePage+1,0,Math.max(0,completionNotices.length-1));
+  else if(action==='restart')showConfirmation('restart',S.pause);
+  else if(action==='chapters-confirm')showConfirmation('chapters',S.pause);
+  else if(action==='quit-confirm')showConfirmation('quit',S.pause);
+  else if(action==='confirm-yes')acceptConfirmation();
+  else if(action==='confirm-no')closeConfirmation();
 }
 function bindCanvasMenu(){
   if(!canvas)return;
   canvas.style.touchAction='none';
   canvas.addEventListener('pointerdown',e=>{
-    if(mode===S.play)return;
+    if(mode===S.play&&!activeStoryMessage)return;
     e.preventDefault();
     const r=canvas.getBoundingClientRect();
     canvasMenuPointer={id:e.pointerId,x:(e.clientX-r.left)*W/Math.max(1,r.width),y:(e.clientY-r.top)*H/Math.max(1,r.height)};
@@ -911,6 +1017,7 @@ function bindCanvasMenu(){
   canvas.addEventListener('pointerup',e=>{
     if(!canvasMenuPointer||canvasMenuPointer.id!==e.pointerId)return;
     const start=canvasMenuPointer;canvasMenuPointer=null;
+    if(activeStoryMessage){dismissOriginalStoryMessage();return;}
     const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*W/Math.max(1,r.width),y=(e.clientY-r.top)*H/Math.max(1,r.height);
     if(mode===S.select&&Math.abs(x-start.x)>24&&Math.abs(x-start.x)>Math.abs(y-start.y)*1.25){changeBookPage(x<start.x?1:-1);return;}
     const hit=canvasMenuHits.slice().reverse().find(h=>x>=h.x&&x<=h.x+h.w&&y>=h.y&&y<=h.y+h.h);
@@ -950,6 +1057,24 @@ function renderLevelCover(index){
   drawImageMap(COVER_IDS[index],cover.width/2,cover.height/2,new Set(),0,coverCtx);
   if(!BounceOriginalProgression.isUnlocked(progress,index)){coverCtx.fillStyle='#10161499';coverCtx.fillRect(0,0,cover.width,cover.height);coverCtx.fillStyle='#fff0c9';coverCtx.font='bold 10px system-ui';coverCtx.textAlign='center';coverCtx.fillText('LOCKED',cover.width/2,cover.height/2+4);}
 }
+function rankEggMedal(level,eggs){
+  const thresholds=BounceOriginalProgression.EGG_TROPHY_REQUIREMENTS;
+  const base=level*3,value=Math.max(0,Number(eggs)||0);
+  if(value>=thresholds[base])return 2;
+  if(value>=thresholds[base+1])return 1;
+  if(value>=thresholds[base+2])return 0;
+  return -1;
+}
+function rankTimeMedal(level,seconds){
+  const thresholds=BounceOriginalProgression.TIMER_TROPHY_REQUIREMENTS;
+  const base=level*3,value=Math.max(0,Number(seconds)||0);
+  if(thresholds[base]>=9999)return -1;
+  if(value<=thresholds[base])return 2;
+  if(value<=thresholds[base+1])return 1;
+  if(value<=thresholds[base+2])return 0;
+  return -1;
+}
+function medalLabel(rank){return rank===2?'GOLD':rank===1?'SILVER':rank===0?'BRONZE':gameText(41,'NO MEDAL').toUpperCase();}
 function getLocalizedLevelName(index){return languageStrings?.[LEVEL_TEXT_INDICES[index]]||LEVELS[index]?.name||'Unknown chapter';}
 function updateMenuSummary(){
   const selected=progress.selected||0,record=progress.records[selected]||progress.records[0];
@@ -976,12 +1101,12 @@ function openGuide(){menuFocusIndex=0;mode=S.guide;hideGameScenes();document.get
 function startLevel(){
   mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;simulationClock.reset();renderAlpha=1;musicController?.playLevel(currentLevel.index);
   if(eventEngine){eventEngine.reset();world=eventEngine.world;refreshGeometryWorld(world);}
-  spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;cameraSnap=false;
+  spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;activeStoryMessage=null;storyMessageQueue=[];cameraSnap=false;
   body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce';body.rotation=0;body.unlockedForme=progress.unlockedForme;body.forme=0;body.slopeCosAbs=1;body.eyeFrame=0;body.idleAnimStartTimer=3000;
   eggs.forEach(e=>e.collected=false);bonusEggs=[];collected=0;elapsed=0;checkpointPosition={x:spawn.x,y:spawn.y};
   trampolines.forEach(t=>BounceOriginalTrampoline.reset(t));
   enemies.forEach(e=>{e.x=e.initialX;e.y=e.initialY;BounceOriginalEnemies.reset(e);});
-  waters.forEach(w=>{w.ripples=[];w.bubbles=[];w.ambientTimer=0;w.swimTimer=0;});particles.clear();playerDeathTimer=0;deathAnimationElapsed=0;victoryTimer=0;completionResult=null;cameraX=body.x;cameraY=body.y+96;cameraSpring?.snap(cameraX,cameraY);refreshHud();
+  waters.forEach(w=>{w.ripples=[];w.bubbles=[];w.ambientTimer=0;w.swimTimer=0;});particles.clear();playerDeathTimer=0;deathAnimationElapsed=0;victoryTimer=0;completionResult=null;completionNotices=[];completionNoticePage=0;cameraX=body.x;cameraY=body.y+96;cameraSpring?.snap(cameraX,cameraY);refreshHud();
   progress.selected=currentLevel.index;BounceOriginalProgression.save(localStorage,progress);
 }
 let spawn={x:0,y:0};
@@ -1000,15 +1125,25 @@ async function loadLevel(index,options={}){
 }
 function completeCurrentChapter(){
   if(mode!==S.play||completionResult)return;
-  const previousForms=progress.unlockedForme;
+  const previousForms=progress.unlockedForme,previousBest=progress.records[currentLevel.index]?.score||0;
   completionResult=BounceOriginalProgression.complete(progress,currentLevel.index,collected,elapsed*1000);
+  completionResult.eggMedal=rankEggMedal(currentLevel.index,completionResult.eggs);
+  completionResult.timeMedal=rankTimeMedal(currentLevel.index,completionResult.seconds);
+  completionNotices=[];completionNoticePage=0;
+  if(completionResult.score>previousBest)completionNotices.push(gameText(40,'New high score!'));
+  if(completionResult.unlocked.some(i=>[4,9,14].includes(i)))completionNotices.push(gameText(9,'You have collected enough items to unlock a new bonus chapter!'));
+  if(progress.unlockedForme>unlockedForme)completionNotices.push(gameText(10,'You have gained a new ball form!'));
+  if(BounceOriginalProgression.BONUS_LEVELS.some(item=>item.level===currentLevel.index))completionNotices.push(gameText(11,'In bonus chapters, collect all items as quickly as possible.'));
+  if(progress.records.every(record=>record.clearTime>0&&record.clearTime<9999))completionNotices.push(gameText(5,'All chapters completed!'));
+  if(progress.records.every((record,index)=>rankEggMedal(index,record.eggs)>=2&&([4,9,14].includes(index)||rankTimeMedal(index,record.clearTime)>=2)))completionNotices.push(gameText(6,'Super Bounce form unlocked!'));
+
   progress.totalGameTime+=elapsed;progress.selected=currentLevel.index;BounceOriginalProgression.save(localStorage,progress);unlockedForme=progress.unlockedForme;
   document.getElementById('complete-title').textContent=getLocalizedLevelName(currentLevel.index);
   document.getElementById('complete-eggs').textContent=completionResult.eggs+' / 30';
   document.getElementById('complete-stats').textContent='Time '+formatTime(completionResult.seconds)+' · Score '+completionResult.score;
   const next=document.getElementById('next-level');
-  if(completionResult.nextLevel>=0&&BounceOriginalProgression.isUnlocked(progress,completionResult.nextLevel)){next.textContent='NEXT CHAPTER';next.disabled=false;}
-  else{next.textContent='CHAPTER BOOK';next.disabled=false;}
+  if(completionResult.nextLevel>=0&&BounceOriginalProgression.isUnlocked(progress,completionResult.nextLevel)){next.textContent=gameText(38,'CONTINUE').toUpperCase();next.disabled=false;}
+  else{next.textContent=gameText(39,'CHAPTER SELECTION').toUpperCase();next.disabled=false;}
   if(progress.unlockedForme>previousForms)toast('NEW FORM UNLOCKED');
   if(completionResult.nextLevel>=0&&BounceOriginalProgression.isUnlocked(progress,completionResult.nextLevel))progress.selected=completionResult.nextLevel;else progress.selected=currentLevel.index;
   BounceOriginalProgression.save(localStorage,progress);
@@ -1040,6 +1175,8 @@ function activateCanvasMenuFocus(){
 }
 function onEdge(id){
   window.dispatchEvent(new CustomEvent('bouncetales:original-key',{detail:{id}}));
+  if(activeStoryMessage){dismissOriginalStoryMessage();return;}
+  if(mode===S.confirm){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6)closeConfirmation();return;}
   if(mode===S.play){if(id===5)pauseGame();else if(id===20)cycleForme();else if(id===7&&cannonState)fireCannon();}
   else if(mode===S.title){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6){}else if(id===3||id===4)showChapterBook();}
   else if(mode===S.select){if(id===3)changeBookPage(-1);else if(id===4)changeBookPage(1);else if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6)showTitleMenu();}
@@ -1404,6 +1541,14 @@ function bindControlEditor(){
 }
 
 function bindSettings(){
+  const language=document.getElementById('language-choice');
+  if(language){
+    language.value=localStorage.getItem('bounce-language')||'auto';
+    language.addEventListener('change',()=>{
+      localStorage.setItem('bounce-language',language.value);
+      window.location.reload();
+    });
+  }
   const fps=document.getElementById('fps-mode'),smoothToggle=document.getElementById('smooth-motion'),fpsToggle=document.getElementById('show-fps'),counter=document.getElementById('fps-counter'),full=document.getElementById('fullscreen-btn');
   fps.value=['auto','30','60','90','120'].includes(fpsMode)?fpsMode:'auto';fps.addEventListener('change',()=>applyFpsMode(fps.value));
   if(smoothToggle){smoothToggle.checked=smoothMotion;smoothToggle.addEventListener('change',()=>applySmoothMotion(smoothToggle.checked));}
@@ -1434,7 +1579,10 @@ function bindSettings(){
 
 async function boot(){
   try{
-    const [mapResp,atlasResp,langResp]=await Promise.all([fetch('src/image-map.json'),fetch('src/sprite-atlas.json'),fetch('assets/original/lang.xx')]);
+    const locale=resolveOriginalLocale();
+    const [mapResp,atlasResp,langResp]=await Promise.all([
+      fetch('src/image-map.json'),fetch('src/sprite-atlas.json'),fetch('assets/original/lang.'+locale)
+    ]);
     if(!mapResp.ok||!atlasResp.ok||!langResp.ok)throw new Error('Could not load original JAR image, sprite atlas or language resources');
     imageMaps=await mapResp.json();atlases=imageMaps.atlases;
     const decodedAtlas=await atlasResp.json();spriteCatalogue=BounceSpriteAtlas.prepare(decodedAtlas,imageMaps);

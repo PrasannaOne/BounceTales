@@ -20,7 +20,7 @@ const engine=new EventEngine(parsed.objects,{
   onMessage:(id,text)=>messages.push({id,text}),
   onAnimate:id=>animations.push(id)
 });
-for(let i=0;i<150;i++)engine.update(body,{x:body.x,y:body.y},0.033,player.id);
+for(let i=0;i<150;i++){engine.update(body,{x:body.x,y:body.y},0.033,player.id);if(engine.events.some(e=>e.waitingForMessage))engine.resumeMessages();}
 assert.deepEqual(messages.map(x=>x.id),[58,59,60],'the JAR autostart event should play its original three Misty Morning scenario lines');
 assert.match(messages[0].text,/hypnotised friends/);
 assert.deepEqual(animations,[76],'the original autostart script should request its sprite animation');
@@ -28,7 +28,7 @@ assert.equal(engine.unsupported.size,0,'Misty Morning autostart event should use
 assert.equal(engine.events.find(e=>e.id===99).state,1,'non-repeatable autostart event should terminate');
 
 engine.reset();messages.length=0;animations.length=0;
-for(let i=0;i<150;i++)engine.update(body,{x:body.x,y:body.y},0.033,player.id);
+for(let i=0;i<150;i++){engine.update(body,{x:body.x,y:body.y},0.033,player.id);if(engine.events.some(e=>e.waitingForMessage))engine.resumeMessages();}
 assert.deepEqual(messages.map(x=>x.id),[58,59,60],'reset should restore the original autostart script and replay its messages');
 assert.deepEqual(animations,[76],'reset should replay the original sprite-animation event');
 
@@ -42,7 +42,7 @@ const stageEngine=new EventEngine(triggerObjects,{
   onMessage:(id,text)=>triggeredMessages.push({id,text})
 });
 const stageBody={x:1455,y:533,vx:0,vy:0,pushX:0,pushY:0,gravityX:0,gravityY:0};
-for(let i=0;i<400;i++)stageEngine.update(stageBody,{x:1000,y:533},0.033,100);
+for(let i=0;i<400;i++){stageEngine.update(stageBody,{x:1000,y:533},0.033,100);if(stageEngine.events.some(e=>e.waitingForMessage))stageEngine.resumeMessages();}
 assert.deepEqual(triggeredMessages.map(x=>x.id),[65,66,67],'entering the original event-94 trigger should run its authored localized story messages');
 assert.equal(stageEngine.events.find(e=>e.id===94).state,1,'the real one-shot level event should terminate after its script');
 assert.equal(stageEngine.getObject(76).parent,-1,'the event should detach its original sprite from the machine');

@@ -21,6 +21,14 @@ assert.match(game,/function drawCanvasChapterBook\(\)[\s\S]*?drawImageMap\(COVER
 for(const name of ['drawCanvasTitle','drawCanvasPause','drawCanvasComplete','drawCanvasGuide','drawCanvasScores','drawCanvasOptions'])assert.match(game,new RegExp('function '+name+'\\('),name+' is a canvas scene');
 assert.match(game,/function bindCanvasMenu\(\)[\s\S]*?pointerdown[\s\S]*?pointerup/,'canvas menu uses pointer input');
 assert.match(game,/else if\(action==='scores'\)/);assert.match(game,/else if\(action==='options'\)/);
-assert.match(game,/canvasMenuButton\('MAIN MENU',[^\n]*'title'/,'pause screen has a Main Menu action');
-assert.match(game,/canvasMenuButton\('RESTART LEVEL'/,'pause screen has a level restart action');
+assert.match(game,/canvasMenuButton\(gameText\(39,'CHAPTER SELECTION'\)[^\n]*'chapters'/,'pause screen returns to original chapter selection');
+assert.match(game,/canvasMenuButton\(gameText\(37,'RESTART CHAPTER'\)[^\n]*'restart'/,'pause screen has the original restart-chapter action');
+
+assert.match(game,/gameText\(17,'CONTINUE'\)/,'main menu uses the original localized Continue label');
+assert.match(game,/gameText\(18,'INSTRUCTIONS'\)/,'main menu uses the original localized Instructions label');
+assert.match(game,/activeStoryMessage/,'original story messages are displayed as modal dialogue');
+assert.match(game,/function drawOriginalConfirmation\(/,'original JAR confirmation prompts are rendered in the game canvas');
+assert.match(game,/gameText\(85,'RESTART CHAPTER\?'\)/,'restart confirmation uses the original localized JAR prompt');
+assert.match(game,/else if\(action==='quit-confirm'\)/,'pause menu quit action has a confirmation path');
+assert.match(game,/dismissOriginalStoryMessage\(\)/,'story dialogue can be advanced by input');
 console.log('Canvas menu flow: title, chapter book, scores, options, guide, pause and chapter results are drawn on the game canvas');

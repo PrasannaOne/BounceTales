@@ -82,3 +82,8 @@ Open Settings → Touch Controls to drag the Left, Right, Jump and Forme buttons
 ## V37 responsive shell
 
 The touch-control editor and live controls share a tested responsive geometry model. Hidden controls are not measured or assigned zero-sized styles; the live row is recalculated when gameplay reveals it and when the viewport changes. The service worker precaches only the critical startup shell and caches original sprites/audio as they are requested, avoiding a full asset download during first installation. The original 240×320 simulation canvas and gameplay update loop are unchanged.
+
+
+## V40 original UI restoration
+
+See [`docs/V40_ORIGINAL_UI_RESTORATION.md`](docs/V40_ORIGINAL_UI_RESTORATION.md) for the original JAR menu text, blocking story dialogue, language resources, challenge medals, and Node.js verification scope.

@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=38">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=38">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=38">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=40">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=40">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=40">
 <meta name="description" content="Bounce Tales: a source-informed browser recreation of the classic mobile platform adventure.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Bounce Tales">
@@ -28,7 +28,7 @@
 <meta name="twitter:description" content="A little world of Bounce. Play the classic mobile platform adventure in your browser.">
 <meta name="twitter:image" content="https://prasannaone.github.io/BounceTales/bounce-tales-web-preview.png">
 <title>Bounce Tales</title>
-<link rel="stylesheet" href="style.css?v=38">
+<link rel="stylesheet" href="style.css?v=40">
 </head>
 <body>
 <main id="app">
@@ -129,6 +129,9 @@
       <button type="button" class="settings-tab" id="settings-about-tab" role="tab" aria-selected="false" aria-controls="settings-about-pane" data-settings-tab="about">ABOUT</button>
     </div>
     <section class="settings-pane" id="settings-game-pane" role="tabpanel" aria-labelledby="settings-game-tab">
+      <label class="setting-row compact" for="language-choice"><span><strong>Game language</strong><small>Original JAR translations. Auto follows your device language when available.</small></span>
+        <select id="language-choice"><option value="auto">Device language</option><option value="xx">English</option><option value="bs-BA">Bosnian</option><option value="cs-CZ">Czech</option><option value="de">German</option><option value="hr-HR">Croatian</option><option value="hu-HU">Hungarian</option><option value="mk-MK">Macedonian</option><option value="sk-SK">Slovak</option><option value="sl-SI">Slovenian</option><option value="sq">Albanian</option><option value="sr-YU">Serbian</option></select>
+      </label>
       <label class="setting-row compact" for="fps-mode"><span><strong>Frame pacing</strong><small>Auto follows the display. Original game timing is preserved.</small></span>
         <select id="fps-mode"><option value="auto">Auto</option><option value="30">30 FPS</option><option value="60">60 FPS</option><option value="90">90 FPS</option><option value="120">120 FPS</option></select>
       </label>
@@ -191,29 +194,29 @@
     </div>
   </div>
 </section>
-<script src="src/fixed-point.js?v=38"></script>
-<script src="src/original-input-map.js?v=38"></script>
-<script src="src/original-camera.js?v=38"></script>
-<script src="src/rlef-reader.js?v=38"></script>
-<script src="src/bounce-physics.js?v=38"></script>
-<script src="src/terrain-collision.js?v=38"></script>
-<script src="src/original-collision.js?v=38"></script>
-<script src="src/game-timing.js?v=38"></script>
-<script src="src/event-engine.js?v=38"></script>
-<script src="src/original-sprite-animation.js?v=38"></script>
-<script src="src/original-enemies.js?v=38"></script>
-<script src="src/original-water.js?v=38"></script>
-<script src="src/original-trampoline.js?v=38"></script>
-<script src="src/midp-graphics.js?v=38"></script>
-<script src="src/original-progression.js?v=38"></script>
-<script src="src/game-particles.js?v=38"></script>
-<script src="src/sprite-atlas.js?v=38"></script>
-<script src="src/audio-controller.js?v=38"></script>
-<script src="src/control-layout.js?v=38"></script>
-<script src="game.js?v=38"></script>
+<script src="src/fixed-point.js?v=40"></script>
+<script src="src/original-input-map.js?v=40"></script>
+<script src="src/original-camera.js?v=40"></script>
+<script src="src/rlef-reader.js?v=40"></script>
+<script src="src/bounce-physics.js?v=40"></script>
+<script src="src/terrain-collision.js?v=40"></script>
+<script src="src/original-collision.js?v=40"></script>
+<script src="src/game-timing.js?v=40"></script>
+<script src="src/event-engine.js?v=40"></script>
+<script src="src/original-sprite-animation.js?v=40"></script>
+<script src="src/original-enemies.js?v=40"></script>
+<script src="src/original-water.js?v=40"></script>
+<script src="src/original-trampoline.js?v=40"></script>
+<script src="src/midp-graphics.js?v=40"></script>
+<script src="src/original-progression.js?v=40"></script>
+<script src="src/game-particles.js?v=40"></script>
+<script src="src/sprite-atlas.js?v=40"></script>
+<script src="src/audio-controller.js?v=40"></script>
+<script src="src/control-layout.js?v=40"></script>
+<script src="game.js?v=40"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=38',{updateViaCache:'none'}).catch(() => {}));
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=40',{updateViaCache:'none'}).catch(() => {}));
 }
 </script>
 </body>

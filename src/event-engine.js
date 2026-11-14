@@ -66,7 +66,7 @@
         id:o.id,index,object:o,state:o.eventType|0,pc:(o.eventType|0)===STATE.ACTIVE?0:-1,
         triggerByLeave:!!o.triggerByLeave,repeatable:!!o.repeatable,triggerObjId:o.triggerObjId|0,
         wasTouching:false,commands:o.commands.map(c=>Uint8Array.from(c)),initialCommands:o.commands.map(c=>Uint8Array.from(c)),
-        lastTouched:false
+        lastTouched:false,waitingForMessage:false
       }));
       this.eventByIndex=this.events;
       this.vars=new Int32Array(256);
@@ -102,7 +102,7 @@
       }
       for(const event of this.events){
         event.state=event.object.eventType|0;event.pc=event.state===STATE.ACTIVE?0:-1;
-        event.wasTouching=false;event.commands=event.initialCommands.map(c=>c.slice());
+        event.wasTouching=false;event.waitingForMessage=false;event.commands=event.initialCommands.map(c=>c.slice());
       }
       this.vars.fill(0);this.cameraTargetId=this.callbacks.playerObjectId??-1;
       this.cameraBounceFactor=90;this.cameraStabilizeSpeed=140;this.cameraSnap=false;this.checkpoint=null;
@@ -119,7 +119,19 @@
       }else if(event.state===STATE.PAUSED&&state===STATE.ACTIVE)event.state=STATE.ACTIVE;
     }
     resetCommands(event){
-      event.pc=-1;event.commands=event.initialCommands.map(c=>c.slice());
+      event.pc=-1;event.waitingForMessage=false;event.commands=event.initialCommands.map(c=>c.slice());
+    }
+    resumeMessages(eventId=null){
+      let resumed=0;
+      for(const event of this.events){
+        if(!event.waitingForMessage||(eventId!==null&&event.id!==eventId))continue;
+        event.waitingForMessage=false;event.pc++;resumed++;
+        if(event.pc>=event.commands.length){
+          if(event.repeatable){event.state=STATE.WAITING;this.resetCommands(event);}
+          else event.state=STATE.TERMINATED;
+        }
+      }
+      return resumed;
     }
     eventRect(event){
       const b=event.object.bbox,m=this.world.get(event.id);
@@ -149,7 +161,11 @@
       switch(op){
         case 0:{
           const messageIndex=readI16(cmd,1),text=this.strings[messageIndex];
-          if(typeof text==='string'&&text)this.callbacks.onMessage?.(messageIndex,text);
+          if(typeof text==='string'&&text){
+            event.waitingForMessage=true;
+            this.callbacks.onMessage?.(messageIndex,text,event.id);
+            return {done:false,message:true};
+          }
           return {done:true};
         }
         case 1:{const id=readI16(cmd,1);this.callbacks.onAnimate?.(id);return {done:true};}
@@ -255,7 +271,7 @@
       }
       for(const event of this.events){
         let safety=0;
-        while(event.state===STATE.ACTIVE&&event.pc>=0&&event.pc<event.commands.length&&safety++<128){
+        while(event.state===STATE.ACTIVE&&!event.waitingForMessage&&event.pc>=0&&event.pc<event.commands.length&&safety++<128){
           const result=this.runCommand(event,event.commands[event.pc],deltaMs,body,playerObjectId);
           if(result.worldChanged)dirty=true;
           if(!result.done)break;

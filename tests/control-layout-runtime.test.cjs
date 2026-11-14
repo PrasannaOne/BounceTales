@@ -88,7 +88,7 @@ const wait = () => new Promise(resolve => setImmediate(resolve));
   assert.notEqual(editorButtons.left.style.top, initialEditorLeft.top, 'drag updates the selected editor button vertically');
 
   els['control-size'].fire('input', { target: { value: '120' } });
-  assert.equal(editorButtons.left.style.width, '89.6px', 'size slider resizes the editor preview');
+  assert.equal(editorButtons.left.style.width, '119.47px', 'size slider resizes the editor preview');
   els['save-control-layout'].fire('click');
   const saved = JSON.parse(prefs.get('bounce-control-layout-v1'));
   assert.equal(saved.left.size, 120);

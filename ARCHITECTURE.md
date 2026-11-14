@@ -55,3 +55,8 @@ The live touch controls and Settings editor use `src/control-layout.js` as their
 The logical game canvas remains 240 × 320. CSS scales it within portrait, landscape, narrow-phone, tablet and desktop layouts without feeding CSS dimensions into physics or camera calculations. V37 keeps the simulation/update loop, original RLEF resources, physics constants and trampoline calculations unchanged.
 
 The V36 install cache eagerly included the original audio, sprite resources and the large social preview. V37 limits install caching to the boot-critical shell and lazily caches additional same-origin resources on first use, reducing competing first-install network traffic.
+
+
+## Event dialogue suspension (V40)
+
+RLEF message opcodes suspend only their owning event at the message instruction. The UI queues messages from concurrent events and resumes the matching event after player input, preserving command order without advancing the fixed-step simulation while dialogue is visible.

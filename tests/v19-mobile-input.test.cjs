@@ -4,7 +4,7 @@ const path=require('node:path');
 const game=fs.readFileSync(path.join(__dirname,'..','game.js'),'utf8');
 assert.match(game,/const id=Number\(btn\.dataset\.keyId\),activePointers=new Set\(\)/,'each control tracks its own live pointer IDs');
 assert.match(game,/if\(activePointers\.size===1\).*?input\.press\(id\)/,'first contact presses that control once');
-assert.match(game,/if\(activePointers\.size===0\).*?input\.release\(id\)/,'control releases only after all contacts lift');
+assert.match(game,/if\(activePointers\.size===0\)\{[\s\S]*?input\.release\(id\)/,'control releases only after all contacts lift');
 assert.match(game,/btn\.addEventListener\('pointercancel',release\)/,'cancel releases do not leave sticky keys');
 assert.match(game,/addEventListener\('blur',clearAll\)/,'window blur clears held controls');
 assert.match(game,/document\.addEventListener\('visibilitychange',[\s\S]*?if\(document\.hidden\)\{clearAll\(\)/,'backgrounding clears held controls');
