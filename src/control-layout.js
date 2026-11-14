@@ -1,4 +1,4 @@
-/* Bounce Tales V41 live-control geometry.
+/* Bounce Tales V42 live-control geometry.
  * Positions are percentages of the available travel range, not viewport pixels.
  * This module is deliberately DOM-free so the exact same geometry is used by
  * gameplay, live touch editing, and the Node regression suite.

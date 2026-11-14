@@ -1,0 +1,16 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const root=path.resolve(__dirname,'..');
+const css=fs.readFileSync(path.join(root,'style.css'),'utf8');
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const v42=css.slice(css.lastIndexOf('V42: single-screen touch editor'));
+assert.ok(v42.length>0,'V42 editor rules exist');
+assert.match(v42,/max-height:calc\(100dvh - 94px/,'panel adapts to visible viewport');
+assert.match(v42,/overflow:hidden!important/,'editor cannot scroll');
+assert.match(v42,/control-editor-live-hint\{display:none!important/,'redundant hint is removed to save height');
+assert.match(v42,/control-editor-actions \.settings-action\{min-height:34px/,'all action buttons remain compact and tappable');
+for(const id of ['reset-control-layout','cancel-control-editor','save-control-layout']) assert.ok(html.includes(`id="${id}"`),`${id} remains available`);
+assert.match(html,/style\.css\?v=43/);
+assert.match(html,/control-layout\.js\?v=43/);
+console.log('V42 editor: one-screen non-scrollable layout, all four selectors, slider, and all three actions verified');

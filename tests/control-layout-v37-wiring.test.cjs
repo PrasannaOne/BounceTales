@@ -7,7 +7,7 @@ const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const game=fs.readFileSync(path.join(root,'game.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'style.css'),'utf8');
 const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-assert.match(html,/src\/control-layout\.js\?v=41/);
+assert.match(html,/src\/control-layout\.js\?v=43/);
 assert.match(game,/if\(!metrics\)return null/,'hidden surfaces do not receive zero-size inline styles');
 assert.match(game,/function syncSceneChrome\(\)[\s\S]*?applyLiveControlLayout\(\);/,'layout is recalculated across all game scenes');
 assert.match(game,/new ResizeObserver\(entries=>/,'layout follows responsive container size changes');
@@ -17,7 +17,7 @@ assert.match(fs.readFileSync(path.join(root,'src/control-layout.js'),'utf8'),/he
 assert.match(css,/width:min\(calc\(100vw - 32px\),270px/,'portrait game canvas is intentionally compact');
 assert.match(css,/grid-template-areas:"controls game"/,'wide landscape screens get an adaptive side-by-side layout');
 assert.match(css,/@media\(max-width:620px\) and \(orientation:landscape\)/,'narrow landscape phones avoid two-column overflow');
-assert.match(sw,/CACHE_NAME = 'bounce-tales-v41'/);
+assert.match(sw,/CACHE_NAME = 'bounce-tales-v43'/);
 assert.doesNotMatch(sw,/assets\/audio\/(?:act1|act2|act3|title)\.ogg/,'large audio is no longer a first-install prerequisite');
 assert.doesNotMatch(sw,/bounce-tales-web-preview\.png/,'social preview is not precached by the game');
 assert.match(sw,/const cached = await cache\.match\(request\)/,'repeat visits use cache-first shell loading');

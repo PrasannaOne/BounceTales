@@ -856,3 +856,51 @@ body{min-height:100svh!important;min-height:100dvh!important;align-items:flex-st
   .control-editor-actions{gap:5px;}
 }
 @media(prefers-reduced-motion:reduce){#game-controls .control{transition:none!important;}}
+
+
+/* ========================= V42: single-screen touch editor ========================= */
+/* Keep the editor compact and fully visible. The overlay itself stays transparent
+   so the real gameplay buttons remain draggable behind the panel. */
+.control-editor-panel{
+  top:calc(66px + env(safe-area-inset-top))!important;
+  max-height:calc(100dvh - 94px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important;
+  overflow:hidden!important;
+  padding:11px!important;
+  gap:6px!important;
+}
+.control-editor-heading{gap:8px!important;}
+.control-editor-heading .eyebrow{font-size:7px!important;line-height:1.1!important;}
+.control-editor-heading h2{font-size:20px!important;line-height:1.05!important;margin:1px 0 0!important;}
+.control-editor-heading .close-settings{width:34px!important;height:34px!important;min-width:34px!important;}
+.control-editor-copy{font-size:9px!important;line-height:1.25!important;}
+.control-editor-live-hint{display:none!important;}
+.control-editor-picker{gap:6px!important;margin:0!important;}
+.control-pick{min-height:33px!important;padding:5px 3px!important;font-size:11px!important;}
+.control-size-row{gap:10px!important;padding:5px 0!important;}
+.control-size-row strong{font-size:10px!important;}
+.control-size-row small{font-size:8px!important;}
+.control-size-row input{min-width:70px!important;}
+.control-editor-note{font-size:8px!important;line-height:1.2!important;}
+.control-editor-actions{gap:6px!important;}
+.control-editor-actions .settings-action{min-height:34px!important;padding:6px 4px!important;font-size:9px!important;}
+@media(max-height:620px){
+  .control-editor-panel{top:calc(54px + env(safe-area-inset-top))!important;padding:8px!important;gap:4px!important;max-height:calc(100dvh - 70px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important;}
+  .control-editor-heading h2{font-size:18px!important;}
+  .control-editor-heading .close-settings{width:30px!important;height:30px!important;min-width:30px!important;}
+  .control-pick{min-height:29px!important;}
+  .control-size-row{padding:3px 0!important;}
+  .control-editor-actions .settings-action{min-height:30px!important;padding:4px!important;}
+}
+
+
+/* V43: keep the share action the same footprint as its neighbours and use a clean filled heart. */
+.header-btn.share-only{width:44px!important;min-width:44px!important;max-width:44px!important;flex:0 0 44px!important;padding:0!important;}
+.share-icon{width:21px;height:21px;}
+.header-btn.heart-link{color:#ff3155!important;flex:0 0 44px!important;width:44px!important;min-width:44px!important;height:44px!important;font-size:0!important;}
+.heart-icon{display:block;width:23px;height:23px;fill:currentColor;stroke:none;flex:none;}
+@media(max-width:360px){
+  .header-btn.share-only{width:40px!important;min-width:40px!important;max-width:40px!important;flex-basis:40px!important;}
+  .header-btn.heart-link{width:40px!important;min-width:40px!important;height:40px!important;flex-basis:40px!important;}
+  .share-icon{width:19px;height:19px;}
+  .heart-icon{width:22px;height:22px;}
+}
