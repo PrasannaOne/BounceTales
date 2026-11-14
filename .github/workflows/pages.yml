@@ -20,6 +20,7 @@ jobs:
   deploy:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout repository
@@ -29,7 +30,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - name: Validate and extract ZIP
+      - name: Validate and safely extract ZIP
         shell: bash
         run: |
           set -euo pipefail
@@ -38,79 +39,135 @@ jobs:
           TEMP_DIR="$(mktemp -d)"
           trap 'rm -rf "$TEMP_DIR"' EXIT
 
-          test -s "$ZIP_FILE" || {
+          if [[ ! -s "$ZIP_FILE" ]]; then
             echo "::error::Bounce.zip is missing or empty."
             exit 1
-          }
+          fi
 
           python3 - "$ZIP_FILE" "$TEMP_DIR" <<'PY'
           import os
+          import shutil
           import stat
           import sys
           import zipfile
-          from pathlib import PurePosixPath
+          from pathlib import PurePosixPath, Path
 
-          archive, destination = sys.argv[1:]
-          max_files = 20000
-          max_size = 500 * 1024 * 1024
+          archive = sys.argv[1]
+          destination = Path(sys.argv[2])
+
+          MAX_ENTRIES = 20000
+          MAX_TOTAL_SIZE = 500 * 1024 * 1024
+          MAX_FILE_SIZE = 100 * 1024 * 1024
 
           with zipfile.ZipFile(archive) as z:
               entries = z.infolist()
 
-              if len(entries) > max_files:
+              if not entries:
+                  raise SystemExit("ZIP archive is empty.")
+
+              if len(entries) > MAX_ENTRIES:
                   raise SystemExit("ZIP contains too many entries.")
 
-              total_size = 0
               seen = set()
+              total_size = 0
 
               for item in entries:
-                  name = item.filename.replace("\\", "/")
-                  path = PurePosixPath(name)
+                  original = item.filename
+                  name = original.replace("\\", "/")
+
+                  if not name or "\x00" in name:
+                      raise SystemExit("ZIP contains an invalid path.")
+
+                  if name.startswith("/") or PurePosixPath(name).is_absolute():
+                      raise SystemExit(f"Absolute ZIP path rejected: {name}")
+
+                  parts = name.rstrip("/").split("/")
 
                   if (
-                      not name
-                      or name.startswith("/")
-                      or path.is_absolute()
-                      or any(part in ("..", "") for part in name.split("/"))
-                      or ":" in name.split("/")[0]
+                      not parts
+                      or any(part in ("", ".", "..") for part in parts)
+                      or ":" in parts[0]
                   ):
-                      raise SystemExit(f"Unsafe ZIP path: {name}")
+                      raise SystemExit(f"Unsafe ZIP path rejected: {name}")
 
-                  normalized = path.as_posix().rstrip("/")
+                  normalized = "/".join(parts)
 
                   if normalized in seen:
-                      raise SystemExit(f"Duplicate ZIP path: {name}")
+                      raise SystemExit(f"Duplicate ZIP path: {normalized}")
+
                   seen.add(normalized)
 
                   mode = item.external_attr >> 16
+                  file_type = stat.S_IFMT(mode)
 
                   if stat.S_ISLNK(mode):
-                      raise SystemExit(f"Symbolic links are forbidden: {name}")
+                      raise SystemExit(f"Symbolic link rejected: {name}")
+
+                  if file_type not in (0, stat.S_IFREG, stat.S_IFDIR):
+                      raise SystemExit(f"Special ZIP entry rejected: {name}")
 
                   if item.flag_bits & 1:
-                      raise SystemExit(f"Encrypted files are not allowed: {name}")
+                      raise SystemExit(f"Encrypted entry rejected: {name}")
+
+                  if item.file_size > MAX_FILE_SIZE:
+                      raise SystemExit(f"File exceeds 100 MB limit: {name}")
 
                   total_size += item.file_size
 
-                  if total_size > max_size:
+                  if total_size > MAX_TOTAL_SIZE:
                       raise SystemExit("ZIP exceeds the 500 MB extraction limit.")
 
-              z.extractall(destination)
+              for item in entries:
+                  name = item.filename.replace("\\", "/")
+                  parts = name.rstrip("/").split("/")
+                  target = destination.joinpath(*parts)
+
+                  if item.is_dir():
+                      target.mkdir(parents=True, exist_ok=True)
+                      continue
+
+                  target.parent.mkdir(parents=True, exist_ok=True)
+
+                  with z.open(item) as source, target.open("xb") as output:
+                      shutil.copyfileobj(source, output)
 
           print(f"Validated and extracted {len(entries)} ZIP entries.")
           PY
 
-          # Handle archives containing one enclosing project folder.
-          SOURCE_DIR="$TEMP_DIR"
+          # Support either a ZIP with files at its root or
+          # a ZIP containing one enclosing project directory.
           shopt -s nullglob dotglob
           ITEMS=("$TEMP_DIR"/*)
+
+          SOURCE_DIR="$TEMP_DIR"
 
           if [[ ${#ITEMS[@]} -eq 1 && -d "${ITEMS[0]}" ]]; then
             SOURCE_DIR="${ITEMS[0]}"
           fi
 
+          # Required project structure.
           test -s "$SOURCE_DIR/index.html" || {
-            echo "::error::ZIP must contain index.html at its project root."
+            echo "::error::ZIP is missing index.html at its project root."
+            exit 1
+          }
+
+          test -s "$SOURCE_DIR/style.css" || {
+            echo "::error::ZIP is missing style.css."
+            exit 1
+          }
+
+          test -s "$SOURCE_DIR/game.js" || {
+            echo "::error::ZIP is missing game.js."
+            exit 1
+          }
+
+          test -s "$SOURCE_DIR/sw.js" || {
+            echo "::error::ZIP is missing sw.js."
+            exit 1
+          }
+
+          test -s "$SOURCE_DIR/manifest.webmanifest" || {
+            echo "::error::ZIP is missing manifest.webmanifest."
             exit 1
           }
 
@@ -125,33 +182,40 @@ jobs:
           }
 
           echo "SOURCE_DIR=$SOURCE_DIR" >> "$GITHUB_ENV"
-          echo "ZIP extraction validated successfully."
+          echo "ZIP structure validation passed."
 
-      - name: Synchronize website files safely
+      - name: Synchronize approved website files
         shell: bash
         run: |
           set -euo pipefail
 
           SOURCE="$SOURCE_DIR"
 
-          # Only these root files are eligible for replacement.
+          # Only approved root-level runtime files can be replaced.
           ROOT_FILES=(
             index.html
             style.css
             game.js
             sw.js
             manifest.webmanifest
+            favicon.png
             favicon.ico
+            icon-192.png
+            icon-512.png
+            apple-touch-icon.png
+            bounce-tales-web-preview.png
           )
 
           for file in "${ROOT_FILES[@]}"; do
             if [[ -f "$SOURCE/$file" ]]; then
               install -D -m 0644 "$SOURCE/$file" "$file"
+              echo "Updated: $file"
             fi
           done
 
-          # Only these directories are synchronized.
-          # Deletion is confined to these explicitly approved paths.
+          # Synchronize runtime directories only.
+          # --delete removes obsolete files inside these directories,
+          # never repository documentation or workflow configuration.
           RUNTIME_DIRS=(
             assets
             src
@@ -161,15 +225,18 @@ jobs:
           for dir in "${RUNTIME_DIRS[@]}"; do
             if [[ -d "$SOURCE/$dir" ]]; then
               mkdir -p "$dir"
+
               rsync -a --delete \
                 --safe-links \
                 "$SOURCE/$dir/" "$dir/"
+
+              echo "Synchronized directory: $dir"
             fi
           done
 
-          echo "Website runtime files synchronized."
+          echo "Runtime synchronization completed."
 
-      - name: Validate updated website
+      - name: Validate synchronized website
         shell: bash
         run: |
           set -euo pipefail
@@ -179,17 +246,81 @@ jobs:
           test -s game.js
           test -s sw.js
           test -s manifest.webmanifest
+          test -d assets
+          test -d src
 
           node --check game.js
 
           python3 - <<'PY'
           import json
+
           with open("manifest.webmanifest", encoding="utf-8") as f:
-              json.load(f)
-          print("PWA manifest is valid JSON.")
+              manifest = json.load(f)
+
+          if not isinstance(manifest, dict):
+              raise SystemExit("PWA manifest must contain a JSON object.")
+
+          print("PWA manifest JSON validation passed.")
           PY
 
-          echo "Basic deployment validation passed."
+          echo "Website validation passed."
+
+      - name: Check deployment scope
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Refuse to commit anything outside the approved runtime paths.
+          python3 <<'PY'
+          import subprocess
+          import sys
+
+          result = subprocess.run(
+              ["git", "status", "--porcelain", "-z"],
+              check=True,
+              stdout=subprocess.PIPE
+          )
+
+          entries = result.stdout.decode("utf-8", "surrogateescape").split("\0")
+          changed = []
+
+          for entry in entries:
+              if not entry:
+                  continue
+
+              path = entry[3:]
+              changed.append(path)
+
+          root_files = {
+              "index.html",
+              "style.css",
+              "game.js",
+              "sw.js",
+              "manifest.webmanifest",
+              "favicon.png",
+              "favicon.ico",
+              "icon-192.png",
+              "icon-512.png",
+              "apple-touch-icon.png",
+              "bounce-tales-web-preview.png",
+          }
+
+          allowed_dirs = ("assets/", "src/", "icons/")
+
+          unexpected = [
+              path for path in changed
+              if path not in root_files
+              and not path.startswith(allowed_dirs)
+          ]
+
+          if unexpected:
+              print("Unexpected changes detected:")
+              for path in unexpected:
+                  print(f"  - {path}")
+              sys.exit("Refusing to commit outside approved runtime paths.")
+
+          print(f"Deployment scope verified: {len(changed)} changed paths.")
+          PY
 
       - name: Commit website changes
         shell: bash
@@ -200,18 +331,9 @@ jobs:
           git config user.email \
             "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Stage only approved website paths and the uploaded ZIP.
-          git add -A -- \
-            index.html \
-            style.css \
-            game.js \
-            sw.js \
-            manifest.webmanifest \
-            favicon.ico \
-            assets \
-            src \
-            icons \
-            Bounce.zip
+          # The scope check above ensures only approved runtime paths
+          # have changed. This also safely handles new and deleted files.
+          git add -A
 
           if git diff --cached --quiet; then
             echo "No website changes detected."
@@ -219,14 +341,22 @@ jobs:
           fi
 
           git commit -m "Deploy Bounce Tales website from ZIP"
+
           git push origin HEAD:main
 
       - name: Deployment summary
         if: success()
+        shell: bash
         run: |
-          echo "## Bounce Tales deployment completed" >> "$GITHUB_STEP_SUMMARY"
-          echo "- ZIP validation: passed" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Website synchronization: passed" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Repository documentation: protected" >> "$GITHUB_STEP_SUMMARY"
-          echo "- Commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "## Bounce Tales deployment completed"
+            echo ""
+            echo "- ZIP validation: passed"
+            echo "- Runtime synchronization: passed"
+            echo "- JavaScript syntax check: passed"
+            echo "- PWA manifest validation: passed"
+            echo "- Deployment scope protection: passed"
+            echo "- Repository documentation and workflow files: protected"
+            echo "- Deployment commit: $(git rev-parse HEAD)"
+          } >> "$GITHUB_STEP_SUMMARY"
           
