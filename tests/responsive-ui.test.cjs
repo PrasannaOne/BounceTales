@@ -16,7 +16,8 @@ assert.match(html,/class="share-icon"/,'header has a conventional connected-node
 assert.doesNotMatch(html,/share-label/,'share control is icon-only');
 assert.match(css,/min-width:820px/,'desktop grid layout exists');
 assert.match(css,/max-height:620px\) and \(orientation:landscape\)/,'landscape phone layout exists');
-assert.match(css,/#app:not\(\[data-mode="play"\]\) \.controls,/,'touch controls are hidden in menus');
+assert.match(css,/#app \.controls\{display:flex;/,'touch controls remain visible across title, chapter, pause and gameplay screens');
+assert.doesNotMatch(css,/#app:not\(\[data-mode="play"\]\) #game-controls\{display:none/,'no scene hides the touch controls');
 assert.match(css,/\.settings-panel\{[^}]*overflow:hidden/s,'settings panel does not scroll');
 assert.match(css,/\.special-control-row\{height:[^}]*display:flex/,'star occupies a separate lower row, not an overlay');
 assert.match(css,/\.game-wrap\{margin-bottom:clamp\(/,'game viewport is separated from the thumb controls for visibility');

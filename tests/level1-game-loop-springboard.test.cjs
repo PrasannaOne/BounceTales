@@ -20,17 +20,16 @@ function element(id) {
     addEventListener(name, fn) { (handlers[name] ??= []).push(fn); },
     fire(name, event = {}) { for (const fn of handlers[name] || []) fn(event); },
     getContext: () => ctx2d,
-    getBoundingClientRect: () => ({ left: 0, top: 0, width: id === 'control-editor-stage' ? 320 : 240, height: id === 'control-editor-stage' ? 164 : 320 }),
+    getBoundingClientRect: () => ({ left: 0, top: 0, width: id === 'game-controls' ? 320 : 240, height: id === 'game-controls' ? 320 * 140 / 360 : 320 }),
     setPointerCapture: noop, handlers
   };
 }
-const ids = ['app','game-controls','game-text','settings-game-tab','settings-about-tab','settings-game-pane','settings-about-pane','keyboard-hint','game','level-cover','menu','level-screen','pause-layer','complete-layer','guide-layer','settings-layer','control-editor-layer','control-editor-stage','open-control-editor','close-control-editor','cancel-control-editor','save-control-layout','reset-control-layout','control-size','control-size-value','statusline','egg-hud','fps-counter','pause-mini','continue-game','open-chapters','open-guide','level-prev','level-next','level-position','level-name','level-chapter','level-record','level-lock','play-level','back-title','resume','restart','pause-chapters','complete-title','complete-eggs','complete-stats','next-level','result-chapters','guide-back','fps-mode','smooth-motion','show-fps','fullscreen-btn','open-settings','close-settings','share-site','reset-game','game-hint','save-summary','music-enabled'];
+const ids = ['app','game-controls','game-text','settings-game-tab','settings-about-tab','settings-game-pane','settings-about-pane','keyboard-hint','game','level-cover','menu','level-screen','pause-layer','complete-layer','guide-layer','settings-layer','control-editor-layer','control-editor-live-hint','open-control-editor','close-control-editor','cancel-control-editor','save-control-layout','reset-control-layout','control-size','control-size-value','statusline','egg-hud','fps-counter','pause-mini','continue-game','open-chapters','open-guide','level-prev','level-next','level-position','level-name','level-chapter','level-record','level-lock','play-level','back-title','resume','restart','pause-chapters','complete-title','complete-eggs','complete-stats','next-level','result-chapters','guide-back','fps-mode','smooth-motion','show-fps','fullscreen-btn','open-settings','close-settings','share-site','reset-game','game-hint','save-summary','music-enabled'];
 const els = Object.fromEntries(ids.map(id => [id, element(id)]));
 els.game.getContext = () => ctx2d;
 const liveControls = ['left','right','jump','form'].map((name, index) => { const b = element(name); b.dataset.keyId = ['3','4','7','20'][index]; return b; });
 els['game-controls'].querySelectorAll = () => liveControls;
-const editorButtons = Object.fromEntries(['left','right','jump','form'].map(id => { const b = element('editor-' + id); b.dataset.editorId = id; b.closest = () => b; return [id, b]; }));
-els['control-editor-stage'].querySelector = selector => editorButtons[selector.match(/data-editor-id="([^"]+)/)?.[1]];
+const pickerButtons = ['left','right','jump','form'].map(name => { const b = element('pick-' + name); b.dataset.pickControl = name; return b; });
 els['control-size'].value = '100';
 const records = Array.from({ length: 15 }, () => ({ eggs: 0, clearTime: 9999, score: 0, globalScore: 0 }));
 let saveData = JSON.stringify({ version: 1, records, selected: 0, totalGameTime: 0 });
@@ -43,7 +42,7 @@ const document = {
   documentElement: { requestFullscreen: async () => { document.fullscreenElement = document.documentElement; } },
   getElementById: id => els[id] || element(id),
   querySelector: selector => selector.includes('about') ? els['settings-about-tab'] : els['settings-game-tab'],
-  querySelectorAll: selector => selector === '[data-settings-tab]' ? tabs : liveControls,
+  querySelectorAll: selector => selector === '[data-settings-tab]' ? tabs : selector === '[data-pick-control]' ? pickerButtons : liveControls,
   addEventListener(name, fn) { (listeners.get('document:' + name) || listeners.set('document:' + name, []).get('document:' + name)).push(fn); }
 };
 const sandbox = {

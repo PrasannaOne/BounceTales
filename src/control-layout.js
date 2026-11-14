@@ -1,7 +1,7 @@
-/* Bounce Tales V38 control geometry.
+/* Bounce Tales V41 live-control geometry.
  * Positions are percentages of the available travel range, not viewport pixels.
  * This module is deliberately DOM-free so the exact same geometry is used by
- * gameplay, the editor preview, and the Node regression suite.
+ * gameplay, live touch editing, and the Node regression suite.
  */
 (function (root, factory) {
   const api = factory();
@@ -10,12 +10,12 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  const SURFACE = Object.freeze({ width: 360, height: 126 });
+  const SURFACE = Object.freeze({ width: 360, height: 140 });
   const BASE = Object.freeze({
-    left: Object.freeze({ width: 112, height: 80 }),
-    right: Object.freeze({ width: 112, height: 80 }),
-    jump: Object.freeze({ width: 112, height: 80 }),
-    form: Object.freeze({ width: 44, height: 44 })
+    left: Object.freeze({ width: 116, height: 84 }),
+    right: Object.freeze({ width: 116, height: 84 }),
+    jump: Object.freeze({ width: 116, height: 84 }),
+    form: Object.freeze({ width: 48, height: 48 })
   });
   const DEFAULTS = Object.freeze({
     left: Object.freeze({ x: 0, y: 0, size: 100 }),

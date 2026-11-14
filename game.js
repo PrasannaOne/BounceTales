@@ -1036,10 +1036,8 @@ function syncSceneChrome(){
   const app=document.getElementById('app');if(app)app.dataset.mode=mode;
   const playing=mode===S.play;
   status.hidden=!playing;eggHud.hidden=!playing;
-  if(playing){
-    applyLiveControlLayout();
-    scheduleLiveControlLayout();
-  }
+  // Controls are available on the title, chapter, pause and gameplay screens.
+  applyLiveControlLayout();
   const fps=document.getElementById('fps-counter');if(fps)fps.hidden=!(playing&&showFps);
 }
 function syncPauseButton(){const b=document.getElementById('pause-mini');if(b)b.hidden=mode!==S.play;}
@@ -1330,7 +1328,7 @@ async function shareSite(){
   const shareData={title:'Bounce Tales',text:'Play Bounce Tales, an HTML5 browser remaster.',url:'https://prasannaone.github.io/BounceTales/'};
   try{if(navigator.share){await navigator.share(shareData);}else if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(shareData.url);toast('Site link copied');}else{prompt('Copy the Bounce Tales link',shareData.url);}}catch(e){if(e?.name!=='AbortError')console.warn('Share unavailable',e);}
 }
-// ======================== V38 TOUCH CONTROL SYSTEM ========================
+// ======================== V41 LIVE TOUCH CONTROL SYSTEM ========================
 // A single geometry module drives the live buttons and the customisation preview.
 const CONTROL_LAYOUT_KEY='bounce-control-layout-v1';
 const CONTROL_LAYOUT_DEFAULTS=BounceControlLayout.DEFAULTS;
@@ -1356,28 +1354,29 @@ function applyControlLayoutToSurface(surface,layout){
   const metrics=BounceControlLayout.metrics(rect?.width);
   // Hidden controls intentionally retain their last valid geometry.
   if(!metrics)return null;
-  surface.style.height=metrics.height+'px';
-  surface.style.minHeight=metrics.height+'px';
+  surface.style.setProperty('height',metrics.height+'px','important');
+  surface.style.setProperty('min-height',metrics.height+'px','important');
   surface.style.setProperty('--control-scale',String(metrics.scale));
   surface.dataset.layoutMeasured='true';
   surface.querySelectorAll('[data-key-id],[data-editor-id]').forEach(el=>{
     const id=controlIdForElement(el);
     const box=BounceControlLayout.placement(id,layout[id],metrics.width);
     if(!box)return;
-    el.style.left=box.left+'px';
-    el.style.top=box.top+'px';
-    el.style.right='auto';
-    el.style.bottom='auto';
-    el.style.width=box.width+'px';
-    el.style.height=box.height+'px';
-    el.style.minHeight=box.height+'px';
+    // Inline important offsets deliberately win over the legacy responsive
+    // coordinate rules that previously pinned buttons to static positions.
+    el.style.setProperty('left',box.left+'px','important');
+    el.style.setProperty('top',box.top+'px','important');
+    el.style.setProperty('right','auto','important');
+    el.style.setProperty('bottom','auto','important');
+    el.style.setProperty('width',box.width+'px','important');
+    el.style.setProperty('height',box.height+'px','important');
+    el.style.setProperty('min-height',box.height+'px','important');
   });
   return metrics;
 }
 function applyLiveControlLayout(override=null){
   const host=document.getElementById('game-controls');
-  const app=document.getElementById('app');
-  if(!host||app?.dataset.mode!=='play')return false;
+  if(!host)return false;
   const metrics=applyControlLayoutToSurface(host,currentControlLayout(override));
   if(!metrics){host.dataset.layoutPending='true';return false;}
   delete host.dataset.layoutPending;
@@ -1402,27 +1401,25 @@ function selectEditorControl(id){
     button.classList.toggle('active',active);
     button.setAttribute('aria-pressed',String(active));
   });
-  document.querySelectorAll('[data-editor-id]').forEach(button=>{
-    const active=button.dataset.editorId===id;
-    button.classList.toggle('selected',active);
+  document.querySelectorAll('[data-key-id]').forEach(button=>{
+    const active=controlIdForElement(button)===id;
+    button.classList.toggle('editor-selected',active);
     button.setAttribute('aria-pressed',String(active));
   });
 }
 function renderEditorLayout(){
-  const stage=document.getElementById('control-editor-stage');
-  if(!stage||!editorLayout)return false;
-  const metrics=applyControlLayoutToSurface(stage,editorLayout);
-  if(!metrics)return false;
-  selectEditorControl(editorSelected);
-  // Show the same unsaved layout in live play where the play controls are visible.
-  applyLiveControlLayout(editorLayout);
-  return true;
+  if(!editorLayout)return false;
+  const measured=applyLiveControlLayout(editorLayout);
+  if(measured)selectEditorControl(editorSelected);
+  return measured;
 }
 function openControlEditor(){
-  editorReturnFocus=document.activeElement;
+  editorReturnFocus=settingsReturnFocus||document.getElementById('open-settings');
   editorLayout=loadControlLayout()||cloneDefaultControlLayout();
   editorSelected='left';
   editorResetToDefault=false;
+  // Leave the title/game scene intact and expose the real controls for direct editing.
+  closeSettings();
   const layer=document.getElementById('control-editor-layer');
   layer.hidden=false;
   requestAnimationFrame(()=>{renderEditorLayout();});
@@ -1432,35 +1429,41 @@ function closeControlEditor(restoreSaved=true){
   layer.hidden=true;
   editorDrag=null;
   editorLayout=null;
+  document.querySelectorAll('[data-key-id]').forEach(button=>{
+    button.classList.remove('editor-selected');
+    button.removeAttribute?.('aria-pressed');
+  });
   if(restoreSaved)applyLiveControlLayout();
   if(editorReturnFocus?.focus)editorReturnFocus.focus();
   editorReturnFocus=null;
 }
 function bindControlEditor(){
   const layer=document.getElementById('control-editor-layer');
-  const stage=document.getElementById('control-editor-stage');
   const live=document.getElementById('game-controls');
   const sizeSlider=document.getElementById('control-size');
 
   document.getElementById('open-control-editor').addEventListener('click',openControlEditor);
   document.getElementById('close-control-editor').addEventListener('click',()=>closeControlEditor(true));
   document.getElementById('cancel-control-editor').addEventListener('click',()=>closeControlEditor(true));
-  layer.addEventListener('click',event=>{
-    if(event.target===layer)closeControlEditor(true);
-  });
 
   document.querySelectorAll('[data-pick-control]').forEach(button=>{
     button.addEventListener('click',()=>selectEditorControl(button.dataset.pickControl));
   });
 
-  stage.addEventListener('pointerdown',event=>{
-    const button=event.target.closest?.('[data-editor-id]');
-    if(!button||!editorLayout)return;
-    const id=button.dataset.editorId;
-    const metrics=BounceControlLayout.metrics(stage.getBoundingClientRect().width);
+  // Capture on the live surface before gameplay's normal pointer listeners.
+  // While editing, drags reposition actual game buttons instead of pressing them.
+  live.addEventListener('pointerdown',event=>{
+    if(!editorLayout)return;
+    const button=event.target?.closest?.('[data-key-id]');
+    if(!button)return;
+    const id=controlIdForElement(button);
+    if(!id||!BounceControlLayout.IDS.includes(id))return;
+    const metrics=BounceControlLayout.metrics(live.getBoundingClientRect().width);
     const box=metrics&&BounceControlLayout.placement(id,editorLayout[id],metrics.width);
     if(!box)return;
     event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation?.();
     selectEditorControl(id);
     editorResetToDefault=false;
     editorDrag={
@@ -1468,25 +1471,28 @@ function bindControlEditor(){
       startXValue:editorLayout[id].x,startYValue:editorLayout[id].y,
       maxX:box.maxX,maxY:box.maxY
     };
-    try{stage.setPointerCapture(event.pointerId);}catch{}
-  });
-  stage.addEventListener('pointermove',event=>{
+    try{live.setPointerCapture(event.pointerId);}catch{}
+  },{capture:true,passive:false});
+  live.addEventListener('pointermove',event=>{
     if(!editorDrag||editorDrag.pointerId!==event.pointerId||!editorLayout)return;
-    const deltaX=event.clientX-editorDrag.startX;
-    const deltaY=event.clientY-editorDrag.startY;
+    event.preventDefault();
+    event.stopPropagation();
+    const dx=event.clientX-editorDrag.startX;
+    const dy=event.clientY-editorDrag.startY;
     const item=editorLayout[editorDrag.id];
-    item.x=BounceControlLayout.clamp(editorDrag.startXValue+(editorDrag.maxX>0?deltaX/editorDrag.maxX*100:0),0,100);
-    item.y=BounceControlLayout.clamp(editorDrag.startYValue+(editorDrag.maxY>0?deltaY/editorDrag.maxY*100:0),0,100);
+    item.x=BounceControlLayout.clamp(editorDrag.startXValue+(editorDrag.maxX>0?dx/editorDrag.maxX*100:0),0,100);
+    item.y=BounceControlLayout.clamp(editorDrag.startYValue+(editorDrag.maxY>0?dy/editorDrag.maxY*100:0),0,100);
     editorResetToDefault=false;
     renderEditorLayout();
-  });
-  const endDrag=event=>{
+  },{capture:true,passive:false});
+  const endLiveDrag=event=>{
     if(!editorDrag||event.pointerId!==undefined&&editorDrag.pointerId!==event.pointerId)return;
+    event.stopPropagation?.();
     editorDrag=null;
   };
-  stage.addEventListener('pointerup',endDrag);
-  stage.addEventListener('pointercancel',endDrag);
-  stage.addEventListener('lostpointercapture',endDrag);
+  live.addEventListener('pointerup',endLiveDrag,{capture:true});
+  live.addEventListener('pointercancel',endLiveDrag,{capture:true});
+  live.addEventListener('lostpointercapture',endLiveDrag,{capture:true});
 
   sizeSlider.addEventListener('input',event=>{
     if(!editorLayout)return;
@@ -1511,13 +1517,14 @@ function bindControlEditor(){
       toast('Could not save controls on this device');
       return;
     }
+    const reset=editorResetToDefault;
     closeControlEditor(false);
     scheduleLiveControlLayout();
-    toast(editorResetToDefault?'Default controls restored':'Touch controls saved');
+    toast(reset?'Default controls restored':'Touch controls saved');
   });
 
   const refresh=()=>{
-    if(document.getElementById('app')?.dataset.mode==='play')scheduleLiveControlLayout();
+    scheduleLiveControlLayout();
     if(!layer.hidden&&editorLayout)requestAnimationFrame(renderEditorLayout);
   };
   window.addEventListener('resize',refresh,{passive:true});
@@ -1528,7 +1535,6 @@ function bindControlEditor(){
       if(entries.some(entry=>entry.contentRect.width>1))refresh();
     });
     controlLayoutObserver.observe(live);
-    controlLayoutObserver.observe(stage);
   }
   document.addEventListener('keydown',event=>{
     if(event.key==='Escape'&&!layer.hidden){
@@ -1537,7 +1543,6 @@ function bindControlEditor(){
       event.stopImmediatePropagation?.();
     }
   },{capture:true});
-  // First gameplay transition calls applyLiveControlLayout after the play surface is revealed.
 }
 
 function bindSettings(){

@@ -49,8 +49,8 @@ test('drag delta updates percentages without changing button size', () => {
 test('surface height scales proportionally with available width', () => {
   const small = Layout.metrics(320);
   const large = Layout.metrics(400);
-  assert.equal(Math.round(small.height*100)/100,112);
-  assert.equal(Math.round(large.height*100)/100,140);
+  assert.equal(Math.round(small.height*100)/100,124.44);
+  assert.equal(Math.round(large.height*100)/100,155.56);
 });
 
 test('default layout is three equal wide buttons in one row with Form below Jump', () => {
@@ -59,12 +59,12 @@ test('default layout is three equal wide buttons in one row with Form below Jump
   const right = Layout.placement('right', layout.right, 360);
   const jump = Layout.placement('jump', layout.jump, 360);
   const form = Layout.placement('form', layout.form, 360);
-  assert.deepEqual([left.width, right.width, jump.width], [112,112,112]);
-  assert.deepEqual([left.height, right.height, jump.height], [80,80,80]);
+  assert.deepEqual([left.width, right.width, jump.width], [116,116,116]);
+  assert.deepEqual([left.height, right.height, jump.height], [84,84,84]);
   assert.equal(left.left, 0);
-  assert.equal(right.left, 124);
-  assert.equal(jump.left, 248);
-  assert.equal(form.left, 316);
-  assert.equal(form.top, 82);
+  assert.equal(right.left, 122);
+  assert.equal(jump.left, 244);
+  assert.equal(form.left, 312);
+  assert.equal(form.top, 92);
   assert.ok(form.top >= jump.top + jump.height);
 });
