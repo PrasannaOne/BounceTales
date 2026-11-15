@@ -50,6 +50,15 @@ const wait = () => new Promise(resolve => setImmediate(resolve));
   assert.equal(music.playLevel(3), true);
   await wait(); await wait();
   assert.equal(music.currentResource, 32);
+  const playingBeforeDeparture = music.currentSource;
+  music.pause();
+  assert.equal(playingBeforeDeparture.stopped, true, 'departure stops the active audio source, not just the AudioContext clock');
+  assert.equal(music.currentSource, null);
+  assert.equal(music.context.state, 'suspended');
+  assert.equal(music.lifecyclePaused, true);
+  assert.equal(await music.resume(), true, 'a previously unlocked and enabled track can resume after return');
+  assert.equal(music.currentResource, 32);
+  assert.notEqual(music.currentSource, playingBeforeDeparture, 'resume creates a fresh source rather than reusing a stopped node');
   music.setEnabled(false);
   assert.equal(store.get('bounce-music-enabled'), 'false');
   assert.equal(music.currentSource, null);
@@ -63,5 +72,29 @@ const wait = () => new Promise(resolve => setImmediate(resolve));
   assert.equal(music.currentSource.loop, false);
   music.dispose();
   assert.equal(music.currentSource, null);
-  console.log('Web Audio: title, act, boss, bonus, lose and win routing, loop/cue behaviour, persistence and resume verified');
+
+  // A decode/fetch still in flight must not start music after the page leaves.
+  let releaseFetch;
+  const delayed = new AudioController({
+    ContextClass: FakeAudioContext,
+    storage,
+    fetcher: () => new Promise(resolve => { releaseFetch = resolve; })
+  });
+  delayed.playTitle();
+  await wait();
+  assert.equal(typeof releaseFetch, 'function');
+  delayed.pause();
+  releaseFetch({ ok: true, arrayBuffer: async () => new ArrayBuffer(8) });
+  await wait(); await wait();
+  assert.equal(delayed.currentSource, null, 'late audio load must not restart after lifecycle pause');
+  assert.equal(delayed.lifecyclePaused, true);
+  assert.equal(await delayed.resume(), false, 'return does not unlock audio before the first user gesture');
+  assert.equal(delayed.lifecyclePaused, false);
+  delayed.dispose();
+
+  const gameSource = require('node:fs').readFileSync(require('node:path').join(__dirname, '..', 'game.js'), 'utf8');
+  assert.match(gameSource, /addEventListener\('pagehide',suspendForDeparture\)/);
+  assert.match(gameSource, /addEventListener\('pageshow'/);
+  assert.match(gameSource, /addEventListener\('freeze',suspendForDeparture\)/);
+  console.log('Web Audio: routing, persistence, lifecycle suspension, late-load race protection and page lifecycle wiring verified');
 })().catch(error => { console.error(error); process.exitCode = 1; });

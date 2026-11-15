@@ -1,0 +1,28 @@
+const fs=require('fs');const assert=require('assert');
+const css=fs.readFileSync('style.css','utf8');const game=fs.readFileSync('game.js','utf8');const html=fs.readFileSync('index.html','utf8');const sw=fs.readFileSync('sw.js','utf8');
+assert.match(css,/#app \.game-stage\s*\{[\s\S]*?position:\s*relative/,'the responsive game stage anchors external controls');
+assert.match(css,/#app \.pause-toolbar\s*\{[\s\S]*?position:\s*absolute;[\s\S]*?top:\s*40px;[\s\S]*?right:\s*-48px;[\s\S]*?width:\s*32px;[\s\S]*?height:\s*29px;/,'pause control occupies the upper right-side gutter outside the game viewport');
+assert.match(css,/#app \.pause-mini\s*\{[\s\S]*?position:\s*static;[\s\S]*?inset:\s*auto;/,'pause button explicitly neutralises legacy absolute offsets');
+assert.doesNotMatch(css,/\.pause-mini\s*\{[^}]*position\s*:\s*absolute/i,'pause button must never inherit absolute positioning');
+assert.match(css,/@media \(max-width: 620px\) and \(orientation: portrait\) \{[\s\S]*?calc\(100vw - 112px\)/,'compact portrait layouts reserve enough side gutter for the button');
+assert.match(css,/@media \(min-width: 760px\) and \(orientation: landscape\) \{[\s\S]*?\.pause-toolbar \{ top: -36px; right: 0; \}/,'wide landscape layouts move the pause button to the clear strip above the game column');
+assert.match(css,/#app #game-controls\s*\{[^}]*visibility:hidden/s,'the premeasured controls remain in layout but are not painted');
+assert.match(game,/function syncPauseButton\(\)\{const b=document\.getElementById\('pause-mini'\);if\(b\)b\.hidden=mode!==S\.play;\}/,'only the pause button is hidden outside active play');
+assert.match(html,/<div class="game-stage">[\s\S]*?<div class="pause-toolbar"[\s\S]*?id="pause-mini"[\s\S]*?<section class="game-wrap"/,'pause control is mounted outside the game viewport in its responsive stage');
+assert.match(html,/id="game-hint"[^>]*role="status"/,'cannon guidance has an accessible status region');
+assert.match(css,/#app #game-hint\.sr-only\s*\{[\s\S]*?display:\s*block\s*!important/s,'status region remains available to assistive technology without visible layout space');
+assert.match(game,/target\.font='8\.2px "Courier New",monospace'/,'original story text should be modestly larger');
+assert.match(game,/menuRoundRect\(10,210,220,99,5\)/,'story panel should provide additional readable space');
+assert.match(game,/lines\.slice\(0,6\)\.forEach\(\(text,i\)=>\{target\.strokeText\(text,22,y\+i\*12\.5,194\)/,'story lines need readable spacing');
+assert.match(game,/textTarget\.font='600 10px system-ui, sans-serif'/,'field messages should be easier to read');
+assert.match(html,/style\.css\?v=53/,'HTML styles use the V53 cache key');
+assert.match(sw,/bounce-tales-v53/,'service worker cache identity is V53');
+assert.match(css,/#app \.pause-mini\[hidden\]\s*\{\s*display:\s*none\s*!important;\s*\}/,'pause button respects hidden state in every scene');
+assert.match(css,/@media \(max-height: 620px\) and \(orientation: portrait\)/,'short portrait devices receive explicit stage sizing');
+assert.match(css,/@media \(max-width: 620px\) and \(orientation: landscape\) and \(max-height: 620px\)/,'narrow landscape devices receive explicit stage sizing');
+
+assert.match(css,/@media \(max-width: 620px\) and \(orientation: landscape\) and \(max-height: 620px\) \{[\s\S]*?calc\(100vw - 112px\)/,'narrow landscape keeps the same protected external pause gutter');
+assert.match(css,/@media \(orientation: landscape\) and \(max-height: 620px\) \{[\s\S]*?pause-toolbar \{ top: -36px; right: 0; \}/,'short wide landscape moves pause to the clear strip above the stage');
+assert.doesNotMatch(css,/V39 responsive|V41 portrait|V42: single-screen touch editor/,'the obsolete responsive patch stack is gone');
+assert.equal((css.match(/V53 responsive shell/g)||[]).length,1,'there is a single responsive shell section');
+console.log('V53 responsive side-gutter pause placement and mobile shell checks passed');

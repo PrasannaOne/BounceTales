@@ -10,9 +10,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=49">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=49">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=49">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=53">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=53">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=53">
 <meta name="description" content="Bounce Tales: a source-informed browser recreation of the classic mobile platform adventure.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Bounce Tales">
@@ -28,7 +28,7 @@
 <meta name="twitter:description" content="A little world of Bounce. Play the classic mobile platform adventure in your browser.">
 <meta name="twitter:image" content="https://prasannaone.github.io/BounceTales/bounce-tales-web-preview.png">
 <title>Bounce Tales</title>
-<link rel="stylesheet" href="style.css?v=49">
+<link rel="stylesheet" href="style.css?v=53">
 </head>
 <body>
 <main id="app">
@@ -41,11 +41,14 @@
     </div>
   </header>
 
-  <section class="game-wrap" aria-label="Bounce Tales game" id="game-wrap">
+  <div class="game-stage">
+    <div class="pause-toolbar" aria-label="Gameplay actions">
+      <button class="pause-mini" id="pause-mini" type="button" aria-label="Pause game" title="Pause" hidden>Ⅱ</button>
+    </div>
+    <section class="game-wrap" aria-label="Bounce Tales game" id="game-wrap">
     <canvas id="game" width="240" height="320" aria-label="Bounce Tales game screen">Bounce Tales. Hold left or right to move, hold jump to bounce, and use the star button to change an unlocked form.</canvas>
     <canvas id="game-text" width="480" height="640" aria-hidden="true"></canvas>
     <div class="statusline" id="statusline">LOADING ORIGINAL GAME…</div>
-    <button class="pause-mini" id="pause-mini" type="button" aria-label="Pause game" title="Pause">Ⅱ</button>
     <div class="egg-hud" id="egg-hud" hidden aria-hidden="true"></div>
     <div class="fps-counter" id="fps-counter" hidden>-- FPS</div>
 
@@ -105,7 +108,8 @@
         <button id="guide-back" class="game-primary">GOT IT</button>
       </div>
     </div>
-  </section>
+    </section>
+  </div>
 
   <section class="controls" id="game-controls" aria-label="Gameplay controls">
     <div class="main-controls">
@@ -189,32 +193,32 @@
     </div>
   </div>
 </section>
-<script src="src/fixed-point.js?v=49"></script>
-<script src="src/original-input-map.js?v=49"></script>
-<script src="src/original-camera.js?v=49"></script>
-<script src="src/rlef-reader.js?v=49"></script>
-<script src="src/bounce-physics.js?v=49"></script>
-<script src="src/terrain-collision.js?v=49"></script>
-<script src="src/original-collision.js?v=49"></script>
-<script src="src/game-timing.js?v=49"></script>
-<script src="src/event-engine.js?v=49"></script>
-<script src="src/original-sprite-animation.js?v=49"></script>
-<script src="src/original-enemies.js?v=49"></script>
-<script src="src/original-water.js?v=49"></script>
-<script src="src/original-trampoline.js?v=49"></script>
-<script src="src/midp-graphics.js?v=49"></script>
-<script src="src/original-progression.js?v=49"></script>
-<script src="src/game-particles.js?v=49"></script>
-<script src="src/sprite-atlas.js?v=49"></script>
-<script src="src/audio-controller.js?v=49"></script>
-<script src="src/control-layout.js?v=49"></script>
-<script src="src/original-hud.js?v=49"></script>
-<script src="src/module-registry.js?v=49"></script>
-<script src="src/port-engine.js?v=49"></script>
-<script src="game.js?v=49"></script>
+<script src="src/fixed-point.js?v=53"></script>
+<script src="src/original-input-map.js?v=53"></script>
+<script src="src/original-camera.js?v=53"></script>
+<script src="src/rlef-reader.js?v=53"></script>
+<script src="src/bounce-physics.js?v=53"></script>
+<script src="src/terrain-collision.js?v=53"></script>
+<script src="src/original-collision.js?v=53"></script>
+<script src="src/game-timing.js?v=53"></script>
+<script src="src/event-engine.js?v=53"></script>
+<script src="src/original-sprite-animation.js?v=53"></script>
+<script src="src/original-enemies.js?v=53"></script>
+<script src="src/original-water.js?v=53"></script>
+<script src="src/original-trampoline.js?v=53"></script>
+<script src="src/midp-graphics.js?v=53"></script>
+<script src="src/original-progression.js?v=53"></script>
+<script src="src/game-particles.js?v=53"></script>
+<script src="src/sprite-atlas.js?v=53"></script>
+<script src="src/audio-controller.js?v=53"></script>
+<script src="src/control-layout.js?v=53"></script>
+<script src="src/original-hud.js?v=53"></script>
+<script src="src/module-registry.js?v=53"></script>
+<script src="src/port-engine.js?v=53"></script>
+<script src="game.js?v=53"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=49',{updateViaCache:'none'}).catch(() => {}));
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=53',{updateViaCache:'none'}).catch(() => {}));
 }
 </script>
 </body>

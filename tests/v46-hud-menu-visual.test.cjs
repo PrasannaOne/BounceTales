@@ -39,16 +39,16 @@ assert.match(game,/drawImageMap\(2,labelLeft-19\+pulse,centerY\)/,'selected titl
 assert.match(game,/drawImageMap\(326,labelRight\+19-pulse,centerY\)/,'selected title row uses the original right green arrow sprite with source spacing');
 assert.match(game,/drawImageMapRotatedAtTopLeft\(12,147,1,-Math\.PI\/2\)/,'title book reproduces the original upper-right metal corner transform');
 assert.match(game,/drawImageMap\(15,33,85\)/,'title book hinge uses the original left-middle anchor');
-assert.match(game,/\[gameText\(17,'CONTINUE'\),'continue'\],\s*\[gameText\(36,'NEW GAME'\),'newgame'\]/,'saved games retain both Continue and New Game actions');
+assert.match(game,/\[gameText\(17,'CONTINUE'\),'continue'\],\s*\[gameText\(36,'NEW GAME'\),'newgame'\],\s*\[gameText\(19,'HIGH SCORES'\),'scores'\],\s*\[gameText\(18,'INSTRUCTIONS'\),'guide'\]/,'saved title menu retains the four original J2ME commands in order');
 assert.match(game,/action==='newgame'\)showConfirmation\('newgame',S\.title\)/,'New Game asks for confirmation when progress exists');
 assert.match(game,/elapsed\+=dt/,'level clock advances on fixed-step simulation');
 assert.match(game,/Open Settings → Touch Controls/,'instructions describe the website touch editor');
 assert.doesNotMatch(game.slice(game.indexOf('function drawCanvasGuide'),game.indexOf('function drawCanvasScores')),/gameText\(12\)|number keys|Press '4'/,'guide no longer shows original handset keypad instructions');
 assert.doesNotMatch(game,/drawImageMap\(10,/,'striped ornament is never stretched as a selection highlight');
-assert.match(html,/src\/original-hud\.js\?v=49/);
-assert.match(html,/game\.js\?v=49/);
-assert.match(sw,/CACHE_NAME\s*=\s*'bounce-tales-v49'/);
-assert.match(sw,/src\/original-hud\.js\?v=49/);
+assert.match(html,/src\/original-hud\.js\?v=53/);
+assert.match(html,/game\.js\?v=53/);
+assert.match(sw,/CACHE_NAME\s*=\s*'bounce-tales-v53'/);
+assert.match(sw,/src\/original-hud\.js\?v=53/);
 for(let i=0;i<15;i++){
   const resource='b'+String.fromCharCode('f'.charCodeAt(0)+i);
   const parsed=RLEF.parse(fs.readFileSync(path.join(root,'assets','original',resource)));

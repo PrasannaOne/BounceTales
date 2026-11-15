@@ -6,7 +6,7 @@ assert.match(game,/const id=Number\(btn\.dataset\.keyId\),activePointers=new Set
 assert.match(game,/if\(activePointers\.size===1\).*?input\.press\(id\)/,'first contact presses that control once');
 assert.match(game,/if\(activePointers\.size===0\)\{[\s\S]*?input\.release\(id\)/,'control releases only after all contacts lift');
 assert.match(game,/btn\.addEventListener\('pointercancel',release\)/,'cancel releases do not leave sticky keys');
-assert.match(game,/addEventListener\('blur',clearAll\)/,'window blur clears held controls');
-assert.match(game,/document\.addEventListener\('visibilitychange',[\s\S]*?if\(document\.hidden\)\{clearAll\(\)/,'backgrounding clears held controls');
+assert.match(game,/addEventListener\('blur',suspendForDeparture\)/,'window blur clears held controls and suspends active audio');
+assert.match(game,/const suspendForDeparture=\(\)=>\{[\s\S]*?clearAll\(\);[\s\S]*?musicController\?\.pause\(\)/,'backgrounding clears held controls and suspends audio');
 assert.match(game,/window\.addEventListener\('pointerdown',\(\)=>musicController\?\.unlock\(\),\{once:true\}\)/,'audio unlock is tied to first user pointer gesture');
 console.log('Mobile input: simultaneous independent contacts, release/cancel cleanup and first-tap audio unlock verified');

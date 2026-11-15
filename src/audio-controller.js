@@ -25,7 +25,7 @@
       this.volume=options.volume===undefined?0.72:Math.max(0,Math.min(1,Number(options.volume)||0));
       this.context=null;this.master=null;this.buffers=new Map();this.pending=new Map();
       this.currentSource=null;this.currentResource=null;this.currentCue=false;
-      this.lastMusicResource=null;this.unlocked=false;this.disposed=false;this.generation=0;
+      this.lastMusicResource=null;this.unlocked=false;this.disposed=false;this.generation=0;this.lifecyclePaused=false;
     }
     readEnabled(){try{return !this.storage||this.storage.getItem('bounce-music-enabled')!=='false';}catch{return true;}}
     ensureContext(){
@@ -57,10 +57,16 @@
       const ctx=this.ensureContext();if(!ctx)return false;
       this.unlocked=true;
       try{if(ctx.state!=='running')await ctx.resume();}catch{return false;}
-      if(this.enabled&&this.lastMusicResource!==null&&!this.currentSource){
+      // A lifecycle transition may happen while the gesture-unlock promise is
+      // pending. Never start a source after the document has been suspended.
+      if(this.lifecyclePaused||this.disposed||!this.enabled){
+        try{await ctx.suspend();}catch{}
+        return false;
+      }
+      if(this.lastMusicResource!==null&&!this.currentSource){
         await this.start(this.lastMusicResource,true);
       }
-      return ctx.state==='running';
+      return ctx.state==='running'&&!this.lifecyclePaused;
     }
     stopCurrent(){
       const source=this.currentSource;this.currentSource=null;this.currentResource=null;this.currentCue=false;
@@ -71,8 +77,12 @@
       const ctx=this.ensureContext();if(!ctx)return false;
       const token=++this.generation;
       const buffer=await this.load(resource);
-      if(!buffer||token!==this.generation||!this.enabled||this.disposed)return false;
+      if(!buffer||token!==this.generation||!this.enabled||this.disposed||this.lifecyclePaused)return false;
       if(ctx.state!=='running'&&this.unlocked){try{await ctx.resume();}catch{return false;}}
+      // A page may be backgrounded while decodeAudioData/resume is pending.
+      // Re-check immediately before creating a source so late async work
+      // cannot restart music after pagehide or visibility loss.
+      if(token!==this.generation||!this.enabled||this.disposed||this.lifecyclePaused)return false;
       this.stopCurrent();
       const source=ctx.createBufferSource();source.buffer=buffer;source.loop=!!loop;
       source.connect(this.master);this.currentSource=source;this.currentResource=resource;this.currentCue=!loop;
@@ -90,19 +100,37 @@
       this.start(resource,false);return true;
     }
     pause(){
-      const ctx=this.context;if(ctx&&ctx.state==='running'){try{ctx.suspend();}catch{}}
-    }
-    resume(){
-      if(!this.enabled||this.disposed)return false;
-      const ctx=this.ensureContext();if(!ctx)return false;
-      if(ctx.state!=='running'&&this.unlocked){ctx.resume().catch(()=>{});}
-      if(!this.currentSource&&this.lastMusicResource!==null)this.start(this.lastMusicResource,true);
+      // Stop the source as well as suspending the context. This is deliberately
+      // synchronous so pagehide/freeze cannot leave a playing source behind.
+      this.lifecyclePaused=true;
+      this.generation++;
+      this.stopCurrent();
+      const ctx=this.context;
+      if(ctx&&ctx.state==='running'){
+        try{Promise.resolve(ctx.suspend()).catch(()=>{});}catch{}
+      }
       return true;
+    }
+    async resume(){
+      if(!this.enabled||this.disposed)return false;
+      this.lifecyclePaused=false;
+      const ctx=this.context;
+      // Returning to a page is not itself an audio-unlock gesture. Wait for a
+      // prior unlock instead of creating/resuming audio on a locked browser.
+      if(!ctx||!this.unlocked)return false;
+      if(ctx.state!=='running'){
+        try{await ctx.resume();}catch{return false;}
+      }
+      if(this.lifecyclePaused||this.disposed||!this.enabled)return false;
+      if(!this.currentSource&&this.lastMusicResource!==null){
+        return this.start(this.lastMusicResource,true);
+      }
+      return ctx.state==='running';
     }
     setEnabled(enabled){
       this.enabled=!!enabled;
       try{this.storage?.setItem('bounce-music-enabled',String(this.enabled));}catch{}
-      if(!this.enabled){this.generation++;this.stopCurrent();}
+      if(!this.enabled){this.pause();}
       else if(this.unlocked)this.resume();
       return this.enabled;
     }

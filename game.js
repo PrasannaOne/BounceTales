@@ -861,27 +861,24 @@ function canvasMenuListItem(label,y,action,index,options={}){
 }
 function drawCanvasTitle(){
   drawOriginalTitleBook();
-  const hasSaved=progress.records.some(r=>(r.eggs||0)>0||(r.score||0)>0||(r.clearTime||9999)<9999);
+  const hasSaved=BounceOriginalProgression.hasSavedGame(localStorage);
   const rows=hasSaved?[
     [gameText(17,'CONTINUE'),'continue'],
     [gameText(36,'NEW GAME'),'newgame'],
-    ['CHAPTER SELECTION','chapters'],
     [gameText(19,'HIGH SCORES'),'scores'],
-    ['OPTIONS','options'],
     [gameText(18,'INSTRUCTIONS'),'guide']
   ]:[
     [gameText(36,'NEW GAME'),'play'],
-    ['CHAPTER SELECTION','chapters'],
     [gameText(19,'HIGH SCORES'),'scores'],
-    ['OPTIONS','options'],
     [gameText(18,'INSTRUCTIONS'),'guide']
   ];
-  const rowTop=rows.length>5?146:158,rowStep=rows.length>5?21:23;
+  const rowTop=hasSaved?174:184,rowStep=25;
   rows.forEach((r,i)=>canvasMenuListItem(String(r[0]).toUpperCase(),rowTop+i*rowStep,r[1],i,{size:r[0].length>15?9.2:(i===0?11.5:10.5)}));
-  // Browser adaptation of the original softkeys. Settings replaces handset Exit.
+  // The handset's right softkey is Exit. Browsers cannot close an arbitrary
+  // tab, so keep the original label and provide a safe, honest browser action.
   menuText('SELECT',48,286,7,'#f08a22');
-  menuText('SETTINGS',190,286,7,'#f08a22');
-  // Softkey labels are visual hints only; keyboard focus stays on the five real menu rows.
+  menuText('EXIT',190,286,7,'#f08a22');
+  canvasMenuHits.push({x:154,y:274,w:78,h:32,action:'exit'});
 }
 function drawCanvasChapterBook(){
   drawOriginalChapterBook();
@@ -908,10 +905,9 @@ function drawCanvasPause(){
   drawJ2MEPanel(19,58,202,202,'#4a260e');
   menuText(gameText(83,'PAUSE MENU').toUpperCase(),120,77,10,'#f2d693');
   menuText(getLocalizedLevelName(currentLevel.index).toUpperCase(),120,93,5.8,'#bbc5b6');
-  canvasMenuButton('CONTINUE',34,107,172,22,'resume','gold');
-  canvasMenuButton('RESTART',34,135,172,22,'restart','green');
-  canvasMenuButton('OPTIONS',34,163,172,22,'options','dark');
-  canvasMenuButton('MAIN MENU',34,191,172,22,'quit-confirm','dark');
+  canvasMenuButton(gameText(17,'RESUME').toUpperCase(),34,111,172,24,'resume','gold');
+  canvasMenuButton(gameText(85,'RESTART CHAPTER').replace('?','').toUpperCase(),34,145,172,24,'restart','green');
+  canvasMenuButton(gameText(39,'CHAPTER SELECTION').toUpperCase(),34,179,172,24,'chapters-confirm','dark');
 }
 function drawCanvasComplete(){
   ctx.fillStyle='rgba(2,8,8,.64)';ctx.fillRect(0,0,W,H);
@@ -1088,6 +1084,7 @@ function handleCanvasMenuAction(action){
     else loadLevel(idx,{start:true}).catch(error=>{console.error(error);toast('Could not load saved chapter');});
   }else if(action==='newgame')showConfirmation('newgame',S.title);
   else if(action==='chapters')showChapterBook();
+  else if(action==='exit'){try{window.close();}catch{}if(!window.closed)toast('You can close this browser tab to exit.');}
   else if(action==='scores'){menuFocusIndex=0;mode=S.scores;hideGameScenes();input.clear();syncPauseButton();}
   else if(action==='guide')openGuide();
   else if(action==='options'){menuFocusIndex=0;mode=S.options;hideGameScenes();input.clear();syncPauseButton();}
@@ -1279,7 +1276,7 @@ function onEdge(id){
   if(activeStoryMessage){dismissOriginalStoryMessage();return;}
   if(mode===S.confirm){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6)closeConfirmation();return;}
   if(mode===S.play){if(id===5)pauseGame();else if(id===20)cycleForme();else if(id===7&&cannonState)fireCannon();}
-  else if(mode===S.title){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6){}else if(id===3||id===4)showChapterBook();}
+  else if(mode===S.title){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5){}else if(id===6)handleCanvasMenuAction('exit');else if(id===3||id===4)showChapterBook();}
   else if(mode===S.select){if(id===3)changeBookPage(-1);else if(id===4)changeBookPage(1);else if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6)showTitleMenu();}
   else if(mode===S.pause){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6)resumeGame();}
   else if(mode===S.complete){if(id===1||id===2)moveCanvasMenuFocus(id===1?-1:1);else if(id===7)activateCanvasMenuFocus();else if(id===5||id===6)showChapterBook();}
@@ -1372,8 +1369,27 @@ function bindInputs(){
   }
 
   const clearAll=()=>{keys.clear();input.clear();gamepadHeld.clear();document.querySelectorAll('[data-key-id]').forEach(b=>b.classList.remove('pressed'));};
-  addEventListener('blur',clearAll);
-  document.addEventListener('visibilitychange',()=>{if(document.hidden){clearAll();musicController?.pause();lastTime=0;simulationClock.reset();renderAlpha=1;lastRenderAt=0;fpsStamp=0;fpsFrames=0;}else musicController?.resume();});
+  const suspendForDeparture=()=>{
+    clearAll();
+    musicController?.pause();
+    lastTime=0;simulationClock.reset();renderAlpha=1;lastRenderAt=0;fpsStamp=0;fpsFrames=0;
+  };
+  const resumeAfterReturn=()=>{
+    if(!document.hidden)musicController?.resume();
+  };
+  // Losing window focus can leave an external tab/app covering this page.
+  // Use the same synchronous suspension path as pagehide/visibilitychange.
+  addEventListener('blur',suspendForDeparture);
+  addEventListener('focus',resumeAfterReturn);
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)suspendForDeparture();
+    else resumeAfterReturn();
+  });
+  // Stop active sources on every browser page-lifecycle departure path. The
+  // controller invalidates pending decodes before suspending AudioContext.
+  window.addEventListener('pagehide',suspendForDeparture);
+  document.addEventListener('freeze',suspendForDeparture);
+  window.addEventListener('pageshow',resumeAfterReturn);
   window.addEventListener('pointerdown',()=>musicController?.unlock(),{once:true});
 }
 
@@ -1460,7 +1476,6 @@ function applyControlLayoutToSurface(surface,layout){
   surface.style.setProperty('height',metrics.height+'px','important');
   surface.style.setProperty('min-height',metrics.height+'px','important');
   surface.style.setProperty('--control-scale',String(metrics.scale));
-  surface.dataset.layoutMeasured='true';
   surface.querySelectorAll('[data-key-id],[data-editor-id]').forEach(el=>{
     const id=controlIdForElement(el);
     const box=BounceControlLayout.placement(id,layout[id],metrics.width);
@@ -1475,6 +1490,8 @@ function applyControlLayoutToSurface(surface,layout){
     el.style.setProperty('height',box.height+'px','important');
     el.style.setProperty('min-height',box.height+'px','important');
   });
+  // Reveal only after every button has its final position and dimensions.
+  surface.dataset.layoutMeasured='true';
   return metrics;
 }
 function applyLiveControlLayout(override=null){
@@ -1487,6 +1504,8 @@ function applyLiveControlLayout(override=null){
 }
 function scheduleLiveControlLayout(){
   if(controlLayoutResizeFrame)return;
+  const host=document.getElementById('game-controls');
+  if(host)host.dataset.layoutMeasured='false';
   controlLayoutResizeFrame=requestAnimationFrame(()=>{
     controlLayoutResizeFrame=0;
     applyLiveControlLayout();
@@ -1686,6 +1705,9 @@ function bindSettings(){
 }
 
 async function boot(){
+  // Resolve the persisted/default layout synchronously before any resource fetch.
+  // The CSS keeps controls hidden until this measured geometry is fully applied.
+  applyLiveControlLayout();
   try{
     const locale=resolveOriginalLocale();
     const [mapResp,atlasResp,langResp]=await Promise.all([

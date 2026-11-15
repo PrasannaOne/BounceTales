@@ -14,7 +14,7 @@ assert.match(game,/function syncMenuTextResolution\(\)/);
 assert.match(game,/textCtx\.setTransform\(width\/W,0,0,height\/H,0,0\)/);
 assert.match(game,/const target=textCtx\|\|ctx;target\.save\(\)/);
 assert.match(game,/if\(textCtx\)textCtx\.clearRect\(0,0,W,H\)/);
-assert.match(css,/canvas#game-text[\s\S]*?image-rendering:auto;pointer-events:none/);
+assert.match(css,/canvas#game-text\s*\{[^}]*image-rendering:\s*auto;[^}]*pointer-events:\s*none/s);
 // Keep the original JAR icon unchanged and use it as the source for install imagery.
 const sourceIcon=fs.readFileSync(path.join(root,'assets/original/icon.png'));
 const hashes=JSON.parse(fs.readFileSync(path.join(root,'reference/original-resource-sha256.json'),'utf8'));
@@ -26,12 +26,12 @@ for(const [file,size] of [['icon-192.png',192],['icon-512.png',512],['apple-touc
   const png=fs.readFileSync(path.join(root,file));assert.equal(png.toString('ascii',1,4),'PNG');
   assert.equal(png.readUInt32BE(16),size);assert.equal(png.readUInt32BE(20),size);
 }
-assert.match(html,/href="favicon\.png\?v=49"/);
+assert.match(html,/href="favicon\.png\?v=53"/);
 // Minimal and correctly sized web preview metadata.
 const preview=fs.readFileSync(path.join(root,'bounce-tales-web-preview.png'));
 assert.equal(preview.toString('ascii',1,4),'PNG');assert.equal(preview.readUInt32BE(16),1536);assert.equal(preview.readUInt32BE(20),857);
 assert.match(html,/og:image:alt/);assert.match(html,/twitter:image:alt/);
-assert.match(sw,/bounce-tales-v49/);assert.match(sw,/favicon\.png/);
+assert.match(sw,/bounce-tales-v53/);assert.match(sw,/favicon\.png/);
 // Discreet Ko-fi link is only in About and explicitly opens outside the app.
 assert.match(html,/<a class="about-link support-link" href="https:\/\/ko-fi\.com\/prasannaone" target="_blank" rel="noopener noreferrer">[\s\S]*?Support Bounce Tales[\s\S]*?Enjoying Bounce Tales\? If you'd like to support this independent project, you can buy me a coffee\./);
 assert.match(css,/\.support-link \.support-text\s*\{[\s\S]*?flex-direction:column/);

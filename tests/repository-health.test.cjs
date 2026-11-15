@@ -29,14 +29,13 @@ for (const item of appShell) {
 }
 
 // Current release/cache identity must agree across the live page, worker and manifest.
-const cacheVersion = Number((sw.match(/CACHE_NAME\s*=\s*['\"]bounce-tales-v(\d+)['\"]/) || [])[1]);
-assert.ok(Number.isInteger(cacheVersion) && cacheVersion >= 49, 'service worker must declare a supported release version');
-for (const file of ['style.css', 'game.js', 'sw.js']) {
-  assert.match(html, new RegExp(`${file.replace('.', '\\.')}\\?v=${cacheVersion}`), `${file} query version must match the service worker`);
-}
-assert.ok(appShell.some(item => item.startsWith(`src/module-registry.js?v=${cacheVersion}`)));
-assert.ok(appShell.some(item => item.startsWith(`src/port-engine.js?v=${cacheVersion}`)));
-assert.equal(JSON.parse(read('package.json')).version, `${cacheVersion}.0.0`);
+assert.match(html, /style\.css\?v=53/);
+assert.match(html, /game\.js\?v=53/);
+assert.match(html, /sw\.js\?v=53/);
+assert.match(sw, /bounce-tales-v53/);
+assert.ok(appShell.some(item => item.startsWith('src/module-registry.js?v=53')));
+assert.ok(appShell.some(item => item.startsWith('src/port-engine.js?v=53')));
+assert.equal(JSON.parse(read('package.json')).version, '53.0.0');
 
 // Every local README destination must exist; external links and anchors are left to their owners.
 const markdownFiles = [];
@@ -70,7 +69,8 @@ const Engine = require('../src/port-engine.js');
 assert.equal(Engine.apiVersion, 1);
 assert.equal(Engine.diagnostics().ready, true);
 assert.equal(Engine.diagnostics().total, 20);
-assert.match(css, /\.pause-mini\s*\{/);
-assert.match(html, /id="pause-mini"/);
+assert.match(css, /#app \.pause-toolbar\s*\{[\s\S]*?top:\s*40px;[\s\S]*?right:\s*-48px;[\s\S]*?width:\s*32px;[\s\S]*?height:\s*29px;/);
+assert.match(css, /#app \.pause-mini\s*\{[\s\S]*?width:\s*32px[\s\S]*?height:\s*29px/);
+assert.match(html, /<div class="pause-toolbar"[\s\S]*?id="pause-mini"/);
 assert.match(html, /<p class="[^"]*sr-only" id="game-hint"/);
 console.log(`Repository health: ${new Set(refs).size} DOM refs, ${appShell.length} precache paths, ${ids.length} unique IDs, ${markdownFiles.length} Markdown files/links and port engine verified`);

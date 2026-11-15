@@ -12,7 +12,7 @@ assert.match(game,/localStorage\.setItem\(CONTROL_LAYOUT_KEY,JSON\.stringify\(cl
 assert.match(game,/function closeControlEditor\(restoreSaved=true\)/);
 assert.match(game,/function syncSceneChrome\(\)[\s\S]*?applyLiveControlLayout\(\);/);
 assert.match(css,/#game-controls \.main-controls[\s\S]*?display:contents!important/);
-assert.match(css,/#game-controls \.control,[\s\S]*?position:absolute!important/);
+assert.match(css,/#game-controls \.control\s*\{[\s\S]*?position:absolute!important/,'measured control buttons are positioned inside the touch surface');
 assert.match(game,/live.addEventListener\('pointerdown'[\s\S]*?editorDrag=/,'live buttons have direct drag handlers');
 assert.match(css,/pointer-events:none!important/,'editor backdrop leaves live controls interactive');
 assert.match(html,/id="settings-layer"[^>]*aria-modal="true"/,'Settings remains a modal dialog');

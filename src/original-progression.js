@@ -40,6 +40,7 @@
     unlocked.push(...unlockBonuses(save));save.unlockedForme=unlockedForme(save);
     return {eggs:safeEggs,seconds,score,unlocked,nextLevel:next,unlockedForme:save.unlockedForme};
   }
+  function hasSavedGame(storage){try{const raw=storage?.getItem(SAVE_KEY);if(!raw)return false;const parsed=JSON.parse(raw);return !!parsed&&parsed.version===1&&Array.isArray(parsed.records)&&parsed.records.length===15;}catch{return false;}}
   function load(storage){
     try{const raw=storage?.getItem(SAVE_KEY);if(!raw)return create();const parsed=JSON.parse(raw);const records=normalize(parsed.records);const state={version:1,records,selected:Number.isInteger(parsed.selected)&&parsed.selected>=0&&parsed.selected<15?parsed.selected:0,unlockedForme:0,totalGameTime:Math.max(0,Number(parsed.totalGameTime)||0)};state.unlockedForme=unlockedForme(state);return state;}
     catch{return create();}
@@ -52,5 +53,5 @@
   function reset(storage){try{storage?.removeItem(SAVE_KEY);}catch{}return create();}
   function chapterGroup(level){return level<=4?0:level<=9?1:2;}
   function unlockedCount(save){return save.records.filter(r=>r.clearTime>0).length;}
-  return {SAVE_KEY,BONUS_LEVELS,FORM_UNLOCK_LEVELS,EGG_SCORE_MULTIPLIERS,EGG_TROPHY_REQUIREMENTS,TIMER_TROPHY_REQUIREMENTS,create,load,save,reset,totalEggs,unlockBonuses,isUnlocked,unlockedForme,nextRegular,complete,chapterGroup,unlockedCount};
+  return {SAVE_KEY,BONUS_LEVELS,FORM_UNLOCK_LEVELS,EGG_SCORE_MULTIPLIERS,EGG_TROPHY_REQUIREMENTS,TIMER_TROPHY_REQUIREMENTS,create,hasSavedGame,load,save,reset,totalEggs,unlockBonuses,isUnlocked,unlockedForme,nextRegular,complete,chapterGroup,unlockedCount};
 });

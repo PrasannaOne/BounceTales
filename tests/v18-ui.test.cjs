@@ -7,8 +7,8 @@ assert.doesNotMatch(html,/THE ORIGINAL ADVENTURE|A little bounce goes a long way
 assert.match(html,/id="music-enabled"/);
 assert.ok(html.indexOf('src/sprite-atlas.js')<html.indexOf('game.js'));
 assert.ok(html.indexOf('src/audio-controller.js')<html.indexOf('game.js'));
-assert.match(css,/html, body\s*\{[^}]*overflow:\s*hidden/s);
-assert.match(css,/body\s*\{[^}]*height:\s*100dvh/s);
+assert.match(css,/html,\s*body\s*\{[^}]*overflow-x:\s*hidden/s,'horizontal overflow is clipped without trapping short screens vertically');
+assert.match(css,/body\s*\{[^}]*min-height:\s*100dvh/s,'the shell fills short screens but may scroll when browser chrome reduces the viewport');
 assert.match(css,/overscroll-behavior:\s*none/);
-assert.match(css,/footer\s*\{\s*display:\s*none\s*!important/s);
+assert.doesNotMatch(css,/footer\s*\{\s*display:\s*none\s*!important/s,'no obsolete footer-hiding patch is needed because the footer is absent from the page');
 console.log('V18 UI: title screen stripped of build/status clutter; fixed viewport and no-scroll rules present');
