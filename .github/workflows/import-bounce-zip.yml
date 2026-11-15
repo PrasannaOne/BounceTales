@@ -18,7 +18,6 @@ jobs:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -26,30 +25,26 @@ jobs:
           ref: main
           fetch-depth: 0
           persist-credentials: true
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-
-      - name: Validate uploaded ZIP before changing the workspace
+      - name: Validate uploaded ZIP before import
         shell: bash
         run: |
           set -euo pipefail
           if [[ -f Bounce.zip ]]; then
             python tools/import_runtime_zip.py Bounce.zip . --validate-only
           elif [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
-            echo "Manual verification run: no Bounce.zip is present."
+            echo "Manual verification only: Bounce.zip is absent."
           else
-            echo "Expected Bounce.zip was not found." >&2
+            echo "::error::Bounce.zip is missing."
             exit 1
           fi
-
       - name: Import validated runtime
         shell: bash
         run: |
@@ -57,34 +52,29 @@ jobs:
           if [[ -f Bounce.zip ]]; then
             python tools/import_runtime_zip.py Bounce.zip .
           else
-            echo "Verification-only run; runtime import skipped."
+            echo "No archive to import; verification only."
           fi
-
-      - name: Verify imported runtime and regression suite
+      - name: Verify imported project
         run: |
           set -euo pipefail
           python -m py_compile tools/import_runtime_zip.py
-          python -m json.tool manifest.webmanifest > /dev/null
-          node tools/check-syntax.cjs
-          node tools/run-tests.cjs
-          node tests/runtime-smoke.cjs
-          node tests/level1-springboard-proof.cjs
-
-      - name: Commit runtime-only changes
+          node -e "JSON.parse(require('node:fs').readFileSync('manifest.webmanifest','utf8'))"
+          npm run verify
+      - name: Commit imported runtime
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- index.html style.css game.js sw.js manifest.webmanifest \
+          git add -A -- index.html style.css game.js sw.js manifest.webmanifest package.json \
             favicon.png icon-192.png icon-512.png apple-touch-icon.png \
             bounce-tales-web-preview.png assets src
           if git ls-files --error-unmatch Bounce.zip >/dev/null 2>&1; then
             git add -A -- Bounce.zip
           fi
           if git diff --cached --quiet; then
-            echo "No runtime changes to commit."
-            exit 0
+            echo "::error::No runtime changes detected; refusing a false-success import."
+            exit 1
           fi
-          git commit -m "Import validated Bounce Tales V53 runtime"
+          git commit -m "Import validated Bounce Tales runtime"
           git push origin HEAD:main

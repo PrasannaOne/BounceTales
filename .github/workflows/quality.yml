@@ -21,26 +21,20 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: Compile-check ZIP importer
         run: python -m py_compile tools/import_runtime_zip.py
-
       - name: Run complete verification suite
         run: npm run verify
-
       - name: Validate PWA manifest
         run: node -e "JSON.parse(require('node:fs').readFileSync('manifest.webmanifest','utf8'))"
-
-      - name: Validate runtime ZIP importer
-        run: python tools/import_runtime_zip.py Bounce.zip . --validate-only
+      - name: Validate uploaded runtime ZIP when present
         if: ${{ hashFiles('Bounce.zip') != '' }}
+        run: python tools/import_runtime_zip.py Bounce.zip . --validate-only
