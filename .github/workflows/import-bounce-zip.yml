@@ -17,7 +17,7 @@ jobs:
   import-runtime:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -37,30 +37,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -f Bounce.zip ]]; then
-            python tools/import_runtime_zip.py Bounce.zip . --validate-only
-          elif [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
-            echo "Manual verification only: Bounce.zip is absent."
-          else
+          if [[ ! -f Bounce.zip ]]; then
             echo "::error::Bounce.zip is missing."
             exit 1
           fi
-      - name: Import validated runtime
+          python tools/import_runtime_zip.py Bounce.zip . --validate-only
+      - name: Import runtime and matching test suite
+        run: python tools/import_runtime_zip.py Bounce.zip .
+      - name: Verify imported V53+ project
         shell: bash
-        run: |
-          set -euo pipefail
-          if [[ -f Bounce.zip ]]; then
-            python tools/import_runtime_zip.py Bounce.zip .
-          else
-            echo "No archive to import; verification only."
-          fi
-      - name: Verify imported project
         run: |
           set -euo pipefail
           python -m py_compile tools/import_runtime_zip.py
           node -e "JSON.parse(require('node:fs').readFileSync('manifest.webmanifest','utf8'))"
           npm run verify
-      - name: Commit imported runtime
+      - name: Commit imported runtime and synchronized tests
         shell: bash
         run: |
           set -euo pipefail
@@ -68,13 +59,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A -- index.html style.css game.js sw.js manifest.webmanifest package.json \
             favicon.png icon-192.png icon-512.png apple-touch-icon.png \
-            bounce-tales-web-preview.png assets src
-          if git ls-files --error-unmatch Bounce.zip >/dev/null 2>&1; then
-            git add -A -- Bounce.zip
-          fi
+            bounce-tales-web-preview.png assets src tests
           if git diff --cached --quiet; then
-            echo "::error::No runtime changes detected; refusing a false-success import."
+            echo "::error::No runtime or test changes detected; refusing a false-success import."
             exit 1
           fi
-          git commit -m "Import validated Bounce Tales runtime"
+          git commit -m "Import validated Bounce Tales runtime and tests"
           git push origin HEAD:main

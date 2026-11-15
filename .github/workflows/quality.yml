@@ -17,7 +17,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
           python-version: "3.12"
       - name: Compile-check ZIP importer
         run: python -m py_compile tools/import_runtime_zip.py
-      - name: Run complete verification suite
+      - name: Run repository verification suite
         run: npm run verify
       - name: Validate PWA manifest
         run: node -e "JSON.parse(require('node:fs').readFileSync('manifest.webmanifest','utf8'))"
