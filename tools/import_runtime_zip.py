@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Safely import the playable runtime and matching tests from Bounce.zip."""
+"""Safely merge a complete Bounce Tales project ZIP into the checked-out repository.
+
+Policy: archive files replace files at the same relative path; repository-only files
+are preserved. Nothing is recursively deleted. The uploaded Bounce.zip is removed
+only after every archive file has been copied successfully.
+"""
 from __future__ import annotations
 
 import argparse
@@ -11,22 +16,17 @@ import stat
 import tempfile
 import zipfile
 
-ROOT_FILES = {
-    "index.html", "style.css", "game.js", "sw.js", "manifest.webmanifest",
-    "favicon.png", "icon-192.png", "icon-512.png", "apple-touch-icon.png",
-    "bounce-tales-web-preview.png",
-}
-RUNTIME_DIRS = {"assets", "src", "tests"}
-REQUIRED_FILES = ROOT_FILES
-REQUIRED_MODULES = {
-    "src/control-layout.js", "src/original-hud.js",
-    "src/module-registry.js", "src/port-engine.js",
-}
-MIN_RUNTIME_VERSION = 53
-MAX_ENTRIES = 20_000
-MAX_UNCOMPRESSED = 500 * 1024 * 1024
+MAX_ENTRIES = 30_000
+MAX_UNCOMPRESSED = 600 * 1024 * 1024
 MAX_FILE_SIZE = 100 * 1024 * 1024
 MAX_RATIO = 250
+EXCLUDED_TOP_LEVEL = {".git"}
+REQUIRED_FILES = {
+    "index.html", "style.css", "game.js", "sw.js", "manifest.webmanifest",
+    "package.json", "README.md", "ARCHITECTURE.md", "LICENSE",
+    "tools/import_runtime_zip.py", ".github/workflows/import-bounce-zip.yml",
+}
+REQUIRED_DIRS = {"assets", "src", "tests", "docs", "tools", ".github"}
 
 
 def normalized_name(info: zipfile.ZipInfo) -> tuple[str, bool]:
@@ -40,12 +40,14 @@ def normalized_name(info: zipfile.ZipInfo) -> tuple[str, bool]:
     parts = name.split("/")
     if any(part in ("", ".", "..") for part in parts):
         raise ValueError(f"Unsafe ZIP path segment: {raw!r}")
+    if parts[0] in EXCLUDED_TOP_LEVEL:
+        raise ValueError(f"Archive must not contain repository metadata: {raw!r}")
     mode = info.external_attr >> 16
     kind = stat.S_IFMT(mode)
     if kind not in (0, stat.S_IFREG, stat.S_IFDIR):
         raise ValueError(f"Special files and symlinks are not allowed: {raw!r}")
     if is_dir and kind not in (0, stat.S_IFDIR):
-        raise ValueError(f"Directory entry has an invalid file type: {raw!r}")
+        raise ValueError(f"Directory entry has invalid file type: {raw!r}")
     if not is_dir and kind == stat.S_IFDIR:
         raise ValueError(f"File entry has directory mode: {raw!r}")
     return name, is_dir
@@ -70,7 +72,7 @@ def inspect_archive(archive: zipfile.ZipFile) -> dict[str, tuple[zipfile.ZipInfo
             raise ValueError(f"ZIP entry is too large: {name}")
         total += info.file_size
         if total > MAX_UNCOMPRESSED:
-            raise ValueError("ZIP expands beyond the 500 MiB safety limit")
+            raise ValueError("ZIP expands beyond the 600 MiB safety limit")
         if info.file_size and info.compress_size == 0:
             raise ValueError(f"Invalid compressed size: {name}")
         if info.compress_size and info.file_size / info.compress_size > MAX_RATIO:
@@ -87,23 +89,16 @@ def locate_root(entries: dict[str, tuple[zipfile.ZipInfo, bool]]) -> str:
         wrapper = next(iter(top))
         if f"{wrapper}/index.html" in entries:
             return wrapper + "/"
-    raise ValueError("ZIP must contain index.html at its root, optionally inside one enclosing folder")
+    raise ValueError("Project ZIP must contain index.html at its root, optionally inside one enclosing folder")
 
 
-def validate_runtime(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.ZipInfo, bool]], prefix: str) -> None:
-    missing = sorted(
-        prefix + name for name in REQUIRED_FILES
-        if prefix + name not in entries or entries[prefix + name][1]
-    )
-    for directory in RUNTIME_DIRS:
-        files = [
-            name for name, (_, is_dir) in entries.items()
-            if name.startswith(prefix + directory + "/") and not is_dir
-        ]
-        if not files:
-            missing.append(prefix + directory + "/")
+def validate_project(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.ZipInfo, bool]], prefix: str) -> None:
+    missing = sorted(name for name in REQUIRED_FILES if prefix + name not in entries or entries[prefix + name][1])
+    for directory in REQUIRED_DIRS:
+        if not any(name.startswith(prefix + directory + "/") and not is_dir for name, (_, is_dir) in entries.items()):
+            missing.append(directory + "/")
     if missing:
-        raise ValueError("Runtime ZIP is incomplete; missing: " + ", ".join(missing))
+        raise ValueError("Full project ZIP is incomplete; missing: " + ", ".join(missing))
 
     def read_text(name: str) -> str:
         try:
@@ -121,29 +116,14 @@ def validate_runtime(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.
         if not src or path.is_absolute() or ".." in path.parts or prefix + src not in entries:
             raise ValueError(f"Manifest icon missing or unsafe in ZIP: {src}")
 
-    html = read_text("index.html")
-    worker = read_text("sw.js")
+    html, worker = read_text("index.html"), read_text("sw.js")
     html_versions = re.findall(r"(?:style\.css|game\.js|sw\.js)\?v=(\d+)", html)
     cache_match = re.search(r"CACHE_NAME\s*=\s*['\"]bounce-tales-v(\d+)['\"]", worker)
     if not html_versions or not cache_match:
-        raise ValueError("Runtime ZIP has no recognizable versioned HTML/service-worker cache identity")
-    runtime_version = int(cache_match.group(1))
-    if runtime_version < MIN_RUNTIME_VERSION or any(int(v) != runtime_version for v in html_versions):
-        raise ValueError(
-            f"Stale or inconsistent runtime version: HTML={html_versions}, "
-            f"service worker={runtime_version}; minimum supported is V{MIN_RUNTIME_VERSION}"
-        )
-    for module in REQUIRED_MODULES:
-        if prefix + module not in entries or entries[prefix + module][1]:
-            raise ValueError(f"Runtime ZIP is missing required V{MIN_RUNTIME_VERSION}+ module: {module}")
-
-    test_files = [
-        name for name, (_, is_dir) in entries.items()
-        if name.startswith(prefix + "tests/") and name.endswith(".cjs") and not is_dir
-    ]
-    if not test_files:
-        raise ValueError("Runtime ZIP must include its matching tests/*.cjs suite")
-
+        raise ValueError("No recognizable versioned HTML/service-worker cache identity")
+    version = int(cache_match.group(1))
+    if any(int(value) != version for value in html_versions):
+        raise ValueError(f"Inconsistent runtime version: HTML={html_versions}, service worker={version}")
     match = re.search(r"const APP_SHELL = (\[[\s\S]*?\]);", worker)
     if not match:
         raise ValueError("sw.js does not declare an APP_SHELL list")
@@ -163,68 +143,60 @@ def validate_runtime(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.
             raise ValueError(f"Service-worker asset missing from ZIP: {item}")
 
 
-def extract_selected(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.ZipInfo, bool]], prefix: str, staging: pathlib.Path) -> None:
-    for name, (info, is_dir) in entries.items():
-        if not name.startswith(prefix):
-            continue
-        relative = name[len(prefix):]
-        if not relative:
-            continue
-        top = relative.split("/", 1)[0]
-        if top not in ROOT_FILES and top not in RUNTIME_DIRS:
-            continue
-        target = staging / relative
-        if is_dir:
-            target.mkdir(parents=True, exist_ok=True)
-            continue
-        target.parent.mkdir(parents=True, exist_ok=True)
-        with archive.open(info, "r") as source, target.open("xb") as destination:
-            shutil.copyfileobj(source, destination)
+def merge_project(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.ZipInfo, bool]], prefix: str, destination: pathlib.Path) -> int:
+    copied = 0
+    with tempfile.TemporaryDirectory(prefix="bounce-project-stage-") as temp:
+        staging = pathlib.Path(temp)
+        for name, (info, is_dir) in entries.items():
+            if not name.startswith(prefix):
+                continue
+            relative = name[len(prefix):]
+            if not relative or relative == "Bounce.zip":
+                continue
+            if relative.split("/", 1)[0] in EXCLUDED_TOP_LEVEL:
+                continue
+            target = staging / relative
+            if is_dir:
+                target.mkdir(parents=True, exist_ok=True)
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with archive.open(info, "r") as source, target.open("xb") as output:
+                shutil.copyfileobj(source, output)
+
+        # Overlay files individually. This deliberately preserves repository-only files.
+        for source in sorted(staging.rglob("*")):
+            relative = source.relative_to(staging)
+            target = destination / relative
+            if source.is_dir():
+                target.mkdir(parents=True, exist_ok=True)
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+            copied += 1
+    return copied
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Safely merge a complete Bounce Tales project ZIP")
     parser.add_argument("archive", type=pathlib.Path)
     parser.add_argument("destination", type=pathlib.Path)
     parser.add_argument("--validate-only", action="store_true")
     args = parser.parse_args()
-    archive_path = args.archive.resolve()
-    destination = args.destination.resolve()
+    archive_path, destination = args.archive.resolve(), args.destination.resolve()
     if not archive_path.is_file():
         raise SystemExit(f"Archive not found: {archive_path}")
     with zipfile.ZipFile(archive_path) as archive:
         entries = inspect_archive(archive)
         prefix = locate_root(entries)
-        validate_runtime(archive, entries, prefix)
+        validate_project(archive, entries, prefix)
         if args.validate_only:
-            print(f"ZIP validation passed: {len(entries)} entries; runtime root={prefix or '/'}")
+            print(f"Full-project ZIP validation passed: {len(entries)} entries; project root={prefix or '/'}")
             return 0
         destination.mkdir(parents=True, exist_ok=True)
-        with tempfile.TemporaryDirectory(prefix="bounce-runtime-") as temp:
-            staging = pathlib.Path(temp)
-            extract_selected(archive, entries, prefix, staging)
-            for name in ROOT_FILES:
-                source = staging / name
-                if source.is_file():
-                    shutil.copy2(source, destination / name)
-            # Runtime assets, source modules AND their matching tests are versioned together.
-            for name in RUNTIME_DIRS:
-                source = staging / name
-                if source.is_dir():
-                    target = destination / name
-                    if target.exists():
-                        shutil.rmtree(target)
-                    shutil.copytree(source, target)
-
-            worker = (destination / "sw.js").read_text(encoding="utf-8")
-            version_match = re.search(r"CACHE_NAME\s*=\s*['\"]bounce-tales-v(\d+)['\"]", worker)
-            package_path = destination / "package.json"
-            if version_match and package_path.is_file():
-                package = json.loads(package_path.read_text(encoding="utf-8"))
-                package["version"] = f"{version_match.group(1)}.0.0"
-                package_path.write_text(json.dumps(package, indent=2) + "\n", encoding="utf-8")
+        copied = merge_project(archive, entries, prefix, destination)
+    # Remove the upload only after validation and the complete overlay have succeeded.
     archive_path.unlink()
-    print("Runtime and matching tests imported; Bounce.zip removed after validation and copy.")
+    print(f"Full project merged: {copied} files copied; repository-only files preserved; no recursive deletions; Bounce.zip removed.")
     return 0
 
 
@@ -232,4 +204,4 @@ if __name__ == "__main__":
     try:
         raise SystemExit(main())
     except (OSError, zipfile.BadZipFile, ValueError) as error:
-        raise SystemExit(f"Runtime ZIP import rejected: {error}")
+        raise SystemExit(f"Full-project ZIP import rejected: {error}")
