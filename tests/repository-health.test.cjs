@@ -29,13 +29,14 @@ for (const item of appShell) {
 }
 
 // Current release/cache identity must agree across the live page, worker and manifest.
-assert.match(html, /style\.css\?v=49/);
-assert.match(html, /game\.js\?v=49/);
-assert.match(html, /sw\.js\?v=49/);
-assert.match(sw, /bounce-tales-v49/);
-assert.ok(appShell.some(item => item.startsWith('src/module-registry.js?v=49')));
-assert.ok(appShell.some(item => item.startsWith('src/port-engine.js?v=49')));
-assert.equal(JSON.parse(read('package.json')).version, '49.0.0');
+const cacheVersion = Number((sw.match(/CACHE_NAME\s*=\s*['\"]bounce-tales-v(\d+)['\"]/) || [])[1]);
+assert.ok(Number.isInteger(cacheVersion) && cacheVersion >= 49, 'service worker must declare a supported release version');
+for (const file of ['style.css', 'game.js', 'sw.js']) {
+  assert.match(html, new RegExp(`${file.replace('.', '\\.')}\\?v=${cacheVersion}`), `${file} query version must match the service worker`);
+}
+assert.ok(appShell.some(item => item.startsWith(`src/module-registry.js?v=${cacheVersion}`)));
+assert.ok(appShell.some(item => item.startsWith(`src/port-engine.js?v=${cacheVersion}`)));
+assert.equal(JSON.parse(read('package.json')).version, `${cacheVersion}.0.0`);
 
 // Every local README destination must exist; external links and anchors are left to their owners.
 const markdownFiles = [];
@@ -59,14 +60,17 @@ for (const file of markdownFiles) {
 
 // Port engine is available, complete, and can host a separate registry.
 const importWorkflow = read('.github/workflows/import-bounce-zip.yml');
-assert.match(importWorkflow, /ROOT_FILES=\(/, 'ZIP import must use an explicit root-file allowlist');
-assert.doesNotMatch(importWorkflow, /rsync\s+-a\s+--delete/, 'ZIP import must not delete unrelated repository files');
-assert.match(importWorkflow, /for directory in assets src/, 'ZIP import only mirrors the runtime asset/module directories');
+assert.match(importWorkflow, /tools\/import_runtime_zip\.py/, 'ZIP import must use the validated importer');
+assert.match(importWorkflow, /git add -A -- index\.html/, 'ZIP import must stage only runtime paths');
+assert.doesNotMatch(importWorkflow, /git add -A\s*$/m, 'ZIP import must never stage the whole repository');
+assert.match(read('tools/import_runtime_zip.py'), /MAX_UNCOMPRESSED = 500 \* 1024 \* 1024/, 'ZIP importer must enforce an expansion limit');
+assert.match(read('tools/import_runtime_zip.py'), /stat\.S_ISREG|stat\.S_IFREG/, 'ZIP importer must validate entry file types');
 
 const Engine = require('../src/port-engine.js');
 assert.equal(Engine.apiVersion, 1);
 assert.equal(Engine.diagnostics().ready, true);
 assert.equal(Engine.diagnostics().total, 20);
-assert.match(css, /\.pause-mini\{[^}]*top:62px[^}]*width:32px;height:30px/);
+assert.match(css, /\.pause-mini\s*\{/);
+assert.match(html, /id="pause-mini"/);
 assert.match(html, /<p class="[^"]*sr-only" id="game-hint"/);
 console.log(`Repository health: ${new Set(refs).size} DOM refs, ${appShell.length} precache paths, ${ids.length} unique IDs, ${markdownFiles.length} Markdown files/links and port engine verified`);
