@@ -1,4 +1,4 @@
-name: Import Bounce Tales runtime ZIP
+name: Import Bounce Tales full project ZIP
 
 on:
   push:
@@ -10,14 +10,14 @@ permissions:
   contents: write
 
 concurrency:
-  group: bounce-tales-zip-import
+  group: bounce-tales-full-project-import
   cancel-in-progress: false
 
 jobs:
-  import-runtime:
+  import-project:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -33,36 +33,31 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Validate uploaded ZIP before import
+      - name: Validate full project ZIP before import
         shell: bash
         run: |
           set -euo pipefail
-          if [[ ! -f Bounce.zip ]]; then
-            echo "::error::Bounce.zip is missing."
-            exit 1
-          fi
+          test -f Bounce.zip || { echo "::error::Bounce.zip is missing."; exit 1; }
           python tools/import_runtime_zip.py Bounce.zip . --validate-only
-      - name: Import runtime and matching test suite
+      - name: Merge complete project without deleting repository-only files
         run: python tools/import_runtime_zip.py Bounce.zip .
-      - name: Verify imported V53+ project
+      - name: Verify merged project
         shell: bash
         run: |
           set -euo pipefail
           python -m py_compile tools/import_runtime_zip.py
           node -e "JSON.parse(require('node:fs').readFileSync('manifest.webmanifest','utf8'))"
           npm run verify
-      - name: Commit imported runtime and synchronized tests
+      - name: Commit merged project
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A -- index.html style.css game.js sw.js manifest.webmanifest package.json \
-            favicon.png icon-192.png icon-512.png apple-touch-icon.png \
-            bounce-tales-web-preview.png assets src tests
+          git add -A
           if git diff --cached --quiet; then
-            echo "::error::No runtime or test changes detected; refusing a false-success import."
+            echo "::error::No project changes detected; refusing a false-success import."
             exit 1
           fi
-          git commit -m "Import validated Bounce Tales runtime and tests"
+          git commit -m "Import validated Bounce Tales full project"
           git push origin HEAD:main
