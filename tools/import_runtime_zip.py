@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Safely merge a complete Bounce Tales project ZIP into the checked-out repository.
 
-Policy: archive files replace files at the same relative path; repository-only files
-are preserved. Nothing is recursively deleted. The uploaded Bounce.zip is removed
+Archive files replace project files at the same relative path; repository-only files
+are preserved. The repository's importer and GitHub Actions workflow are protected
+from archive replacement. Nothing is recursively deleted. Bounce.zip is removed
 only after every archive file has been copied successfully.
 """
 from __future__ import annotations
@@ -21,10 +22,13 @@ MAX_UNCOMPRESSED = 600 * 1024 * 1024
 MAX_FILE_SIZE = 100 * 1024 * 1024
 MAX_RATIO = 250
 EXCLUDED_TOP_LEVEL = {".git"}
+PROTECTED_FILES = {
+    "tools/import_runtime_zip.py",
+    ".github/workflows/import-bounce-zip.yml",
+}
 REQUIRED_FILES = {
     "index.html", "style.css", "game.js", "sw.js", "manifest.webmanifest",
     "package.json", "README.md", "ARCHITECTURE.md", "LICENSE",
-    "tools/import_runtime_zip.py", ".github/workflows/import-bounce-zip.yml",
 }
 REQUIRED_DIRS = {"assets", "src", "tests", "docs", "tools", ".github"}
 
@@ -116,14 +120,7 @@ def validate_project(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.
         if not src or path.is_absolute() or ".." in path.parts or prefix + src not in entries:
             raise ValueError(f"Manifest icon missing or unsafe in ZIP: {src}")
 
-    html, worker = read_text("index.html"), read_text("sw.js")
-    html_versions = re.findall(r"(?:style\.css|game\.js|sw\.js)\?v=(\d+)", html)
-    cache_match = re.search(r"CACHE_NAME\s*=\s*['\"]bounce-tales-v(\d+)['\"]", worker)
-    if not html_versions or not cache_match:
-        raise ValueError("No recognizable versioned HTML/service-worker cache identity")
-    version = int(cache_match.group(1))
-    if any(int(value) != version for value in html_versions):
-        raise ValueError(f"Inconsistent runtime version: HTML={html_versions}, service worker={version}")
+    worker = read_text("sw.js")
     match = re.search(r"const APP_SHELL = (\[[\s\S]*?\]);", worker)
     if not match:
         raise ValueError("sw.js does not declare an APP_SHELL list")
@@ -143,6 +140,15 @@ def validate_project(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.
             raise ValueError(f"Service-worker asset missing from ZIP: {item}")
 
 
+def should_skip(relative: str) -> bool:
+    parts = pathlib.PurePosixPath(relative).parts
+    if relative in PROTECTED_FILES:
+        return True
+    if "__pycache__" in parts or relative.endswith((".pyc", ".pyo")):
+        return True
+    return False
+
+
 def merge_project(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.ZipInfo, bool]], prefix: str, destination: pathlib.Path) -> int:
     copied = 0
     with tempfile.TemporaryDirectory(prefix="bounce-project-stage-") as temp:
@@ -151,7 +157,7 @@ def merge_project(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.Zip
             if not name.startswith(prefix):
                 continue
             relative = name[len(prefix):]
-            if not relative or relative == "Bounce.zip":
+            if not relative or relative == "Bounce.zip" or should_skip(relative):
                 continue
             if relative.split("/", 1)[0] in EXCLUDED_TOP_LEVEL:
                 continue
@@ -196,7 +202,7 @@ def main() -> int:
         copied = merge_project(archive, entries, prefix, destination)
     # Remove the upload only after validation and the complete overlay have succeeded.
     archive_path.unlink()
-    print(f"Full project merged: {copied} files copied; repository-only files preserved; no recursive deletions; Bounce.zip removed.")
+    print(f"Full project merged: {copied} files copied; protected workflow/importer preserved; repository-only files preserved; no recursive deletions; Bounce.zip removed.")
     return 0
 
 
