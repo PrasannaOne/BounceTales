@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Safely import the playable runtime from Bounce.zip without touching project records."""
+"""Safely import the playable runtime and matching tests from Bounce.zip."""
 from __future__ import annotations
 
 import argparse
 import json
-import os
 import pathlib
 import re
 import shutil
@@ -17,10 +16,13 @@ ROOT_FILES = {
     "favicon.png", "icon-192.png", "icon-512.png", "apple-touch-icon.png",
     "bounce-tales-web-preview.png",
 }
-RUNTIME_DIRS = {"assets", "src"}
+RUNTIME_DIRS = {"assets", "src", "tests"}
 REQUIRED_FILES = ROOT_FILES
-REQUIRED_MODULES = {"src/control-layout.js", "src/original-hud.js", "src/module-registry.js", "src/port-engine.js"}
-MIN_RUNTIME_VERSION = 49
+REQUIRED_MODULES = {
+    "src/control-layout.js", "src/original-hud.js",
+    "src/module-registry.js", "src/port-engine.js",
+}
+MIN_RUNTIME_VERSION = 53
 MAX_ENTRIES = 20_000
 MAX_UNCOMPRESSED = 500 * 1024 * 1024
 MAX_FILE_SIZE = 100 * 1024 * 1024
@@ -89,9 +91,16 @@ def locate_root(entries: dict[str, tuple[zipfile.ZipInfo, bool]]) -> str:
 
 
 def validate_runtime(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.ZipInfo, bool]], prefix: str) -> None:
-    missing = sorted(prefix + name for name in REQUIRED_FILES if prefix + name not in entries or entries[prefix + name][1])
+    missing = sorted(
+        prefix + name for name in REQUIRED_FILES
+        if prefix + name not in entries or entries[prefix + name][1]
+    )
     for directory in RUNTIME_DIRS:
-        if not any(name.startswith(prefix + directory + "/") and not is_dir for name, (_, is_dir) in entries.items()):
+        files = [
+            name for name, (_, is_dir) in entries.items()
+            if name.startswith(prefix + directory + "/") and not is_dir
+        ]
+        if not files:
             missing.append(prefix + directory + "/")
     if missing:
         raise ValueError("Runtime ZIP is incomplete; missing: " + ", ".join(missing))
@@ -119,11 +128,21 @@ def validate_runtime(archive: zipfile.ZipFile, entries: dict[str, tuple[zipfile.
     if not html_versions or not cache_match:
         raise ValueError("Runtime ZIP has no recognizable versioned HTML/service-worker cache identity")
     runtime_version = int(cache_match.group(1))
-    if runtime_version < MIN_RUNTIME_VERSION or any(int(version) != runtime_version for version in html_versions):
-        raise ValueError(f"Stale or inconsistent runtime version: HTML={html_versions}, service worker={runtime_version}; minimum supported is V{MIN_RUNTIME_VERSION}")
+    if runtime_version < MIN_RUNTIME_VERSION or any(int(v) != runtime_version for v in html_versions):
+        raise ValueError(
+            f"Stale or inconsistent runtime version: HTML={html_versions}, "
+            f"service worker={runtime_version}; minimum supported is V{MIN_RUNTIME_VERSION}"
+        )
     for module in REQUIRED_MODULES:
         if prefix + module not in entries or entries[prefix + module][1]:
             raise ValueError(f"Runtime ZIP is missing required V{MIN_RUNTIME_VERSION}+ module: {module}")
+
+    test_files = [
+        name for name, (_, is_dir) in entries.items()
+        if name.startswith(prefix + "tests/") and name.endswith(".cjs") and not is_dir
+    ]
+    if not test_files:
+        raise ValueError("Runtime ZIP must include its matching tests/*.cjs suite")
 
     match = re.search(r"const APP_SHELL = (\[[\s\S]*?\]);", worker)
     if not match:
@@ -184,12 +203,11 @@ def main() -> int:
         with tempfile.TemporaryDirectory(prefix="bounce-runtime-") as temp:
             staging = pathlib.Path(temp)
             extract_selected(archive, entries, prefix, staging)
-            # Apply only the explicit runtime allowlist. Project docs, tests, research,
-            # license, GitHub workflows and repository metadata are never in scope.
             for name in ROOT_FILES:
                 source = staging / name
                 if source.is_file():
                     shutil.copy2(source, destination / name)
+            # Runtime assets, source modules AND their matching tests are versioned together.
             for name in RUNTIME_DIRS:
                 source = staging / name
                 if source.is_dir():
@@ -198,7 +216,6 @@ def main() -> int:
                         shutil.rmtree(target)
                     shutil.copytree(source, target)
 
-            # Keep repository metadata aligned with the imported runtime release.
             worker = (destination / "sw.js").read_text(encoding="utf-8")
             version_match = re.search(r"CACHE_NAME\s*=\s*['\"]bounce-tales-v(\d+)['\"]", worker)
             package_path = destination / "package.json"
@@ -207,7 +224,7 @@ def main() -> int:
                 package["version"] = f"{version_match.group(1)}.0.0"
                 package_path.write_text(json.dumps(package, indent=2) + "\n", encoding="utf-8")
     archive_path.unlink()
-    print("Runtime imported successfully; Bounce.zip removed after validation and copy.")
+    print("Runtime and matching tests imported; Bounce.zip removed after validation and copy.")
     return 0
 
 
