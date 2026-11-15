@@ -1,268 +1,90 @@
-
-name: Import and deploy Bounce Tales
+name: Import Bounce Tales runtime ZIP
 
 on:
   push:
     branches: [main]
-    paths:
-      - "Bounce.zip"
+    paths: ["Bounce.zip"]
   workflow_dispatch:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
-  group: bounce-tales-deployment
+  group: bounce-tales-zip-import
   cancel-in-progress: false
 
 jobs:
-  import-and-deploy:
+  import-runtime:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
 
     steps:
-      - name: Checkout repository
+      - name: Check out repository
         uses: actions/checkout@v4
         with:
           ref: main
           fetch-depth: 0
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Safely extract and validate Bounce.zip
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -s Bounce.zip || {
-            echo "::error::Bounce.zip is missing or empty."
-            exit 1
-          }
-
-          python - <<'PY'
-          import os
-          import stat
-          import zipfile
-          from pathlib import Path, PurePosixPath
-
-          dest = Path(os.environ["RUNNER_TEMP"]) / "bounce-import"
-          dest.mkdir(parents=True, exist_ok=True)
-
-          with zipfile.ZipFile("Bounce.zip") as z:
-              entries = z.infolist()
-              if not entries or len(entries) > 20000:
-                  raise SystemExit("Invalid ZIP entry count.")
-
-              seen = set()
-              total = 0
-
-              for entry in entries:
-                  name = entry.filename.replace("\\", "/")
-                  path = PurePosixPath(name)
-                  parts = name.rstrip("/").split("/")
-
-                  if path.is_absolute() or any(
-                      part in ("", ".", "..") for part in parts
-                  ):
-                      raise SystemExit(f"Unsafe ZIP path: {name}")
-
-                  if ":" in parts[0] or name in seen:
-                      raise SystemExit(f"Invalid or duplicate path: {name}")
-
-                  seen.add(name)
-
-                  mode = entry.external_attr >> 16
-                  if stat.S_ISLNK(mode):
-                      raise SystemExit(f"Symlink rejected: {name}")
-
-                  if entry.flag_bits & 1:
-                      raise SystemExit("Encrypted ZIP entries are not allowed.")
-
-                  total += entry.file_size
-                  if entry.file_size > 100 * 1024 * 1024 or total > 500 * 1024 * 1024:
-                      raise SystemExit("ZIP exceeds extraction limits.")
-
-              if z.testzip():
-                  raise SystemExit("ZIP CRC validation failed.")
-
-              for entry in entries:
-                  name = entry.filename.replace("\\", "/")
-                  target = dest.joinpath(*PurePosixPath(name).parts)
-
-                  if entry.is_dir():
-                      target.mkdir(parents=True, exist_ok=True)
-                  else:
-                      target.parent.mkdir(parents=True, exist_ok=True)
-                      with z.open(entry) as src, target.open("wb") as dst:
-                          while chunk := src.read(1024 * 1024):
-                              dst.write(chunk)
-
-          candidates = [dest]
-          children = list(dest.iterdir())
-
-          if len(children) == 1 and children[0].is_dir():
-              candidates.insert(0, children[0])
-
-          required = [
-              "index.html",
-              "style.css",
-              "game.js",
-              "sw.js",
-              "manifest.webmanifest",
-              "assets",
-              "src"
-          ]
-
-          source = next(
-              (
-                  root for root in candidates
-                  if all((root / name).exists() for name in required)
-                  and (root / "index.html").is_file()
-                  and (root / "style.css").is_file()
-                  and (root / "game.js").is_file()
-                  and (root / "sw.js").is_file()
-                  and (root / "manifest.webmanifest").is_file()
-                  and (root / "assets").is_dir()
-                  and (root / "src").is_dir()
-              ),
-              None
-          )
-
-          if source is None:
-              raise SystemExit(
-                  "ZIP is missing required runtime files at its root."
-              )
-
-          with open(os.environ["GITHUB_ENV"], "a") as env:
-              env.write(f"BOUNCE_SOURCE_DIR={source}\n")
-
-          print(f"ZIP validated: {len(entries)} entries.")
-          print(f"Runtime source: {source}")
-          PY
-
-      - name: Verify source archive
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ -f "$BOUNCE_SOURCE_DIR/package.json" ]]; then
-            cd "$BOUNCE_SOURCE_DIR"
-            npm run verify
-          else
-            echo "::error::Source archive has no package.json."
-            exit 1
-          fi
-
-      - name: Import website runtime
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          SOURCE="$BOUNCE_SOURCE_DIR"
-
-          ROOT_FILES=(
-            index.html
-            style.css
-            game.js
-            sw.js
-            manifest.webmanifest
-            favicon.ico
-            favicon.png
-            icon-192.png
-            icon-512.png
-            apple-touch-icon.png
-            bounce-tales-web-preview.png
-          )
-
-          for file in "${ROOT_FILES[@]}"; do
-            if [[ -f "$SOURCE/$file" ]]; then
-              install -D -m 0644 "$SOURCE/$file" "$file"
-            fi
-          done
-
-          for dir in assets src icons; do
-            if [[ -d "$SOURCE/$dir" ]]; then
-              rm -rf "$dir"
-              mkdir -p "$dir"
-              cp -a "$SOURCE/$dir/." "$dir/"
-            fi
-          done
-
-          test -s index.html
-          test -s style.css
-          test -s game.js
-          test -s sw.js
-          test -s manifest.webmanifest
-
-          echo "Runtime import completed."
-
-      - name: Verify imported runtime
-        shell: bash
-        run: |
-          set -euo pipefail
-          node --check game.js
-          python -m json.tool manifest.webmanifest > /dev/null
-
-      - name: Commit imported runtime
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          git config user.name "github-actions[bot]"
-          git config user.email \
-            "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add -A -- \
-            index.html style.css game.js sw.js manifest.webmanifest \
-            favicon.ico favicon.png icon-192.png icon-512.png \
-            apple-touch-icon.png bounce-tales-web-preview.png \
-            assets src icons
-
-          if git diff --cached --quiet; then
-            echo "::error::No runtime changes detected. Refusing a false-success deployment."
-            exit 1
-          fi
-
-          git commit -m "Import Bounce Tales V52 runtime"
-          git push origin HEAD:main
-
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Prepare website artifact
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p _site
-
-          for file in \
-            index.html style.css game.js sw.js manifest.webmanifest \
-            favicon.ico favicon.png icon-192.png icon-512.png \
-            apple-touch-icon.png bounce-tales-web-preview.png
-          do
-            if [[ -f "$file" ]]; then cp "$file" _site/; fi
-          done
-
-          for dir in assets src icons; do
-            if [[ -d "$dir" ]]; then cp -a "$dir" _site/; fi
-          done
-
-          touch _site/.nojekyll
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          path: _site
+          node-version: "20"
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-      - name: Report deployment
+      - name: Validate uploaded ZIP before changing the workspace
+        shell: bash
         run: |
-          echo "V52 deployment completed."
-          echo "Published URL: ${{ steps.deployment.outputs.page_url }}"
-          
+          set -euo pipefail
+          if [[ -f Bounce.zip ]]; then
+            python tools/import_runtime_zip.py Bounce.zip . --validate-only
+          elif [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            echo "Manual verification run: no Bounce.zip is present."
+          else
+            echo "Expected Bounce.zip was not found." >&2
+            exit 1
+          fi
+
+      - name: Import validated runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -f Bounce.zip ]]; then
+            python tools/import_runtime_zip.py Bounce.zip .
+          else
+            echo "Verification-only run; runtime import skipped."
+          fi
+
+      - name: Verify imported runtime and regression suite
+        run: |
+          set -euo pipefail
+          python -m py_compile tools/import_runtime_zip.py
+          python -m json.tool manifest.webmanifest > /dev/null
+          node tools/check-syntax.cjs
+          node tools/run-tests.cjs
+          node tests/runtime-smoke.cjs
+          node tests/level1-springboard-proof.cjs
+
+      - name: Commit runtime-only changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- index.html style.css game.js sw.js manifest.webmanifest \
+            favicon.png icon-192.png icon-512.png apple-touch-icon.png \
+            bounce-tales-web-preview.png assets src
+          if git ls-files --error-unmatch Bounce.zip >/dev/null 2>&1; then
+            git add -A -- Bounce.zip
+          fi
+          if git diff --cached --quiet; then
+            echo "No runtime changes to commit."
+            exit 0
+          fi
+          git commit -m "Import validated Bounce Tales V53 runtime"
+          git push origin HEAD:main
