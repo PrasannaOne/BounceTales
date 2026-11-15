@@ -1,6 +1,6 @@
 # Bounce Port Engine · Reuse and porting guide
 
-> **Current release:** V49  
+> **Current release:** V52.0.0 (runtime baseline V52)  
 > **Runtime API:** `BouncePortEngine` · API version 1  
 > **Scope:** Reusable modules and the adapter boundary for future browser-game ports
 

@@ -72,6 +72,7 @@
       this.vars=new Int32Array(256);
       this.strings=options.strings||[];
       this.callbacks=options;
+      for(const o of objects)o.renderDepth=((o.runtimeFlags??o.flags??0)&31)-16;
       this.initialObjects=objects.map(o=>({id:o.id,parent:o.parent,matrix:o.matrix.slice(),flags:o.flags}));
       this.world=new Map();
       this.cameraTargetId=options.playerObjectId??-1;
@@ -98,7 +99,7 @@
     reset(){
       for(const initial of this.initialObjects){
         const obj=this.byId.get(initial.id);if(!obj)continue;
-        obj.parent=initial.parent;obj.matrix=initial.matrix.slice();obj.runtimeFlags=initial.flags;delete obj.__eventRotateBase;
+        obj.parent=initial.parent;obj.matrix=initial.matrix.slice();obj.runtimeFlags=initial.flags;obj.renderDepth=((initial.flags??0)&31)-16;delete obj.__eventRotateBase;
       }
       for(const event of this.events){
         event.state=event.object.eventType|0;event.pc=event.state===STATE.ACTIVE?0:-1;
@@ -246,8 +247,19 @@
         case 29:{
           const obj=get(readI16(cmd,1));if(!obj)return {done:true};
           const mask=readI32(cmd,3),values=readI32(cmd,7);let flags=obj.runtimeFlags??obj.flags??0;
-          flags=(flags&~mask)|(values&mask);obj.runtimeFlags=flags;
-          this.callbacks.onFlagsChanged?.(obj,flags,mask);return {done:true};
+          // JAR j.m is a packed field, not a conventional bit mask: selector bit 0
+          // replaces the complete five-bit render-depth value (and its cached depth).
+          if(mask&1){flags=(flags&~31)|(values&31);obj.renderDepth=(flags&31)-16;}
+          if(mask&32)flags=(flags&~32)|(values&32);
+          if(mask&128){
+            flags=(flags&~128)|(values&128);
+            // Original g opcode 29 emits the special sprite-fragment effect whenever
+            // the image-358 object is touched through selector 0x80, on set or clear.
+            if(obj.type==='sprite'&&obj.sprites?.[0]?.[2]===358)this.callbacks.onOriginalSpriteEffect?.(obj);
+          }
+          if(mask&256)flags=(flags&~256)|(values&256);
+          obj.runtimeFlags=flags;
+          this.callbacks.onFlagsChanged?.(obj,flags,mask,values);return {done:true};
         }
         case 30:this.cameraTargetId=readI16(cmd,1);this.callbacks.onCameraTarget?.(this.cameraTargetId);return {done:true};
         case 31:this.cameraSnap=cmd[1]===1;this.cameraBounceFactor=readI16(cmd,2);this.cameraStabilizeSpeed=readI16(cmd,4);this.callbacks.onCameraParams?.(this.cameraBounceFactor,this.cameraStabilizeSpeed,this.cameraSnap);return {done:true};

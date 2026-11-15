@@ -32,6 +32,7 @@
     { name: 'enemies', globalName: 'BounceOriginalEnemies', file: './original-enemies.js', group: 'bounceCompatibility', description: 'Bounce Tales enemy state and behavior.' },
     { name: 'water', globalName: 'BounceOriginalWater', file: './original-water.js', group: 'bounceCompatibility', description: 'Bounce Tales water zones and buoyancy.' },
     { name: 'trampoline', globalName: 'BounceOriginalTrampoline', file: './original-trampoline.js', group: 'bounceCompatibility', description: 'Bounce Tales springboard transform and launch lifecycle.' },
+    { name: 'cannon', globalName: 'BounceOriginalCannon', file: './original-cannon.js', group: 'bounceCompatibility', description: 'Original shared cannon polygon mesh and three-pose firing animation.' },
     { name: 'progression', globalName: 'BounceOriginalProgression', file: './original-progression.js', group: 'bounceCompatibility', description: 'Bounce Tales chapter, unlock and save progression.' },
     { name: 'inputMap', globalName: 'BounceOriginalInput', file: './original-input-map.js', group: 'bounceCompatibility', description: 'Original J2ME input-key normalization.' },
     { name: 'spriteAnimation', globalName: 'BounceOriginalSpriteAnimation', file: './original-sprite-animation.js', group: 'bounceCompatibility', description: 'Recovered Bounce Tales animation timing.' },

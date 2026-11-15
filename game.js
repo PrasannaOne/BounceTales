@@ -36,7 +36,7 @@ const menu=document.getElementById('menu'),pauseLayer=document.getElementById('p
 const status=document.getElementById('statusline'),eggHud=document.getElementById('egg-hud'),gameHint=document.getElementById('game-hint');
 const input=new BounceOriginalInput.OriginalInputState();
 let levelData=null,world=null,body=null,worldGeometry=[],renderObjects=[],eggs=[],enemies=[],waters=[],trampolines=[],cannons=[],bonusEggs=[];
-let cannonState=null;
+let cannonState=null,cannonMesh=null,cannonMeshPromise=null;
 let currentLevel=LEVELS[0],levelLoadToken=0;
 let atlases=[],imageMaps=null,spriteCatalogue=null,loadedImages=new Map(),collected=0,elapsed=0,mode='title';
 const musicController=typeof BounceAudioController!=='undefined'?new BounceAudioController.AudioController({storage:localStorage}):null;
@@ -160,6 +160,16 @@ function refreshGeometryWorld(nextWorld=world){
     poly.nocollide=(flags&0x20)!==0;
   }
 }
+async function loadCannonMesh(){
+  if(cannonMesh)return cannonMesh;
+  if(!cannonMeshPromise)cannonMeshPromise=(async()=>{
+    const response=await fetch('assets/original/bu');
+    if(!response.ok)throw new Error('Could not load original shared cannon geometry');
+    const parsed=BounceRLEF.parse(new Uint8Array(await response.arrayBuffer()));
+    return BounceOriginalCannon.createMesh(parsed);
+  })().then(mesh=>(cannonMesh=mesh)).catch(error=>{console.warn('Original cannon mesh unavailable; using fallback artwork.',error);return null;});
+  return cannonMeshPromise;
+}
 function buildRuntime(parsed){
   world=BounceRLEF.buildWorld(parsed.objects);
   levelData=parsed;
@@ -199,7 +209,7 @@ function buildRuntime(parsed){
     }else if(o.type==='trampoline'){
       const p=getWorldPos(o);const t={object:o,imageId:BounceOriginalTrampoline.imageForLevel(currentLevel.index||0),basePush:o.basePush,x:p.x,y:p.y,active:false,progress:0,period:0,frameStep:0,elapsedMs:0,animFrame:0,calcPush:0,jumpFinished:false};trampolines.push(t);renderObjects.push({type:'trampoline',trampoline:t});
     }else if(o.type==='cannon'){
-      const p=getWorldPos(o);const c={object:o,x:p.x,y:p.y,power:o.power|0,animCountdown:0,launched:false};cannons.push(c);renderObjects.push({type:'cannon',cannon:c,object:o,point:p});
+      const p=getWorldPos(o);const c={object:o,x:p.x,y:p.y,power:o.power|0,animCountdown:0,launched:false,animationElapsedMs:0,animationActive:false,launchFired:false};cannons.push(c);renderObjects.push({type:'cannon',cannon:c,object:o,point:p});
     }else if(o.type==='friend'){
       const p=getWorldPos(o);renderObjects.push({type:'friend',object:o,point:p});
     }
@@ -213,6 +223,13 @@ function buildRuntime(parsed){
     onMessage:(id,text,eventId)=>{storyMessageQueue.push({id,text,eventId});if(!activeStoryMessage)activeStoryMessage=storyMessageQueue.shift();fieldMessage='';fieldMessageTimer=0;},
     onAnimate:id=>startSpriteAnimation(id),
     onFlagsChanged:(obj,flags)=>{const poly=worldGeometry.find(p=>p.id===obj.id);if(poly)poly.nocollide=(flags&0x20)!==0;},
+    onOriginalSpriteEffect:obj=>{
+      const m=eventEngine?.objectWorld(obj.id)||world?.get(obj.id);if(!m)return;
+      // r.java bounds for image 358 are [-36,96] × [-67,18] around the
+      // sprite anchor; opcode 29 insets those bounds by 60 source units.
+      const tx=m[2]/65536,ty=m[5]/65536;
+      particles.emitOriginalSpriteFragments(tx+24,tx+36,ty-7,ty-42,24);
+    },
     onCameraTarget:id=>{cameraSnap=true;},
     onCameraParams:(bounce,stabilize,snap)=>{cameraSpring?.setParams(bounce,stabilize);cameraSnap=!!snap;},
     onCheckpoint:point=>{checkpointPosition={x:point.x,y:point.y};particles.emitCheckpoint(point.x,point.y);toast('CHECKPOINT');}
@@ -374,7 +391,30 @@ function updateCannonAim(c,dt,direction){
 }
 function fireCannon(){
   if(!cannonState||cannonState.animCountdown>0)return;
-  cannonState.animCountdown=900;cannonState.launched=false;
+  cannonState.animCountdown=BounceOriginalCannon.ANIMATION_DURATION;cannonState.launched=false;
+  BounceOriginalCannon.begin(cannonState.cannon);
+}
+function updateCannonAnimations(dt){
+  BounceOriginalCannon.update(cannons,dt*1000,cannonMesh);
+}
+function drawCannon(c){
+  if(!cannonMesh){
+    const p=screenPoint(getWorldPos(c.object)),a=cannonState?.cannon===c?cannonState.angle:cannonAngle(c);
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(-a);drawImageMap(48,0,0);ctx.restore();return;
+  }
+  const elapsedMs=c.animationActive?c.animationElapsedMs:0;
+  const parts=BounceOriginalCannon.frameAt(cannonMesh,elapsedMs,c.animationActive),matrix=world.get(c.object.id)||c.object.matrix;
+  for(const part of parts){
+    ctx.fillStyle='#'+part.color.toString(16).padStart(6,'0');ctx.beginPath();
+    for(let i=0;i+2<part.faces.length;i+=3){
+      const points=[part.faces[i],part.faces[i+1],part.faces[i+2]].map(index=>{
+        const fixed=BounceFixed16.transformPoint(matrix,part.vertices16[index][0],part.vertices16[index][1]);
+        return screenPoint({x:fixed.x/65536,y:fixed.y/65536});
+      });
+      ctx.moveTo(points[0].x,points[0].y);ctx.lineTo(points[1].x,points[1].y);ctx.lineTo(points[2].x,points[2].y);ctx.closePath();
+    }
+    ctx.fill();
+  }
 }
 function updateCannon(dt,held){
   if(!cannonState)return false;
@@ -405,6 +445,7 @@ function beginDeath(){
 }
 function update(dt,sourceDeltaMs=Math.round(dt*1000)){
   if(mode!==S.play||!body||activeStoryMessage)return;
+  updateCannonAnimations(dt);
   if(victoryTimer>0){
     victoryTimer=Math.max(0,victoryTimer-dt);
     updateSpriteAnimations(dt);particles.update(dt);
@@ -1036,13 +1077,10 @@ function drawGameplayScene(){
     }else if(item.type==='water')drawWater(item.water);
     else if(item.type==='friend'){
       const p=screenPoint(getWorldPos(item.object));ctx.fillStyle='#ED1C24';ctx.beginPath();ctx.arc(p.x,p.y,Math.round(20*SCALE),0,Math.PI*2);ctx.fill();
-    }else if(item.type==='cannon'){
-      const p=screenPoint(getWorldPos(item.object)),a=cannonState?.cannon===item.cannon?cannonState.angle:cannonAngle(item.cannon);
-      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(-a);drawImageMap(48,0,0);ctx.restore();
-    }
+    }else if(item.type==='cannon')drawCannon(item.cannon);
   }
   for(const e of bonusEggs){if(!e.collected){const p=screenPoint(e);drawImageMap(208,p.x,p.y);}}
-  particles.draw(ctx,screenPoint,SCALE);if(activeStoryMessage)drawOriginalStoryMessage();else drawFieldMessage();
+  particles.draw(ctx,screenPoint,SCALE,(id,x,y,frame)=>drawImageMap(id,x,y,new Set(),frame,ctx));if(activeStoryMessage)drawOriginalStoryMessage();else drawFieldMessage();
   if(toastTimer>0){ctx.fillStyle='#06121dcc';ctx.fillRect(34,276,172,22);const target=textCtx||ctx;target.fillStyle='#fff';target.font='600 9px system-ui,sans-serif';target.textAlign='center';target.textBaseline='alphabetic';target.fillText(toastText,120,290);}
   drawOriginalGameplayHud();
 }
@@ -1200,7 +1238,7 @@ function startLevel(){
   mode=S.play;hideGameScenes();syncPauseButton();input.clear();lastTime=0;simulationClock.reset();renderAlpha=1;musicController?.playLevel(currentLevel.index);
   if(eventEngine){eventEngine.reset();world=eventEngine.world;refreshGeometryWorld(world);}
   spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;activeStoryMessage=null;storyMessageQueue=[];cameraSnap=false;
-  body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce';body.rotation=0;body.unlockedForme=progress.unlockedForme;body.forme=0;body.slopeCosAbs=1;body.eyeFrame=0;body.idleAnimStartTimer=3000;
+  body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;BounceOriginalCannon.resetMesh(cannonMesh);cannons.forEach(BounceOriginalCannon.reset);if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce';body.rotation=0;body.unlockedForme=progress.unlockedForme;body.forme=0;body.slopeCosAbs=1;body.eyeFrame=0;body.idleAnimStartTimer=3000;
   eggs.forEach(e=>e.collected=false);bonusEggs=[];collected=0;elapsed=0;checkpointPosition={x:spawn.x,y:spawn.y};
   trampolines.forEach(t=>BounceOriginalTrampoline.reset(t));
   enemies.forEach(e=>{e.x=e.initialX;e.y=e.initialY;BounceOriginalEnemies.reset(e);});
@@ -1212,7 +1250,7 @@ async function loadLevel(index,options={}){
   const chosen=LEVELS[index];if(!chosen)throw new Error('Unknown level index '+index);
   const token=++levelLoadToken;status.textContent='LOADING '+chosen.name.toUpperCase()+'…';
   const response=await fetch('assets/original/'+chosen.resource);if(!response.ok)throw new Error('Could not load original level resource '+chosen.resource);
-  const parsed=BounceRLEF.parse(new Uint8Array(await response.arrayBuffer()));if(token!==levelLoadToken)return false;
+  const parsed=BounceRLEF.parse(new Uint8Array(await response.arrayBuffer()));await loadCannonMesh();if(token!==levelLoadToken)return false;BounceOriginalCannon.resetMesh(cannonMesh);
   const player=parsed.objects.find(o=>o.type==='player');if(!player)throw new Error(chosen.name+' has no player start record');
   currentLevel={...chosen,index,objectCount:parsed.objectCount,eventCount:parsed.eventCount,name:getLocalizedLevelName(index)};
   buildRuntime(parsed);spawn={x:body.x,y:body.y};mode=S.title;hideGameScenes();input.clear();lastTime=0;simulationClock.reset();renderAlpha=1;

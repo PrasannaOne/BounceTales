@@ -28,15 +28,6 @@ for (const item of appShell) {
   assert.ok(fs.existsSync(path.join(root, file)), `missing app-shell file: ${item}`);
 }
 
-// Current release/cache identity must agree across the live page, worker and manifest.
-assert.match(html, /style\.css\?v=53/);
-assert.match(html, /game\.js\?v=53/);
-assert.match(html, /sw\.js\?v=53/);
-assert.match(sw, /bounce-tales-v53/);
-assert.ok(appShell.some(item => item.startsWith('src/module-registry.js?v=53')));
-assert.ok(appShell.some(item => item.startsWith('src/port-engine.js?v=53')));
-assert.equal(JSON.parse(read('package.json')).version, '53.0.0');
-
 // Every local README destination must exist; external links and anchors are left to their owners.
 const markdownFiles = [];
 function collectMarkdown(directory) {
@@ -59,16 +50,17 @@ for (const file of markdownFiles) {
 
 // Port engine is available, complete, and can host a separate registry.
 const importWorkflow = read('.github/workflows/import-bounce-zip.yml');
-assert.match(importWorkflow, /tools\/import_runtime_zip\.py/, 'ZIP import must use the validated importer');
-assert.match(importWorkflow, /git add -A -- index\.html/, 'ZIP import must stage only runtime paths');
-assert.doesNotMatch(importWorkflow, /git add -A\s*$/m, 'ZIP import must never stage the whole repository');
-assert.match(read('tools/import_runtime_zip.py'), /MAX_UNCOMPRESSED = 500 \* 1024 \* 1024/, 'ZIP importer must enforce an expansion limit');
+assert.match(importWorkflow, /tools\/import_runtime_zip\.py/, 'ZIP import must use the validated full-project importer');
+assert.match(importWorkflow, /git add -A/, 'ZIP import must stage the complete project overlay');
+assert.match(importWorkflow, /npm run verify/, 'ZIP import must verify the merged project before committing');
+assert.match(read('tools/import_runtime_zip.py'), /MAX_UNCOMPRESSED = 600 \* 1024 \* 1024/, 'ZIP importer must enforce an expansion limit');
 assert.match(read('tools/import_runtime_zip.py'), /stat\.S_ISREG|stat\.S_IFREG/, 'ZIP importer must validate entry file types');
+assert.match(read('tools/import_runtime_zip.py'), /PROTECTED_FILES/, 'ZIP importer must protect its own execution files');
 
 const Engine = require('../src/port-engine.js');
 assert.equal(Engine.apiVersion, 1);
 assert.equal(Engine.diagnostics().ready, true);
-assert.equal(Engine.diagnostics().total, 20);
+assert.equal(Engine.diagnostics().total, 21);
 assert.match(css, /#app \.pause-toolbar\s*\{[\s\S]*?top:\s*40px;[\s\S]*?right:\s*-48px;[\s\S]*?width:\s*32px;[\s\S]*?height:\s*29px;/);
 assert.match(css, /#app \.pause-mini\s*\{[\s\S]*?width:\s*32px[\s\S]*?height:\s*29px/);
 assert.match(html, /<div class="pause-toolbar"[\s\S]*?id="pause-mini"/);

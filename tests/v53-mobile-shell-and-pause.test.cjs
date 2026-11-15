@@ -15,8 +15,8 @@ assert.match(game,/target\.font='8\.2px "Courier New",monospace'/,'original stor
 assert.match(game,/menuRoundRect\(10,210,220,99,5\)/,'story panel should provide additional readable space');
 assert.match(game,/lines\.slice\(0,6\)\.forEach\(\(text,i\)=>\{target\.strokeText\(text,22,y\+i\*12\.5,194\)/,'story lines need readable spacing');
 assert.match(game,/textTarget\.font='600 10px system-ui, sans-serif'/,'field messages should be easier to read');
-assert.match(html,/style\.css\?v=53/,'HTML styles use the V53 cache key');
-assert.match(sw,/bounce-tales-v53/,'service worker cache identity is V53');
+assert.match(html,/style\.css\?v=58/,'HTML styles use the V58 cache key');
+assert.match(sw,/bounce-tales-v58/,'service worker cache identity is V58');
 assert.match(css,/#app \.pause-mini\[hidden\]\s*\{\s*display:\s*none\s*!important;\s*\}/,'pause button respects hidden state in every scene');
 assert.match(css,/@media \(max-height: 620px\) and \(orientation: portrait\)/,'short portrait devices receive explicit stage sizing');
 assert.match(css,/@media \(max-width: 620px\) and \(orientation: landscape\) and \(max-height: 620px\)/,'narrow landscape devices receive explicit stage sizing');
@@ -24,5 +24,5 @@ assert.match(css,/@media \(max-width: 620px\) and \(orientation: landscape\) and
 assert.match(css,/@media \(max-width: 620px\) and \(orientation: landscape\) and \(max-height: 620px\) \{[\s\S]*?calc\(100vw - 112px\)/,'narrow landscape keeps the same protected external pause gutter');
 assert.match(css,/@media \(orientation: landscape\) and \(max-height: 620px\) \{[\s\S]*?pause-toolbar \{ top: -36px; right: 0; \}/,'short wide landscape moves pause to the clear strip above the stage');
 assert.doesNotMatch(css,/V39 responsive|V41 portrait|V42: single-screen touch editor/,'the obsolete responsive patch stack is gone');
-assert.equal((css.match(/V53 responsive shell/g)||[]).length,1,'there is a single responsive shell section');
-console.log('V53 responsive side-gutter pause placement and mobile shell checks passed');
+assert.equal((css.match(/V54 responsive shell/g)||[]).length,1,'there is a single responsive shell section');
+console.log('V54 responsive side-gutter pause placement and mobile shell checks passed');

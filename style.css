@@ -324,7 +324,7 @@ canvas#game-text {
   flex: 0 0 44px !important;
   padding: 0 !important;
 }
-.share-icon { width: 21px; height: 21px; }
+.share-icon { display: block; width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .header-btn.heart-link {
   color: #ff3155 !important;
   flex: 0 0 44px !important;
@@ -359,7 +359,7 @@ canvas#game-text {
 
 
 /* ================================================================
-   V53 responsive shell
+   V54 responsive shell
    One layout contract owns the game stage, touch surface and pause gutter.
    ================================================================ */
 html,

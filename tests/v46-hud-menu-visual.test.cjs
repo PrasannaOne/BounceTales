@@ -45,10 +45,10 @@ assert.match(game,/elapsed\+=dt/,'level clock advances on fixed-step simulation'
 assert.match(game,/Open Settings → Touch Controls/,'instructions describe the website touch editor');
 assert.doesNotMatch(game.slice(game.indexOf('function drawCanvasGuide'),game.indexOf('function drawCanvasScores')),/gameText\(12\)|number keys|Press '4'/,'guide no longer shows original handset keypad instructions');
 assert.doesNotMatch(game,/drawImageMap\(10,/,'striped ornament is never stretched as a selection highlight');
-assert.match(html,/src\/original-hud\.js\?v=53/);
-assert.match(html,/game\.js\?v=53/);
-assert.match(sw,/CACHE_NAME\s*=\s*'bounce-tales-v53'/);
-assert.match(sw,/src\/original-hud\.js\?v=53/);
+assert.match(html,/src\/original-hud\.js\?v=58/);
+assert.match(html,/game\.js\?v=58/);
+assert.match(sw,/CACHE_NAME\s*=\s*'bounce-tales-v58'/);
+assert.match(sw,/src\/original-hud\.js\?v=58/);
 for(let i=0;i<15;i++){
   const resource='b'+String.fromCharCode('f'.charCodeAt(0)+i);
   const parsed=RLEF.parse(fs.readFileSync(path.join(root,'assets','original',resource)));

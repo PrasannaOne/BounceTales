@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "source": "Bounce Tales JAR 2.0.3 resource index /a, supplied decompiled reference classes o.java and m.java",
+  "status": "resource identity and payload structure verified; exact gameplay consumers not fully established",
+  "resources": [
+    {
+      "name": "be",
+      "resource_type": 5,
+      "resource_indices": [
+        90,
+        91,
+        92
+      ],
+      "records": [
+        {
+          "offset": 0,
+          "length": 86,
+          "sha256": "2116c441e66ad3867050ecb7d0b5c68bf9c8457c3040fce6b7d8964605df22da"
+        },
+        {
+          "offset": 86,
+          "length": 86,
+          "sha256": "6ca7e5f47d26d4d914a6f26396f1c6ecd6c17d0303a27e28c8a80147af9c4b63"
+        },
+        {
+          "offset": 172,
+          "length": 86,
+          "sha256": "4b062c8e873c18f111d500589ff4ce5ad176f5a66a60b1a35fecb9b848c4a834"
+        }
+      ],
+      "total_length": 258,
+      "runtime_note": "Three consecutive 86-byte raw records in one type-5 resource file. The decompiled world manager calls o.e(37) and o.e(36) together during m.c(1), explicitly preloading two of these resource groups. No direct o.e(38) call or definitive semantic label for the three payloads was established.",
+      "source_call_sites": [
+        {
+          "class": "m.java",
+          "method": "c(int)",
+          "line_range": [
+            1651,
+            1662
+          ],
+          "evidence": "The state-1 branch calls o.e(37) and o.e(36), then initializes the resource manager."
+        }
+      ]
+    },
+    {
+      "name": "bv",
+      "resource_type": 8,
+      "resource_indices": [
+        109
+      ],
+      "offset": 0,
+      "length": 26,
+      "sha256": "d4efaa6fad9beeb06fd2f2b14a688cf1b078926932b5528dbe91d24f543eaad1",
+      "big_endian_u16": [
+        3,
+        8,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        1,
+        7,
+        0
+      ],
+      "runtime_note": "A 13-word raw type-8 table. Values 28 through 35 match the eight original MIDI resource IDs already represented in the browser audio controller; this is a strong correspondence, but the exact original caller/field semantics remain unconfirmed.",
+      "source_call_sites": []
+    }
+  ],
+  "resource_index_entries": [
+    {
+      "resource_index": 90,
+      "name": "be",
+      "offset": 0,
+      "length": 86
+    },
+    {
+      "resource_index": 91,
+      "name": "be",
+      "offset": 86,
+      "length": 86
+    },
+    {
+      "resource_index": 92,
+      "name": "be",
+      "offset": 172,
+      "length": 86
+    },
+    {
+      "resource_index": 109,
+      "name": "bv",
+      "offset": 0,
+      "length": 26
+    }
+  ],
+  "type_definitions": [
+    {
+      "definition_index": 36,
+      "type": 5,
+      "first_index": 90,
+      "resource_indices": [],
+      "resource_names": []
+    },
+    {
+      "definition_index": 37,
+      "type": 5,
+      "first_index": 91,
+      "resource_indices": [],
+      "resource_names": []
+    },
+    {
+      "definition_index": 38,
+      "type": 5,
+      "first_index": 92,
+      "resource_indices": [],
+      "resource_names": []
+    }
+  ],
+  "cross_reference": {
+    "original_midi_ids": [
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35
+    ],
+    "browser_audio_mappings": [
+      "title.ogg",
+      "act1.ogg",
+      "act2.ogg",
+      "act3.ogg",
+      "boss.ogg",
+      "lose.ogg",
+      "win.ogg",
+      "bonus.ogg"
+    ],
+    "dynamic_sprite_ids": {
+      "first": 326,
+      "last": 539,
+      "reference_count": 214
+    },
+    "note": "Do not confuse resource-index type 8 with RLEF scene-object type 8. They are separate type systems.",
+    "bv_interpretation": "The embedded IDs 28\u201335 align with the eight MIDI identities, but no direct o.e(55) call or definitive interpretation of the leading/trailing words was found in the examined decompiled source."
+  }
+}

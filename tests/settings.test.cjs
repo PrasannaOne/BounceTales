@@ -15,5 +15,5 @@ assert.match(js,/\['auto','30','60','90','120'\]/);
 assert.match(html,/Made by Prasanna ❤️/);
 assert.match(html,/https:\/\/t\.me\/prasannaone/);
 assert.match(html,/https:\/\/github\.com\/PrasannaOne\/BounceTales/);
-assert.match(js,/https:\/\/prasannaone\.github\.io\/BounceTales\//);
+assert.match(html,/href="https:\/\/prasannaone\.github\.io\/BounceTales\/"/);
 console.log('Settings: Auto/30/60/90/120 FPS cap and persisted Smooth Motion OFF-by-default rendering toggle validated');

@@ -1,7 +1,8 @@
 'use strict';
 const assert = require('node:assert/strict');
-const { AudioController, resourceForLevel, RESOURCE_FILES } = require('../src/audio-controller.js');
+const { AudioController, resourceForLevel, RESOURCE_FILES, SOURCE_MIDI_FILES } = require('../src/audio-controller.js');
 assert.equal(RESOURCE_FILES[28], 'title.ogg');
+assert.deepEqual(SOURCE_MIDI_FILES,{28:'aw.mid',29:'ax.mid',30:'ay.mid',31:'az.mid',32:'ba.mid',33:'bb.mid',34:'bc.mid',35:'bd.mid'});
 assert.deepEqual([0,1,2,3,4,5,8,9,10,13,14].map(resourceForLevel), [29,29,29,32,35,30,32,35,31,32,35]);
 
 class FakeAudioContext {
@@ -26,11 +27,13 @@ const wait = () => new Promise(resolve => setImmediate(resolve));
     fetcher: async url => { urls.push(url); return { ok: true, arrayBuffer: async () => new ArrayBuffer(8) }; }
   });
   assert.equal(music.enabled, true);
+  assert.equal(music.volume, 0.72, 'the existing browser master gain is retained until the pre-rendered audio can be compared perceptually');
   assert.equal(music.playTitle(), true);
   await wait(); await wait();
   assert.equal(music.currentResource, 28);
   assert.equal(music.currentSource.loop, true);
   assert.equal(music.currentSource.started, true);
+  assert.equal(music.master.gain.value, 0.72, 'the pre-rendered Opus master gain is not attenuated a second time by an assumed MIDI volume conversion');
   assert.ok(urls.includes('/audio/title.ogg'));
   assert.equal(await music.unlock(), true, 'Web Audio unlocks through the user-gesture path');
 

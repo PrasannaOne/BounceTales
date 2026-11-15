@@ -11,3 +11,13 @@ These files were generated from the private Phase 2 decoded reference archive su
 `tests/reference-parity.test.cjs` compares the browser parser with these fixtures. It verifies all 2,240 object headers, 490 polygons, 5,776 polygon vertices, 4,306 triangles, and 316 type-6 objects / 1,143 exact sequence streams.
 
 The reference package's extraction metadata is retained in the private archive. This public deploy package does not include decompiled Java source or the original JAR.
+
+
+## Supplemental resource inventory (V56)
+
+`supplemental-resource-audit.json` records the original resource-index entries for `be` and `bv`, including exact record offsets, lengths and hashes. The `be` payload is three 86-byte type-5 records; `bv` is a 26-byte type-8 payload whose thirteen big-endian words are retained. Their original bytes remain under `assets/original/` and are covered by the resource-parity tests. The audit distinguishes confirmed byte structure from still-unconfirmed runtime semantics.
+
+
+## Event interpreter parity (V57)
+
+`../docs/V57_EVENT_FLAG_PARITY.md` records the original opcode-29 selector semantics and the image-358 particle path. `tests/event-flag-parity.test.cjs` checks the 140 campaign commands and `tests/original-sprite-fragments.test.cjs` validates the restored browser effect.

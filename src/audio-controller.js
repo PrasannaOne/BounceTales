@@ -8,6 +8,10 @@
     28:'title.ogg',29:'act1.ogg',30:'act2.ogg',31:'act3.ogg',
     32:'boss.ogg',33:'lose.ogg',34:'win.ogg',35:'bonus.ogg'
   });
+  const SOURCE_MIDI_FILES=Object.freeze({
+    28:'aw.mid',29:'ax.mid',30:'ay.mid',31:'az.mid',
+    32:'ba.mid',33:'bb.mid',34:'bc.mid',35:'bd.mid'
+  });
   function resourceForLevel(index){
     if([4,9,14].includes(index))return 35;
     if([3,8,13].includes(index))return 32;
@@ -145,5 +149,5 @@
       if(ctx&&ctx.state!=='closed'){try{ctx.close();}catch{}}
     }
   }
-  return {AudioController,RESOURCE_FILES,resourceForLevel};
+  return {AudioController,RESOURCE_FILES,SOURCE_MIDI_FILES,resourceForLevel};
 });

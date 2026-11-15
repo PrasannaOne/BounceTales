@@ -8,7 +8,7 @@
 ## 🌐 [prasannaone.github.io/BounceTales](https://prasannaone.github.io/BounceTales/)
 
 <p>
-  <img src="https://img.shields.io/badge/Release-V49-f97316?style=flat-square" alt="Release V49" />
+  <img src="https://img.shields.io/badge/Release-V58-f97316?style=flat-square" alt="Release V58" />
   <img src="https://img.shields.io/badge/Platform-Web%20%2F%20PWA-0ea5e9?style=flat-square" alt="Web and PWA" />
   <img src="https://img.shields.io/badge/Runtime-HTML5%20%2B%20JavaScript-facc15?style=flat-square" alt="HTML5 and JavaScript" />
   <img src="https://img.shields.io/badge/Simulation-240%C3%97320-22c55e?style=flat-square" alt="240 by 320 simulation" />
@@ -55,18 +55,119 @@ Standard gamepads are supported when the browser exposes the Gamepad API. Touch 
 - 📦 **Installable PWA:** add the browser game to a compatible device's home screen.
 - 🔊 **Soundtrack:** browser-based music and sound playback.
 
-## 🧭 V49 · the polish and portability pass
+## 🧭 V58 · campaign parity scorecard
 
-This release focuses on the whole project rather than changing how Bounce moves:
+This release pins the original campaign script corpus and makes the current parity evidence easier to audit:
 
-- 🟢 The pause control is moved below the original clock footprint and keeps a compact, comfortable touch target.
-- 💬 Cannon aiming/firing guidance now updates an accessible live region without adding another visible row or shrinking the mobile game area.
-- 🧰 The existing standalone modules are exposed through **Bounce Port Engine API v1**. The generic registry is also a standalone utility for independent future ports, with a clear boundary between reusable helpers and Bounce-specific behavior.
-- 🧹 Duplicate unused PWA icon copies and dead DOM references are removed; exact CSS duplicates are cleaned without flattening responsive cascade rules.
-- 📚 README, architecture, project guide and historical reverse-engineering notes are reconciled for the current release.
-- 🧪 A dependency-free Node.js workflow makes syntax checks, regression tests and smoke proofs repeatable.
+- 🧩 All 15 playable RLEF stages are enumerated: 316 events and 1,143 authored commands.
+- 🧭 A new regression test pins the exact campaign opcode distribution and verifies both opcode-26 target references resolve to the player object.
+- 🧪 The full gate runs 69 test files, syntax checks, all-stage runtime smoke, and the Level 1 springboard lifecycle proof. A new synthetic test exercises all 33 event interpreter opcodes against source-derived expectations.
+- 📚 The scorecard separates verified campaign coverage from unproven semantic parity. It does not manufacture a 90% score from feature counts.
 
-See the [V49 repository polish audit](docs/V49_REPOSITORY_POLISH_AUDIT.md) and [engine porting guide](docs/ENGINE_PORTING_GUIDE.md).
+The Share button now sends or copies `https://prasannaone.github.io/BounceTales/`, matching the canonical page link and social metadata. The older X.gd target documented under V55 is historical and has been superseded.
+
+See the [V58 campaign parity scorecard](docs/V58_CAMPAIGN_PARITY_SCORECARD.md), [V58 source crosswalk audit](docs/V58_SOURCE_CROSSWALK_AUDIT.md), [V58 release audit](docs/V58_RELEASE_AUDIT.md), and [engine porting guide](docs/ENGINE_PORTING_GUIDE.md).
+
+## 🛡️ V50 · reproducible checks and safer runtime imports
+
+V50 is a repository-readiness release. It preserves the gameplay simulation, original resource data and saved touch-layout geometry while strengthening the path from source changes to a published site. Its shell-level polish also moved the pause action outside the canvas and delayed touch-control visibility until measured geometry was applied; V51 refines both details.
+
+- **Runtime ZIP imports are constrained:** `Bounce.zip` is validated before extraction, including path traversal, symlink/special-file, duplicate-path, encrypted-entry, file-count, file-size and expansion checks.
+- **Protected project records stay protected:** the importer copies only the browser runtime allowlist (`index.html`, the site shell files, `assets/` and `src/`). It does not replace documentation, the license, tests, research notes, repository metadata or GitHub workflows.
+- **Deployment is gated:** the imported runtime must pass syntax checks, the full Node.js regression suite, runtime smoke checks and the springboard lifecycle proof before it is committed.
+- **Pull requests get the same quality gate:** GitHub Actions runs the complete dependency-free verification sequence on pushes and pull requests.
+- **The import path is independently testable:** the ZIP validator is a checked-in Python tool, not an opaque shell-only extraction step.
+
+The release is intentionally conservative: it improves how the project is checked and deployed without presenting infrastructure work as new gameplay. The V50 shell adjustments did not change the saved touch-layout format or gameplay simulation. See the [V50 release-readiness and deployment audit](docs/V50_RELEASE_READINESS.md).
+
+
+## 🟠 V57 · original event-flag and sprite-effect fidelity
+
+V57 corrects a source-level mismatch in the RLEF event interpreter and restores a small but authentic effect that campaign scripts rely on.
+
+- **Packed flag semantics:** original opcode 29 selector `0x01` replaces all five low render-depth bits, not just bit zero. Selectors `0x20`, `0x80` and `0x100` remain independently applied. The render-depth cache now follows the original `(flags & 31) - 16` rule.
+- **Campaign evidence:** the 15 playable RLEF stages contain 140 opcode-29 commands, including 25 combined depth/visibility updates. Tests verify the selector distribution and target data against the bundled original levels.
+- **Original sprite-fragment effect:** the original image-358 sprite path emits 24 animated fragments using sprite families 390, 414 and 396, with the source lifetime/angular configuration. Browser-side timing, random sampling and particle integration are a documented adaptation, not a claim of deterministic J2ME RNG parity.
+- **No unrelated redesign:** the chapter flow, controls, level data, physics constants, cannon behavior, audio mapping and sharing UI are carried forward.
+- **Verification:** the focused event-flag and fragment tests join the complete syntax, regression, all-15-stage smoke and springboard checks.
+
+See the [V57 event-flag and sprite-effect audit](docs/V57_EVENT_FLAG_PARITY.md).
+
+## 🟠 V56 · supplemental original-resource fidelity
+
+V56 investigates the previously under-documented `be` and `bv` resources using the supplied JAR resource index and decompiled resource-loader paths.
+
+- **`be`:** three original type-5 records, each 86 bytes, at resource indices 90–92. Their offsets and individual SHA-256 hashes are recorded. The original world manager queues resource IDs 36 and 37 for loading in one state transition.
+- **`bv`:** one 26-byte type-8 payload at resource index 109. Its thirteen big-endian words are decoded and preserved; values 28–35 correspond to the eight original MIDI resource IDs already mapped by the browser audio controller.
+- **Type-system correction:** resource-index type 8 is distinct from RLEF scene-object type 8. The latter creates a `c(true)` scene object; the former is read as raw resource bytes.
+- **No speculative behavior:** the exact consumer of `be` and the full meaning of `bv`'s header/trailer are not established by the examined source call paths, so V56 adds source-backed inventory and regression protection rather than an invented runtime feature.
+- **Verification:** the new supplemental-resource test checks all `be` record boundaries/hashes, the complete `bv` word sequence, the MIDI-ID correspondence and all 214 dynamic sprite-map entries.
+
+See the [V56 supplemental resource audit](docs/V56_SUPPLEMENTAL_RESOURCE_AUDIT.md).
+
+## 🟠 V55 · clearer sharing and deployment hygiene
+
+V55 is a focused shell and maintenance release. The game simulation, campaign resources, cannon behavior, soundtrack mapping, menus and touch layout are carried forward unchanged.
+
+- **Share control:** the header share mark now uses a visible, outlined connected-node icon with a consistent stroke instead of dark, effectively invisible SVG shapes. Its accessible label and compact button footprint remain unchanged.
+- **Share destination:** the native share sheet and copy fallback now use `https://X.gd/BounceTales`. The regular site navigation and canonical GitHub Pages address remain unchanged.
+- **Runtime importer:** the ZIP validator accepts any internally consistent release number, checks every service-worker app-shell file, and does not require a test suite inside `Bounce.zip`. The repository keeps ownership of `tests/`; those tests run after runtime import and are not replaced by an uploaded archive.
+- **Repository hygiene:** the importer no longer carries a V54 minimum, a hard-coded module floor or a test-suite replacement path. ZIP path, symlink, duplicate-entry, size and expansion safeguards remain.
+- **Verification:** the V55 share UI/URL regression test joins the existing suite. The full syntax, regression, 15-stage smoke and springboard checks are recorded in the V55 audit.
+
+The X.gd URL is the requested share target; its live redirect destination should be confirmed from a browser after the short-link owner settings are checked. This release does not claim that redirect verification succeeded.
+
+See the [V55 share and maintenance audit](docs/V55_RELEASE_AUDIT.md).
+
+## 🟠 V54 · original cannon mesh and audio reference parity
+
+V54 restores the shared cannon artwork that the original game loads from its sixteenth RLEF resource, `bu`. This is not a sixteenth campaign stage: the original world manager loads it alongside each playable chapter as the cannon's reusable polygon mesh.
+
+- **Original cannon geometry:** all 12 polygon records are parsed from `assets/original/bu`; the renderer draws the original black, grey and yellow mesh rather than a static placeholder sprite.
+- **Original firing animation:** the three authored polygon poses interpolate over 500 ms, 100 ms and 300 ms. The player launch boundary remains at 600 ms, while the cannon animation finishes at 900 ms.
+- **Audio resource map:** the eight original MIDI resources (`aw.mid` through `bd.mid`) are explicitly cross-referenced to the eight browser Opus tracks. Title, chapter-group, death and victory triggers are checked against the decompiled source call sites.
+- **Audio regression checks:** tests parse MIDI timing and Ogg Opus duration metadata. Each browser track retains the observed approximately 1.1-second tail after its source MIDI duration. This confirms the mapping and timing envelope, not bit-identical waveforms.
+- **Release integrity:** the V54 runtime cache identity was versioned consistently. The V55 universal importer now validates structure and cache consistency without a hard-coded release minimum; the cannon module remains part of the service-worker shell.
+- **Verification:** all original campaign levels remain in the 15-stage chapter list; `bu` is loaded as shared cannon geometry, never exposed as a playable chapter.
+- **Release checks:** 90 JavaScript files pass syntax checks, all 63 test files pass, all 15 campaign levels pass the runtime smoke check, and the Level 1 springboard proof passes.
+
+See the [V54 parity and restoration audit](docs/V54_PARITY_AUDIT.md).
+
+## 🟠 V53 · original menu-flow restoration
+
+V53 restores the source-shaped title and pause command sets while retaining the separate browser settings entry point and the existing chapter-book scene. The title scene now presents Continue (when a valid persisted save exists), New Game, High Scores and Instructions; the original Exit softkey is represented with a browser-safe close-tab attempt and a clear fallback message. The pause scene is reduced to Resume, Restart Chapter and Chapter Selection, with the existing confirmation path retained for destructive transitions.
+
+- **Version identity:** package metadata, HTML asset query strings and the service-worker cache use V53 consistently.
+- **Historical import rule:** V53 originally introduced a minimum import version. V55 removes that obsolete floor while retaining structural and cache-integrity validation.
+- **Regression coverage:** menu-flow assertions now check the original command order and ensure web-only Options/Chapter Selection entries do not leak into the title menu.
+- **Verification:** `npm run verify` passes all 61 test files, the Node runtime smoke test exercises all 15 RLEF stages, and the Level 1 springboard lifecycle proof passes.
+
+See the [V53 restoration audit](docs/V53_RESTORATION_AUDIT.md). Browser-specific visual checks and physical handset testing remain separate from Node verification.
+
+## 🟠 V52 · responsive-shell cleanup and reliable audio departure
+
+V52 keeps the original game simulation, campaign resources, menus and saved touch-layout format intact while removing the accumulated shell cascade and tightening lifecycle behavior.
+
+- **One responsive layout system:** historical overlapping layout patches are consolidated into one shell contract for portrait, landscape, compact phones and wide screens. The pause control remains outside the 240 × 320 game viewport in a reserved gutter or the clear strip above the game column.
+- **No control-layout flash:** saved/default control geometry is applied before resource-loading awaits. The controls remain unpainted until measured, and are hidden again while a resize/orientation update is being applied.
+- **Audio stops on departure:** leaving or backgrounding the page invalidates pending audio loads, stops the active source and suspends the AudioContext. Returning can restore the prior music only after the browser has previously unlocked audio and music remains enabled.
+- **Version consistency:** package metadata is `52.0.0`; HTML and service-worker assets retain the V52 URL identity. The changed V52 worker refreshes the V52 cache entries on installation.
+- **Preservation boundary:** the 15 playable RLEF stages, original resource archive, gameplay physics, progression and saved layout key are not intentionally changed by this shell-maintenance release.
+
+The verification suite checks the real JavaScript modules and parsed RLEF resources in Node.js. It does not replace physical-device testing across Safari, Firefox, Android WebView or different browser versions. See the [V52 release audit](docs/V52_RELEASE_AUDIT.md).
+
+## 🎯 V51 · clean first paint and a quieter pause control
+
+V51 is a responsive-shell and startup-order maintenance release. It keeps the V50 gameplay/runtime systems and original campaign resources intact.
+
+- **No legacy control flash:** the saved or default touch layout is measured and applied synchronously before game resources are fetched. The control surface remains hidden until all button geometry is ready.
+- **External pause control:** a small 32 × 29 CSS-pixel pause button sits in the empty right-side gutter near the upper edge of the game. It is outside the canvas and appears only during active play. Wide two-column layouts place it in the clear strip above the game column.
+- **Responsive stage sizing:** the pause strip and canvas share one sizing wrapper across portrait, landscape, compact and wide layouts.
+- **Cascade audit:** exact duplicate CSS rule blocks were removed. Context-specific historical overrides were retained where they still define responsive behavior, rather than flattening the cascade and risking regressions.
+- **Cache refresh:** the V51.1 correction uses `v=52` asset references and a distinct `bounce-tales-v52` service-worker cache so the corrected layout is not trapped behind the earlier V51 cache.
+- **Regression coverage:** first-paint ordering, pause placement, hidden-state behavior and responsive stage rules are checked alongside the existing gameplay tests.
+
+See the [V51 responsive-shell audit](docs/V51_RESPONSIVE_SHELL_AUDIT.md).
 
 ## 🚀 Play and install
 
@@ -149,7 +250,17 @@ The port combines recovered source/resource facts with browser-specific implemen
 | [Project guide](docs/PROJECT_GUIDE.md) | Runtime, controls, maintenance and release checklist |
 | [Architecture](ARCHITECTURE.md) | Modules, simulation pipeline, resources and protected boundaries |
 | [Engine porting guide](docs/ENGINE_PORTING_GUIDE.md) | Reuse boundaries and the new port-engine registry API |
-| [V49 repository polish audit](docs/V49_REPOSITORY_POLISH_AUDIT.md) | V49 changes, cleanup scope and verification boundaries |
+| [V52 release audit](docs/V52_RELEASE_AUDIT.md) | Consolidated shell, startup controls, audio lifecycle, cache identity and test evidence |
+| [V51 responsive-shell audit](docs/V51_RESPONSIVE_SHELL_AUDIT.md) | Startup layout, pause placement, CSS cascade audit and device-layout checks |
+| [V50 release-readiness audit](docs/V50_RELEASE_READINESS.md) | ZIP import security, CI gates, scope and verification |
+| [V57 event-flag and sprite-effect audit](docs/V57_EVENT_FLAG_PARITY.md) | Source-backed opcode-29 semantics, campaign coverage and original image-358 particles |
+| [V57 release audit](docs/V57_RELEASE_AUDIT.md) | V57 scope, verification results and explicit fidelity limits |
+| [V56 supplemental resource audit](docs/V56_SUPPLEMENTAL_RESOURCE_AUDIT.md) | Exact `be`/`bv` resource inventory, type-system distinction and regression coverage |
+| [V55 share and maintenance audit](docs/V55_RELEASE_AUDIT.md) | Share UI/URL change, importer correction and V55 verification |
+| [V58 campaign parity scorecard](docs/V58_CAMPAIGN_PARITY_SCORECARD.md) | Original campaign corpus, opcode distribution and parity limits |
+| [V58 source crosswalk audit](docs/V58_SOURCE_CROSSWALK_AUDIT.md) | Original class-to-browser subsystem map and behavioral verification limits |
+| [V58 release audit](docs/V58_RELEASE_AUDIT.md) | Release evidence, verification results, importer safety and open parity work |
+| [V49 repository polish audit](docs/V49_REPOSITORY_POLISH_AUDIT.md) | Historical cleanup scope and verification boundaries |
 | [V48 mobile readability audit](docs/V48_MOBILE_READABILITY_AUDIT.md) | Dialogue legibility and previous mobile HUD work |
 | [V47 visual-parity audit](docs/V47_FULL_VISUAL_PARITY_AUDIT.md) | Original-game title/menu/HUD restoration |
 | [Reverse-engineering method](docs/REVERSE_ENGINEERING_METHOD.md) | How reference resources are inspected and recorded |
@@ -161,7 +272,7 @@ Older build-specific notes are intentionally retained as a research timeline. Th
 
 ## ⚖️ License and original-game rights
 
-The portions authored by Prasanna are covered by the **[Sovereign Source License v1.1](LICENSE)**. It is a **proprietary, source-available license**, not an open-source license. It permits limited personal, educational and noncommercial use under its terms; it does not grant general permission to republish, host, redistribute or monetise copies.
+The portions authored by Prasanna are covered by the **[Sovereign Source License v1.1](LICENSE)**. It is a **proprietary, source-available license**, not an OSI-approved open-source license. It permits limited personal, educational and noncommercial use under its terms; it does not grant general permission to republish, host, redistribute or monetise copies.
 
 Original Bounce Tales artwork, sprites, animation, audio, music, fonts, level data, binary resources, names and marks are **not relicensed** by this project license. They remain subject to the rights of their respective owners. This is an independent project and is not affiliated with, sponsored by, or endorsed by Nokia or Rovio.
 
@@ -180,3 +291,8 @@ Original Bounce Tales artwork, sprites, animation, audio, music, fonts, level da
 *Keep bouncing.*
 
 </div>
+
+
+### V51.1 · pause-gutter correction
+
+The first V51 pause placement was incomplete: the toolbar had been moved in the HTML, but its CSS positioning was not explicitly reset. V51.1 anchors the toolbar to the game stage's upper-right external gutter, explicitly resets the button itself to static positioning, reserves right-side clearance on compact portrait screens, and refreshes the service-worker cache identity. The gameplay canvas, touch-layout storage key and game simulation are unchanged.

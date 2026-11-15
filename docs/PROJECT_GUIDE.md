@@ -2,9 +2,9 @@
 
 > **Official game:** https://prasannaone.github.io/BounceTales/  
 > **Repository:** https://github.com/PrasannaOne/BounceTales  
-> **Document scope:** V49 project structure and maintenance guide
+> **Document scope:** V58 project structure, source crosswalk and maintenance guide
 
-This guide explains how the browser project is organised, how a play session moves through the code, where important behavior lives, how to validate changes, and which boundaries should be protected during maintenance.
+This guide explains how the browser project is organised, how a play session moves through the code, where important behavior lives, how the V58 source crosswalk relates the supplied J2ME classes to browser modules, how to validate changes, and which boundaries should be protected during maintenance. See `docs/V58_RELEASE_AUDIT.md` for the release evidence and safe-import procedure. The current runtime baseline is V58 (`58.0.0`). The V58 importer merges named root-level regression-test files without deleting tests that exist only in the repository; it does not import project documentation, the licence or workflow definitions.
 
 ## 1. Project identity and scope
 
@@ -78,17 +78,19 @@ The original game's content is not relicensed by the project's source license. S
 
 ## 6. Interface and control model
 
+V51 applies the saved/default control geometry synchronously before any asynchronous game-resource loading. The control surface remains visually hidden until all four button positions and dimensions have been written. The pause action is outside the 240 × 320 canvas, in a compact right-side gutter aligned with the upper part of the game viewport on portrait screens. In wide landscape layouts, it uses the clear strip above the game column.
+
 The game world remains 240 × 320. The browser shell scales the game presentation to the available viewport; CSS dimensions must not feed back into physics or world coordinates.
 
 Touch controls are separate from the logical game canvas. The Left, Right, Jump and form controls use a shared layout model. The in-game customization screen edits the same geometry used by the live controls, and the saved arrangement is local to the current browser/device.
 
-The stable local-storage key is `bounce-control-layout-v1`. Preserve it across releases unless a deliberate migration is implemented. Do not hide a control surface and then measure it as though it had valid visible dimensions. Recalculate when the surface becomes visible and when its container changes size.
+The stable local-storage key is `bounce-control-layout-v1`. Preserve it across releases unless a deliberate migration is implemented. During V51 startup, the control surface uses `visibility: hidden` rather than `display: none`; it remains in layout, so its dimensions can be measured before the buttons are revealed. Reapply the geometry when the container changes size or the surface becomes available after a hidden state.
 
 ## 7. PWA and caching
 
 The project is installable as a Progressive Web App on compatible browsers. The manifest controls installation metadata and icon selection. Those icons belong to the browser/device installation experience; original in-game sprite selection belongs to the game renderer. Keep the two asset roles separate.
 
-The service worker precaches a small startup shell and caches additional same-origin resources as they are requested. This avoids forcing every large media resource into the initial installation download.
+The service worker precaches a small startup shell and caches additional same-origin resources as they are requested. The V51.1 pause toolbar is anchored outside the game canvas. Portrait layouts reserve a right-side gutter for the small pause button; wide landscape layouts place it in the clear strip above the game column. Only the pause button itself is hidden outside active play, so entering gameplay does not shift the canvas. This avoids forcing every large media resource into the initial installation download.
 
 When creating a new game release:
 
@@ -98,7 +100,7 @@ When creating a new game release:
 4. Test first load, reload, offline startup and an update from the previous cache.
 5. Do not change the control-layout storage key without a migration plan.
 
-Documentation-only changes do not require a gameplay cache-version bump.
+Documentation-only changes do not require a gameplay cache-version bump. The V58 ZIP importer replaces the allowlisted runtime assets/source trees, updates named root-level test files while preserving repository-only tests, and leaves README, architecture, licence, docs and workflow files alone. Documentation and the importer workflow must be updated separately. V58 changes the header share action to the canonical `https://prasannaone.github.io/BounceTales/` URL; the Web Share API and clipboard fallback use that same address as the canonical metadata and home link.
 
 ## 8. Local development
 
@@ -161,3 +163,41 @@ The Licensor-authored portions of the project are governed by the root **Soverei
 The current release includes a dependency-free Node.js verification workflow (`npm run verify`) and the `BouncePortEngine` API v1 registry. The registry exposes existing standalone modules and provides `createRegistry(definitions)` for a separate future port to compose its own read-only module registry. It does not turn Bounce Tales' application coordinator into a universal engine. Consult [ENGINE_PORTING_GUIDE.md](ENGINE_PORTING_GUIDE.md) for module boundaries and adapter contracts.
 
 The GitHub Actions workflow at `.github/workflows/import-bounce-zip.yml` imports and validates a supplied `Bounce.zip` archive. It is not the GitHub Pages publishing workflow. The deployed static site is published separately through the repository's Pages configuration.
+
+
+## V52 shell and lifecycle contract
+
+The V52 stylesheet has one responsive-shell section that owns the game-stage size, the external pause-control gutter, and the touch-control surface. Do not append another versioned patch at the bottom of `style.css`; edit the relevant V52 section and its regression tests. `#game-controls` is initially hidden until `applyControlLayoutToSurface()` has written all four button geometries and marked `data-layout-measured="true"`. The same marker is cleared during viewport resizing so old coordinates are never briefly displayed in the new layout.
+
+The V52 audio controller stops the active source, increments its generation token to invalidate pending loads, and suspends the Web Audio context on window `blur`, `visibilitychange`, `pagehide` and `freeze`. The visible-page `focus`/`pageshow` path restores a previously unlocked track only while the music setting remains enabled. It resumes only when the page is visible, audio remains enabled, and the context was previously unlocked by a user gesture. Keep the persisted music setting authoritative.
+
+The package release version is `52.0.0`. HTML asset URLs and the service-worker cache use the V52 identity (`v=52` / `bounce-tales-v52`). The service-worker source must change with a V52 runtime release so an existing worker installs and refreshes the cache entries.
+
+
+## V57 event-flag and sprite-effect fidelity
+
+At V57, the package release was `57.0.0`; that historical release used `v=57` / `bounce-tales-v57`. The current V58 release uses `58.0.0`, `v=58` and `bounce-tales-v58`.
+
+The original `g.java` opcode-29 handler treats selector `0x01` as replacement of the complete low five-bit object depth, then updates cached depth to `(flags & 31) - 16`. Selectors `0x20`, `0x80` and `0x100` are independent flag updates. V57 mirrors this behavior. The bundled 15 playable levels contain 140 such commands, including 25 combined `0x81` commands.
+
+The same source handler invokes the original 24-particle effect when selector `0x80` touches a type-5 sprite with first image ID 358. V57 reproduces the three source sprite families (390, 414, 396), five-frame animation, particle count, full-circle emission and 2040 ms lifetime with 510 ms variation. Browser-side timing conversion, random generator, drag and movement remain approximations rather than deterministic J2ME device parity. See [`V57_EVENT_FLAG_PARITY.md`](V57_EVENT_FLAG_PARITY.md) for the source crosswalk and test evidence.
+
+`tests/event-flag-parity.test.cjs` checks the packed selector semantics and all 140 campaign commands. `tests/original-sprite-fragments.test.cjs` verifies the source particle configuration and browser rendering path. The V57 release verification is recorded in the release audit.
+
+## V56 supplemental resource fidelity
+
+At the V56 release, HTML asset references and the service-worker cache used `v=56` / `bounce-tales-v56`. This section records that historical release; the current runtime baseline is V58.
+
+V56 records the exact resource-index identities and payload structure of the previously under-documented `be` and `bv` resources. `be` contains three 86-byte type-5 records (resource indices 90–92); the original world manager queues resource IDs 36 and 37 for loading in its state-1 branch. The purpose of the third group and the payloads' exact semantic labels remain unconfirmed. `bv` is a 26-byte type-8 payload containing thirteen big-endian words; its values 28–35 correspond to the eight original MIDI resource IDs already mapped by the browser audio controller.
+
+The resource-index type values must not be confused with RLEF scene-object type values. The `c(true)` branch in the original world manager handles an RLEF object record of type 8; it does not establish that the standalone `bv` resource is such an object. The file-level resource loader reads `bv` as raw bytes.
+
+`reference/supplemental-resource-audit.json` records offsets, lengths, hashes and the decoded word sequence. `tests/supplemental-resource-parity.test.cjs` protects these facts and checks the correspondence with the existing audio-resource map. The exact gameplay consumer of the `be` records and the full semantics of the `bv` header/trailer remain unresolved, so V56 does not invent runtime behavior for them.
+
+The `Bounce.zip` importer remains release-version agnostic: it validates internal HTML/service-worker version consistency and all `APP_SHELL` paths, but does not impose a minimum release or require tests in the upload. Repository `tests/` remain repository-owned and run after import.
+
+## V58 source crosswalk and command verification
+
+The supplied decompiled 2.0.3 JAR reference is indexed in `src_decompiled/CLASS_ROLE_INDEX.md`. `docs/V58_SOURCE_CROSSWALK_AUDIT.md` maps those original classes to the browser runtime, the available regression evidence and the remaining approximation boundaries. `tests/event-command-semantics.test.cjs` exercises every event opcode from 0 through 32 with controlled test objects. Those synthetic checks complement the 15-stage source corpus profile; they are not an original-JVM versus browser differential replay.
+
+The header Share action now shares or copies `https://prasannaone.github.io/BounceTales/` exactly, including its trailing slash. The canonical URL is intentionally kept in sync with `og:url` and the brand/home link. The V55 X.gd reference in README is a historical record only and is not the current share target.

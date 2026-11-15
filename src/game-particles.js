@@ -65,17 +65,53 @@
           size:1+this.random()*2,palette:'burst',kind:i%4,shape:'spark'});
       }
     }
+    emitOriginalSpriteFragments(minX,maxX,minY,maxY,count=24){
+      // Source crosswalk: m.h is configured with 24 particles, image IDs
+      // [390,414,396], speed 840, mode 4, lifetime 2040 +/- 510 ms.
+      const sprites=[390,414,396];
+      // Preserve the original endpoint order. In the JAR, the Y endpoints are
+      // inverted after the 60-unit inset; Math.abs(nextInt() % span) then samples
+      // upward from the first endpoint instead of normalising the rectangle.
+      const xSamples=Math.max(1,Math.abs(Math.trunc(maxX-minX+1)));
+      const ySamples=Math.max(1,Math.abs(Math.trunc(maxY-minY+1)));
+      for(let i=0;i<count;i++){
+        const angle=(this.random()*2-1)*Math.PI;
+        // JAR trig values are scaled by 360 and positions are 16.16 fixed point;
+        // map its 840 speed argument through the original 16 ms delta unit.
+        const speed=840*360*1000/(65536*16);
+        const life=(2040+Math.floor(this.random()*1019)-509)/1000;
+        const spriteId=sprites[Math.min(2,Math.floor(this.random()*sprites.length))];
+        this.push({x:minX+Math.floor(this.random()*xSamples),y:minY+Math.floor(this.random()*ySamples),
+          vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,age:0,life,remaining:life,
+          turnIn:.3+this.random()*.2,turnDirection:Math.floor(this.random()*4),
+          spriteId,shape:'original-sprite'});
+      }
+    }
     update(dt){
       if(!(dt>0))return;
       for(let i=this.items.length-1;i>=0;i--){
         const p=this.items[i];p.age+=dt;
         if(p.age>=p.life){this.items.splice(i,1);continue;}
+        if(p.shape==='original-sprite'){
+          p.remaining=Math.max(0,p.life-p.age);
+          p.turnIn-=dt;
+          if(p.turnIn<=0){p.turnIn=.3+this.random()*.2;p.turnDirection=Math.floor(this.random()*4);}
+          if(p.turnDirection===1||p.turnDirection===2){
+            const angle=(p.turnDirection===1?1:-1)*dt*(500*Math.PI/180),c=Math.cos(angle),s=Math.sin(angle),vx=p.vx,vy=p.vy;
+            p.vx=vx*c-vy*s;p.vy=vx*s+vy*c;
+          }
+          const drag=Math.max(0,1-dt*(35*1000/16384));
+          p.vx*=drag;p.vy*=drag;p.x+=p.vx*dt;p.y+=p.vy*dt;
+          p.frame=Math.max(0,Math.min(4,4-Math.min(4,Math.floor(p.remaining*5/2.04))));
+          continue;
+        }
         p.vy-=(p.shape==='drop'?330:250)*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vx*=Math.max(0,1-dt*(p.shape==='drop'?1.8:2.5));
       }
     }
-    draw(ctx,screenPoint,scale){
+    draw(ctx,screenPoint,scale,drawSprite=null){
       for(const p of this.items){
         const q=screenPoint({x:p.x,y:p.y}),alpha=Math.max(0,1-p.age/p.life);
+        if(p.shape==='original-sprite'&&drawSprite){ctx.save();ctx.globalAlpha=alpha;drawSprite(p.spriteId,q.x,q.y,p.frame||0);ctx.restore();continue;}
         const palette=PALETTES[p.palette]||PALETTES.egg;
         ctx.globalAlpha=alpha;ctx.fillStyle=palette[p.kind%palette.length];
         const r=Math.max(.45,p.size*scale);

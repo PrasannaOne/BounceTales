@@ -33,4 +33,4 @@ assert.match(css,/\.special-control-row \.special\s*\{[^}]*width:\s*clamp\(36px,
 assert.match(css,/\.special-control-row\s*\{[^}]*height:\s*clamp\(39px,11vw,49px\)/s,'the special control reserves its own responsive row');
 assert.match(css,/#app\s*\{[^}]*gap:\s*12px/s,'game and touch controls are separated by the shell gap');
 assert.match(css,/html,\s*body\s*\{[^}]*overflow-x:\s*hidden/s,'horizontal overflow is clipped without trapping short screens vertically');
-console.log('V53 layout: responsive special-control target, explicit game/control separation and safe viewport overflow passed');
+console.log('V54 layout: responsive special-control target, explicit game/control separation and safe viewport overflow passed');
