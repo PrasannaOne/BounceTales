@@ -2,8 +2,6 @@
 
 # 🟠 Bounce Tales
 
-### Remember Nokia's Bounce Tales? A faithful HTML5 reconstruction from original J2ME bytecode and assets, bringing the classic to the modern web with responsive touch controls.
-
 <p>
   <a href="https://prasannaone.github.io/BounceTales/"><img src="https://img.shields.io/badge/▶_PLAY_NOW-OPEN_BOUNCE_TALES-ff8b24?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Play Bounce Tales" /></a>
 </p>
