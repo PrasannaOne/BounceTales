@@ -15,8 +15,8 @@ assert.match(game,/target\.font='8\.2px "Courier New",monospace'/,'original stor
 assert.match(game,/menuRoundRect\(10,210,220,99,5\)/,'story panel should provide additional readable space');
 assert.match(game,/lines\.slice\(0,6\)\.forEach\(\(text,i\)=>\{target\.strokeText\(text,22,y\+i\*12\.5,194\)/,'story lines need readable spacing');
 assert.match(game,/textTarget\.font='600 10px system-ui, sans-serif'/,'field messages should be easier to read');
-assert.match(html,/style\.css\?v=58/,'HTML styles use the V58 cache key');
-assert.match(sw,/bounce-tales-v58/,'service worker cache identity is V58');
+assert.match(html,/style\.css\?v=62/,'HTML styles use the V62 cache key');
+assert.match(sw,/bounce-tales-v62/,'service worker cache identity is V58');
 assert.match(css,/#app \.pause-mini\[hidden\]\s*\{\s*display:\s*none\s*!important;\s*\}/,'pause button respects hidden state in every scene');
 assert.match(css,/@media \(max-height: 620px\) and \(orientation: portrait\)/,'short portrait devices receive explicit stage sizing');
 assert.match(css,/@media \(max-width: 620px\) and \(orientation: landscape\) and \(max-height: 620px\)/,'narrow landscape devices receive explicit stage sizing');

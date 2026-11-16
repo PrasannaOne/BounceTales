@@ -103,8 +103,12 @@ const a=moving.matrix[0]/65536,b=moving.matrix[1]/65536,c=moving.matrix[3]/65536
 const det=a*d-b*c;
 const expectedLocalX=Math.round(((d*40-b*50)/det)*65536);
 const expectedLocalY=Math.round(((a*50-c*40)/det)*65536);
-assert.equal(moving.matrix[2], expectedLocalX);
-assert.equal(moving.matrix[5], expectedLocalY);
+// V60: opcode 18 is now a bit-exact port of the original fixed-point d.c(d) inverse (truncating
+// long division, 32-bit narrowing), proven against the real class in tools/differential. The
+// exact-real-number result above is only a sanity bound: the original's fixed-point rounding
+// legitimately differs from it by a few dozen 1/65536 units.
+assert.ok(Math.abs(moving.matrix[2] - expectedLocalX) <= 64, `x ${moving.matrix[2]} vs ${expectedLocalX}`);
+assert.ok(Math.abs(moving.matrix[5] - expectedLocalY) <= 64, `y ${moving.matrix[5]} vs ${expectedLocalY}`);
 assert.deepEqual(engine.world.get(201), moving.matrix);
 run([19, ...i16(201), ...i16(202)]); engine.rebuildWorld();
 assert.equal(moving.parent, 202);

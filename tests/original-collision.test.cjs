@@ -34,7 +34,7 @@ function bodyAt(x,y,vy=-100){
 {
   // Exact c.class response regression: friction is gravity × form-friction ×
   // normal gravity, not radius-scaled, and torque follows relative velocity.
-  const body={x:0,y:20,x16:fp.toFixed16(0),y16:fp.toFixed16(20),radius:200,forme:0,
+  const body={x:0,y:20,x16:fp.toFixed16(0),y16:fp.toFixed16(20),radius:200,
     vx:0,vy:-100,gravityX:0,gravityY:0,torqueX:0,torqueY:0,
     slopeSinAbs:0,slopeCosAbs:1,airTime:.2,grounded:false,curVelocity:100};
   const hit={x:fp.toFixed16(0),y:fp.toFixed16(0),normalX:0,normalY:65536};
@@ -53,6 +53,29 @@ function bodyAt(x,y,vy=-100){
   collision.applySourceResponse(body,hit,1000);
   assert.equal(body.vy,12,'actor inherits the surface normal velocity');
   assert.equal(body.torqueY,5,'torque is based on actor velocity relative to the surface');
+}
+{
+  // c.class separates the next-pass previous transform (full surface motion)
+  // from the corrected current transform (normal surface motion only).
+  // The old port added the full displacement and then added its normal part
+  // again, double-counting moving-platform travel.
+  const body={x:10,y:25,x16:fp.toFixed16(10),y16:fp.toFixed16(25),radius:20,forme:0,
+    vx:0,vy:-10,gravityX:0,gravityY:0,torqueX:0,torqueY:0,
+    slopeSinAbs:0,slopeCosAbs:1,airTime:.2,grounded:false,curVelocity:10};
+  const hit={x:fp.toFixed16(10),y:fp.toFixed16(20),normalX:0,normalY:65536,surfaceDX:3,surfaceDY:2};
+  collision.applySourceResponse(body,hit,1000);
+  assert.ok(Math.abs(body.x-10)<0.001,'tangential platform movement must not be added to corrected actor position');
+  assert.ok(Math.abs(body.y-21.51)<0.001,'normal platform movement must be applied once');
+}
+{
+  // A platform moving opposite the outward normal still uses the absolute
+  // normal displacement in the source position reconstruction.
+  const body={x:10,y:25,x16:fp.toFixed16(10),y16:fp.toFixed16(25),radius:20,forme:0,
+    vx:0,vy:-10,gravityX:0,gravityY:0,torqueX:0,torqueY:0,
+    slopeSinAbs:0,slopeCosAbs:1,airTime:.2,grounded:false,curVelocity:10};
+  const hit={x:fp.toFixed16(10),y:fp.toFixed16(20),normalX:0,normalY:65536,surfaceDX:0,surfaceDY:-2};
+  collision.applySourceResponse(body,hit,1000);
+  assert.ok(Math.abs(body.y-21.51)<0.001,'normal surface displacement is oriented outward in source correction');
 }
 {
   const poly={prevVertices16:[[0,0],[10*65536,0]],vertices16:[[2*65536,4*65536],[12*65536,4*65536]]};

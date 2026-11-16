@@ -4,10 +4,6 @@
   root.BounceSpriteAtlas=api;
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
-  function equalRect(a,b){
-    return !!a&&!!b&&a.x===b.x&&a.y===b.y&&a.width===b.width&&a.height===b.height;
-  }
-  function equalOffset(a,b){return !!a&&!!b&&a.x===b.x&&a.y===b.y;}
   function prepare(catalogue,imageMap){
     if(!catalogue||catalogue.status!=='STATIC_SPRITE_MAPPING_AND_SCRIPT_TIMINGS_VERIFIED')
       throw new Error('Unverified static sprite catalogue');

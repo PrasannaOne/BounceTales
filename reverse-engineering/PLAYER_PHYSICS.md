@@ -1,21 +1,35 @@
-# Player/actor constants recovered from `c.class`
+# Player physics constants and traced behaviour
 
-`c` extends the shared entity base class `j`. The game controller's active gameplay update calls methods on its static `c` actor instance for left/right movement and the primary actor action. The class has a mode index (`c.d`) that `c.f()` advances through values 0, 1 and 2.
+Reference: the supplied Bounce Tales 2.0.3 decompiled `src_decompiled/c.java`. The original obfuscated field names are retained alongside the now-traced meanings. The original class remains authoritative.
 
-The static initializer in `c.class` defines the following three-entry parameter arrays. The original field names are kept because the classes are obfuscated.
+## Three form/mode parameter sets
 
-| Original field | Mode 0 | Mode 1 | Mode 2 |
-|---|---:|---:|---:|
-| `b:[F` | 0.6 | 0.3 | 0.6 |
-| `c:[F` | 0.1 | 0.1 | 0.1 |
-| `d:[F` | cos(0.9599310755729675 rad) | same | same |
-| `a:[I` | 20 | 20 | 20 |
-| `a:[F` | 1.0 | 1.4 | 0.5 |
-| `e:[F` | 500.0 | 350.0 | 312.5 |
-| `f:[F` | 280.0 | 350.0 | 150.0 |
-| `g:[F` | 1.5 | 2.5 | 1.2 |
-| `h:[F` | 288.0 | 255.0 | 162.5 |
+| Original field | Traced meaning | Mode 0 | Mode 1 | Mode 2 |
+|---|---|---:|---:|---:|
+| `a:[I` | Player collision radius | 20 | 20 | 20 |
+| `a:[F` | Gravity scale | 1.0 | 1.4 | 0.5 |
+| `b:[F` | Surface friction coefficient | 0.6 | 0.3 | 0.6 |
+| `c:[F` | Collision restitution / ricochet | 0.1 | 0.1 | 0.1 |
+| `d:[F` | Minimum surface-normal Y for jumping (`cos(55°)`) | same | same | same |
+| `e:[F` | Horizontal movement acceleration | 500.0 | 350.0 | 312.5 |
+| `f:[F` | Maximum horizontal movement speed | 280.0 | 350.0 | 150.0 |
+| `g:[F` | Mid-air movement suppression divisor | 1.5 | 2.5 | 1.2 |
+| `h:[F` | Jump impulse | 288.0 | 255.0 | 162.5 |
 
-Additional class-level constants include `l:F = 0.0` and `m:F = -400.0`.
+`c.java` confirms the use sites: `b()`/`c()` use `e`, `f` and `g` for horizontal movement; `a(boolean)` uses `h` and the `d` slope threshold for jumping; `d()` uses `a:[F` for gravity; and `a(j)` uses `b:[F` and `c:[F` for contact friction and restitution.
 
-**Important:** these values are exact bytecode constants, but the obfuscated field semantics are not all proven yet. This file does not label them gravity, acceleration, jump impulse, friction or collision radius. The next reverse-engineering step is to trace every array read to the actor update/collision call sites and compare the values against frame captures from the original runtime.
+Additional class constants: static `l:F = 0.0F` and `m:F = -400.0F` (base gravity Y).
+
+## Jump gate
+
+The original `c.a(boolean)` jump method requires both the grounded flag and the surface-normal Y component to be strictly greater than `cos(0.9599311F)` (approximately 0.5736). A normal jump adds `h[mode]` to the vertical impulse; the small-jump path adds half. The browser port uses the same gate and impulse values.
+
+## Arithmetic and timing
+
+The actor stores its world transform in signed 16.16 fixed-point coordinates while velocities and several intermediate calculations use Java `float` (IEEE-754 binary32). The port rounds the main actor integration operations to binary32 and truncates position deltas toward zero, matching the decompiled update order. The original loop can perform multiple actor substeps per rendered frame; comparisons must replay the recorded `o.j` count and integer `o.a` delta rather than assume one 60 Hz step.
+
+## Remaining fidelity limits
+
+- Physics and collision have been compared against the original runtime over the level-1 opening and short scheduled-input runs. Long, collision-heavy routes across multiple object types still need differential captures.
+- The browser's overlap-recovery fallback in `terrain-collision.js` is a remaster safety net for penetrations and teleports, not an original-engine collision path.
+- The source-faithful contact response still uses JavaScript binary64 for some vector normalization and response intermediates; a full binary32 operation-order port is a possible later precision improvement.

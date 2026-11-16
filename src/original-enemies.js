@@ -24,19 +24,6 @@
     return e;
   }
 
-  function moveTowards(e,target,speed,dt){
-    const dx=target.x-e.x,dy=target.y-e.y,dist=Math.hypot(dx,dy);
-    if(dist>1e-8){
-      const step=speed*dt;
-      const scale=Math.min(1,step/dist);
-      const oldX=e.x;e.x+=dx*scale;e.y+=dy*scale;
-      if(scale>=1-1e-9){e.x=target.x;e.y=target.y;e.x16=toLP(e.x);e.y16=toLP(e.y);return true;}
-      e.facingLeft=oldX>e.x;
-      e.x16=toLP(e.x);e.y16=toLP(e.y);
-      return false;
-    }
-    return true;
-  }
   // Direct translation of l.d(): enemy path coordinates and current transforms
   // are LP32 (16.16). The distance estimate intentionally truncates each delta
   // to whole world units before the square root, matching the original float casts.

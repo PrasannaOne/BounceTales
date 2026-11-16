@@ -1,5 +1,20 @@
 (() => {
 'use strict';
+// Browser storage can be unavailable or throw (blocked cookies, sandboxed iframes,
+// some in-app browsers, full quota). Touching window.localStorage itself may raise
+// a SecurityError, which previously stopped the game before it could start.
+// This closure-local binding shadows the global, so every call site below stays
+// unchanged: reads/writes fall back to an in-memory layer for the session instead.
+const localStorage=(()=>{
+  const memory=new Map();
+  let real=null;
+  try{real=window.localStorage||null;if(real)real.getItem('__bounce_storage_probe__');}catch{real=null;}
+  return {
+    getItem(key){if(memory.has(key))return memory.get(key);try{return real?real.getItem(key):null;}catch{return null;}},
+    setItem(key,value){try{if(!real)throw new Error('no storage');real.setItem(key,String(value));memory.delete(key);}catch{memory.set(key,String(value));}},
+    removeItem(key){memory.delete(key);try{real?.removeItem(key);}catch{}}
+  };
+})();
 const W=240,H=320,SCALE=43266/65536;
 const LEVELS=[
   {resource:'bf',name:'Misty Morning'},
@@ -32,13 +47,13 @@ function syncMenuTextResolution(){
 syncMenuTextResolution();
 window.addEventListener('resize',syncMenuTextResolution,{passive:true});
 if(typeof ResizeObserver!=='undefined'){const textResizeObserver=new ResizeObserver(syncMenuTextResolution);textResizeObserver.observe(canvas.parentElement);}
-const menu=document.getElementById('menu'),pauseLayer=document.getElementById('pause-layer'),settingsLayer=document.getElementById('settings-layer');
+const settingsLayer=document.getElementById('settings-layer');
 const status=document.getElementById('statusline'),eggHud=document.getElementById('egg-hud'),gameHint=document.getElementById('game-hint');
 const input=new BounceOriginalInput.OriginalInputState();
 let levelData=null,world=null,body=null,worldGeometry=[],renderObjects=[],eggs=[],enemies=[],waters=[],trampolines=[],cannons=[],bonusEggs=[];
 let cannonState=null,cannonMesh=null,cannonMeshPromise=null;
 let currentLevel=LEVELS[0],levelLoadToken=0;
-let atlases=[],imageMaps=null,spriteCatalogue=null,loadedImages=new Map(),collected=0,elapsed=0,mode='title';
+let atlases=[],imageMaps=null,spriteCatalogue=null,loadedImages=new Map(),collected=0,elapsed=0,playClock=0,mode='title';
 const musicController=typeof BounceAudioController!=='undefined'?new BounceAudioController.AudioController({storage:localStorage}):null;
 let eventEngine=null,playerObjectId=-1,fieldMessage='',fieldMessageTimer=0,languageStrings=[],checkpointPosition=null,activeStoryMessage=null,storyMessageQueue=[];
 let spriteAnimations=new Map(),cameraSnap=false,playerDeathTimer=0;
@@ -70,7 +85,7 @@ function resolveOriginalLocale(){
 }
 let progress=BounceOriginalProgression.load(localStorage),selectedLevelIndex=progress.selected||0;
 let particles=new BounceGameParticles.ParticleSystem();
-let victoryTimer=0,deathAnimationElapsed=0,deathBaseY=0,completionResult=null,completionNotices=[],completionNoticePage=0,worldMinY=-Infinity,worldMaxY=Infinity;
+let victoryTimer=0,deathAnimationElapsed=0,deathBaseY=0,completionResult=null,completionNotices=[],completionNoticePage=0,worldMinY=-Infinity;
 function toast(t){toastText=t;toastTimer=1.3;}
 function gameText(index,fallback=''){
   const value=languageStrings?.[index];
@@ -91,7 +106,6 @@ function wrapMenuText(text,x,y,maxWidth,lineHeight,size=6,color='#ece4cd',maxLin
   target.restore();return yy;
 }
 function fixedPoint(m,x,y){return {x:(m[0]*x+m[1]*y)/65536+m[2]/65536,y:(m[3]*x+m[4]*y)/65536+m[5]/65536};}
-function matrixPoint(m,x,y){return fixedPoint(m,x,y);}
 function getWorldPos(o){const m=world.get(o.id);return fixedPoint(m,0,0);}
 function imgFor(index){
   if(!Number.isInteger(index)||index<0||index>=atlases.length)return null;
@@ -214,7 +228,7 @@ function buildRuntime(parsed){
       const p=getWorldPos(o);renderObjects.push({type:'friend',object:o,point:p});
     }
   }
-  collected=0;elapsed=0;victoryTimer=0;deathAnimationElapsed=0;completionResult=null;particles.clear();
+  collected=0;elapsed=0;playClock=0;victoryTimer=0;deathAnimationElapsed=0;completionResult=null;particles.clear();
   spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;activeStoryMessage=null;storyMessageQueue=[];
   cameraSpring=new BounceOriginalCamera.CameraSpring(body.x,body.y+96,{width:W,height:H,scale:SCALE});
   eventEngine=new BounceEventEngine.EventEngine(parsed.objects,{
@@ -236,7 +250,7 @@ function buildRuntime(parsed){
   });
   world=eventEngine.world;refreshGeometryWorld(world);
   checkpointPosition={x:body.x,y:body.y};
-  const ys=worldGeometry.flatMap(poly=>poly.vertices.map(v=>v.y));worldMinY=ys.length?Math.min(...ys):-Infinity;worldMaxY=ys.length?Math.max(...ys):Infinity;
+  const ys=worldGeometry.flatMap(poly=>poly.vertices.map(v=>v.y));worldMinY=ys.length?Math.min(...ys):-Infinity;
   cameraX=body.x;cameraY=body.y+96;cameraSpring?.snap(cameraX,cameraY);
   refreshHud();
 }
@@ -455,6 +469,10 @@ function update(dt,sourceDeltaMs=Math.round(dt*1000)){
   // The original level timer advances on the same fixed-step clock as physics.
   // It therefore pauses with gameplay and cannot drift with browser frame rate.
   elapsed+=dt;
+  // m.java: the scored level clock (`a += o.a`) only runs while the player is alive (g.a[0]==0)
+  // and the script control mode (g.a[1]) is not 3, so intros/cutscenes and death animations
+  // never count toward clear time. `elapsed` above stays the free-running animation clock.
+  if(playerDeathTimer<=0&&(eventEngine?.vars[1]|0)!==3)playClock+=dt;
   if(playerDeathTimer>0){
     deathAnimationElapsed+=dt;playerDeathTimer=Math.max(0,playerDeathTimer-dt);
     const t=deathAnimationElapsed;
@@ -477,9 +495,15 @@ function update(dt,sourceDeltaMs=Math.round(dt*1000)){
     particles.update(dt);if(fieldMessageTimer>0)fieldMessageTimer=Math.max(0,fieldMessageTimer-dt);
     updateSpriteAnimations(dt);if(toastTimer>0)toastTimer-=dt;return;
   }
-  if(held.left)body.moveLeft(false);
-  if(held.right)body.moveRight(false);
-  if(held.jump)body.jump(false);
+  // m.java dispatches player input by script control mode g.a[1]: mode 0 is normal play. Level
+  // scripts set mode 3 (and back to 0) to lock the controls during intros and cutscenes (all
+  // 13 story levels do). Mode 1 swaps in other handlers the campaign never uses, so any
+  // non-zero mode leaves the ball uncontrolled here.
+  if((eventEngine?.vars[1]|0)===0){
+    if(held.left)body.moveLeft(false);
+    if(held.right)body.moveRight(false);
+    if(held.jump)body.jump(false);
+  }
   // JAR m.i(): update scene objects first (including an already-active e.d()
   // spring), then integrate Bounce, then run the object-tree collision pass.
   const trampolineReleased=updateTrampolineAnimations(dt,sourceDeltaMs);
@@ -540,7 +564,7 @@ function drawWater(zone){
   const o=zone.object,m=world.get(o.id)||zone.matrix;if(!m)return;
   const left=BounceOriginalWater.worldPoint(m,o.areaMinX,o.areaMinY),right=BounceOriginalWater.worldPoint(m,o.areaMaxX,o.areaMinY);
   const lowerRight=BounceOriginalWater.worldPoint(m,o.areaMaxX,o.areaMaxY),lowerLeft=BounceOriginalWater.worldPoint(m,o.areaMinX,o.areaMaxY);
-  const sl=screenPoint(left),sr=screenPoint(right),br=screenPoint(lowerRight),bl=screenPoint(lowerLeft);
+  const sl=screenPoint(left),br=screenPoint(lowerRight),bl=screenPoint(lowerLeft);
   const wave=zone.region===1?0:1;
   ctx.beginPath();ctx.moveTo(sl.x,sl.y);
   const steps=18;
@@ -958,7 +982,7 @@ function drawCanvasComplete(){
   ctx.strokeStyle='#6b775f';ctx.beginPath();ctx.moveTo(29,84);ctx.lineTo(211,84);ctx.stroke();
   menuText('EGGS  '+(completionResult?.eggs??collected)+' / 30',120,100,9,'#f5d78d');
   menuText(gameText(42,'SCORE: %U').replace('%U',String(completionResult?.score??0)),120,119,7,'#f0e8d7');
-  menuText('TIME  '+formatTime(completionResult?.seconds??Math.floor(elapsed)),120,134,7,'#c1c9ba');
+  menuText('TIME  '+formatTime(completionResult?.seconds??Math.floor(playClock)),120,134,7,'#c1c9ba');
   menuText(gameText(7,'ITEM COLLECTION CHALLENGE:').toUpperCase(),120,157,6,'#b8c3b5');
   menuText(medalLabel(completionResult?.eggMedal??-1),120,171,8,'#f2d693');
   menuText(gameText(8,'TIME CHALLENGE:').toUpperCase(),120,193,6,'#b8c3b5');
@@ -1041,7 +1065,7 @@ function drawOriginalGameplayHud(){
   drawImageMap(101,x,7);x+=9;
   drawHudNumber(eggs.length+enemies.length,x,7);
   drawImageMap(103,W,0);
-  const totalSeconds=Math.max(0,Math.floor(elapsed));
+  const totalSeconds=Math.max(0,Math.floor(playClock));
   const minutes=Math.floor(totalSeconds/60),seconds=totalSeconds%60;
   const rightEdge=W-25-6-1;
   const secondsWidth=hudDigitWidth(Math.floor(seconds/10))+hudDigitWidth(seconds%10);
@@ -1239,7 +1263,7 @@ function startLevel(){
   if(eventEngine){eventEngine.reset();world=eventEngine.world;refreshGeometryWorld(world);}
   spriteAnimations.clear();fieldMessage='';fieldMessageTimer=0;activeStoryMessage=null;storyMessageQueue=[];cameraSnap=false;
   body.reset(spawn.x,spawn.y);body.enabled=true;body.visible=true;cannonState=null;BounceOriginalCannon.resetMesh(cannonMesh);cannons.forEach(BounceOriginalCannon.reset);if(gameHint)gameHint.textContent='Hold ◀ / ▶ to move · Hold JUMP to bounce';body.rotation=0;body.unlockedForme=progress.unlockedForme;body.forme=0;body.slopeCosAbs=1;body.eyeFrame=0;body.idleAnimStartTimer=3000;
-  eggs.forEach(e=>e.collected=false);bonusEggs=[];collected=0;elapsed=0;checkpointPosition={x:spawn.x,y:spawn.y};
+  eggs.forEach(e=>e.collected=false);bonusEggs=[];collected=0;elapsed=0;playClock=0;checkpointPosition={x:spawn.x,y:spawn.y};
   trampolines.forEach(t=>BounceOriginalTrampoline.reset(t));
   enemies.forEach(e=>{e.x=e.initialX;e.y=e.initialY;BounceOriginalEnemies.reset(e);});
   waters.forEach(w=>{w.ripples=[];w.bubbles=[];w.ambientTimer=0;w.swimTimer=0;});particles.clear();playerDeathTimer=0;deathAnimationElapsed=0;victoryTimer=0;completionResult=null;completionNotices=[];completionNoticePage=0;cameraX=body.x;cameraY=body.y+96;cameraSpring?.snap(cameraX,cameraY);refreshHud();
@@ -1262,7 +1286,7 @@ async function loadLevel(index,options={}){
 function completeCurrentChapter(){
   if(mode!==S.play||completionResult)return;
   const previousForms=progress.unlockedForme,previousBest=progress.records[currentLevel.index]?.score||0;
-  completionResult=BounceOriginalProgression.complete(progress,currentLevel.index,collected,elapsed*1000);
+  completionResult=BounceOriginalProgression.complete(progress,currentLevel.index,collected,playClock*1000);
   completionResult.eggMedal=rankEggMedal(currentLevel.index,completionResult.eggs);
   completionResult.timeMedal=rankTimeMedal(currentLevel.index,completionResult.seconds);
   completionNotices=[];completionNoticePage=0;
@@ -1354,7 +1378,23 @@ function bindInputs(){
 
   // Desktop keyboard: arrows or A/D move, Space/Enter jump, Shift/Q changes
   // form, Escape pauses. W/S remain usable for vertical/original menu input.
+  // Held keys are tracked by physical key (e.code), not e.key: with Shift down the
+  // browser reports 'D' on keydown but may report 'd' on keyup (or vice versa), which
+  // used to leave a stale entry that silently ignored the next press. Each action id
+  // also counts its held sources (A and ArrowLeft both mean LEFT, keyboard + gamepad),
+  // so releasing one source no longer cancels an action another source still holds.
   const keys=new Set();
+  const actionSources=new Map();
+  const keyToken=e=>e.code||(String(e.key).length===1?String(e.key).toLowerCase():String(e.key));
+  const pressSource=(id,token)=>{
+    let sources=actionSources.get(id);if(!sources){sources=new Set();actionSources.set(id,sources);}
+    const was=input.isHeld(id);sources.add(token);input.press(id);if(!was)onEdge(id);
+  };
+  const releaseSource=(id,token)=>{
+    const sources=actionSources.get(id);
+    if(sources){sources.delete(token);if(sources.size)return;actionSources.delete(id);}
+    input.release(id);
+  };
   const editableTarget=target=>{
     const el=target instanceof Element?target:null;
     return !!el?.closest('input,textarea,select,[contenteditable="true"]');
@@ -1366,11 +1406,12 @@ function bindInputs(){
     if(!accepted.includes(e.key))return;
     if(e.key.startsWith('Arrow')||e.key===' ')e.preventDefault();
     const id=BounceOriginalInput.browserKeyId(e.key);
-    if(id>=0&&!keys.has(e.key)){
-      keys.add(e.key);const was=input.isHeld(id);input.press(id);if(!was)onEdge(id);
+    const token=keyToken(e);
+    if(id>=0&&!keys.has(token)){
+      keys.add(token);pressSource(id,token);
     }
   });
-  addEventListener('keyup',e=>{const id=BounceOriginalInput.browserKeyId(e.key);if(id>=0){keys.delete(e.key);input.release(id);}});
+  addEventListener('keyup',e=>{const id=BounceOriginalInput.browserKeyId(e.key);if(id>=0){const token=keyToken(e);keys.delete(token);releaseSource(id,token);}});
 
   // A standard-mapping gamepad works in the same way as the phone controls.
   // D-pad / left stick: move or page; A: jump/select; B: form; Start: pause.
@@ -1388,8 +1429,8 @@ function bindInputs(){
       if(pad.buttons?.[1]?.pressed)next.add(20);
       if(pad.buttons?.[9]?.pressed)next.add(5);
     }
-    for(const id of gamepadHeld)if(!next.has(id))input.release(id);
-    for(const id of next)if(!gamepadHeld.has(id)){const was=input.isHeld(id);input.press(id);if(!was)onEdge(id);}
+    for(const id of gamepadHeld)if(!next.has(id))releaseSource(id,'gamepad');
+    for(const id of next)if(!gamepadHeld.has(id))pressSource(id,'gamepad');
     gamepadHeld=next;
   }
   window.__bouncePollGamepad=pollGamepad;
@@ -1406,7 +1447,7 @@ function bindInputs(){
     book.addEventListener('pointercancel',()=>{swipe=null;});
   }
 
-  const clearAll=()=>{keys.clear();input.clear();gamepadHeld.clear();document.querySelectorAll('[data-key-id]').forEach(b=>b.classList.remove('pressed'));};
+  const clearAll=()=>{keys.clear();actionSources.clear();input.clear();gamepadHeld.clear();document.querySelectorAll('[data-key-id]').forEach(b=>b.classList.remove('pressed'));};
   const suspendForDeparture=()=>{
     clearAll();
     musicController?.pause();
@@ -1429,6 +1470,26 @@ function bindInputs(){
   document.addEventListener('freeze',suspendForDeparture);
   window.addEventListener('pageshow',resumeAfterReturn);
   window.addEventListener('pointerdown',()=>musicController?.unlock(),{once:true});
+  // The one-shot pointerdown above is kept, but it is a single attempt: browsers differ
+  // on which events count as a user gesture (WebKit wants touchend/click, keyboard and
+  // gamepad players never fire a pointer event). Keep retrying on every gesture-class
+  // event until the audio context is actually running, then stop listening.
+  if(musicController){
+    const unlockEvents=['touchend','pointerup','click','keydown'];
+    const retryUnlock=()=>{
+      if(!musicController.enabled)return;
+      Promise.resolve(musicController.unlock()).then(running=>{
+        if(running)for(const name of unlockEvents)window.removeEventListener(name,retryUnlock,true);
+      }).catch(()=>{});
+    };
+    for(const name of unlockEvents)window.addEventListener(name,retryUnlock,{capture:true,passive:true});
+  }
+  // Backgrounding the page used to leave the level in play mode with controls released,
+  // so returning dropped the player straight back into a live game. The original MIDlet
+  // paused when its canvas was hidden; do the same when the page is hidden or unloaded.
+  // (Window blur alone is deliberately not a trigger: it also fires for devtools/overlays.)
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)pauseGame();});
+  window.addEventListener('pagehide',()=>pauseGame());
 }
 
 // Drawing follows requestAnimationFrame. V18 advances simulation on a nominal

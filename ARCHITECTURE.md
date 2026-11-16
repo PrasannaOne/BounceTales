@@ -1,113 +1,155 @@
 # Bounce Tales architecture
 
-> **Official playable site:** https://prasannaone.github.io/BounceTales/  
-> **Source repository:** https://github.com/PrasannaOne/BounceTales  
-> **Current documented baseline:** V58
+> **Playable game:** https://prasannaone.github.io/BounceTales/  
+> **Repository:** https://github.com/PrasannaOne/BounceTales  
+> **Current documented runtime:** V62
 
-This document describes the browser runtime, the relationship between the original J2ME resource model and the JavaScript implementation, and the boundaries that should remain stable during maintenance. For the operational walkthrough and release checklist, see [`docs/PROJECT_GUIDE.md`](docs/PROJECT_GUIDE.md).
+This document describes the current browser reconstruction, its relationship to the original J2ME game, the main runtime boundaries and the rules that should be preserved during maintenance. For practical setup and release steps, see [`docs/PROJECT_GUIDE.md`](docs/PROJECT_GUIDE.md). For measured physics/collision evidence, see [`V62_PHYSICS_COLLISION_AUDIT.md`](V62_PHYSICS_COLLISION_AUDIT.md).
 
-## 1. Runtime flow
+## 1. Project shape
 
-`index.html` loads the browser shell, stylesheet, engine modules, then `game.js`. The main game loop coordinates input, fixed-step simulation, level events, camera updates, drawing, progression, and audio. The logical playfield remains **240 × 320**; CSS scales the canvas to the available viewport while pixel-art rendering disables smoothing.
+Bounce Tales is a static HTML5/JavaScript reconstruction informed by the original game's decompiled Java ME bytecode and recovered resources. The logical game world remains **240 × 320**. The browser shell scales that world to mobile and desktop viewports without feeding CSS dimensions back into the simulation.
 
-A typical active update proceeds through input normalization, fixed-step scheduling, player/world updates, event processing, camera projection, rendering, and event-driven audio/progression. Pause and blocking dialogue suspend the relevant simulation work. The browser shell and touch controls are presentation/input surfaces; they must not redefine world coordinates.
+The project deliberately separates three concerns:
 
-## 2. J2ME-to-HTML5 mapping
+1. **Original-game model:** recovered resources, level records, sprite mappings, event commands and source-informed engine behavior.
+2. **Browser runtime:** simulation, collision, event processing, camera, rendering, audio and progression.
+3. **Modern presentation:** responsive page shell, touch/keyboard/gamepad input, settings, sharing and installable-web-app integration.
 
-| Original J2ME area | Browser implementation |
+This is a faithful, source-informed reconstruction, not a claim of complete device-specific J2ME equivalence. Where the browser must adapt timing, input, rendering, audio or lifecycle behavior, the relevant documentation records that boundary.
+
+## 2. Runtime flow
+
+`index.html` loads the document shell, styles, engine modules and `game.js`. The application coordinator owns the game state and connects input, simulation, event scripts, camera, drawing, progression and audio.
+
+A typical active frame follows this order:
+
+1. Collect and normalize touch, keyboard and supported gamepad input.
+2. Advance the fixed-step simulation clock.
+3. Update player movement and physics.
+4. Resolve terrain and object contacts, then update enemies, water, springboards and other world systems.
+5. Process scripted events and their control/message state.
+6. Update camera projection and render the logical scene.
+7. Apply audio cues, score/time updates and progression effects.
+
+Pause, blocking dialogue and scripted control modes can suspend or restrict parts of gameplay. Rendering presentation may be paced independently, but the gameplay simulation remains fixed at 60 Hz.
+
+## 3. J2ME-to-browser mapping
+
+| Original game responsibility | Browser implementation |
 |---|---|
-| MIDlet/application lifecycle and game loop | `game.js` application state and update/render loop |
-| Fixed-point integer arithmetic | `src/fixed-point.js` |
-| Player movement, bounce and form behavior | `src/bounce-physics.js` plus `src/original-collision.js` |
-| Original RLEF level/resource loading | `src/rlef-reader.js` |
-| Scripted object commands and triggers | `src/event-engine.js` |
+| MIDlet lifecycle and game coordinator | `game.js` |
+| Fixed-point arithmetic | `src/fixed-point.js` |
+| Player movement, gravity, bounce and form behavior | `src/bounce-physics.js` |
+| Terrain and surface contacts | `src/terrain-collision.js`, `src/original-collision.js` |
+| RLEF level/resource parsing | `src/rlef-reader.js` |
+| Scripted commands and event triggers | `src/event-engine.js` |
 | Camera and world transforms | `src/original-camera.js` |
-| Moving enemies and enemy state | `src/original-enemies.js` |
-| Water interaction and buoyancy | `src/original-water.js` |
+| Enemy state and interactions | `src/original-enemies.js` |
+| Water behavior | `src/original-water.js` |
 | Springboard/trampoline behavior | `src/original-trampoline.js` |
-| Shared cannon mesh and firing animation | `src/original-cannon.js` plus `assets/original/bu` |
-| Sprite frames and animation sequences | `src/sprite-atlas.js`, `src/original-sprite-animation.js` |
-| MIDP graphics compatibility | `src/midp-graphics.js` |
-| HUD mapping and collectible progression | `src/original-hud.js`, `src/original-progression.js` |
-| Music and event cues | `src/audio-controller.js` using Web Audio |
-| Responsive touch-control geometry | `src/control-layout.js` |
+| Cannon mesh and firing behavior | `src/original-cannon.js` and original shared resource |
+| Sprite maps and animation | `src/sprite-atlas.js`, `src/original-sprite-animation.js` |
+| MIDP drawing compatibility | `src/midp-graphics.js` |
+| HUD and progression | `src/original-hud.js`, `src/original-progression.js` |
+| Music and sound cues | `src/audio-controller.js` |
+| Touch-control layout | `src/control-layout.js` |
+| Read-only module registry | `src/module-registry.js`, `src/port-engine.js` |
 
-The mapping is an implementation guide, not a claim that every J2ME class or device-specific behavior has exact one-to-one parity. Some browser behavior is adapted to modern input, rendering, audio and lifecycle APIs.
+The map identifies implementation responsibilities. It does not imply that every original Java class has a one-to-one JavaScript class or that every device-specific behavior is exact.
 
-## 3. Fixed-step physics pipeline
+## 4. Physics and collision
 
-1. **Read input:** touch, keyboard, or supported gamepad input is normalized into gameplay actions.
-2. **Advance simulation:** the main loop advances the game in fixed time steps rather than using arbitrary render-frame deltas.
-3. **Update physics:** fixed-point helpers preserve the original engine's scaled integer arithmetic where represented. Player velocity, gravity, collision bounds, and form-specific behavior are updated in world coordinates.
-4. **Resolve world interactions:** terrain collision and source-informed object systems process platforms, springboards, water, enemies, and scripted triggers.
-5. **Project the camera:** world positions are transformed into the logical screen coordinate system. The camera follows the player within the level bounds.
-6. **Render:** sprite and animation data are drawn into the logical canvas. Pixel-art smoothing is disabled; the browser scales the canvas for the device viewport.
-7. **Audio and progression:** gameplay events trigger buffered Web Audio playback and update checkpoints, collectibles, and stage state.
+### Simulation model
 
-World Y follows the original game's upward-positive convention; canvas projection converts it to screen coordinates. Keep physics calculations in their established fixed-point/world-coordinate domain and avoid mixing CSS pixels into simulation state.
+- The world uses the original logical coordinate space and upward-positive world Y convention.
+- Simulation advances at a fixed 60 Hz step; display frame pacing and optional interpolation affect presentation, not the simulation rate.
+- Fixed-point helpers preserve the original engine's scaled integer arithmetic where represented.
+- Player physics and world collision are separate modules so the movement model can be tested independently from terrain/contact resolution.
 
-## 4. Rendering and original resources
+### Collision model
 
-The original binary resources under `assets/original/` supply runtime level and sprite/audio data. `reference/` contains decoded fixtures used by tests and tooling, including the V56 supplemental-resource inventory for the three `be` records and the `bv` table, plus the V57 opcode-29 and image-358 particle crosswalk. Sprite indices, dimensions, source offsets and MIDP anchor semantics are part of the resource mapping; do not replace an original in-game sprite with a PWA installation icon or a similarly named modern asset.
+`src/original-collision.js` translates recovered original collision helpers, including swept edge and endpoint intersection calculations, nearest-contact selection, surface-relative velocity response, restitution, friction-force comparison, torque smoothing and contact-state updates. The implementation uses fixed-point arithmetic with `BigInt` intermediates for the translated integer calculations.
 
-The game renderer owns in-game artwork and HUD composition. The PWA manifest and page metadata own browser/device branding. These are separate asset paths with separate purposes.
+`src/terrain-collision.js` connects the collision routines to decoded level geometry and contains browser-side overlap recovery where required. Keep that fallback distinguishable from source-translated collision behavior; do not present it as original-engine logic.
 
-The service worker precaches a small critical startup shell. Original sprite images and audio are cached on demand after the game requests them; repeat requests are served cache-first. The social-sharing preview is not a runtime dependency. The header share action passes `https://prasannaone.github.io/BounceTales/` to the Web Share API or the clipboard fallback. Sharing, canonical metadata, and brand/home navigation now use the same public GitHub Pages address.
+V62 corrected moving-contact position reconstruction. The original maintains a previous transform advanced by the full contacted-surface displacement, while the corrected current actor transform uses the retained tangent offset, the absolute normal component and the contact skin. The earlier browser path double-counted part of the displacement. Regression fixtures now cover tangential movement and both directions of normal movement.
 
-## 5. Interface and touch controls
+### What the evidence means
 
-The logical game canvas remains 240 × 320. CSS scales it within portrait, landscape, narrow-phone, tablet and desktop layouts without feeding CSS dimensions into physics or camera calculations.
+The original-runner can execute the untouched original game classes in a JVM with small MIDP/Nokia API stubs, record frame deltas and physics substeps, and replay those values through the browser port. V62 records short Level 1 runs for the opening, jump, left movement and right movement. In the latest rerun, the maximum player-position deviation across those scenarios was 0.0117 logical pixels; the value varies slightly with the original game's wall-clock frame deltas.
 
-The live touch controls and Settings editor use `src/control-layout.js` as their shared geometry source. Positions and sizes are stored as normalized percentages and a percentage size multiplier on a fixed 360 × 108 reference surface. The stable `bounce-control-layout-v1` storage key preserves user layouts across releases. Hidden controls must not be measured or assigned zero-sized styles; recalculate when gameplay reveals the controls and when the viewport/container changes. The editor waits until its overlay is visible before measuring, and Save, Cancel, Reset and Escape have distinct persistence semantics.
+That is strong evidence for those measured paths, not exhaustive proof of all collision combinations, moving-geometry event sequences, device timing patterns or all 15 stages. See the V62 audit for exact measurements, commands and open verification items.
 
-### Header share control
+## 5. Resources, levels and rendering
 
-The `#share-site` button uses a small outlined connected-node SVG. Its stroke is explicitly set to `currentColor`; do not rely on SVG default fill behavior for the open path segments. `shareSite()` sends the canonical GitHub Pages URL to `navigator.share`, then falls back to clipboard copy or a manual prompt. Keep the literal URL identical to the canonical `og:url` metadata and brand/home link.
+`assets/original/` contains the original game resource material used by the reconstruction, including binary resources, class files and localized text files. The playable campaign uses the recovered RLEF resources; `reference/` contains decoded level fixtures, inventories, hashes and other test references. `reverse-engineering/` retains class maps, bytecode extracts, resource-format notes and research records.
 
-## 6. Event dialogue suspension
+Sprite IDs, dimensions, source offsets, animation sequences and MIDP anchor semantics are part of the rendering contract. Do not substitute browser branding icons for original in-game sprites. The logical canvas remains 240 × 320; CSS scales it to the available viewport and the renderer controls pixel-art smoothing.
 
-RLEF message opcodes suspend only their owning event at the message instruction. The UI queues messages from concurrent events and resumes the matching event after player input, preserving command order without advancing the fixed-step simulation while dialogue is visible.
+The browser soundtrack uses the project's audio controller and converted browser-playable audio. Browser audio policies require a user gesture before playback can begin in some browsers; the controller handles unlock and page visibility lifecycle behavior.
 
-### Original RLEF packed flags and source particle effect
+## 6. Responsive shell and controls
 
-RLEF event opcode 29 updates the original `j.m` packed object field. Its selector is not a conventional mask for every bit: selector `0x01` replaces the complete low five-bit render-depth value and recomputes the cached depth as `(flags & 31) - 16`; `0x20`, `0x80` and `0x100` update their individual bits. The renderer sorts by the low five bits and suppresses objects carrying `0x80`, matching the corresponding `j.java` render path. Do not simplify this to `(flags & ~mask) | (values & mask)`.
+The page supports mobile and desktop browser layouts. The canvas remains the fixed logical game surface; the responsive shell controls its CSS size and the placement of the external touch-control surface.
 
-When selector `0x80` is processed for a type-5 sprite whose first image is 358, original `g.java` invokes the 24-particle emitter configured in `m.java`. V57 routes that event to the original animated sprite families 390, 414 and 396. Sprite family, particle count, angle envelope and lifetime base/variation are cross-referenced from the source. Browser random sampling, timing conversion, drag and particle integration are adapted; the port does not claim byte-for-byte J2ME RNG or per-device frame timing.
+### Input
 
-## 7. Offline behavior and release caching
+| Action | Touch | Keyboard |
+|---|---|---|
+| Move left/right | Hold left/right buttons | `A` / `D`, arrow keys |
+| Jump | Hold Jump | `Space` / `Enter` |
+| Change unlocked form | Form `*` button | `Shift` / `Q` |
+| Pause | External pause control | `Escape` |
 
-The service worker precaches a small critical startup shell and lazily caches additional same-origin resources. This reduces first-install transfer and avoids eagerly downloading all original media.
+Standard gamepads are supported through the browser Gamepad API when available.
 
-For a gameplay release, update the service-worker cache name and versioned asset query strings together. Confirm manifest paths, first-load behavior, reload, offline startup and update-from-previous-cache behavior. Documentation-only changes do not require a cache-version bump. Preserve the touch-layout storage key unless a deliberate migration is included.
+### Touch layout editor
 
-## 8. Verification boundaries
+The live touch controls and editor share `src/control-layout.js` as their geometry source. The editor moves the actual left, right, jump and form buttons. A user selects a control, changes its size from 75% to 125%, then saves, cancels or resets. Layout values are stored locally as normalized geometry on the fixed reference surface, using the stable `bounce-control-layout-v1` key. The editor and live controls must continue to use the same geometry model.
 
-Node.js tests cover selected resource parsing, physics/collision, level scripting, input, UI logic, audio-controller behavior and PWA references. Dedicated runtime smoke and springboard checks provide additional coverage. Automated checks do not establish exhaustive completion of every stage or guarantee identical behavior on every physical device. Visual layout, mobile browser chrome, touch ergonomics, audio policy and PWA installation require real-device testing.
+### Header and settings
+
+The compact header contains:
+
+- **Heart:** opens the PrasannaOne site. The direct Ko-fi support link is in Settings → About.
+- **Share:** shares the canonical game URL through the Web Share API where available, with a clipboard/manual fallback.
+- **Settings:** opens Game and About tabs.
+
+The Game settings include language, frame pacing, smooth motion, FPS counter, original music, fullscreen, reset progress and touch-control customisation. About includes creator/project links, Ko-fi support and the independence/rights disclaimer. Do not move the creator credit onto the main game screen; it belongs in About.
+
+## 7. Installability, caching and updates
+
+The site includes a web app manifest and service worker. Compatible browsers may offer installation to a home screen or app launcher. Normal browser play does not require installation.
+
+The service worker precaches a small startup shell and caches additional same-origin resources as they are requested. For a runtime release, keep all of the following in sync:
+
+- `CACHE_NAME` in `sw.js`;
+- versioned script and stylesheet query strings in `index.html`;
+- matching versioned paths in the service worker app shell;
+- manifest/icon paths when those assets change.
+
+Test first load, reload, offline startup where supported, and update from a previously cached release. Documentation-only changes do not require a service-worker cache bump. Preserve the touch-layout storage key unless a deliberate migration is included.
+
+## 8. Verification and limits
+
+The repository includes syntax checks, regression tests, runtime smoke tests, a springboard lifecycle proof, differential checks and the original-JVM replay harness. These checks cover selected resource parsing, physics/collision, event commands, campaign data, input, audio and interface logic.
+
+Automated tests do not prove exhaustive gameplay completion or identical behavior on every physical device. Real-device testing is still needed for touch ergonomics, browser chrome, audio policy, fullscreen behavior, install prompts and the actual deployed website. The V62 physics/collision audit explicitly lists the remaining longer-path comparisons.
 
 ## 9. Maintenance boundaries
 
-- Preserve original resource files and their relative paths.
-- Keep the logical 240 × 320 coordinate system independent of responsive CSS sizing.
-- Preserve fixed-step timing, pause behavior, physics and springboard lifecycle unless a deliberate gameplay change is being made and tested.
-- Keep original in-game sprite mappings separate from PWA icons and web branding.
-- Preserve all bundled RLEF levels unless level changes are explicitly intended.
-- Keep live touch controls and the editor on the same geometry model.
-- Update `index.html` asset query versions and the service-worker cache name together for gameplay releases.
-- Keep the share target synchronized with the canonical site URL in metadata and home navigation; avoid introducing an unverified short-link dependency.
-- Run the Node.js test suite after engine changes; syntax checks alone do not establish gameplay parity.
+- Preserve all original resource files and their relative paths unless a resource change is intentional and audited.
+- Keep the 240 × 320 logical world independent of CSS dimensions.
+- Keep simulation fixed at 60 Hz; do not let render frame pacing alter physics time.
+- Keep source-translated collision behavior separate from browser overlap-recovery fallbacks.
+- Preserve the RLEF campaign data and event ordering.
+- Keep live touch controls and the control editor on the same geometry model and storage key.
+- Keep original in-game art separate from web/PWA branding.
+- Keep the canonical share URL synchronized across metadata, the brand link and share action.
+- Update HTML asset query versions and the service-worker cache name together for runtime releases.
+- Run focused tests and the full available verification suite after engine changes; document any environment-dependent or repository-only test failures accurately.
 
-## 10. License and rights boundary
+## 10. License and original-game rights
 
-The root `LICENSE` governs only the portions of the project authored by the Licensor. It is the proprietary Sovereign Source License v1.1, not an open-source license. Original Bounce Tales content and third-party components are excluded and remain subject to their respective rights and terms.
-
-
-## Port-engine boundary (V49)
-
-`src/module-registry.js` is a dependency-free, game-agnostic helper that can be reused independently. It accepts named system definitions, optional groups/descriptions and unavailable (`null`) systems, then exposes immutable registry operations and diagnostics. `src/port-engine.js` uses it to publish the Bounce Tales catalog as `BouncePortEngine` API v1. The generic registry is deliberately separated from Bounce-specific globals and module loading.
-
-`src/port-engine.js` exposes the existing systems through `BouncePortEngine` API v1. The registry is a discovery surface, not a replacement for the Bounce Tales application coordinator. Its `createRegistry(definitions)` factory also allows a future port to build a separate read-only registry from its own systems without importing Bounce-specific globals. Keep generic primitives and host adapters separate from game-specific behavior; see [the engine porting guide](docs/ENGINE_PORTING_GUIDE.md).
-
-
-## V58 release and import boundary
-
-V58 adds synthetic behavior checks for all event-command values and uses the canonical share URL `https://prasannaone.github.io/BounceTales/`. The safe ZIP importer imports only the allowlisted runtime files and replaces the runtime `assets/` and `src/` trees; it merges root-level test files by filename without deleting repository-only tests. It does not import README, architecture, licence, docs or workflow files. See `docs/V58_RELEASE_AUDIT.md` for the exact evidence and remaining parity limits.
+The root `LICENSE` governs only the portions authored by the project Licensor. It is a proprietary source-available license, not an OSI-approved open-source license. Original Bounce Tales code, names, images, music and other third-party materials are excluded from that grant and remain subject to their respective owners' rights and terms. The project is independent and is not affiliated with Nokia or Rovio.

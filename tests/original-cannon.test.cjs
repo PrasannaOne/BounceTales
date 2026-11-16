@@ -53,9 +53,9 @@ assert.match(game,/fetch\('assets\/original\/bu'\)/,'the original shared cannon 
 assert.match(game,/animCountdown<=300/,'the player launch remains at the original 600 ms boundary of the 900 ms animation');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-assert.match(html,/src\/original-cannon\.js\?v=58/,'the new cannon module is loaded by the V54 page');
+assert.match(html,/src\/original-cannon\.js\?v=62/,'the new cannon module is loaded by the V54 page');
 assert.match(sw,/assets\/original\/bu/,'the shared cannon resource is precached for offline play');
-assert.match(sw,/src\/original-cannon\.js\?v=58/,'the new cannon module is part of the service-worker shell');
+assert.match(sw,/src\/original-cannon\.js\?v=62/,'the new cannon module is part of the service-worker shell');
 assert.match(game,/BounceOriginalCannon\.frameAt\(cannonMesh,elapsedMs,c\.animationActive\)/,'the runtime renders the original interpolated cannon mesh');
 assert.match(game,/BounceOriginalCannon\.update\(cannons,dt\*1000,cannonMesh\)/,'cannon animation continues after launch');
 assert.match(game,/drawImageMap\(48,0,0\)/,'a safe visual fallback remains if the shared mesh cannot be loaded');

@@ -94,14 +94,6 @@
     }
     return resolved;
   }
-  function raySegment(sx,sy,dx,dy,a,b){
-    const ex=b.x-a.x,ey=b.y-a.y,den=dx*ey-dy*ex;
-    if(Math.abs(den)<EPS)return null;
-    const ax=a.x-sx,ay=a.y-sy;
-    const t=(ax*ey-ay*ex)/den,u=(ax*dy-ay*dx)/den;
-    if(t<-EPS||t>1+EPS||u<-EPS||u>1+EPS)return null;
-    return {t:clamp(t,0,1),u:clamp(u,0,1)};
-  }
   function sweepAgainstPolygon(sx,sy,ex,ey,poly,radius){
     const v=poly.vertices,dx=ex-sx,dy=ey-sy;
     if(Math.abs(dx)+Math.abs(dy)<EPS)return null;

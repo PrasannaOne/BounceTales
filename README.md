@@ -1,298 +1,175 @@
 <div align="center">
 
-# 🟠 BOUNCE TALES
-### The classic bounce, carefully rebuilt for the browser.
+# 🟠 Bounce Tales
 
-<p><a href="https://prasannaone.github.io/BounceTales/"><img src="https://img.shields.io/badge/▶_PLAY_BOUNCE_TALES-OPEN_THE_GAME-ff8b24?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Play Bounce Tales" /></a></p>
-
-## 🌐 [prasannaone.github.io/BounceTales](https://prasannaone.github.io/BounceTales/)
+### Remember Nokia's Bounce Tales? A faithful HTML5 reconstruction from original J2ME bytecode and assets, bringing the classic to the modern web with responsive touch controls.
 
 <p>
-  <img src="https://img.shields.io/badge/Release-V58-f97316?style=flat-square" alt="Release V58" />
-  <img src="https://img.shields.io/badge/Platform-Web%20%2F%20PWA-0ea5e9?style=flat-square" alt="Web and PWA" />
-  <img src="https://img.shields.io/badge/Runtime-HTML5%20%2B%20JavaScript-facc15?style=flat-square" alt="HTML5 and JavaScript" />
-  <img src="https://img.shields.io/badge/Simulation-240%C3%97320-22c55e?style=flat-square" alt="240 by 320 simulation" />
-  <img src="https://img.shields.io/badge/Port%20Core-API%20v1-8b5cf6?style=flat-square" alt="Port Engine API version 1" />
-  <img src="https://img.shields.io/badge/License-Sovereign%20Source%20v1.1-bc8cf2?style=flat-square" alt="Sovereign Source License v1.1" />
+  <a href="https://prasannaone.github.io/BounceTales/"><img src="https://img.shields.io/badge/▶_PLAY_NOW-OPEN_BOUNCE_TALES-ff8b24?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Play Bounce Tales" /></a>
 </p>
 
-<img src="bounce-tales-web-preview.png" alt="Bounce Tales browser game preview" width="760" />
+**[Play Bounce Tales](https://prasannaone.github.io/BounceTales/)** · **[Source repository](https://github.com/PrasannaOne/BounceTales)**
 
-*An independent, source-informed browser reimplementation inspired by the classic J2ME game.*
+<p>
+  <img src="https://img.shields.io/badge/Release-V62%20Final-f97316?style=flat-square" alt="V62 Final Edition" />
+  <img src="https://img.shields.io/badge/Platform-Mobile%20%26%20Desktop-0ea5e9?style=flat-square" alt="Mobile and desktop" />
+  <img src="https://img.shields.io/badge/Runtime-HTML5%20%2B%20JavaScript-facc15?style=flat-square" alt="HTML5 and JavaScript" />
+  <img src="https://img.shields.io/badge/Original%20basis-J2ME%20bytecode%20%2B%20assets-8b5cf6?style=flat-square" alt="Original J2ME bytecode and assets" />
+  <img src="https://img.shields.io/badge/License-Source--available-bc8cf2?style=flat-square" alt="Source available license" />
+</p>
+
+<img src="bounce-tales-web-preview.png" alt="Bounce Tales running in a modern browser" width="760" />
+
+*The little red ball is back. Play in a modern browser, on a phone or a computer.*
 
 </div>
 
 ---
 
-## ✨ Welcome back to Bounce's little world
+## What is Bounce Tales?
 
-Bounce Tales brings the familiar red bouncing hero and its platforming world to modern browsers. The project rebuilds the experience around a **240 × 320 logical game world**, recovered resource formats, original game artwork, a modular JavaScript runtime and responsive browser controls.
+Bounce Tales is an independent HTML5 reconstruction of the classic Java ME platform game. The browser version is built from recovered original game resources and decompiled J2ME bytecode, with the original campaign data, visual identity and gameplay systems used as the reference.
 
-The aim is preservation with thoughtful modernization: keep the game's personality, make it comfortable to play on today's screens, and keep the source understandable enough to maintain and extend.
+The goal is simple: bring the familiar adventure back to players while making it comfortable on today's devices. The game keeps its original 240 × 320 logical playfield and adapts the surrounding experience for responsive screens, touch input, keyboard and gamepads. It is a source-informed reconstruction, not a claim of perfect device-by-device J2ME equivalence.
 
-> 📱 **Jump straight in:** the official site is playable in a browser. No app-store installation or account is required.
+**No account or installation is required to play:** open the [game website](https://prasannaone.github.io/BounceTales/) and start playing.
 
-## 🎮 How to play
+## Play
 
-| Action | Touch | Keyboard |
+| Action | Phone / tablet | Desktop |
 |---|---|---|
-| Move left / right | Hold **◀** / **▶** | `A` / `D` or `←` / `→` |
-| Jump / bounce | Hold **JUMP** | `Space` / `Enter` |
+| Move | Hold **◀** / **▶** | `A` / `D` or `←` / `→` |
+| Jump | Hold **JUMP** | `Space` / `Enter` |
 | Change unlocked form | Tap **`*`** | `Shift` / `Q` |
-| Pause | Tap the pause button | `Escape` |
+| Pause | On-screen pause button | `Escape` |
 
-Standard gamepads are supported when the browser exposes the Gamepad API. Touch controls can be moved and resized in **Settings → Customize touch controls**. Your layout is saved locally in that browser on that device.
+Standard gamepads are supported when the browser exposes the Gamepad API. The on-screen controls remain available on touch devices and can be customised in Settings.
 
-## 🌟 What is inside?
+## Made for phones and computers
 
-- 🕹️ **Original-scale simulation:** a logical 240 × 320 playfield, scaled to modern screens.
-- 🧩 **Resource-aware runtime:** reads the 15 playable campaign RLEF resources while preserving all 16 original RLEF files and source-informed sprite/animation mappings.
-- 🧭 **Campaign systems:** chapter progression, checkpoints, collectibles, scripted events and level objects.
-- 🪀 **Platforming systems:** fixed-step updates, collision handling, bounce physics, forms, enemies, water and springboards.
-- 🎨 **Original visual language:** in-game sprites and artwork are kept separate from modern PWA branding.
-- 📳 **Phone-friendly controls:** touch, keyboard and supported gamepad input.
-- 🛠️ **Live control editor:** reposition and resize the actual on-screen controls.
-- 📦 **Installable PWA:** add the browser game to a compatible device's home screen.
-- 🔊 **Soundtrack:** browser-based music and sound playback.
+- **Responsive play area:** the original 240 × 320 game world scales to portrait, landscape and desktop layouts.
+- **Touch controls:** dedicated left, right, jump and form buttons, with touch-friendly hold behaviour.
+- **Personal control layout:** open **Settings → Customize touch controls** to drag the actual buttons, select a button and resize it from 75% to 125%, then save, cancel or reset the layout. The saved layout stays in that browser on that device.
+- **Keyboard and gamepad:** play without touch controls on a computer or with a supported controller.
+- **Fullscreen:** available from the Game settings panel where the browser supports it.
+- **Frame presentation options:** Auto, 30, 60, 90 or 120 FPS presentation targets, optional render interpolation, and an FPS counter. The gameplay simulation remains fixed at 60 Hz.
+- **Music toggle:** turn the original soundtrack playback on or off.
+- **Language selection:** choose from the original bundled translations, or follow the device language when available.
+- **Progressive Web App (PWA):** the project includes a web app manifest, app icons and a service worker. On supported browsers, install Bounce Tales to the phone home screen or desktop app launcher and open it in a standalone window. Ordinary browser play remains available.
+- **Repeat-visit caching:** the service worker caches the app shell and resources as they are used, helping repeat visits load faster and allowing some previously cached content to remain available offline. Offline completeness depends on which resources have already been cached; the first visit requires an internet connection.
 
-## 🧭 V58 · campaign parity scorecard
+## The game
 
-This release pins the original campaign script corpus and makes the current parity evidence easier to audit:
+- **15 playable campaign stages**, with chapter selection and progression.
+- Original RLEF level resources and recovered sprite, animation and audio mappings.
+- Checkpoints, collectibles, scripted events and chapter completion flow.
+- Bounce movement, forms, terrain contacts, enemies, water, springboards and cannon interactions.
+- Original-style title, chapter book, pause, guide and result screens.
+- Local progress and touch-layout preferences stored in the browser.
 
-- 🧩 All 15 playable RLEF stages are enumerated: 316 events and 1,143 authored commands.
-- 🧭 A new regression test pins the exact campaign opcode distribution and verifies both opcode-26 target references resolve to the player object.
-- 🧪 The full gate runs 69 test files, syntax checks, all-stage runtime smoke, and the Level 1 springboard lifecycle proof. A new synthetic test exercises all 33 event interpreter opcodes against source-derived expectations.
-- 📚 The scorecard separates verified campaign coverage from unproven semantic parity. It does not manufacture a 90% score from feature counts.
+## The current build: V62 Final Edition
 
-The Share button now sends or copies `https://prasannaone.github.io/BounceTales/`, matching the canonical page link and social metadata. The older X.gd target documented under V55 is historical and has been superseded.
+V62 is the planned final feature release: a complete, playable browser reconstruction with the current physics and collision improvements, recovered campaign content and modern controls. The project moves to maintenance mode after this release. Further changes should be limited to genuine bugs, compatibility fixes, security issues and essential browser/platform updates rather than an open-ended version chase.
 
-See the [V58 campaign parity scorecard](docs/V58_CAMPAIGN_PARITY_SCORECARD.md), [V58 source crosswalk audit](docs/V58_SOURCE_CROSSWALK_AUDIT.md), [V58 release audit](docs/V58_RELEASE_AUDIT.md), and [engine porting guide](docs/ENGINE_PORTING_GUIDE.md).
+- The original game classes can be run in a headless JVM through a small MIDP/Nokia API compatibility layer. The original bytecode is not modified by this harness.
+- The browser port can be replayed using the original run's frame deltas and physics substep count.
+- Short Level 1 comparisons cover the opening, a short jump, left movement and right movement. In the latest recorded rerun, the maximum player-position deviation across those scenarios was 0.0117 logical pixels; the exact value varies slightly with the original game's wall-clock frame deltas.
+- The original collision translation uses fixed-point arithmetic and `BigInt` intermediates for the swept edge and endpoint intersection helpers, contact selection and surface-relative response.
+- V62 corrects moving-contact position reconstruction so the corrected actor transform does not double-count tangential platform movement or the normal displacement.
+- The project includes 600,816 bit-exact differential comparisons for fixed-point, transform and event-script operations, plus physics, collision, terrain and campaign-spawn regression tests.
 
-## 🛡️ V50 · reproducible checks and safer runtime imports
+These results are meaningful but bounded. They do not establish exhaustive collision parity across every level, device timing pattern or combination of moving objects. See the [V62 physics and collision audit](V62_PHYSICS_COLLISION_AUDIT.md) for measurements, commands and remaining gaps.
 
-V50 is a repository-readiness release. It preserves the gameplay simulation, original resource data and saved touch-layout geometry while strengthening the path from source changes to a published site. Its shell-level polish also moved the pause action outside the canvas and delayed touch-control visibility until measured geometry was applied; V51 refines both details.
+## The interface
 
-- **Runtime ZIP imports are constrained:** `Bounce.zip` is validated before extraction, including path traversal, symlink/special-file, duplicate-path, encrypted-entry, file-count, file-size and expansion checks.
-- **Protected project records stay protected:** the importer copies only the browser runtime allowlist (`index.html`, the site shell files, `assets/` and `src/`). It does not replace documentation, the license, tests, research notes, repository metadata or GitHub workflows.
-- **Deployment is gated:** the imported runtime must pass syntax checks, the full Node.js regression suite, runtime smoke checks and the springboard lifecycle proof before it is committed.
-- **Pull requests get the same quality gate:** GitHub Actions runs the complete dependency-free verification sequence on pushes and pull requests.
-- **The import path is independently testable:** the ZIP validator is a checked-in Python tool, not an opaque shell-only extraction step.
+The game screen keeps its focus on the playfield. The compact header provides:
 
-The release is intentionally conservative: it improves how the project is checked and deployed without presenting infrastructure work as new gameplay. The V50 shell adjustments did not change the saved touch-layout format or gameplay simulation. See the [V50 release-readiness and deployment audit](docs/V50_RELEASE_READINESS.md).
+- **Heart:** opens the project's Ko-fi page directly. The About panel also contains the support link and project information.
+- **Share:** opens the device share sheet where available, with a copy fallback, using the canonical game URL.
+- **Settings:** opens the Game and About panels.
 
+The **Game** panel contains language, frame pacing, smooth motion, FPS counter, original music, fullscreen, reset progress and touch-control customisation. The **About** panel contains project/creator links, the Ko-fi support link and the independence/rights disclaimer. The header heart now opens the project's Ko-fi page directly, so support is easy to find without interrupting play.
 
-## 🟠 V57 · original event-flag and sprite-effect fidelity
+## Install Bounce Tales (PWA)
 
-V57 corrects a source-level mismatch in the RLEF event interpreter and restores a small but authentic effect that campaign scripts rely on.
+Bounce Tales can be installed where the browser supports Progressive Web Apps. The site must be served from a secure HTTPS origin (or localhost for development).
 
-- **Packed flag semantics:** original opcode 29 selector `0x01` replaces all five low render-depth bits, not just bit zero. Selectors `0x20`, `0x80` and `0x100` remain independently applied. The render-depth cache now follows the original `(flags & 31) - 16` rule.
-- **Campaign evidence:** the 15 playable RLEF stages contain 140 opcode-29 commands, including 25 combined depth/visibility updates. Tests verify the selector distribution and target data against the bundled original levels.
-- **Original sprite-fragment effect:** the original image-358 sprite path emits 24 animated fragments using sprite families 390, 414 and 396, with the source lifetime/angular configuration. Browser-side timing, random sampling and particle integration are a documented adaptation, not a claim of deterministic J2ME RNG parity.
-- **No unrelated redesign:** the chapter flow, controls, level data, physics constants, cannon behavior, audio mapping and sharing UI are carried forward.
-- **Verification:** the focused event-flag and fragment tests join the complete syntax, regression, all-15-stage smoke and springboard checks.
+- **Android (Chrome and compatible browsers):** open the game website, open the browser menu, then choose **Install app** or **Add to Home screen** when offered. The wording varies by browser and device.
+- **Desktop (Chrome / Edge):** open the game website and use the install icon in the address bar, if shown, or choose **Install Bounce Tales** from the browser menu.
+- **iPhone / iPad (Safari):** use **Share → Add to Home Screen** where available. Installation and standalone behaviour can differ from Chromium browsers.
 
-See the [V57 event-flag and sprite-effect audit](docs/V57_EVENT_FLAG_PARITY.md).
+The manifest supplies the app name, icons, theme and standalone display preference. The service worker caches the core app shell and caches additional same-origin resources as they are requested. This improves repeat visits and can provide partial offline access after resources have been cached; it is not a guarantee that every level, sound or asset is available offline after a first visit.
 
-## 🟠 V56 · supplemental original-resource fidelity
+## Run locally
 
-V56 investigates the previously under-documented `be` and `bv` resources using the supplied JAR resource index and decompiled resource-loader paths.
+The game is a static browser project. You do not need a bundler to play it. Serve the repository root over HTTP rather than opening `index.html` directly, because service workers and some browser resource APIs require an HTTP(S) origin.
 
-- **`be`:** three original type-5 records, each 86 bytes, at resource indices 90–92. Their offsets and individual SHA-256 hashes are recorded. The original world manager queues resource IDs 36 and 37 for loading in one state transition.
-- **`bv`:** one 26-byte type-8 payload at resource index 109. Its thirteen big-endian words are decoded and preserved; values 28–35 correspond to the eight original MIDI resource IDs already mapped by the browser audio controller.
-- **Type-system correction:** resource-index type 8 is distinct from RLEF scene-object type 8. The latter creates a `c(true)` scene object; the former is read as raw resource bytes.
-- **No speculative behavior:** the exact consumer of `be` and the full meaning of `bv`'s header/trailer are not established by the examined source call paths, so V56 adds source-backed inventory and regression protection rather than an invented runtime feature.
-- **Verification:** the new supplemental-resource test checks all `be` record boundaries/hashes, the complete `bv` word sequence, the MIDI-ID correspondence and all 214 dynamic sprite-map entries.
+With Python installed:
 
-See the [V56 supplemental resource audit](docs/V56_SUPPLEMENTAL_RESOURCE_AUDIT.md).
-
-## 🟠 V55 · clearer sharing and deployment hygiene
-
-V55 is a focused shell and maintenance release. The game simulation, campaign resources, cannon behavior, soundtrack mapping, menus and touch layout are carried forward unchanged.
-
-- **Share control:** the header share mark now uses a visible, outlined connected-node icon with a consistent stroke instead of dark, effectively invisible SVG shapes. Its accessible label and compact button footprint remain unchanged.
-- **Share destination:** the native share sheet and copy fallback now use `https://X.gd/BounceTales`. The regular site navigation and canonical GitHub Pages address remain unchanged.
-- **Runtime importer:** the ZIP validator accepts any internally consistent release number, checks every service-worker app-shell file, and does not require a test suite inside `Bounce.zip`. The repository keeps ownership of `tests/`; those tests run after runtime import and are not replaced by an uploaded archive.
-- **Repository hygiene:** the importer no longer carries a V54 minimum, a hard-coded module floor or a test-suite replacement path. ZIP path, symlink, duplicate-entry, size and expansion safeguards remain.
-- **Verification:** the V55 share UI/URL regression test joins the existing suite. The full syntax, regression, 15-stage smoke and springboard checks are recorded in the V55 audit.
-
-The X.gd URL is the requested share target; its live redirect destination should be confirmed from a browser after the short-link owner settings are checked. This release does not claim that redirect verification succeeded.
-
-See the [V55 share and maintenance audit](docs/V55_RELEASE_AUDIT.md).
-
-## 🟠 V54 · original cannon mesh and audio reference parity
-
-V54 restores the shared cannon artwork that the original game loads from its sixteenth RLEF resource, `bu`. This is not a sixteenth campaign stage: the original world manager loads it alongside each playable chapter as the cannon's reusable polygon mesh.
-
-- **Original cannon geometry:** all 12 polygon records are parsed from `assets/original/bu`; the renderer draws the original black, grey and yellow mesh rather than a static placeholder sprite.
-- **Original firing animation:** the three authored polygon poses interpolate over 500 ms, 100 ms and 300 ms. The player launch boundary remains at 600 ms, while the cannon animation finishes at 900 ms.
-- **Audio resource map:** the eight original MIDI resources (`aw.mid` through `bd.mid`) are explicitly cross-referenced to the eight browser Opus tracks. Title, chapter-group, death and victory triggers are checked against the decompiled source call sites.
-- **Audio regression checks:** tests parse MIDI timing and Ogg Opus duration metadata. Each browser track retains the observed approximately 1.1-second tail after its source MIDI duration. This confirms the mapping and timing envelope, not bit-identical waveforms.
-- **Release integrity:** the V54 runtime cache identity was versioned consistently. The V55 universal importer now validates structure and cache consistency without a hard-coded release minimum; the cannon module remains part of the service-worker shell.
-- **Verification:** all original campaign levels remain in the 15-stage chapter list; `bu` is loaded as shared cannon geometry, never exposed as a playable chapter.
-- **Release checks:** 90 JavaScript files pass syntax checks, all 63 test files pass, all 15 campaign levels pass the runtime smoke check, and the Level 1 springboard proof passes.
-
-See the [V54 parity and restoration audit](docs/V54_PARITY_AUDIT.md).
-
-## 🟠 V53 · original menu-flow restoration
-
-V53 restores the source-shaped title and pause command sets while retaining the separate browser settings entry point and the existing chapter-book scene. The title scene now presents Continue (when a valid persisted save exists), New Game, High Scores and Instructions; the original Exit softkey is represented with a browser-safe close-tab attempt and a clear fallback message. The pause scene is reduced to Resume, Restart Chapter and Chapter Selection, with the existing confirmation path retained for destructive transitions.
-
-- **Version identity:** package metadata, HTML asset query strings and the service-worker cache use V53 consistently.
-- **Historical import rule:** V53 originally introduced a minimum import version. V55 removes that obsolete floor while retaining structural and cache-integrity validation.
-- **Regression coverage:** menu-flow assertions now check the original command order and ensure web-only Options/Chapter Selection entries do not leak into the title menu.
-- **Verification:** `npm run verify` passes all 61 test files, the Node runtime smoke test exercises all 15 RLEF stages, and the Level 1 springboard lifecycle proof passes.
-
-See the [V53 restoration audit](docs/V53_RESTORATION_AUDIT.md). Browser-specific visual checks and physical handset testing remain separate from Node verification.
-
-## 🟠 V52 · responsive-shell cleanup and reliable audio departure
-
-V52 keeps the original game simulation, campaign resources, menus and saved touch-layout format intact while removing the accumulated shell cascade and tightening lifecycle behavior.
-
-- **One responsive layout system:** historical overlapping layout patches are consolidated into one shell contract for portrait, landscape, compact phones and wide screens. The pause control remains outside the 240 × 320 game viewport in a reserved gutter or the clear strip above the game column.
-- **No control-layout flash:** saved/default control geometry is applied before resource-loading awaits. The controls remain unpainted until measured, and are hidden again while a resize/orientation update is being applied.
-- **Audio stops on departure:** leaving or backgrounding the page invalidates pending audio loads, stops the active source and suspends the AudioContext. Returning can restore the prior music only after the browser has previously unlocked audio and music remains enabled.
-- **Version consistency:** package metadata is `52.0.0`; HTML and service-worker assets retain the V52 URL identity. The changed V52 worker refreshes the V52 cache entries on installation.
-- **Preservation boundary:** the 15 playable RLEF stages, original resource archive, gameplay physics, progression and saved layout key are not intentionally changed by this shell-maintenance release.
-
-The verification suite checks the real JavaScript modules and parsed RLEF resources in Node.js. It does not replace physical-device testing across Safari, Firefox, Android WebView or different browser versions. See the [V52 release audit](docs/V52_RELEASE_AUDIT.md).
-
-## 🎯 V51 · clean first paint and a quieter pause control
-
-V51 is a responsive-shell and startup-order maintenance release. It keeps the V50 gameplay/runtime systems and original campaign resources intact.
-
-- **No legacy control flash:** the saved or default touch layout is measured and applied synchronously before game resources are fetched. The control surface remains hidden until all button geometry is ready.
-- **External pause control:** a small 32 × 29 CSS-pixel pause button sits in the empty right-side gutter near the upper edge of the game. It is outside the canvas and appears only during active play. Wide two-column layouts place it in the clear strip above the game column.
-- **Responsive stage sizing:** the pause strip and canvas share one sizing wrapper across portrait, landscape, compact and wide layouts.
-- **Cascade audit:** exact duplicate CSS rule blocks were removed. Context-specific historical overrides were retained where they still define responsive behavior, rather than flattening the cascade and risking regressions.
-- **Cache refresh:** the V51.1 correction uses `v=52` asset references and a distinct `bounce-tales-v52` service-worker cache so the corrected layout is not trapped behind the earlier V51 cache.
-- **Regression coverage:** first-paint ordering, pause placement, hidden-state behavior and responsive stage rules are checked alongside the existing gameplay tests.
-
-See the [V51 responsive-shell audit](docs/V51_RESPONSIVE_SHELL_AUDIT.md).
-
-## 🚀 Play and install
-
-1. Visit **[the official Bounce Tales site](https://prasannaone.github.io/BounceTales/)**.
-2. Start a chapter and use the on-screen controls, keyboard or a supported gamepad.
-3. On a compatible browser, choose **Install app** or **Add to Home Screen** to install the PWA.
-
-The service worker requires HTTPS or `localhost`. The official GitHub Pages site is served over HTTPS.
-
-## 🧑‍💻 Run locally
-
-The site is static-hosted. You do not need a bundler, third-party package install or build step for normal play. Node.js 18 or later is needed for the repository validation scripts. Opening `index.html` directly through `file://` is not supported.
-
-```bash
+```sh
 python -m http.server 8000
 ```
 
-Then open <http://localhost:8000/>.
+Then open `http://localhost:8000` in a browser.
 
-## 🧪 Development and verification
+For the Node.js checks, use Node.js 18 or later:
 
-The repository has no runtime or development dependencies. The included npm scripts simply wrap the existing Node.js checks:
-
-```bash
-npm test                  # All regression and runtime test files
-npm run check             # Syntax-check JavaScript source, tests and tools
-npm run smoke             # Browser-runtime smoke harness
-npm run proof:springboard # Level 1 springboard lifecycle proof
-npm run verify            # Complete verification sequence
+```sh
+npm run check
+npm test
+npm run smoke
+npm run proof:springboard
 ```
 
-The test suite covers resource parsing, fixed-point arithmetic, physics/collision, level scripting, input, touch layout, audio, menus, timing, PWA references, visual regressions and the reusable port-engine registry.
+The combined command is:
 
-Passing automated checks does not prove exhaustive parity on every physical device. Touch ergonomics, viewport scaling, browser audio policy, PWA installation and final visual composition still deserve real-device testing.
-
-## 🏗️ Project map
-
-```text
-BounceTales/
-├── index.html                 Browser shell, metadata, canvas and accessible UI
-├── style.css                  Responsive layout and presentation
-├── game.js                    Bounce Tales state, loop and rendering coordinator
-├── sw.js                      Offline startup shell and runtime caching
-├── manifest.webmanifest       PWA installation metadata
-├── package.json               Dependency-free validation scripts
-├── src/
-│   ├── module-registry.js     Standalone generic module-registry utility (API v1)
-│   ├── port-engine.js         Bounce Tales system catalog over the generic registry
-│   ├── fixed-point.js         Fixed-point arithmetic
-│   ├── game-timing.js         Fixed-step timing
-│   ├── rlef-reader.js         Original RLEF resource parser
-│   ├── terrain-collision.js   Geometry collision primitives
-│   ├── bounce-physics.js      Bounce Tales player motion
-│   ├── event-engine.js        Original scripted-event processing
-│   ├── original-*.js          Bounce Tales compatibility systems
-│   └── sprite-atlas.js        Validated sprite and animation lookup
-├── assets/                    Original runtime art, audio and resources
-├── reference/                 Decoded fixtures and resource metadata
-├── reverse-engineering/       Research notes and bytecode traces
-├── docs/                      Audits, guides and porting documentation
-├── tests/                     Node.js regression and validation suite
-├── tools/                     Test runner, syntax checker and resource tools
-├── ARCHITECTURE.md             Runtime architecture and non-regression boundaries
-├── LICENSE                    Sovereign Source License v1.1
-└── README.md                   Project overview and quick start
+```sh
+npm run verify
 ```
 
-## 🧠 How the runtime is organized
+Additional source-comparison commands:
 
-`index.html` loads the browser shell and standalone modules. `game.js` remains the Bounce Tales application coordinator: it owns the chapter lifecycle, game-specific objects, update/render sequencing and integration. The `src/` modules separate timing, arithmetic, collision, events, resources, input, audio and game-specific systems so they can be inspected and tested independently. The dependency-free `src/module-registry.js` is the reusable registry utility; `src/port-engine.js` is Bounce Tales’ catalog over the existing modules.
+```sh
+npm run verify:differential
+npm run verify:original
+```
 
-The new `BouncePortEngine` registry provides a stable discovery API for those modules and a `createRegistry()` factory for independent future-port systems. It does **not** pretend the whole game is a universal engine. The [porting guide](docs/ENGINE_PORTING_GUIDE.md) explains which parts are useful foundations, which are specific to Bounce Tales, and how a future game's renderer/input/storage adapters should be separated.
+`verify:original` needs Java 21 with `jdk.compiler` and the original-runner support files. It skips cleanly when the required Java environment is unavailable. Individual test commands and their scope are described in the [Project Guide](docs/PROJECT_GUIDE.md).
 
-The port combines recovered source/resource facts with browser-specific implementation choices. It is **source-informed**, not a claim that every original handset behavior has a perfect one-to-one browser equivalent. For the detailed update pipeline and invariants, read [ARCHITECTURE.md](ARCHITECTURE.md).
+## Project map
 
-## 📚 Documentation shelf
-
-| Document | What it covers |
+| Path | Purpose |
 |---|---|
-| [Project guide](docs/PROJECT_GUIDE.md) | Runtime, controls, maintenance and release checklist |
-| [Architecture](ARCHITECTURE.md) | Modules, simulation pipeline, resources and protected boundaries |
-| [Engine porting guide](docs/ENGINE_PORTING_GUIDE.md) | Reuse boundaries and the new port-engine registry API |
-| [V52 release audit](docs/V52_RELEASE_AUDIT.md) | Consolidated shell, startup controls, audio lifecycle, cache identity and test evidence |
-| [V51 responsive-shell audit](docs/V51_RESPONSIVE_SHELL_AUDIT.md) | Startup layout, pause placement, CSS cascade audit and device-layout checks |
-| [V50 release-readiness audit](docs/V50_RELEASE_READINESS.md) | ZIP import security, CI gates, scope and verification |
-| [V57 event-flag and sprite-effect audit](docs/V57_EVENT_FLAG_PARITY.md) | Source-backed opcode-29 semantics, campaign coverage and original image-358 particles |
-| [V57 release audit](docs/V57_RELEASE_AUDIT.md) | V57 scope, verification results and explicit fidelity limits |
-| [V56 supplemental resource audit](docs/V56_SUPPLEMENTAL_RESOURCE_AUDIT.md) | Exact `be`/`bv` resource inventory, type-system distinction and regression coverage |
-| [V55 share and maintenance audit](docs/V55_RELEASE_AUDIT.md) | Share UI/URL change, importer correction and V55 verification |
-| [V58 campaign parity scorecard](docs/V58_CAMPAIGN_PARITY_SCORECARD.md) | Original campaign corpus, opcode distribution and parity limits |
-| [V58 source crosswalk audit](docs/V58_SOURCE_CROSSWALK_AUDIT.md) | Original class-to-browser subsystem map and behavioral verification limits |
-| [V58 release audit](docs/V58_RELEASE_AUDIT.md) | Release evidence, verification results, importer safety and open parity work |
-| [V49 repository polish audit](docs/V49_REPOSITORY_POLISH_AUDIT.md) | Historical cleanup scope and verification boundaries |
-| [V48 mobile readability audit](docs/V48_MOBILE_READABILITY_AUDIT.md) | Dialogue legibility and previous mobile HUD work |
-| [V47 visual-parity audit](docs/V47_FULL_VISUAL_PARITY_AUDIT.md) | Original-game title/menu/HUD restoration |
-| [Reverse-engineering method](docs/REVERSE_ENGINEERING_METHOD.md) | How reference resources are inspected and recorded |
-| [Reference inventory](reference/README.md) | Decoded fixtures and resource provenance |
-| [Reverse-engineering notes](reverse-engineering/BUILD_NOTES.md) | Historical research record and open questions |
-| [License and attribution](LICENSE) | Proprietary source terms and third-party/original-game exclusions |
+| `index.html` | Browser shell, game canvas, menus, settings and touch editor |
+| `style.css` | Responsive layouts, game presentation and interface styling |
+| `game.js` | Application lifecycle, game loop, input integration, scenes and rendering coordination |
+| `src/bounce-physics.js` | Player movement and bounce physics |
+| `src/original-collision.js` | Source-informed original collision routines and contact response |
+| `src/terrain-collision.js` | Terrain collision integration and fallback handling |
+| `src/fixed-point.js` | Fixed-point arithmetic helpers |
+| `src/rlef-reader.js` | Original RLEF resource reader |
+| `src/event-engine.js` | Scripted event and command interpreter |
+| `src/control-layout.js` | Shared touch-control geometry and persistence |
+| `src/original-*.js` | Reconstructed camera, enemies, water, trampoline, cannon, HUD, progression and animation systems |
+| `assets/original/` | Bundled original game resources used by the reconstruction |
+| `reference/` | Decoded resource fixtures, inventories and source-derived reference data |
+| `reverse-engineering/` | Decompiled class notes, bytecode extracts, resource analysis and research records |
+| `tests/` | Regression and behavior tests |
+| `tools/` | Verification, replay and development utilities |
+| `docs/` | Project, architecture, release and fidelity documentation |
 
-Older build-specific notes are intentionally retained as a research timeline. Their limitations describe the named historical pass, not necessarily the current release.
+## Documentation
 
-## ⚖️ License and original-game rights
+- [Architecture](ARCHITECTURE.md): runtime flow, engine boundaries, collision model, responsive shell and controls.
+- [Project Guide](docs/PROJECT_GUIDE.md): modules, development workflow, commands and release checklist.
+- [Reverse-engineering method](docs/REVERSE_ENGINEERING_METHOD.md): how the original resources and code are examined.
+- [Engine porting guide](docs/ENGINE_PORTING_GUIDE.md): module boundaries and reusable port-engine interface.
+- [V62 release notes](docs/V62_RELEASE_NOTES.md): concise release summary and player-facing feature inventory.
+- [V62 physics and collision audit](V62_PHYSICS_COLLISION_AUDIT.md): measured original-vs-port runs, collision correction and remaining work.
+- [Historical audits](docs/): versioned restoration, source-parity and release records. Earlier version documents are retained as historical evidence, not as the current release description.
 
-The portions authored by Prasanna are covered by the **[Sovereign Source License v1.1](LICENSE)**. It is a **proprietary, source-available license**, not an OSI-approved open-source license. It permits limited personal, educational and noncommercial use under its terms; it does not grant general permission to republish, host, redistribute or monetise copies.
+## Credits and rights
 
-Original Bounce Tales artwork, sprites, animation, audio, music, fonts, level data, binary resources, names and marks are **not relicensed** by this project license. They remain subject to the rights of their respective owners. This is an independent project and is not affiliated with, sponsored by, or endorsed by Nokia or Rovio.
+Created by **Prasanna**. The project is an independent, unofficial reconstruction and is not affiliated with Nokia or Rovio. Bounce Tales names, original game assets, music and other original materials remain the property of their respective owners. The project's own source is governed by the root `LICENSE`; it is source-available under the stated terms and is **not** an OSI-approved open-source license. See the full license and rights notice before reuse or redistribution.
 
-## 🔗 Project links
-
-- 🌐 **Play:** [prasannaone.github.io/BounceTales](https://prasannaone.github.io/BounceTales/)
-- 💻 **Source:** [github.com/PrasannaOne/BounceTales](https://github.com/PrasannaOne/BounceTales)
-- 👤 **Creator:** [Prasanna One](https://github.com/PrasannaOne)
-- ☕ **Support:** [Ko-fi](https://ko-fi.com/prasannaone)
-
----
-
-<div align="center">
-
-**Made with care by Prasanna.** ❤️  
-*Keep bouncing.*
-
-</div>
-
-
-### V51.1 · pause-gutter correction
-
-The first V51 pause placement was incomplete: the toolbar had been moved in the HTML, but its CSS positioning was not explicitly reset. V51.1 anchors the toolbar to the game stage's upper-right external gutter, explicitly resets the button itself to static positioning, reserves right-side clearance on compact portrait screens, and refreshes the service-worker cache identity. The gameplay canvas, touch-layout storage key and game simulation are unchanged.
+If you enjoy playing, use the **heart button in the top header** or the **Support Bounce Tales** link in **Settings → About** to visit [Ko-fi](https://ko-fi.com/prasannaone). Support is optional; the game can be played without an account or payment. Your support also helps explore future restorations of other mobile classics, potentially including **Diamond Rush** and **City Bloxx**.

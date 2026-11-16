@@ -5,7 +5,7 @@
 })(typeof globalThis!=='undefined'?globalThis:this,function(){
   'use strict';
   const FP=typeof BounceFixed16!=='undefined'?BounceFixed16:null;
-  const ONE=65536n, ZERO=0n;
+  const ONE=65536n;
   const i32=n=>Number(n)|0;
   const B=n=>BigInt(n|0);
   const sqrt=n=>FP?FP.sqrtBigInt(n):sqrtFallback(n);
@@ -13,7 +13,6 @@
   const wrap=(n)=>Number(BigInt.asIntN(32,BigInt(n)))|0;
   const toFixed=value=>FP?FP.toFixed16(value):wrap(Math.trunc(value*65536));
   const fromFixed=value=>(value|0)/65536;
-  const shift16=n=>n>>16n;
 
   // Exact integer translation of c.class's swept edge/endpoint intersection helpers.
   function sweptOffsetEdge(x0,y0,dx,dy,x1,y1,x2,y2,radiusSquared16){
@@ -118,8 +117,13 @@
     const surfaceNormal=(surfaceVX*nx+surfaceVY*ny);
     // c.class reconstructs the actor transform from the moving contact point,
     // retained tangent offset, surface-normal motion and a 0.01-unit skin.
-    body.x16=toFixed(contactX+surfaceDX+offsetX+surfaceNormal*nx*dtMs/1000+nx*0.01);
-    body.y16=toFixed(contactY+surfaceDY+offsetY+surfaceNormal*ny*dtMs/1000+ny*0.01);
+    // c.class stores the next-pass start transform at contact + the full
+    // surface displacement, but reconstructs the current actor transform using
+    // only the absolute normal component of that displacement. Tangential
+    // surface motion must not be added to the current position.
+    const normalTravel=Math.abs(surfaceNormal)*dtMs/1000;
+    body.x16=toFixed(contactX+offsetX+normalTravel*nx+nx*0.01);
+    body.y16=toFixed(contactY+offsetY+normalTravel*ny+ny*0.01);
     body.x=fromFixed(body.x16);body.y=fromFixed(body.y16);
 
     // Exact c.class response: reflect the actor's normal velocity with form
@@ -168,8 +172,6 @@
     const radiusSquared16=radiusWorld*radiusWorld*65536;
     const dx0=wrap(body.x16-startX),dy0=wrap(body.y16-startY);
     const movementLength=Number(sqrt(B(dx0)*B(dx0)+B(dy0)*B(dy0)));
-    const dirX=movementLength?wrap((B(dx0)<<16n)/B(movementLength)):0;
-    const dirY=movementLength?wrap((B(dy0)<<16n)/B(movementLength)):0;
     if(!movementLength)return {contacts:0,iterations:0};
     const dtMs=Math.max(1,Math.round(dt*1000));
 
@@ -226,7 +228,10 @@
       contacts++;
       // Match c.class's next contact pass: the previous actor transform advances
       // to the selected contact point before the corrected current transform.
-      startX=hit.x|0;startY=hit.y|0;
+      // c.class advances its previous transform to contact + the full
+      // contacted-surface displacement before the next contact iteration.
+      startX=wrap(B(hit.x|0)+B(toFixed(Number(hit.surfaceDX||0))));
+      startY=wrap(B(hit.y|0)+B(toFixed(Number(hit.surfaceDY||0))));
     }
     body.x=fromFixed(body.x16);body.y=fromFixed(body.y16);
     return {contacts,iterations};

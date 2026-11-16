@@ -12,7 +12,8 @@
   const writeI16=(a,p,v)=>{a[p]=(v>>8)&255;a[p+1]=v&255;};
   const writeI32=(a,p,v)=>{v|=0;a[p]=(v>>>24)&255;a[p+1]=(v>>>16)&255;a[p+2]=(v>>>8)&255;a[p+3]=v&255;};
   const toFloat=bits=>{const b=new ArrayBuffer(4),d=new DataView(b);d.setInt32(0,bits|0,false);return d.getFloat32(0,false);};
-  const fromFloat=value=>{const b=new ArrayBuffer(4),d=new DataView(b);d.setFloat32(0,value,false);return d.getInt32(0,false);};
+  // Float.floatToIntBits: every NaN collapses to the canonical 0x7fc00000 (V8 would keep stray payload bits).
+  const fromFloat=value=>{if(value!==value)return 0x7fc00000;const b=new ArrayBuffer(4),d=new DataView(b);d.setFloat32(0,value,false);return d.getInt32(0,false);};
 
   function parseLanguage(input){
     const bytes=input instanceof Uint8Array?input:new Uint8Array(input);
@@ -29,15 +30,31 @@
     return strings;
   }
 
+  // Exact port of d.b(d): Java long products, arithmetic >>16 (floor), then narrowing to
+  // signed 32-bit after each component. (This used to divide in floating point, which was
+  // never bit-identical to the original; verified against the real d class, see
+  // tools/differential/.) Matrices stay integer 16.16 values.
+  const mulAdd16=(x,y,u,v)=>Number((BigInt(x|0)*BigInt(y|0)+BigInt(u|0)*BigInt(v|0))>>16n)|0;
   function compose(a,b){
     return [
-      (a[0]*b[0]+a[1]*b[3])/65536,
-      (a[0]*b[1]+a[1]*b[4])/65536,
-      (a[0]*b[2]+a[1]*b[5])/65536+a[2],
-      (a[3]*b[0]+a[4]*b[3])/65536,
-      (a[3]*b[1]+a[4]*b[4])/65536,
-      (a[3]*b[2]+a[4]*b[5])/65536+a[5]
+      mulAdd16(a[0],b[0],a[1],b[3]),
+      mulAdd16(a[0],b[1],a[1],b[4]),
+      (mulAdd16(a[0],b[2],a[1],b[5])+(a[2]|0))|0,
+      mulAdd16(a[3],b[0],a[4],b[3]),
+      mulAdd16(a[3],b[1],a[4],b[4]),
+      (mulAdd16(a[3],b[2],a[4],b[5])+(a[5]|0))|0
     ];
+  }
+  // Exact port of d.c(d): fixed-point inverse using Java long arithmetic with truncating division
+  // and 32-bit narrowing (note the original's own sign layout for b/d). Returns null when the
+  // original would throw ArithmeticException("Non-invertible matrix.").
+  function invertFixed(m){
+    const a=BigInt(m[0]|0),b=BigInt(m[1]|0),c=BigInt(m[2]|0),d=BigInt(m[3]|0),e=BigInt(m[4]|0),f=BigInt(m[5]|0);
+    const det=(a*e-b*d)>>16n;if(det===0n)return null;
+    const n32=x=>Number(BigInt.asIntN(32,x));
+    const ia=n32((e<<16n)/det),ib=n32((d<<16n)/det),id=n32((b<<16n)/det),ie=n32((a<<16n)/det);
+    const ic=(-n32((c*BigInt(ia)+f*BigInt(ib))>>16n))|0,iff=(-n32((c*BigInt(id)+f*BigInt(ie))>>16n))|0;
+    return [ia,ib,ic,id,ie,iff];
   }
   function point(m,x,y){return {x:(m[0]*x+m[1]*y)/65536+m[2]/65536,y:(m[3]*x+m[4]*y)/65536+m[5]/65536};}
   function inversePoint(m,x,y){
@@ -157,7 +174,7 @@
     getObject(id){return this.byId.get(id);}
     objectWorld(id){return this.world.get(id)||null;}
     runCommand(event,cmd,deltaMs,body,playerObjectId){
-      const op=cmd[0],get=id=>this.getObject(id),dirty=()=>{this.rebuildWorld();return true;};
+      const op=cmd[0],get=id=>this.getObject(id);
       this.executed++;
       switch(op){
         case 0:{
@@ -181,17 +198,30 @@
         }
         case 7:case 8:case 9:case 10:case 11:{
           const destType=cmd[1],dest=cmd[2],opnd=destType===1?this.operand(cmd,3):this.integerOperand(cmd,3),old=destType===1?toFloat(this.vars[dest]):this.vars[dest]|0;
-          let value=opnd.value;
-          if(op===8)value=old+value;else if(op===9)value=old-value;else if(op===10)value=old*value;else if(op===11)value=old/value;
-          this.vars[dest]=destType===1?fromFloat(value):value|0;return {done:true};
+          // Mirrors g.java cases 7-11. Float variant: an integer operand is first rounded to float32
+          // ((float)int), and each float op rounds to float32 when stored. Integer variant: Java int
+          // arithmetic, so multiplication must wrap exactly (Math.imul, not a double product) and a
+          // zero divisor throws ArithmeticException in the original, leaving the command incomplete.
+          let value=destType===1?Math.fround(opnd.value):opnd.value;
+          if(destType===1){
+            if(op===8)value=old+value;else if(op===9)value=old-value;else if(op===10)value=old*value;else if(op===11)value=old/value;
+            this.vars[dest]=fromFloat(value);
+          }else{
+            if(op===8)value=(old+value)|0;else if(op===9)value=(old-value)|0;else if(op===10)value=Math.imul(old,value);
+            else if(op===11){if(value===0)return {done:false};value=Math.trunc(old/value)|0;}
+            this.vars[dest]=value|0;
+          }
+          return {done:true};
         }
         case 12:case 13:case 14:case 15:{
           const type=cmd[1],idx=cmd[2],opnd=type===1?this.operand(cmd,3):this.integerOperand(cmd,3),value=type===1?toFloat(this.vars[idx]):this.vars[idx]|0;
+          // Float compares happen in float32: an integer operand is rounded ((float)int) first.
+          const rhs=type===1?Math.fround(opnd.value):opnd.value;
           let branch=false;
-          if(op===12)branch=value!==opnd.value;
-          else if(op===13)branch=value===opnd.value;
-          else if(op===14)branch=value>=opnd.value;
-          else branch=value<=opnd.value;
+          if(op===12)branch=value!==rhs;
+          else if(op===13)branch=value===rhs;
+          else if(op===14)branch=!(value<rhs);   // original continues only when var < operand (false for NaN)
+          else branch=!(value>rhs);              // original continues only when var > operand (false for NaN)
           // The source interpreter's early-return conditions make the branch names
           // look inverted. These are the effective branch conditions.
           const target=cmd[opnd.next];
@@ -208,27 +238,37 @@
           writeI32(cmd,15,next);return {done:false,worldChanged:true};
         }
         case 17:{
+          // Exact port of g.java case 17 (timed rotation): stash the base 2x2 when the timer is
+          // full, rotate by (float)((long)angle*(duration-remaining)/duration)/65536F using the
+          // float32 cos/sin recipe of d.a(float), post-multiply with d.b(d) in fixed point, keep
+          // the translation, and reset the command timer to the duration once finished.
           const obj=get(readI16(cmd,1));if(!obj)return {done:true};
-          const angle=readI32(cmd,3)/65536,duration=Math.max(1,readI32(cmd,7));let remaining=readI32(cmd,11);
+          const angle16=readI32(cmd,3),duration=Math.max(1,readI32(cmd,7));let remaining=readI32(cmd,11);
           if(remaining===duration){obj.__eventRotateBase=[obj.matrix[0],obj.matrix[1],obj.matrix[3],obj.matrix[4]];}
           const base=obj.__eventRotateBase||[obj.matrix[0],obj.matrix[1],obj.matrix[3],obj.matrix[4]];
-          const finished=remaining-deltaMs<=0;
-          const used=finished?duration:clamp(duration-remaining,0,duration);
-          const r=angle*(used/duration),co=Math.cos(r),si=Math.sin(r);
-          obj.matrix[0]=Math.trunc(base[0]*co+base[1]*si)|0;obj.matrix[1]=Math.trunc(-base[0]*si+base[1]*co)|0;
-          obj.matrix[3]=Math.trunc(base[2]*co+base[3]*si)|0;obj.matrix[4]=Math.trunc(-base[2]*si+base[3]*co)|0;
-          remaining=finished?0:Math.max(0,remaining-deltaMs);writeI32(cmd,11,remaining);
-          if(remaining===0){delete obj.__eventRotateBase;return {done:true,worldChanged:true};}
-          return {done:false,worldChanged:true};
+          if(remaining-deltaMs<=0){writeI32(cmd,11,duration);remaining=0;}
+          const f32=Math.fround;
+          const radians=f32(f32(Number(BigInt(angle16)*BigInt(duration-remaining)/BigInt(duration)))/65536);
+          const cos=Math.trunc(f32(f32(Math.cos(radians))*65536))|0,sin=Math.trunc(f32(f32(Math.sin(radians))*65536))|0;
+          obj.matrix[0]=mulAdd16(base[0],cos,base[1],sin);obj.matrix[1]=mulAdd16(base[0],-sin,base[1],cos);
+          obj.matrix[3]=mulAdd16(base[2],cos,base[3],sin);obj.matrix[4]=mulAdd16(base[2],-sin,base[3],cos);
+          remaining-=deltaMs;
+          if(remaining<=0){delete obj.__eventRotateBase;return {done:true,worldChanged:true};}
+          writeI32(cmd,11,remaining);return {done:false,worldChanged:true};
         }
         case 18:{
           const dest=get(readI16(cmd,1));if(!dest)return {done:true};const source=readI16(cmd,3);
           if(source<0){dest.matrix[2]=readI32(cmd,5);dest.matrix[5]=readI32(cmd,9);}
           else{
             const src=this.objectWorld(source);if(!src)return {done:true};
-            const worldX=src[2]/65536,worldY=src[5]/65536,parent=dest.parent>=0?this.objectWorld(dest.parent):[65536,0,0,0,65536,0];
-            const noTranslation=compose(parent,[dest.matrix[0],dest.matrix[1],0,dest.matrix[3],dest.matrix[4],0]);
-            const local=inversePoint(noTranslation,worldX,worldY);dest.matrix[2]=Math.round(local.x*65536)|0;dest.matrix[5]=Math.round(local.y*65536)|0;
+            // Exact port of g.java case 18: zero the destination translation, invert
+            // parentWorld * local(2x2) in fixed point and map the source's world translation through it.
+            const parent=dest.parent>=0?this.objectWorld(dest.parent):[65536,0,0,0,65536,0];
+            dest.matrix[2]=0;dest.matrix[5]=0;
+            const inverse=invertFixed(compose(parent,[dest.matrix[0],dest.matrix[1],0,dest.matrix[3],dest.matrix[4],0]));
+            if(!inverse)return {done:false,worldChanged:true};
+            dest.matrix[2]=(mulAdd16(inverse[0],src[2],inverse[1],src[5])+inverse[2])|0;
+            dest.matrix[5]=(mulAdd16(inverse[3],src[2],inverse[4],src[5])+inverse[5])|0;
           }
           return {done:true,worldChanged:true};
         }

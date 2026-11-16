@@ -1,6 +1,6 @@
 {
   "name": "bounce-tales",
-  "version": "58.0.0",
+  "version": "62.0.0",
   "private": true,
   "description": "Source-informed Bounce Tales browser port and reusable game-port modules",
   "license": "SEE LICENSE IN LICENSE",
@@ -12,6 +12,8 @@
     "check": "node tools/check-syntax.cjs",
     "smoke": "node tests/runtime-smoke.cjs",
     "proof:springboard": "node tests/level1-springboard-proof.cjs",
-    "verify": "npm run check && npm test && npm run smoke && npm run proof:springboard"
+    "verify": "npm run check && npm test && npm run smoke && npm run proof:springboard",
+    "verify:differential": "node tools/differential/run.cjs",
+    "verify:original": "node tools/original-runner/replay-compare.cjs"
   }
 }
