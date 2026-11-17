@@ -3,70 +3,87 @@ name: Bounce Tales Android APK
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 permissions:
   contents: read
 
 jobs:
   build-apk:
+    name: Build Bounce Tales APK
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Get the existing game
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
+      # 3. Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 21
 
+      # 4. Android SDK
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build web assets
+      - name: Install Android build packages
         run: |
-          if npm run | grep -q "build"; then
-            npm run build
-          fi
+          sdkmanager "platforms;android-35" "build-tools;35.0.0"
 
+      # 5. Prepare the original game files
+      - name: Prepare web assets
+        run: |
+          mkdir -p www
+
+          cp index.html style.css game.js www/
+          cp manifest.webmanifest sw.js www/
+
+          cp favicon.png icon-192.png icon-512.png www/
+          cp apple-touch-icon.png www/
+
+          cp -R src assets www/
+
+      # 6. Install Capacitor without modifying package.json
       - name: Install Capacitor
         run: |
-          npm install @capacitor/core @capacitor/android
-          npm install -D @capacitor/cli
+          npm install --no-save --package-lock=false --no-audit --no-fund \
+            @capacitor/core@7 \
+            @capacitor/cli@7 \
+            @capacitor/android@7
 
-      - name: Initialize Capacitor if needed
+      # 7. Initialize Android wrapper
+      - name: Initialize Capacitor
         run: |
-          if [ ! -f capacitor.config.ts ] && [ ! -f capacitor.config.json ]; then
-            npx cap init "Bounce Tales" "com.prasanna.bouncetales" --web-dir .
-          fi
+          npx cap init "Bounce Tales" \
+            "com.prasanna.bouncetales" \
+            --web-dir www
 
-      - name: Add Android platform if needed
-        run: |
-          if [ ! -d android ]; then
-            npx cap add android
-          fi
+      # 8. Generate Android project
+      - name: Add Android platform
+        run: npx cap add android
 
-      - name: Sync Android
+      # 9. Copy game into Android
+      - name: Sync Android project
         run: npx cap sync android
 
-      - name: Build APK
+      # 10. Build APK
+      - name: Build Debug APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew --no-daemon assembleDebug
 
+      # 11. Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
@@ -74,3 +91,4 @@ jobs:
           path: android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
           retention-days: 30
+          
